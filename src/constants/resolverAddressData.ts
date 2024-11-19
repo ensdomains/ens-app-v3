@@ -302,9 +302,26 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
   ],
   '11155111': [
     {
-      address: '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD',
+      address: '0x8948458626811dd0c23EB25Cc74291247077cC51',
       deployer: 'ENS Labs',
       tag: 'latest',
+      isNameWrapperAware: true,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
+      address: '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD',
+      deployer: 'ENS Labs',
+      tag: null,
       isNameWrapperAware: true,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,

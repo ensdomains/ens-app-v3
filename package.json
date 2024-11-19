@@ -51,10 +51,11 @@
     "knip:fix": "knip --fix --allow-remove-files"
   },
   "dependencies": {
+    "@adraffy/ens-normalize": "1.10.1",
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
-    "@ensdomains/ensjs": "4.0.0",
+    "@ensdomains/ensjs": "4.0.2",
     "@ensdomains/thorin": "0.6.50",
     "@metamask/post-message-stream": "^6.1.2",
     "@metamask/providers": "^14.0.2",
@@ -116,7 +117,7 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/test-helpers": "^0.5.16",
-    "@playwright/test": "^1.48.0",
+    "@playwright/test": "^1.48.2",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.0.0",
     "@testing-library/react-hooks": "^8.0.1",
