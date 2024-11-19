@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import glob from 'glob'
+import * as glob from 'glob'
 
 import { BASE_LOCALE, getLocaleData, getLocalePaths } from './locale-utils.mjs'
 
