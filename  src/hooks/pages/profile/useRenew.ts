@@ -1,6 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
@@ -9,33 +9,33 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { parseNumericString } from '@app/utils/string'
 
 export function useRenew(name: string) {
-  const [opened, setOpened] = useState<boolean>(false)
-
   const { registrationStatus, isLoading } = useNameDetails({ name })
   const abilities = useAbilities({ name })
   const searchParams = useSearchParams()
   const { isConnected, isDisconnected } = useAccount()
   const { usePreparedDataInput } = useTransactionFlow()
-  const { openConnectModal } = useConnectModal()
+  const { openConnectModal, connectModalOpen } = useConnectModal()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
   const { data: { canSelfExtend } = {} } = abilities
   const isAvailableName = registrationStatus === 'available'
   const renewSeconds = parseNumericString(searchParams.get('renew'))
 
-  const isRenewActive = !opened && !!renewSeconds && !isLoading
+  const prevIsConnected = useRef(isConnected)
 
+  const isRenewActive =
+    (!isConnected || !connectModalOpen) && !!renewSeconds && !isLoading && !isAvailableName
+
+  // http://localhost:3000/anyname.eth?renew=63072000
   useEffect(() => {
     if (!isRenewActive) return
 
-    if (!isAvailableName && isDisconnected) {
-      setOpened(true)
+    if (isDisconnected && prevIsConnected.current) {
       openConnectModal?.()
       return
     }
 
-    if (!isAvailableName && isConnected) {
-      setOpened(true)
+    if (isConnected) {
       showExtendNamesInput(`extend-names-${name}`, {
         names: [name],
         isSelf: canSelfExtend,
@@ -43,6 +43,8 @@ export function useRenew(name: string) {
       })
     }
 
+    prevIsConnected.current = !isConnected
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRenewActive, isAvailableName, isConnected, isDisconnected, name, canSelfExtend])
+  }, [isRenewActive, isConnected, isDisconnected, name, canSelfExtend])
 }
