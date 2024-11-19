@@ -437,9 +437,9 @@ export const AvatarNFT = ({
         (address !== ethAddress && (
           <Button onClick={handleSelectAddress}>
             {t(
-              `input.profileEditor.tabs.avatar.nft.address.${
-                selectedAddress === address ? 'other' : 'owned'
-              }`,
+              selectedAddress === address
+                ? 'input.profileEditor.tabs.avatar.nft.address.other'
+                : `input.profileEditor.tabs.avatar.nft.address.owned`,
             )}
           </Button>
         ))}

@@ -23,6 +23,28 @@ import { useValidateSubnameLabel } from '../../hooks/useValidateSubnameLabel'
 import { createTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
 
+// type AddSubnameError =
+//   | 'invalidCharacters'
+//   | 'mustUseLowercase'
+//   | 'alreadyExists'
+//   | 'nameTooLong'
+//   | 'pccBurned'
+
+// const getErrorTranslationKey = (error: AddSubnameError): string =>
+//   match(error)
+//     .with(
+//       'invalidCharacters',
+//       () => 'details.tabs.subnames.addSubname.dialog.error.invalidCharacters',
+//     )
+//     .with(
+//       'mustUseLowercase',
+//       () => 'details.tabs.subnames.addSubname.dialog.error.mustUseLowercase',
+//     )
+//     .with('alreadyExists', () => 'details.tabs.subnames.addSubname.dialog.error.alreadyExists')
+//     .with('nameTooLong', () => 'details.tabs.subnames.addSubname.dialog.error.nameTooLong')
+//     .with('pccBurned', () => 'details.tabs.subnames.addSubname.dialog.error.pccBurned')
+//     .otherwise(() => '')
+
 type Data = {
   parent: string
   isWrapped: boolean

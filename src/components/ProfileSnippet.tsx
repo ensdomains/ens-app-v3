@@ -2,6 +2,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
@@ -173,6 +174,15 @@ export const getUserDefinedUrl = (url?: string) => {
   return ``
 }
 
+type ProfileButton = 'viewProfile' | 'extend' | 'register'
+
+const getButtonTranslationKey = (button?: ProfileButton): string =>
+  match(button)
+    .with('viewProfile', () => 'wallet.viewProfile')
+    .with('extend', () => 'action.extend')
+    .with('register', () => 'wallet.register')
+    .otherwise(() => '')
+
 export const ProfileSnippet = ({
   name,
   getTextRecord,
@@ -184,7 +194,7 @@ export const ProfileSnippet = ({
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
-  button?: 'viewProfile' | 'extend' | 'register'
+  button?: ProfileButton
   isPrimary?: boolean
   isVerified?: boolean
   children?: React.ReactNode
@@ -228,6 +238,8 @@ export const ProfileSnippet = ({
   }, [isConnected, available, renew, name, canSelfExtend])
 
   const ActionButton = useMemo(() => {
+    const translationKey = getButtonTranslationKey(button)
+
     if (button === 'extend')
       return (
         <Button
@@ -242,7 +254,7 @@ export const ProfileSnippet = ({
             })
           }}
         >
-          {t('action.extend', { ns: 'common' })}
+          {t(translationKey)}
         </Button>
       )
     if (button === 'register')
@@ -252,7 +264,7 @@ export const ProfileSnippet = ({
           size="small"
           colorStyle="accentSecondary"
         >
-          {t(`wallet.${button}`)}
+          {t(translationKey)}
         </Button>
       )
     if (button === 'viewProfile')
@@ -262,7 +274,7 @@ export const ProfileSnippet = ({
           size="small"
           colorStyle="accentSecondary"
         >
-          {t(`wallet.${button}`)}
+          {t(translationKey)}
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps

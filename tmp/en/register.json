@@ -4,11 +4,12 @@
   "heading": "Register {{name}}",
   "invoice": {
     "timeRegistration": "{{time}} registration",
+    "registration": "Registration",
     "estimatedNetworkFee": "Est. network fee",
-    "transactionFees": "Transaction fees",
+    "networkFee": "Network fee",
     "temporaryPremium": "Temporary premium",
     "total": "Estimated total",
-    "expiry": "Name expires"
+    "totalPaid": "Total paid"
   },
   "error": {
     "nameTooLong": "The name you want to register is too long. Please choose a shorter name."
@@ -30,6 +31,11 @@
     "profile": {
       "title": "Create your profile",
       "title2": "Edit your profile",
+      "default": "Default",
+      "advanced": "Advanced",
+      "permissions": "Permissions",
+      "resolver": "Resolver",
+      "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible.",
       "addProfile": "Add profile fields",
       "addMore": "Add more to profile",
       "options": {
@@ -77,8 +83,7 @@
               "op": "0xb8c2C2...",
               "arb1": "0xb8c2C2...",
               "base": "0xb8c2C2...",
-              "matic": "0xb8c2C2...",
-              "linea": "0xb8c2C2..."
+              "matic": "0xb8c2C2..."
             }
           },
           "website": {
@@ -145,6 +150,7 @@
     "complete": {
       "heading": "Congratulations!",
       "subheading": "You are now the owner of ",
+      "description": "Your name was successfully registered. You can now view and manage your name.",
       "registerAnother": "Register another",
       "viewName": "View name"
     },
@@ -165,6 +171,7 @@
       "notEnoughEth": "Not enough ETH in wallet",
       "creditOrDebit": "Credit or debit card",
       "additionalFee": "Additional processing fee",
+      "pendingMoonpayTransaction": "Your MoonPay transaction is processing. This may take up to two minutes. You can check your progress from the confirmation email you recieved.",
       "failedMoonpayTransaction": "Your MoonPay transaction has failed. Please try again or choose the 'Ethereum' payment method.",
       "ethereum": "Ethereum",
       "processing": "Processing",
@@ -174,20 +181,11 @@
     },
     "transactions": {
       "heading": "Almost there",
-      "subheading": {
-        "default": "You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.",
-        "commitSent": "<strong>Your first transaction is in progress.</strong><br> The second transaction must be completed within 24 hours of the first.",
-        "commiting": "This wait prevents others from <tooltip>front running</tooltip> your transaction. You will be prompted to complete a second transaction when the timer is complete.",
-        "commitComplete": "<strong>Your name is not registered until you’ve completed the second transaction.</strong><br> You have {{duration}} remaining to complete it.",
-        "commitCompleteNoDuration": "<strong>Your name is not registered until you’ve completed the second transaction.</strong>",
-        "commitExpired": "Your registration has expired. You will need to start the process again.",
-        "frontRunning": "When someone sees your transaction and registers the name before your transaction can complete."
-      },
+      "subheading": "You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.",
       "startTimer": "Start timer",
       "wait": "Wait",
-      "completeRegistration": "Complete registration",
       "transactionFailed": "Transaction Failed",
-      "transactionProgress": "View transaction in progress"
+      "transactionProgress": "Transaction in progress"
     },
     "cancelRegistration": {
       "heading": "You will lose your transaction",

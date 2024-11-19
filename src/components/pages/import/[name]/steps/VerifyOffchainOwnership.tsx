@@ -2,6 +2,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Dispatch, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { CheckCircleSVG, Helper } from '@ensdomains/thorin'
 
@@ -22,6 +23,7 @@ import {
 import { StatusChecker } from '../StatusChecker'
 import { SupportLinkList } from '../SupportLinkList'
 import { DnsImportReducerAction, SelectedItemProperties } from '../useDnsImportReducer'
+import { checkDnsError } from '../utils'
 
 const ValueButtonsContainer = styled.div(
   ({ theme }) => css`
@@ -63,6 +65,17 @@ const getDnsResolverValue = (chainId: number) => {
   if (chainId === 1) return 'dnsname.ens.eth'
   return EXTENDED_DNS_RESOLVER_MAP[String(chainId)]
 }
+type ErrorKey = ReturnType<typeof checkDnsError>
+
+const getErrorTranslationKey = (error: ErrorKey): string =>
+  match(error)
+    .with('unknown', () => 'error.unknown')
+    .with('noTxtRecord', () => 'error.noTxtRecord')
+    .with('dnssecFailure', () => 'error.dnssecFailure')
+    .with('invalidTxtRecord', () => 'error.invalidTxtRecord')
+    .with('invalidAddressChecksum', () => 'error.invalidAddressChecksum')
+    .with('resolutionFailure', () => 'error.resolutionFailure')
+    .otherwise(() => '')
 
 export const VerifyOffchainOwnership = ({
   dispatch,
@@ -71,8 +84,7 @@ export const VerifyOffchainOwnership = ({
   dispatch: Dispatch<DnsImportReducerAction>
   selected: SelectedItemProperties
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.verifyOwnership' })
-  const { t: tc } = useTranslation('common')
+  const { t } = useTranslation('dnssec')
 
   const { address, chainId } = selected
   const isConnected = !!address
@@ -93,20 +105,21 @@ export const VerifyOffchainOwnership = ({
   const { openConnectModal } = useConnectModal()
 
   const errorMessage = useMemo(() => {
-    if (error) return tc(`error.${error}`, { ns: 'dnssec' })
+    if (error) return t(getErrorTranslationKey(error as ErrorKey))
     return null
-  }, [tc, error])
+  }, [t, error])
 
   return (
     <DnsImportCard>
-      <DnsImportHeading>{t('title')}</DnsImportHeading>
+      <DnsImportHeading>{t('steps.verifyOwnership.title')}</DnsImportHeading>
       {(() => {
-        if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
+        if (!isConnected)
+          return <Helper type="info">{t('steps.verifyOwnership.status.disconnected')}</Helper>
         if (dnsOffchainStatus?.address?.status === 'matching')
           return (
             <SuccessHelper>
               <CheckCircleSVG />
-              {t('status.matching')}
+              {t('steps.verifyOwnership.status.matching')}
             </SuccessHelper>
           )
         return (
@@ -123,7 +136,7 @@ export const VerifyOffchainOwnership = ({
               />
             </ValueButtonsContainer>
             <SupportLinkList
-              title={t('status.mismatching.help')}
+              title={t('steps.verifyOwnership.status.mismatching.help')}
               items={DNS_TXT_RECORD_HELPER_LINKS}
             />
             <StatusChecker
@@ -132,7 +145,7 @@ export const VerifyOffchainOwnership = ({
               isLoading={isLoading}
               isRefetching={isRefetching}
               refetch={refetch}
-              message={errorMessage || t('status.mismatching.message')}
+              message={errorMessage || t('steps.verifyOwnership.status.mismatching.message')}
               statusElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' &&
                 dnsOffchainStatus?.resolver && (
@@ -148,7 +161,9 @@ export const VerifyOffchainOwnership = ({
               }
               statusHelperElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' && (
-                  <Helper type="error">{t('status.mismatching.error.offchain')}</Helper>
+                  <Helper type="error">
+                    {t('steps.verifyOwnership.status.mismatching.error.offchain')}
+                  </Helper>
                 )
               }
             />
@@ -160,7 +175,7 @@ export const VerifyOffchainOwnership = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          {tc('action.back')}
+          {t('action.back', { ns: 'common' })}
         </DnsImportActionButton>
         {isConnected ? (
           <DnsImportActionButton
@@ -174,12 +189,12 @@ export const VerifyOffchainOwnership = ({
               : {})}
           >
             {dnsOffchainStatus?.address?.status === 'mismatching'
-              ? tc('action.finish')
-              : tc('action.claim')}
+              ? t('action.finish', { ns: 'common' })
+              : t('action.claim', { ns: 'common' })}
           </DnsImportActionButton>
         ) : (
           <DnsImportActionButton disabled={!openConnectModal} onClick={() => openConnectModal?.()}>
-            {tc('action.connect')}
+            {t('action.connect', { ns: 'common' })}
           </DnsImportActionButton>
         )}
       </DnsImportActionsContainer>

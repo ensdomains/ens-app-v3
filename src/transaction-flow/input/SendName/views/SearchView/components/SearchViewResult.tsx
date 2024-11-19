@@ -7,6 +7,7 @@ import { mq, Tag } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import type { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
+import { getRoleTranslationKeys } from '@app/intl/translationKeys'
 
 const LeftContainer = styled.div(() => css``)
 
@@ -62,7 +63,7 @@ type Props = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>
 
 export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...props }: Props) => {
-  const { t } = useTranslation('transactionFlow')
+  const { t } = useTranslation()
   const markers = useMemo(() => {
     const userRoles = roles.filter((r) => r.address?.toLowerCase() === address.toLowerCase())
     const hasRole = userRoles.some((r) => r.role === role)
@@ -88,7 +89,7 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
       {markers.primaryRole && (
         <RightContainer>
           <Tag>
-            <TagText>{t(`roles.${markers.primaryRole?.role}.title`, { ns: 'common' })}</TagText>
+            <TagText>{t(getRoleTranslationKeys(markers.primaryRole?.role).title)}</TagText>
           </Tag>
         </RightContainer>
       )}

@@ -33,9 +33,10 @@ export const SummaryView = ({ name, canResetProfile, onNext, onBack }: Props) =>
   const { control, register } = useFormContext<SendNameForm>()
   const recipient = useWatch({ control, name: 'recipient' })
   const expiry = useExpiry({ name })
-  const expiryLabel = expiry.data?.expiry?.date
+  const expiryDate = expiry.data?.expiry?.date
+  const expiryLabel = expiryDate
     ? t('input.sendName.views.summary.fields.name.expires', {
-        date: expiry.data?.expiry?.date.toLocaleDateString(undefined, {
+        date: expiryDate.toLocaleDateString(undefined, {
           year: 'numeric',
           month: 'short',
           day: 'numeric',

@@ -102,8 +102,7 @@ export const ImportTransaction = ({
   item: DnsImportReducerDataItem
   selected: SelectedItemProperties
 }) => {
-  const { t } = useTranslation('dnssec', { keyPrefix: 'steps.transaction' })
-  const { t: tc } = useTranslation('common')
+  const { t } = useTranslation('dnssec')
 
   const { data: gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
@@ -206,15 +205,19 @@ export const ImportTransaction = ({
     <DnsImportCard>
       {dnsOwnerStatus === 'mismatching' ? (
         <>
-          <DnsImportHeading>{t('mismatching.title')}</DnsImportHeading>
+          <DnsImportHeading>{t('steps.transaction.mismatching.title')}</DnsImportHeading>
           <Typography>
-            <Trans t={t} i18nKey="mismatching.subtitle" components={{ b: <b /> }} />
+            <Trans
+              t={t}
+              i18nKey="steps.transaction.mismatching.subtitle"
+              components={{ b: <b /> }}
+            />
           </Typography>
         </>
       ) : (
         <>
-          <DnsImportHeading>{t('matching.title')}</DnsImportHeading>
-          <Typography>{t('matching.subtitle')}</Typography>
+          <DnsImportHeading>{t('steps.transaction.matching.title')}</DnsImportHeading>
+          <Typography>{t('steps.transaction.matching.subtitle')}</Typography>
         </>
       )}
       <InvoiceContainer>
@@ -227,19 +230,19 @@ export const ImportTransaction = ({
           />
         </OptionBar>
         <InvoiceItemBox>
-          <Typography>{t('estimatedNetworkCost')}</Typography>
+          <Typography>{t('steps.transaction.estimatedNetworkCost')}</Typography>
           <Typography data-testid="import-cost">
             <CurrencyText eth={gasCost} currency={currencyDisplay} />
           </Typography>
         </InvoiceItemBox>
         <InvoiceItemBox>
-          <Typography>{tc('name.owner')}</Typography>
+          <Typography>{t('name.owner', { ns: 'common' })}</Typography>
           {dnsOwner && <InvoiceDnsOwner dnsOwner={dnsOwner} />}
         </InvoiceItemBox>
       </InvoiceContainer>
       {dnsOwnerStatus === 'mismatching' && (
         <Helper type="warning">
-          {tc('steps.verifyOwnership.status.mismatching.error.onchain', { ns: 'dnssec' })}
+          {t('steps.verifyOwnership.status.mismatching.error.onchain', { ns: 'dnssec' })}
         </Helper>
       )}
       <DnsImportActionsContainer>
@@ -247,7 +250,7 @@ export const ImportTransaction = ({
           colorStyle="accentSecondary"
           onClick={() => dispatch({ name: 'decreaseStep', selected })}
         >
-          {tc('action.back')}
+          {t('action.back', { ns: 'common' })}
         </DnsImportActionButton>
         <DnsImportActionButton
           disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
@@ -255,7 +258,9 @@ export const ImportTransaction = ({
           onClick={() => startOrResumeFlow()}
           data-testid="import-next-button"
         >
-          {dnsOwnerStatus === 'mismatching' ? tc('action.import') : tc('action.claim')}
+          {dnsOwnerStatus === 'mismatching'
+            ? t('action.import', { ns: 'common' })
+            : t('action.claim', { ns: 'common' })}
         </DnsImportActionButton>
       </DnsImportActionsContainer>
     </DnsImportCard>

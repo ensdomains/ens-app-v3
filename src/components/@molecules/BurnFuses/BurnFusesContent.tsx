@@ -2,6 +2,7 @@ import isEqual from 'lodash/isEqual'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
 import { Button, FlameSVG, Helper, mq, Typography } from '@ensdomains/thorin'
@@ -81,18 +82,32 @@ const StyledButton = styled(Button)(
   `,
 )
 
+type Permission = ChildFuseReferenceType['Key']
+
+const getPermissionTranslationKey = (permission: Permission): string =>
+  match(permission)
+    .with('CANNOT_UNWRAP', () => `tabs.more.fuses.permissions.CANNOT_UNWRAP`)
+    .with('CANNOT_BURN_FUSES', () => `tabs.more.fuses.permissions.CANNOT_BURN_FUSES`)
+    .with('CANNOT_TRANSFER', () => `tabs.more.fuses.permissions.CANNOT_TRANSFER`)
+    .with('CANNOT_SET_RESOLVER', () => `tabs.more.fuses.permissions.CANNOT_SET_RESOLVER`)
+    .with('CANNOT_SET_TTL', () => `tabs.more.fuses.permissions.CANNOT_SET_TTL`)
+    .with('CANNOT_CREATE_SUBDOMAIN', () => `tabs.more.fuses.permissions.CANNOT_CREATE_SUBDOMAIN`)
+    .otherwise(() => '')
+
 const BurnButton = ({
   permission,
   isBurned,
   handleBurnClick,
   isSelected,
 }: {
-  permission: ChildFuseReferenceType['Key']
+  permission: Permission
   isBurned: boolean
-  handleBurnClick: (permission: ChildFuseReferenceType['Key']) => void
+  handleBurnClick: (permission: Permission) => void
   isSelected: boolean
 }) => {
-  const { t } = useTranslation('profile', { keyPrefix: 'tabs.more.fuses' })
+  const { t } = useTranslation('profile')
+
+  const translationKey = getPermissionTranslationKey(permission)
 
   return (
     <StyledButton
@@ -109,10 +124,10 @@ const BurnButton = ({
       }
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
-        <Typography>{t(`permissions.${permission}`)}</Typography>
+        <Typography>{t(translationKey)}</Typography>
         {isBurned && (
           <BurnedFlameContainer $isBurned={isBurned}>
-            <Typography>{t('burned')}</Typography>
+            <Typography>{t('tabs.more.fuses.burned')}</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
         )}
@@ -135,8 +150,8 @@ const canContinue = (
 ) => {
   const filteredInitialFuseData: CurrentChildFuses = { ...fuseData }
   Object.keys(filteredInitialFuseData).forEach((key: string) => {
-    if (filteredInitialFuseData[key as ChildFuseReferenceType['Key']]) {
-      delete filteredInitialFuseData[key as ChildFuseReferenceType['Key']]
+    if (filteredInitialFuseData[key as Permission]) {
+      delete filteredInitialFuseData[key as Permission]
     }
   })
   const cannotUnwrap = !fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP
@@ -161,7 +176,7 @@ type PropsWithReturnObject = BaseProps & {
 
 type PropsWithReturnArray = BaseProps & {
   returnObject?: never
-  onSubmit: (fuses: ChildFuseReferenceType['Key'][], fuseNames: string[]) => void
+  onSubmit: (fuses: Permission[], fuseNames: string[]) => void
 }
 
 const BurnFusesContent = ({
@@ -171,12 +186,11 @@ const BurnFusesContent = ({
   canUnsetFuse = false,
   returnObject,
 }: PropsWithReturnArray | PropsWithReturnObject) => {
-  const { t } = useTranslation('profile', { keyPrefix: 'tabs.more' })
-  const { t: tc } = useTranslation()
+  const { t } = useTranslation('profile')
   const [_fuseData, setFuseData] = useState<CurrentChildFuses>(childFuseObj)
   const [fuseSelected, setFuseSelected] = useState<CurrentChildFuses>(childFuseObj)
 
-  const handleBurnClick = (permission: ChildFuseReferenceType['Key']) => {
+  const handleBurnClick = (permission: Permission) => {
     const nextFuseSelected = { ...fuseSelected } as CurrentChildFuses
     nextFuseSelected[permission] = !nextFuseSelected[permission]
     setFuseSelected(nextFuseSelected)
@@ -188,10 +202,10 @@ const BurnFusesContent = ({
     }
 
     const selectedFuses = Object.keys(fuseSelected).filter(
-      (key) => fuseSelected[key as ChildFuseReferenceType['Key']],
-    ) as ChildFuseReferenceType['Key'][]
+      (key) => fuseSelected[key as Permission],
+    ) as Permission[]
 
-    const permissions = selectedFuses.map((key) => t(`fuses.permissions.${key}`))
+    const permissions = selectedFuses.map((key) => t(getPermissionTranslationKey(key)))
 
     onSubmit(selectedFuses, permissions)
   }
@@ -214,12 +228,12 @@ const BurnFusesContent = ({
 
   return (
     <FusesContainer>
-      <Typography fontVariant="headingFour">{t('fuses.burnFormTitle')}</Typography>
+      <Typography fontVariant="headingFour">{t('tabs.more.fuses.burnFormTitle')}</Typography>
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
           <Spacer $height="1" />
           <Helper type="info" style={{ textAlign: 'center' }}>
-            <Typography>{t('fuses.info')}</Typography>
+            <Typography>{t('tabs.more.fuses.info')}</Typography>
           </Helper>
         </>
       ) : (
@@ -230,10 +244,10 @@ const BurnFusesContent = ({
         {Object.entries(_fuseData).map(([key, value]) => (
           <BurnButton
             {...{
-              permission: key as ChildFuseReferenceType['Key'],
+              permission: key as Permission,
               isBurned: !!value && !canUnsetFuse,
               handleBurnClick,
-              isSelected: !!fuseSelected[key as ChildFuseReferenceType['Key']],
+              isSelected: !!fuseSelected[key as Permission],
             }}
           />
         ))}
@@ -241,7 +255,7 @@ const BurnFusesContent = ({
       <Spacer $height="6" />
       <ButtonsContainer>
         <Button colorStyle="accentSecondary" onClick={onDismiss}>
-          {tc('action.cancel')}
+          {t('action.cancel', { ns: 'common' })}
         </Button>
         <Button
           disabled={canContinue(_fuseData, fuseSelected, canUnsetFuse)}
@@ -249,7 +263,9 @@ const BurnFusesContent = ({
           color="red"
           data-testid="burn-form-continue"
         >
-          {canUnsetFuse ? tc('action.confirm') : tc('action.burnSelected')}
+          {canUnsetFuse
+            ? t('action.confirm', { ns: 'common' })
+            : t('action.burnSelected', { ns: 'common' })}
         </Button>
       </ButtonsContainer>
     </FusesContainer>

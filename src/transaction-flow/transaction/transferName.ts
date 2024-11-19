@@ -1,4 +1,5 @@
 import type { TFunction } from 'react-i18next'
+import { match } from 'ts-pattern'
 import type { Address } from 'viem'
 
 import { transferName } from '@ensdomains/ensjs/wallet'
@@ -23,6 +24,12 @@ export type Data = {
   reclaim?: boolean
 } & (RegistrarData | OtherData)
 
+const getSendTypeTranslationKey = (sendType: 'sendManager' | 'sendOwner'): string =>
+  match(sendType)
+    .with('sendManager', () => 'name.sendManager')
+    .with('sendOwner', () => 'name.sendOwner')
+    .otherwise(() => '')
+
 const displayItems = (
   { name, sendType, newOwnerAddress }: Data,
   t: TFunction<'translation', undefined>,
@@ -34,7 +41,7 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: t(`name.${sendType}`),
+    value: t(getSendTypeTranslationKey(sendType)),
   },
   {
     label: 'to',

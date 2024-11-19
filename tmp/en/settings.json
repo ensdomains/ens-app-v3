@@ -1,6 +1,9 @@
 {
   "title": "Settings",
   "section": {
+    "wallet": {
+      "title": "Wallet"
+    },
     "transaction": {
       "title": "Transactions",
       "noRecentTransactions": "No recent transactions",
