@@ -198,12 +198,14 @@ export const NameTableHeader = ({
               />
               <DirectionButton
                 $active={sortDirection === 'asc'}
+                data-testid="sort-asc"
                 onClick={() => onSortDirectionChange?.('asc')}
               >
                 <DownDirectionSVG />
               </DirectionButton>
               <DirectionButton
                 $active={sortDirection === 'desc'}
+                data-testid="sort-desc"
                 onClick={() => onSortDirectionChange?.('desc')}
               >
                 <UpDirectionSVG />

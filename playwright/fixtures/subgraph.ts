@@ -23,17 +23,20 @@ const query = gql`
 
 export const waitForSubgraph = () => async () => {
   const blockNumber = await getBlockNumber(publicClient)
-
-  let wait = true
-  let count = 0
+  const anvilBlockNumbers: number[] = []
   do {
     await new Promise((resolve) => setTimeout(resolve, 500))
     const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
     const res = await client.request(query)
-    wait = blockNumber > res._meta.block.number
-    count += 1
-    console.log(`subgraph: ${res._meta.block.number} -> ${blockNumber} ${!wait ? '[IN SYNC]' : ''}`)
-  } while (wait && count < 10)
+
+    anvilBlockNumbers.push(res._meta.block.number)
+    if (anvilBlockNumbers.length > 10) anvilBlockNumbers.shift()
+
+    const finished = res._meta.block.number >= blockNumber
+    console.log(`subgraph: ${res._meta.block.number} -> ${blockNumber} ${finished ? '[IN SYNC]' : ''}`)
+
+    if (anvilBlockNumbers.length >= 10 && anvilBlockNumbers.every((blockNumb) => blockNumb === anvilBlockNumbers[0])) throw new Error('Subgraph not in sync')
+  } while (anvilBlockNumbers[anvilBlockNumbers.length - 1] < blockNumber)
 }
 
 export const createSubgraph = () => ({

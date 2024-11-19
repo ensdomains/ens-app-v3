@@ -1,10 +1,10 @@
+/* eslint-disable no-nested-ternary */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
-import { validateName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Input, mq, PlusSVG } from '@ensdomains/thorin'
+import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
@@ -12,49 +12,18 @@ import { AddProfileRecordView } from '@app/components/pages/profile/[name]/regis
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
-import { profileEditorFormToProfileRecords } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { WrappedAvatarButton } from '@app/components/pages/profile/[name]/registration/steps/Profile/WrappedAvatarButton'
+import {
+  profileEditorFormToProfileRecords,
+  profileToProfileRecords,
+} from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
+import { useProfile } from '@app/hooks/useProfile'
 import { useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { createTransactionItem } from '@app/transaction-flow/transaction'
+import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-import { useValidateSubnameLabel } from '../../hooks/useValidateSubnameLabel'
-import { createTransactionItem } from '../transaction'
-import { TransactionDialogPassthrough } from '../types'
-
-// type AddSubnameError =
-//   | 'invalidCharacters'
-//   | 'mustUseLowercase'
-//   | 'alreadyExists'
-//   | 'nameTooLong'
-//   | 'pccBurned'
-
-// const getErrorTranslationKey = (error: AddSubnameError): string =>
-//   match(error)
-//     .with(
-//       'invalidCharacters',
-//       () => 'details.tabs.subnames.addSubname.dialog.error.invalidCharacters',
-//     )
-//     .with(
-//       'mustUseLowercase',
-//       () => 'details.tabs.subnames.addSubname.dialog.error.mustUseLowercase',
-//     )
-//     .with('alreadyExists', () => 'details.tabs.subnames.addSubname.dialog.error.alreadyExists')
-//     .with('nameTooLong', () => 'details.tabs.subnames.addSubname.dialog.error.nameTooLong')
-//     .with('pccBurned', () => 'details.tabs.subnames.addSubname.dialog.error.pccBurned')
-//     .otherwise(() => '')
-
-type Data = {
-  parent: string
-  isWrapped: boolean
-}
-
-type ModalOption = AvatarClickType | 'editor' | 'profile-editor' | 'add-record'
-
-export type Props = {
-  data: Data
-} & TransactionDialogPassthrough
+import { WrappedAvatarButton } from './ProfileEditor/WrappedAvatarButton'
 
 const ButtonContainer = styled.div(
   ({ theme }) => css`
@@ -73,71 +42,29 @@ const ButtonWrapper = styled.div(({ theme }) => [
   `),
 ])
 
-const ParentLabel = styled.div(
-  ({ theme }) => css`
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: ${theme.space['48']};
-  `,
-)
-
-const useSubnameLabel = (data: Data) => {
-  const [label, setLabel] = useState('')
-  const [_label, _setLabel] = useState('')
-
-  const {
-    valid,
-    error,
-    expiryLabel,
-    isLoading: isUseValidateSubnameLabelLoading,
-  } = useValidateSubnameLabel({
-    name: data.parent,
-    label,
-    isWrapped: data.isWrapped,
-  })
-
-  const debouncedSetLabel = useDebouncedCallback(setLabel, 500)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const normalised = validateName(e.target.value)
-      _setLabel(normalised)
-      debouncedSetLabel(normalised)
-    } catch {
-      _setLabel(e.target.value)
-      debouncedSetLabel(e.target.value)
-    }
-  }
-
-  const isLabelsInsync = label === _label
-  const isLoading = isUseValidateSubnameLabelLoading || !isLabelsInsync
-
-  return {
-    valid,
-    error,
-    expiryLabel,
-    isLoading,
-    label: _label,
-    debouncedLabel: label,
-    setLabel: handleChange,
-  }
+type Data = {
+  name: string
+  label: string
+  parent: string
 }
 
-const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Props) => {
+type ModalOption = AvatarClickType | 'profile-editor' | 'add-record'
+
+export type Props = {
+  name?: string
+  data: Data
+  onDismiss?: () => void
+} & TransactionDialogPassthrough
+
+const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const { t: registerT } = useTranslation('register')
 
-  const [view, setView] = useState<ModalOption>('editor')
+  const [view, setView] = useState<ModalOption>('profile-editor')
 
-  const { valid, error, expiryLabel, isLoading, debouncedLabel, label, setLabel } = useSubnameLabel(
-    {
-      parent,
-      isWrapped,
-    },
-  )
+  const { data: profile } = useProfile({ name })
 
-  const name = `${debouncedLabel}.${parent}`
+  const existingRecords = profileToProfileRecords(profile)
 
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
@@ -157,20 +84,13 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
     validatorForRecord,
     errorForRecordAtIndex,
     isDirtyForRecordAtIndex,
-  } = useProfileEditorForm([
-    {
-      key: 'eth',
-      value: '',
-      type: 'text',
-      group: 'address',
-    },
-  ])
-
+  } = useProfileEditorForm(existingRecords)
+  console.log(existingRecords)
   const handleSubmit = () => {
     const payload = [
       createTransactionItem('createSubname', {
-        contract: isWrapped ? 'nameWrapper' : 'registry',
-        label: debouncedLabel,
+        contract: 'nameWrapper',
+        label,
         parent,
       }),
     ]
@@ -206,49 +126,12 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
   return (
     <>
       {match(view)
-        .with('editor', () => (
-          <>
-            <Dialog.Heading title={t('details.tabs.subnames.addSubname.dialog.title')} />
-            <Dialog.Content>
-              <Input
-                data-testid="add-subname-input"
-                label="Label"
-                suffix={<ParentLabel>.{parent}</ParentLabel>}
-                value={label}
-                onChange={setLabel}
-                error={
-                  error
-                    ? t(`details.tabs.subnames.addSubname.dialog.error.${error}`, {
-                        date: expiryLabel,
-                      })
-                    : undefined
-                }
-              />
-            </Dialog.Content>
-            <Dialog.Footer
-              leading={
-                <Button colorStyle="accentSecondary" onClick={onDismiss}>
-                  {t('action.cancel', { ns: 'common' })}
-                </Button>
-              }
-              trailing={
-                <Button
-                  data-testid="create-subname-next"
-                  onClick={() => setView('profile-editor')}
-                  disabled={!valid || isLoading}
-                >
-                  {t('action.next', { ns: 'common' })}
-                </Button>
-              }
-            />
-          </>
-        ))
         .with('profile-editor', () => (
           <>
             <Dialog.Heading title={t('details.tabs.subnames.setProfile')} />
             <Dialog.Content>
               <WrappedAvatarButton
-                disabledUpload
+                name={name}
                 control={control}
                 src={avatarSrc}
                 onSelectOption={setView}
@@ -317,16 +200,12 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
             </Dialog.Content>
             <Dialog.Footer
               leading={
-                <Button colorStyle="accentSecondary" onClick={() => setView('editor')}>
+                <Button colorStyle="accentSecondary" onClick={onDismiss}>
                   {t('action.cancel', { ns: 'common' })}
                 </Button>
               }
               trailing={
-                <Button
-                  data-testid="create-subname-profile-next"
-                  onClick={handleSubmit}
-                  disabled={!valid || isLoading}
-                >
+                <Button data-testid="reclaim-profile-next" onClick={handleSubmit}>
                   {isDirty
                     ? t('action.next', { ns: 'common' })
                     : t('action.skip', { ns: 'common' })}
@@ -347,7 +226,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
         ))
         .with('upload', 'nft', (type) => (
           <AvatarViewManager
-            name={parent} // TODO name
+            name={name}
             avatarFile={avatarFile}
             handleCancel={() => setView('profile-editor')}
             type={type}
@@ -364,4 +243,4 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
   )
 }
 
-export default CreateSubname
+export default ProfileReclaim

@@ -12,7 +12,6 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { makeCurrencyDisplay } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
@@ -30,6 +29,7 @@ import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
+import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
 
 type View = 'name-list' | 'no-ownership-warning' | 'registration'
 
@@ -172,34 +172,16 @@ const minSeconds = ONE_DAY
 
 const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])
-  const { data: ethPrice } = useEthPrice()
-
-  const { address } = useAccount()
-  const { data: balance } = useBalance({
-    address,
-  })
-
-  const flow: View[] = useMemo(
-    () =>
-      match([names.length, isSelf])
-        .with([P.when((length) => length > 1), true], () => ['name-list', 'registration'] as View[])
-        .with(
-          [P.when((length) => length > 1), P._],
-          () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
-        )
-        .with([P._, true], () => ['registration'] as View[])
-        .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
-    [names.length, isSelf],
-  )
-  const [viewIdx, setViewIdx] = useState(0)
-  const incrementView = () => setViewIdx(() => Math.min(flow.length - 1, viewIdx + 1))
-  const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
-  const view = flow[viewIdx]
 
   const [seconds, setSeconds] = useState(ONE_YEAR)
+  const years = secondsToYears(seconds)
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
-  const years = secondsToYears(seconds)
+  const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
+  const { address, isConnected: isAccountConnected } = useAccount()
+  const { data: balance, isLoading: isBalanceLoading } = useBalance({
+    address,
+  })
 
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -212,25 +194,17 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
   const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
-  const unsafeDisplayYearlyFee = yearlyFee !== 0n ? yearlyFee : previousYearlyFee
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
-  const { data: expiryData } = useExpiry({ enabled: names.length === 1, name: names[0] })
+
+  const isExpiryEnabled = names.length === 1
+  const { data: expiryData, isLoading: isExpiryLoading } = useExpiry({
+    enabled: isExpiryEnabled,
+    name: names[0],
+  })
+  const isExpiryEnabledAndLoading = isExpiryEnabled && isExpiryLoading
+
   const expiryDate = expiryData?.expiry?.date
   const extendedDate = expiryDate ? new Date(expiryDate.getTime() + seconds * 1000) : undefined
-
-  const transactions = [
-    createTransactionItem('extendNames', {
-      names,
-      duration: seconds,
-      startDateTimestamp: expiryDate?.getTime(),
-      displayPrice: makeCurrencyDisplay({
-        eth: totalRentFee,
-        ethPrice,
-        bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
-        currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
-      }),
-    }),
-  ]
 
   const {
     data: { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
@@ -255,13 +229,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         ],
       },
     ],
-    enabled: !!totalRentFee,
+    enabled: !!totalRentFee && !!address && seconds > 0 && totalRentFee > 0n,
   })
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
 
-  const unsafeDisplayTransactionFee =
-    transactionFee !== 0n ? transactionFee : previousTransactionFee
   const isShowingPreviousTransactionFee = transactionFee === 0n && previousTransactionFee > 0n
 
   const items: InvoiceItem[] = [
@@ -279,46 +251,87 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     },
   ]
 
-  const { title, alert } = match(view)
-    .with('no-ownership-warning', () => ({
-      title: t('input.extendNames.ownershipWarning.title', { count: names.length }),
-      alert: 'warning' as const,
-    }))
-    .otherwise(() => ({
-      title: t('input.extendNames.title', { count: names.length }),
-      alert: undefined,
-    }))
+  const flow: View[] = useMemo(
+    () =>
+      match([names.length, isSelf])
+        .with([P.when((length) => length > 1), true], () => ['name-list', 'registration'] as View[])
+        .with(
+          [P.when((length) => length > 1), P._],
+          () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
+        )
+        .with([P._, true], () => ['registration'] as View[])
+        .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
+    [names.length, isSelf],
+  )
+  const [viewIdx, setViewIdx] = useState(0)
+  const incrementView = () => setViewIdx(() => Math.min(flow.length - 1, viewIdx + 1))
+  const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
+  const view = flow[viewIdx]
 
-  const trailingButtonProps = match(view)
-    .with('name-list', () => ({
-      onClick: incrementView,
-      children: t('action.next', { ns: 'common' }),
-    }))
+  const isBaseDataLoading =
+    !isAccountConnected || isBalanceLoading || isExpiryEnabledAndLoading || isEthPriceLoading
+  const isRegisterLoading = isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError)
+
+  const { title, alert, buttonProps } = match(view)
     .with('no-ownership-warning', () => ({
-      onClick: incrementView,
-      children: t('action.understand', { ns: 'common' }),
-    }))
-    .otherwise(() => ({
-      disabled: !!estimateGasLimitError,
-      onClick: () => {
-        if (!totalRentFee) return
-        dispatch({ name: 'setTransactions', payload: transactions })
-        dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      title: t('input.extendNames.ownershipWarning.title', {
+        name: names.at(0),
+        count: names.length,
+      }),
+      alert: 'warning' as const,
+      buttonProps: {
+        onClick: incrementView,
+        children: t('action.understand', { ns: 'common' }),
       },
-      children: t('action.next', { ns: 'common' }),
     }))
+    .with('name-list', () => ({
+      title: t('input.extendNames.title', { name: names.at(0), count: names.length }),
+      alert: undefined,
+      buttonProps: {
+        onClick: incrementView,
+        children: t('action.next', { ns: 'common' }),
+      },
+    }))
+    .with('registration', () => ({
+      title: t('input.extendNames.title', { name: names.at(0), count: names.length }),
+      alert: undefined,
+      buttonProps: {
+        disabled: isRegisterLoading,
+        onClick: () => {
+          if (!totalRentFee) return
+          const transactions = createTransactionItem('extendNames', {
+            names,
+            duration: seconds,
+            startDateTimestamp: expiryDate?.getTime(),
+            displayPrice: makeCurrencyDisplay({
+              eth: totalRentFee,
+              ethPrice,
+              bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
+              currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
+            }),
+          })
+          dispatch({ name: 'setTransactions', payload: [transactions] })
+          dispatch({ name: 'setFlowStage', payload: 'transaction' })
+        },
+        children: t('action.next', { ns: 'common' }),
+      },
+    }))
+    .exhaustive()
 
   return (
     <>
       <Dialog.Heading title={title} alert={alert} />
       <Dialog.Content data-testid="extend-names-modal">
-        {match(view)
-          .with('name-list', () => <NamesList names={names} />)
-          .with('no-ownership-warning', () => (
+        {match([view, isBaseDataLoading])
+          .with([P._, true], () => <SearchViewLoadingView />)
+          .with(['no-ownership-warning', false], () => (
             <CenteredMessage>
               {t('input.extendNames.ownershipWarning.description', { count: names.length })}
             </CenteredMessage>
           ))
+          .with(['name-list', false], () => {
+            return <NamesList names={names} />
+          })
           .otherwise(() => (
             <>
               <PlusMinusWrapper>
@@ -366,13 +379,6 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                     balance.value < estimatedGasLimit)) && (
                   <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
-                {!!unsafeDisplayYearlyFee && !!unsafeDisplayTransactionFee && (
-                  <RegistrationTimeComparisonBanner
-                    yearlyFee={unsafeDisplayYearlyFee}
-                    transactionFee={unsafeDisplayTransactionFee}
-                    message={t('input.extendNames.bannerMsg')}
-                  />
-                )}
               </GasEstimationCacheableComponent>
             </>
           ))}
@@ -383,13 +389,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
             {t(viewIdx === 0 ? 'action.cancel' : 'action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={
-          <Button
-            {...trailingButtonProps}
-            data-testid="extend-names-confirm"
-            disabled={isEstimateGasLoading}
-          />
-        }
+        trailing={<Button {...buttonProps} data-testid="extend-names-confirm" />}
       />
     </>
   )

@@ -29,6 +29,7 @@ const displayItems = (
       value: t('transaction.extendNames.actionValue', { ns: 'transactionFlow' }),
     },
     {
+      type: 'duration',
       label: 'duration',
       value: formatDurationOfDates({
         startDate: startDateTimestamp ? new Date(startDateTimestamp) : undefined,

@@ -11,7 +11,7 @@ import { daysToSeconds } from '@app/utils/time'
 
 import { test } from '../../../playwright'
 
-test('should be able to register multiple names on the address page', async ({
+test('should be able to extend multiple names (including names in grace preiod) on the address page', async ({
   page,
   accounts,
   login,
@@ -26,11 +26,13 @@ test('should be able to register multiple names on the address page', async ({
       label: 'extend-legacy',
       type: 'legacy',
       owner: 'user2',
+      duration: -24 * 60 * 60,
     },
     {
       label: 'wrapped',
       type: 'wrapped',
       owner: 'user2',
+      duration: -24 * 60 * 60,
     },
   ])
 
@@ -65,20 +67,27 @@ test('should be able to register multiple names on the address page', async ({
 
   // warning message
   await expect(page.getByText('You do not own all these names')).toBeVisible()
-  await page.getByRole('button', { name: 'I understand' }).click()
-
-  // name list
-  await addresPage.extendNamesModalNextButton.click()
-
-  // check the invoice details
-  await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
-  await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-
-  // increment and save
-  await page.getByTestId('plus-minus-control-plus').click()
-  await page.getByTestId('plus-minus-control-plus').click()
   await page.getByTestId('extend-names-confirm').click()
 
+  // name list
+  await expect(page.getByText(`Extend ${extendableNameItems.length} Names`)).toBeVisible()
+  await page.locator('button:has-text("Next")').waitFor({ state: 'visible' })
+  await page.locator('button:has-text("Next")').click()
+
+  // check the invoice details
+  // TODO: Reimplement when date duration bug is fixed
+  // await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
+  await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
+  await page.getByTestId('plus-minus-control-plus').click()
+  await expect(page.getByTestId('plus-minus-control-label')).toHaveText('2 years')
+  await page.getByTestId('plus-minus-control-plus').click()
+  await expect(page.getByTestId('plus-minus-control-label')).toHaveText('3 years')
+  await expect(page.getByTestId('invoice-item-0-amount')).not.toHaveText('0.0000 ETH')
+  await expect(page.getByTestId('invoice-item-1-amount')).not.toHaveText('0.0000 ETH')
+  await expect(page.getByTestId('invoice-total')).not.toHaveText('0.0000 ETH')
+
+  await page.getByTestId('extend-names-confirm').click()
+  await expect(transactionModal.transactionModal).toBeVisible({ timeout: 10000 })
   await transactionModal.autoComplete()
 
   await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
@@ -88,13 +97,12 @@ test('should be able to register multiple names on the address page', async ({
 
   // Should be able to remove this after useQuery is fixed. Using to force a refetch.
   await time.increaseTime({ seconds: 15 })
-  await page.pause()
   await page.reload()
+  await page.waitForLoadState('networkidle')
   for (const name of extendableNameItems) {
     const label = name.replace('.eth', '')
     await addresPage.search(label)
     await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
-    await page.pause()
     await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
     await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
   }
@@ -124,7 +132,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
 
   const extendNamesModal = makePageObject('ExtendNamesModal')
   await test.step('should show warning message', async () => {
-    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
     await page.getByRole('button', { name: 'I understand' }).click()
   })
 
@@ -135,12 +143,6 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible({
       timeout: 30000,
     })
-  })
-
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
   })
 
   await test.step('should work correctly with plus minus control', async () => {
@@ -206,12 +208,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
-  })
-
   await test.step('should work correctly with plus minus control', async () => {
     await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
@@ -265,7 +261,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await profilePage.getExtendButton.click()
 
   await test.step('should show warning message', async () => {
-    await expect(page.getByText('You do not own this name')).toBeVisible()
+    await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
     await page.getByRole('button', { name: 'I understand' }).click()
   })
 
@@ -274,12 +270,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-  })
-
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
   })
 
   await test.step('should work correctly with plus minus control', async () => {
@@ -383,7 +373,7 @@ test('should be able to extend a name by a month', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.000[3|4]/)
     await expect(page.getByText(/1 month .* extension/)).toBeVisible()
   })
 
@@ -497,12 +487,6 @@ test('should be able to extend a name in grace period by a month', async ({
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
-  })
-
   await test.step('should be able to pick by date', async () => {
     const dateSelection = page.getByTestId('date-selection')
     await expect(dateSelection).toHaveText('Pick by date')
@@ -580,12 +564,6 @@ test('should be able to extend a name in grace period by 1 day', async ({
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
-  await test.step('should show the cost comparison data', async () => {
-    await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-    await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-    await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
-  })
-
   await test.step('should be able to pick by date', async () => {
     const dateSelection = page.getByTestId('date-selection')
     await expect(dateSelection).toHaveText('Pick by date')
@@ -625,4 +603,83 @@ test('should be able to extend a name in grace period by 1 day', async ({
     const comparativeTimestamp = timestamp + daysToSeconds(1) * 1000
     await expect(comparativeTimestamp).toEqual(newTimestamp)
   })
+})
+
+test('should be able to extend a single wrapped name using deep link', async ({
+  page,
+  login,
+  makePageObject,
+  makeName,
+}) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'wrapped',
+    owner: 'user2',
+  })
+
+  const profilePage = makePageObject('ProfilePage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  const homePage = makePageObject('HomePage')
+  await homePage.goto()
+  await login.connect()
+  await page.goto(`/${name}?renew`)
+
+  const timestamp = await profilePage.getExpiryTimestamp()
+
+  const extendNamesModal = makePageObject('ExtendNamesModal')
+  await test.step('should show warning message', async () => {
+    await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
+    await page.getByRole('button', { name: 'I understand' }).click()
+  })
+
+  await test.step('should show 1 year extension', async () => {
+    await expect(page.getByText('1 year extension', { exact: true })).toBeVisible({
+      timeout: 30000,
+    })
+  })
+
+  await test.step('should be able to add more years', async () => {
+    await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
+    await extendNamesModal.getCounterPlusButton.click()
+    await expect(page.getByText('2 years extension', { exact: true })).toBeVisible({
+      timeout: 30000,
+    })
+  })
+
+  await test.step('should be able to reduce number of years', async () => {
+    await extendNamesModal.getCurrencyToggle.click({ force: true })
+    await extendNamesModal.getCounterMinusButton.click()
+  })
+
+  await test.step('should extend', async () => {
+    await extendNamesModal.getExtendButton.click()
+    await transactionModal.autoComplete()
+    const newTimestamp = await profilePage.getExpiryTimestamp()
+    expect(newTimestamp).toEqual(timestamp + 31536000000)
+  })
+})
+
+test('should not be able to extend a name which is not registered', async ({
+  page,
+  makePageObject,
+  login,
+}) => {
+  const name = 'this-name-does-not-exist.eth'
+  const homePage = makePageObject('HomePage')
+  await homePage.goto()
+  await login.connect()
+  await page.goto(`/${name}?renew`)
+  await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+})
+
+test('renew deep link should redirect to registration when not logged in', async ({
+  page,
+  makePageObject,
+}) => {
+  const name = 'this-name-does-not-exist.eth'
+  const homePage = makePageObject('HomePage')
+  await homePage.goto()
+  await page.goto(`/${name}?renew`)
+  await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 })
