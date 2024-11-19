@@ -5,13 +5,11 @@ import { useAccount } from 'wagmi'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { parseNumericString } from '@app/utils/string'
 
 export function useRenew(name: string) {
   const [opened, setOpened] = useState<boolean>(false)
-  const router = useRouterWithHistory()
 
   const { registrationStatus, isLoading } = useNameDetails({ name })
   const abilities = useAbilities({ name })
