@@ -178,7 +178,7 @@ const ExtendNames = ({
 }: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])
 
-  const [seconds, setSeconds] = useState(Math.max(defaultSeconds, ONE_YEAR))
+  const [seconds, setSeconds] = useState(defaultSeconds)
   const years = secondsToYears(seconds)
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
