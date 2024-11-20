@@ -1,6 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
@@ -23,6 +23,7 @@ export const calculateRenewState = ({
   isAbilitiesLoading,
   isRouterReady,
   name,
+  openedConnectModal,
 }: {
   registrationStatus?: RegistrationStatus
   isRegistrationStatusLoading: boolean
@@ -33,6 +34,7 @@ export const calculateRenewState = ({
   isAbilitiesLoading: boolean
   isRouterReady: boolean
   name?: string
+  openedConnectModal: boolean
 }): RenewStatus => {
   const isNameRegisteredOrGracePeriod =
     registrationStatus === 'registered' || registrationStatus === 'gracePeriod'
@@ -44,7 +46,13 @@ export const calculateRenewState = ({
     !!renewSeconds &&
     !connectModalOpen
 
-  if (isRenewActive && accountStatus === 'disconnected' && !!openConnectModal) return 'connect-user'
+  if (
+    isRenewActive &&
+    accountStatus === 'disconnected' &&
+    !!openConnectModal &&
+    !openedConnectModal
+  )
+    return 'connect-user'
   if (isRenewActive && accountStatus === 'connected' && !isAbilitiesLoading)
     return 'display-extend-names'
   return 'idle'
@@ -69,7 +77,9 @@ export function useRenew(name: string) {
   const abilities = useAbilities({ name })
   const searchParams = useSearchParams()
   const { status } = useAccount()
+
   const { openConnectModal, connectModalOpen } = useConnectModal()
+  const [openedConnectModal, setOpenedConnectModal] = useState(connectModalOpen)
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
@@ -88,11 +98,15 @@ export function useRenew(name: string) {
     name,
     isRouterReady: router.isReady,
     openConnectModal,
+    openedConnectModal,
   })
 
   useEffect(() => {
     match(renewState)
-      .with('connect-user', () => openConnectModal?.())
+      .with('connect-user', () => {
+        openConnectModal?.()
+        setOpenedConnectModal(!!openConnectModal)
+      })
       .with('display-extend-names', () => {
         showExtendNamesInput(`extend-names-${name}`, {
           names: [name],
