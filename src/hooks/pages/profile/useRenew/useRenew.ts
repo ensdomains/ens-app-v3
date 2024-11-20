@@ -21,6 +21,7 @@ export const calculateRenewState = ({
   connectModalOpen,
   accountStatus,
   isAbilitiesLoading,
+  isRouterReady,
   name,
 }: {
   registrationStatus?: RegistrationStatus
@@ -30,11 +31,13 @@ export const calculateRenewState = ({
   openConnectModal: ReturnType<typeof useConnectModal>['openConnectModal']
   accountStatus: ReturnType<typeof useAccount>['status']
   isAbilitiesLoading: boolean
+  isRouterReady: boolean
   name?: string
 }): RenewStatus => {
   const isNameRegisteredOrGracePeriod =
     registrationStatus === 'registered' || registrationStatus === 'gracePeriod'
   const isRenewActive =
+    isRouterReady &&
     !isRegistrationStatusLoading &&
     !!name &&
     isNameRegisteredOrGracePeriod &&
@@ -45,6 +48,19 @@ export const calculateRenewState = ({
   if (isRenewActive && accountStatus === 'connected' && !isAbilitiesLoading)
     return 'display-extend-names'
   return 'idle'
+}
+
+export const removeRenewParam = ({
+  query,
+}: {
+  query: ReturnType<typeof useRouterWithHistory>['query']
+}): string => {
+  const searchParams = new URLSearchParams(query as any)
+  // remove the name param in case the page is a redirect from /profile page
+  searchParams.delete('name')
+  searchParams.delete('renew')
+  const newParams = searchParams.toString()
+  return newParams ? `?${newParams}` : ''
 }
 
 export function useRenew(name: string) {
@@ -70,6 +86,7 @@ export function useRenew(name: string) {
     accountStatus: status,
     isAbilitiesLoading,
     name,
+    isRouterReady: router.isReady,
     openConnectModal,
   })
 
@@ -82,7 +99,8 @@ export function useRenew(name: string) {
           isSelf: canSelfExtend,
           seconds: renewSeconds!,
         })
-        router.replace(`/${name}`)
+        const params = removeRenewParam({ query: router.query })
+        router.replace(`/${name}${params}`)
       })
       .with('idle', () => {})
       .exhaustive()
