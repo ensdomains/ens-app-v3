@@ -268,7 +268,7 @@ export default function ENSv2() {
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
-        allowfullscreen
+        allowFullScreen
       />
       <CenteredCard>
         <Typography fontVariant="headingTwo" asProp="h2">
