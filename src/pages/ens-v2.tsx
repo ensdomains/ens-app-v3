@@ -41,7 +41,7 @@ const Header = styled.header(
     justify-content: center;
     gap: ${theme.space[4]};
     padding: ${theme.space[4]};
-    min-height: 330px;
+    padding-top: ${theme.space[16]};
     text-align: center;
   `,
 )
@@ -239,11 +239,10 @@ const SlideshowContainer = styled.div(
   `,
 )
 
-const Video = styled.video(
+const YoutubeEmbed = styled.iframe(
   ({ theme }) => css`
-    height: ${theme.space.full};
+    aspect-ratio: 16 / 9;
     width: ${theme.space.full};
-    border-radius: ${theme.radii.card};
   `,
 )
 
@@ -263,9 +262,14 @@ export default function ENSv2() {
         <Title>{t('title')}</Title>
         <Typography fontVariant="body">{t('caption')}</Typography>
       </Header>
-      <Video poster="/migrate/preview.svg">
-        <track />
-      </Video>
+      <YoutubeEmbed
+        src="https://www.youtube.com/embed/THnbTKjhZwA?si=Cu7lrt6yirDPVNsL&amp;start=3291"
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      />
       <CenteredCard>
         <Typography fontVariant="headingTwo" asProp="h2">
           {t('learn-more.title')}
