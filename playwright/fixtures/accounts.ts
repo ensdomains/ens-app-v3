@@ -17,12 +17,11 @@ const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice 
 
 export type Accounts = ReturnType<typeof createAccounts>
 
-export type User = 'user' | 'user2' | 'user3'
+const users = ['user', 'user2', 'user3', 'user4'] as const
+export type User = typeof users[number]
 
 export const createAccounts = (stateful = false) => {
   const mnemonic = stateful ? process.env.SECRET_WORDS || DEFAULT_MNEMONIC : DEFAULT_MNEMONIC
-
-  const users: User[] = ['user', 'user2', 'user3']
 
   const { accounts, privateKeys } = users.reduce<{ accounts: Account[]; privateKeys: Hash[] }>(
     (acc, _, index) => {

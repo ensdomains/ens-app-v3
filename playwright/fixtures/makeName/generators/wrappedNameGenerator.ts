@@ -159,16 +159,14 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
       })
     }
 
-    await Promise.all(
-      subnames.map((subname) =>
-        generateWrappedSubname({ accounts })({
+    for (const subname of subnames)  {
+        await generateWrappedSubname({ accounts })({
           ...subname,
           name: `${label}.eth`,
           nameOwner: owner,
           resolver: subname.resolver ?? _resolver,
-        }),
-      ),
-    )
+        })
+      }
 
     if (!hasValidResolver && resolver) {
       console.log('setting resolver: ', name, resolver)
