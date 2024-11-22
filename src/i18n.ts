@@ -6,6 +6,7 @@ import { initReactI18next } from 'react-i18next'
 import address from '../public/locales/en/address.json'
 import common from '../public/locales/en/common.json'
 import dnssec from '../public/locales/en/dnssec.json'
+import ensv2 from '../public/locales/en/ensv2.json'
 import names from '../public/locales/en/names.json'
 import profile from '../public/locales/en/profile.json'
 import register from '../public/locales/en/register.json'
@@ -33,6 +34,7 @@ i18n
       'register',
       'settings',
       'transactionFlow',
+      'ensv2',
     ],
     react: {
       useSuspense: false,
@@ -48,5 +50,6 @@ i18n.addResourceBundle('en', 'profile', profile)
 i18n.addResourceBundle('en', 'register', register)
 i18n.addResourceBundle('en', 'settings', settings)
 i18n.addResourceBundle('en', 'transactionFlow', transactionFlow)
+i18n.addResourceBundle('en', 'ensv2', ensv2)
 
 export default i18n
