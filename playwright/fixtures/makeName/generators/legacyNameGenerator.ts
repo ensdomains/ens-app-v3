@@ -101,16 +101,15 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
   configure: async (nameConfig: LegacyName) => {
     const { label, owner, manager, subnames = [], secret } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
+    
     // Create subnames
-    await Promise.all(
-      subnames.map((subname) => {
-        return generateLegacySubname({ accounts })({
-          ...subname,
-          name: `${label}.eth`,
-          nameOwner: owner,
-        })
-      }),
-    )
+    for (const subname of subnames) {
+      await generateLegacySubname({ accounts })({
+        ...subname,
+        name: `${label}.eth`,
+        nameOwner: owner,
+      })
+    }
 
     if (!!manager && manager !== owner) {
       console.log('setting manager:', name, manager)
