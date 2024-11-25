@@ -131,7 +131,7 @@ test('should wrap name', async ({ makeName, login, makePageObject }) => {
   await expect(morePage.wrapButton).toHaveCount(0)
 })
 
-test('should allow wrapping a subdomain', async ({ page, makeName, login, makePageObject }) => {
+test('should allow wrapping a subdomain', async ({ makeName, login, makePageObject }) => {
   const name = await makeName({
     label: 'unwrapped-with-wrapped-subnames',
     type: 'legacy',
@@ -157,8 +157,6 @@ test('should allow wrapping a subdomain', async ({ page, makeName, login, makePa
 
   await morePage.goto(subname)
   await login.connect()
-
-  await page.pause()
 
   // should approve name wrapper for address
   await morePage.wrapButton.click()
@@ -198,7 +196,6 @@ test('should allow wrapping a name with an unknown label', async ({
   await morePage.goto(subname)
   await login.connect()
 
-  await page.pause()
   await morePage.wrapButton.click()
 
   const input = page.getByTestId(`unknown-label-input-${unknownLabelhash}`)
