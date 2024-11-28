@@ -5,7 +5,6 @@ import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
 import {
-  goerliWithEns,
   holeskyWithEns,
   localhostWithEns,
   mainnetWithEns,
@@ -33,7 +32,7 @@ const drpcUrl = (chainName: string) =>
     chainName === 'mainnet' ? 'ethereum' : chainName
   }&dkey=${drpcKey}`
 
-type SupportedUrlFunc = typeof infuraUrl | typeof dRPCUrl | typeof tenderlyUrl
+type SupportedUrlFunc = typeof infuraUrl | typeof drpcUrl | typeof tenderlyUrl
 
 const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   chainName: string,
@@ -87,7 +86,6 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
 const chains = [
   ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
   mainnetWithEns,
-  goerliWithEns,
   sepoliaWithEns,
   holeskyWithEns,
 ] as const
