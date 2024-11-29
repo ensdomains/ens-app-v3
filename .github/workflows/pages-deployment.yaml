@@ -3,7 +3,7 @@ name: Cloudflare Pages
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   NEXT_PUBLIC_INTERCOM_ID: re9q5yti
-  NEXT_PUBLIC_DRPC_KEY: ${{ github.ref == 'refs/heads/main' && AnmpasF2C0JBqeAEzxVO8aTteiMlrW4R75hpDonbV6cR || '' }}
+  NEXT_PUBLIC_DRPC_KEY: ${{ github.ref == 'refs/heads/main' && 'AnmpasF2C0JBqeAEzxVO8aTteiMlrW4R75hpDonbV6cR' || '' }}
 
 on: [push]
 jobs:
