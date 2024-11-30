@@ -2,7 +2,6 @@
 
 /* eslint-disable no-await-in-loop */
 import cbor from 'cbor'
-import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import pako from 'pako'

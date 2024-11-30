@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { existsSync } from 'fs'
-import { mkdir, writeFile } from 'fs/promises'
-import { resolve } from 'path'
+import { existsSync } from 'node:fs'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'

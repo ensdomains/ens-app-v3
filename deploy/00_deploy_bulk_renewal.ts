@@ -10,16 +10,19 @@ import {
   namehash,
   toFunctionHash,
 } from 'viem'
+
 import { getContract, getNamedClients } from './utils/viem-hardhat'
 
-const createInterfaceId = <iface extends Abi>(iface: iface) => {
+const createInterfaceId = <I extends Abi>(iface: I) => {
   const bytesId = iface
     .filter((item): item is AbiFunction => item.type === 'function')
     .map((f) => toFunctionHash(f))
     .map((h) => hexToBytes(h).slice(0, 4))
     .reduce((memo, bytes) => {
+      // eslint-disable-next-line no-plusplus
       for (let i = 0; i < 4; i++) {
-        memo[i] = memo[i] ^ bytes[i] // xor
+        // eslint-disable-next-line no-bitwise, no-param-reassign
+        memo[i] ^= bytes[i] // xor
       }
       return memo
     }, new Uint8Array(4))
@@ -38,29 +41,29 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { owner, deployer } = await getNamedClients(hre)()
 
   const root = (await getContract(hre)('Root', owner))!
-  const registry = (await getContract(hre)('ENSRegistry',owner))!
-  const resolver = (await getContract(hre)('PublicResolver',owner))!
+  const registry = (await getContract(hre)('ENSRegistry', owner))!
+  const resolver = (await getContract(hre)('PublicResolver', owner))!
   const registrar = (await getContract(hre)('BaseRegistrarImplementation'))!
   const controller = (await getContract(hre)('ETHRegistrarController'))!
   const wrapper = (await getContract(hre)('NameWrapper'))!
   const controllerArtifact = (await deployments.getArtifact('IETHRegistrarController'))!
 
-  const bulkRenewal = await viem.deployContract('BulkRenewal',  [registry.address], {
-    client: deployer
+  const bulkRenewal = await viem.deployContract('BulkRenewal', [registry.address], {
+    client: deployer,
   })
 
   console.log('Temporarily setting owner of eth tld to owner ')
-  const tx = await root.write.setSubnodeOwner([labelhash('eth')])
+  await root.write.setSubnodeOwner([labelhash('eth')], owner)
 
   console.log('Set default resolver for eth tld to public resolver')
   const tx111 = await registry.write.setResolver([namehash('eth'), resolver.address])
 
   console.log('Set interface implementor of eth tld for bulk renewal')
-  const tx2 = await resolver.write.setInterface(
-    [namehash('eth'),
+  const tx2 = await resolver.write.setInterface([
+    namehash('eth'),
     createInterfaceId(bulkRenewal.abi),
-    bulkRenewal.address,]
-  )
+    bulkRenewal.address,
+  ])
 
   console.log('Set interface implementor of eth tld for registrar controller')
   const tx3 = await resolver.setInterface(
