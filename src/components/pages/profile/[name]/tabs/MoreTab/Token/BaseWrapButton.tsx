@@ -12,8 +12,8 @@ const StyledWrapButton = styled(Button)(
   `,
 )
 
-const BaseWrapButton = forwardRef(
-  ({ children, ...props }: ComponentProps<typeof StyledWrapButton>, ref) => {
+const BaseWrapButton = forwardRef<HTMLButtonElement, ComponentProps<typeof StyledWrapButton>>(
+  ({ children, ...props }, ref) => {
     return (
       <StyledWrapButton size="small" colorStyle="accentPrimary" ref={ref} {...props}>
         {children}

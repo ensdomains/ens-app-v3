@@ -123,8 +123,8 @@ have developed a design system in order to ensure consistent styling across the 
 Pages folder has basic route layout and basic react needed for rendering pages. These
 files should be kept relatively simple
 
-Components that pages consume are kept in the components folder. This folder has a strucutre
-that mimicks the strucutre of the pages folder. If a component is only used on a specific page
+Components that pages consume are kept in the components folder. This folder has a structure
+that mimics the structure of the pages folder. If a component is only used on a specific page
 then it goes into the corresponding folder in the components folder.
 
 If a component is used across multiple pages and other components,
@@ -254,7 +254,7 @@ Once exited, you can commit the data to your branch. You do not need to run a se
 
 #### Stateless vs Stateful
 
-Our e2e tests are split into two categories, stateless and stateful. Stateless test use the development environment, are faster, and is the general recommended way to write integration tests. Occasionally, you may need to test a feature that requires an external api or service. In this case, you can use the stateful tests. These tests are slower, 
+Our e2e tests are split into two categories, stateless and stateful. Stateless test use the development environment, are faster, and is the general recommended way to write integration tests. Occasionally, you may need to test a feature that requires an external API or service. In this case, you can use the stateful tests. These tests are slower, 
 
 #### Running the tests
 
@@ -507,3 +507,62 @@ Our testing philosophy is user-centric, meaning we want to write out tests so th
 A user generally clicks, types and swipes, and so most tests should include one of these actions. A user may also load a page in a specific state (by clicking, typing or swiping outside of the app) so sometimes we just want to check a page renders correctly. The vast majority of our tests will be of these kinds.
 
 For deeper parts of the codebase that aren't directly related to a user interaction, such as utility functions, the user is the developer. So simply test the code in the way a developer would use it.
+
+## Knip Configuration Guide
+
+### 1. Install Knip:
+
+Install Knip as a development dependency in your project:
+
+```bash
+pnpm add -D knip
+```
+
+### 2. Add a knip script to your package.json:
+
+Add a script to your package.json for easy access to Knip:
+
+```json
+{
+  "scripts": {
+    ...,
+    "knip": "knip",
+    "knip:fix": "knip --fix --allow-remove-files"
+  }
+}
+```
+
+### 3. Create Knip Configuration File:
+
+Create a `knip.config.ts` file at the root of your project. For more detail of configuration options, refer to the [knip.config.ts file](knip.config.ts) in the ENSDomains repository.
+
+### 4. Run Knip:
+
+To analyze your project, run Knip using the following command:
+
+```bash
+pnpm knip
+```
+Knip will exit with code `1` if any issues are found, such as unused files, dependencies, or exports that need to be removed.
+
+### 5. Review and Remove Unused Files
+
+After Knip completes its analysis, review the results. Manually remove any unused files that are safe to delete, or let Knip handle it automatically with the following command:
+
+```bash
+pnpm knip:fix
+```
+
+Ensure you carefully examine any files marked for removal to avoid accidentally deleting necessary code.
+
+### 6. Run Unit Tests and E2E Tests:
+
+After removing files, it's important to run your unit and end-to-end tests to ensure that everything is still functioning correctly:
+
+```bash
+pnpm test:coverage
+```
+
+```bash
+pnpm e2e
+```

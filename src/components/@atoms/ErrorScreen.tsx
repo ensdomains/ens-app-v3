@@ -48,11 +48,19 @@ const LinkWrapper = ({ children }: { children?: React.ReactNode }) => (
 type ErrorType = 'not-found' | 'application-error'
 
 const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
-  const { t } = useTranslation('error', { keyPrefix: errorType })
+  const { t, ready } = useTranslation('error', { keyPrefix: errorType })
+
+  if (!ready) {
+    return null
+  }
 
   return (
     <Container className={errorType}>
-      {errorType === 'not-found' ? <QuestionCircleSVG /> : <AlertSVG />}
+      {errorType === 'not-found' ? (
+        <QuestionCircleSVG data-testid="question-circle-svg" />
+      ) : (
+        <AlertSVG data-testid="alert-svg" />
+      )}
       <Typography fontVariant="headingOne">{t('title')}</Typography>
       <Typography fontVariant="body">
         <Trans

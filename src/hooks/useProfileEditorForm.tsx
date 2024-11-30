@@ -172,7 +172,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
       SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => avatar?.startsWith(endpoint))
     )
     if (avatarIsChanged) {
-      setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
+      setValue('avatar', avatar || '', { shouldDirty: true, shouldTouch: true })
     }
   }
 
@@ -217,6 +217,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const getAvatar = () => getValues('avatar')
 
   return {
+    isDirty: formState.isDirty,
     records,
     register,
     trigger,

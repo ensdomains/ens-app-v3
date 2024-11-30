@@ -5,7 +5,7 @@ import { parseVerifiableCredential } from './parseVerifiedCredential'
 describe('parseVerifiedCredential', () => {
   it('should parse x account verified credential', async () => {
     expect(
-      await parseVerifiableCredential({
+      await parseVerifiableCredential({ ownershipVerified: true })({
         type: ['VerifiedXAccount'],
         credentialSubject: { username: 'name' },
       } as any),
@@ -19,7 +19,7 @@ describe('parseVerifiedCredential', () => {
 
   it('should parse twitter account verified credential', async () => {
     expect(
-      await parseVerifiableCredential({
+      await parseVerifiableCredential({ ownershipVerified: true })({
         type: ['VerifiedTwitterAccount'],
         credentialSubject: { username: 'name' },
       } as any),
@@ -33,7 +33,7 @@ describe('parseVerifiedCredential', () => {
 
   it('should parse discord account verified credential', async () => {
     expect(
-      await parseVerifiableCredential({
+      await parseVerifiableCredential({ ownershipVerified: true })({
         type: ['VerifiedDiscordAccount'],
         credentialSubject: { name: 'name' },
       } as any),
@@ -47,7 +47,7 @@ describe('parseVerifiedCredential', () => {
 
   it('should parse telegram account verified credential', async () => {
     expect(
-      await parseVerifiableCredential({
+      await parseVerifiableCredential({ ownershipVerified: true })({
         type: ['VerifiedTelegramAccount'],
         credentialSubject: { name: 'name' },
       } as any),
@@ -61,7 +61,7 @@ describe('parseVerifiedCredential', () => {
 
   it('should parse github account verified credential', async () => {
     expect(
-      await parseVerifiableCredential({
+      await parseVerifiableCredential({ ownershipVerified: true })({
         type: ['VerifiedGithubAccount'],
         credentialSubject: { name: 'name' },
       } as any),
@@ -75,7 +75,7 @@ describe('parseVerifiedCredential', () => {
 
   it('should parse personhood verified credential', async () => {
     expect(
-      await parseVerifiableCredential({
+      await parseVerifiableCredential({ ownershipVerified: true })({
         type: ['VerifiedPersonhood'],
         credentialSubject: { name: 'name' },
       } as any),
@@ -89,10 +89,24 @@ describe('parseVerifiedCredential', () => {
 
   it('should return null otherwise', async () => {
     expect(
-      await parseVerifiableCredential({
+      await parseVerifiableCredential({ ownershipVerified: true })({
         type: ['VerifiedIddentity'],
         credentialSubject: { name: 'name' },
       } as any),
     ).toEqual(null)
+  })
+
+  it('should return verified = false for verified credential if ownershipVerified is false', async () => {
+    expect(
+      await parseVerifiableCredential({ ownershipVerified: false })({
+        type: ['VerifiedPersonhood'],
+        credentialSubject: { name: 'name' },
+      } as any),
+    ).toEqual({
+      issuer: 'dentity',
+      key: 'personhood',
+      value: '',
+      verified: false,
+    })
   })
 })

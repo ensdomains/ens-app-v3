@@ -1,21 +1,17 @@
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import type { VerificationErrorDialogProps } from '@app/components/pages/VerificationErrorDialog'
 import { DENTITY_ISS } from '@app/constants/verification'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-import { useVerificationOAuth } from '../useVerificationOAuth/useVerificationOAuth'
+import { useDentityProfile } from '../useDentityProfile/useDentityProfile'
+import { useDentityToken } from '../useDentityToken/useDentityToken'
 import { dentityVerificationHandler } from './utils/dentityHandler'
-
-const issToVerificationProtocol = (iss: string | null): VerificationProtocol | null => {
-  if (iss === DENTITY_ISS) return 'dentity'
-  return null
-}
 
 type UseVerificationOAuthHandlerReturnType = {
   dialogProps: VerificationErrorDialogProps
@@ -26,24 +22,34 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
   const iss = searchParams.get('iss')
   const code = searchParams.get('code')
   const router = useRouterWithHistory()
+  const { t } = useTranslation('common')
   const { createTransactionFlow } = useTransactionFlow()
 
   const { address: userAddress } = useAccount()
 
-  const isReady = !!createTransactionFlow && !!router && !!userAddress && !!iss && !!code
-
-  const { data, isLoading, error } = useVerificationOAuth({
-    verifier: issToVerificationProtocol(iss),
+  const isReady = !!createTransactionFlow && !!router && !!iss && !!code && iss === DENTITY_ISS
+  const { data: dentityToken, isLoading: isDentityTokenLoading } = useDentityToken({
     code,
     enabled: isReady,
   })
 
+  const isReadyToFetchProfile = !!dentityToken && !isDentityTokenLoading
+  const {
+    data,
+    isLoading: isDentityProfileLoading,
+    error,
+  } = useDentityProfile({
+    token: dentityToken,
+    enabled: isReadyToFetchProfile,
+  })
+
+  const isLoading = isDentityTokenLoading || isDentityProfileLoading
   const [dialogProps, setDialogProps] = useState<VerificationErrorDialogProps>()
   const onClose = () => setDialogProps(undefined)
   const onDismiss = () => setDialogProps(undefined)
 
   useEffect(() => {
-    if (data && !isLoading && userAddress) {
+    if (data && !isLoading) {
       const newProps = match(data)
         .with(
           {
@@ -55,6 +61,7 @@ export const useVerificationOAuthHandler = (): UseVerificationOAuthHandlerReturn
             onDismiss,
             router,
             createTransactionFlow,
+            t,
           }),
         )
         .otherwise(() => undefined)

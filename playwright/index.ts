@@ -2,9 +2,13 @@
 import { test as base } from '@playwright/test'
 import { anvil, holesky } from 'viem/chains'
 
-import { injectHeadlessWeb3Provider, type Web3ProviderBackend } from '@ensdomains/headless-web3-provider'
+import {
+  injectHeadlessWeb3Provider,
+  type Web3ProviderBackend,
+} from '@ensdomains/headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
+import { createConsoleListener } from './fixtures/consoleListener'
 import { Login } from './fixtures/login'
 import { createMakeNames } from './fixtures/makeName/index.js'
 import { createSubgraph } from './fixtures/subgraph.js'
@@ -20,6 +24,7 @@ type Fixtures = {
   makePageObject: ReturnType<typeof createPageObjectMaker>
   subgraph: ReturnType<typeof createSubgraph>
   time: ReturnType<typeof createTime>
+  consoleListener: ReturnType<typeof createConsoleListener>
 }
 
 export const test = base.extend<Fixtures>({
@@ -56,5 +61,10 @@ export const test = base.extend<Fixtures>({
   },
   time: async ({ page }, use) => {
     await use(createTime({ page }))
+  },
+  consoleListener: async ({ page }, use) => {
+    const consoleListener = createConsoleListener({ page })
+    await use(consoleListener)
+    consoleListener.reset()
   },
 })
