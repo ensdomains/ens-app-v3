@@ -8,7 +8,7 @@ import useUserConfig from '@app/utils/useUserConfig'
 import { useChainName } from './chain/useChainName'
 
 type SearchSelectEvent = {
-  eventName: 'search_selected_eth' | 'search_selected_box'
+  eventName: 'search_selected_eth' | 'search_selected_box' | 'search_selected_dns'
   customProperties: { name: string }
 }
 
@@ -23,6 +23,19 @@ type PaymentEvent = {
   }
 }
 
+type DNSImportTypeSelectedEvent = {
+  eventName:
+    | 'dns_selected_import_type'
+    | 'dns_sec_enabled'
+    | 'dns_verified_ownership'
+    | 'dns_claim_started'
+    | 'dns_claimed'
+  customProperties: {
+    importType: 'onchain' | 'offchain' | null
+    name: string
+  }
+}
+
 type DefaultEvent = {
   eventName:
     | 'commit_started'
@@ -30,11 +43,22 @@ type DefaultEvent = {
     | 'register_started'
     | 'register_started_box'
     | 'register_wallet_opened'
+    | 'claim_domain_started_dns'
+    | 'commit_wallet_opened_dns'
+    | 'register_started_dns'
+    | 'register_wallet_opened_dns'
     | 'register_override_triggered'
+    | 'dns_approve_registrar_wallet_opened'
+    | 'dns_import_wallet_opened'
+    | 'dns_claim_wallet_opened'
   customProperties?: never
 }
 
-export type TrackEventParameters = SearchSelectEvent | PaymentEvent | DefaultEvent
+export type TrackEventParameters =
+  | SearchSelectEvent
+  | PaymentEvent
+  | DefaultEvent
+  | DNSImportTypeSelectedEvent
 
 export const useEventTracker = () => {
   const chain = useChainName()
@@ -43,7 +67,9 @@ export const useEventTracker = () => {
   const trackEvent = (props: TrackEventParameters) => {
     match(props)
       .with(
-        { eventName: P.union('search_selected_eth', 'search_selected_box') },
+        {
+          eventName: P.union('search_selected_eth', 'search_selected_box', 'search_selected_dns'),
+        },
         ({ eventName, customProperties }) => {
           const { name } = customProperties
           sendTrackEvent(eventName, chain, { name })
@@ -57,7 +83,14 @@ export const useEventTracker = () => {
             'register_started',
             'register_started_box',
             'register_wallet_opened',
+            'claim_domain_started_dns',
+            'commit_wallet_opened_dns',
+            'register_started_dns',
+            'register_wallet_opened_dns',
             'register_override_triggered',
+            'dns_approve_registrar_wallet_opened',
+            'dns_import_wallet_opened',
+            'dns_claim_wallet_opened',
           ),
         },
         ({ eventName }) => sendTrackEvent(eventName, chain),
@@ -75,6 +108,21 @@ export const useEventTracker = () => {
           paymentAmount,
         })
       })
+      .with(
+        {
+          eventName: P.union(
+            'dns_selected_import_type',
+            'dns_sec_enabled',
+            'dns_verified_ownership',
+            'dns_claim_started',
+            'dns_claimed',
+          ),
+        },
+        ({ eventName, customProperties }) => {
+          const { importType, name } = customProperties
+          sendTrackEvent(eventName, chain, { name, importType })
+        },
+      )
       .exhaustive()
   }
 
