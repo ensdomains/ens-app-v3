@@ -81,6 +81,12 @@ const StyledButton = styled(Button)(
   `,
 )
 
+const SelectedBurnButton = (permission: string) => () => (
+  <FlameSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
+)
+
+const UnselectedBurnButton = () => <StyledFlameSVG width="24" height="24" />
+
 const BurnButton = ({
   permission,
   isBurned,
@@ -100,13 +106,7 @@ const BurnButton = ({
       disabled={isBurned}
       colorStyle={isSelected ? 'redSecondary' : 'greySecondary'}
       size="small"
-      suffix={
-        isSelected ? (
-          <FlameSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
-        ) : (
-          <StyledFlameSVG width="24" height="24" />
-        )
-      }
+      suffix={isSelected ? SelectedBurnButton(permission) : UnselectedBurnButton}
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
         <Typography>{t(`permissions.${permission}`)}</Typography>

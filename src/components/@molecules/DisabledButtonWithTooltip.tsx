@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react'
 
-import { Button, ButtonProps, Tooltip, type ReactNodeNoStrings } from '@ensdomains/thorin'
+import { Button, ButtonProps, Tooltip } from '@ensdomains/thorin'
 
 import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 
@@ -31,7 +31,7 @@ export const DisabledButtonWithTooltip = ({
   mobileWidth?: number
   buttonWidth?: ButtonProps['width']
   colorStyle?: ButtonProps['colorStyle']
-  prefix?: ReactNodeNoStrings
+  prefix?: AsProp
   loading?: boolean
 }) => {
   const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(buttonId)

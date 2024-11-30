@@ -280,6 +280,12 @@ type Props = {
   onAddRecord?: (value: string) => void
 }
 
+const WrappedPlusSVG = () => (
+  <SVGWrapper>
+    <PlusSVG />
+  </SVGWrapper>
+)
+
 export const AddRecordButton = ({
   autocomplete,
   createable,
@@ -429,11 +435,7 @@ export const AddRecordButton = ({
       </ControlsContainer>
       <ButtonContainer $state={state}>
         <Button
-          prefix={
-            <SVGWrapper>
-              <PlusSVG />
-            </SVGWrapper>
-          }
+          prefix={WrappedPlusSVG}
           colorStyle="transparent"
           onClick={handleButtonClick}
           size="medium"
