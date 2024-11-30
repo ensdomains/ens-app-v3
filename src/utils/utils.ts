@@ -8,7 +8,8 @@ import { DecodedFuses } from '@ensdomains/ensjs/utils'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
-import { ONE_DAY, ONE_YEAR } from './time'
+import { calculateDatesDiff } from './date'
+import { ONE_YEAR } from './time'
 
 export * from './time'
 
@@ -31,9 +32,9 @@ export const deriveYearlyFee = ({
   return yearlyFee
 }
 
-export const formatExpiry = (expiry: Date) =>
+export const formatExpiry = (expiry: Date, options: { short?: boolean } = {}) =>
   `${expiry.toLocaleDateString(undefined, {
-    month: 'long',
+    month: options.short ? 'short' : 'long',
   })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
 export const formatDateTime = (date: Date) => {
@@ -50,41 +51,40 @@ export const formatDateTime = (date: Date) => {
 export const formatFullExpiry = (expiryDate?: Date) =>
   expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
 
-export const formatDuration = (duration: number, t: TFunction) => {
-  const month = ONE_DAY * 30 // Assuming 30 days per month for simplicity
+export const formatDurationOfDates = ({
+  startDate,
+  endDate,
+  postFix = '',
+  shortYears,
+  t,
+}: {
+  startDate?: Date
+  endDate?: Date
+  postFix?: string
+  shortYears?: boolean
+  t: TFunction
+}) => {
+  if (!startDate || !endDate) return t('unit.invalid_date', { ns: 'common' })
 
-  if (duration >= ONE_YEAR) {
-    const years = Math.floor(duration / ONE_YEAR)
-    const months = Math.floor((duration - years * ONE_YEAR) / month)
+  const { isNegative, diff } = calculateDatesDiff(startDate, endDate)
 
-    if (months !== 0)
-      return `${t('unit.years', { count: years, ns: 'common' })}, ${t('unit.months', {
-        count: months,
-        ns: 'common',
-      })}`
+  if (isNegative) return t('unit.invalid_date', { ns: 'common' })
 
-    return t('unit.years', { count: years, ns: 'common' })
-  }
-  if (duration >= month) {
-    const months = Math.floor(duration / month)
+  const diffEntries = [
+    [shortYears ? 'yrs' : 'years', diff.years],
+    ['months', diff.months],
+    ['days', diff.days],
+  ] as [string, number][]
 
-    const days = Math.floor((duration - months * month) / ONE_DAY)
+  const durationStrings = diffEntries
+    .filter(([, value]) => value > 0)
+    .slice(0, 2)
+    .filter((value): value is [string, number] => !!value)
+    .map(([unit, count]) => t(`unit.${unit}`, { count, ns: 'common' }))
 
-    // for 31-day months
-    if (days > 1)
-      return `${t('unit.months', { count: months, ns: 'common' })}, ${t('unit.days', {
-        count: days,
-        ns: 'common',
-      })}`
+  if (durationStrings.length === 0) return t('unit.days', { count: 0, ns: 'common' }) + postFix
 
-    return t('unit.months', { count: months, ns: 'common' })
-  }
-  if (duration >= ONE_DAY) {
-    const days = Math.floor(duration / ONE_DAY)
-    return t('unit.days', { count: days, ns: 'common' })
-  }
-
-  return t('unit.invalid_date', { ns: 'common' })
+  return durationStrings.join(', ') + postFix
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>

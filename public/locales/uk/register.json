@@ -6,7 +6,7 @@
     "timeRegistration": "{{time}} реєстрація",
     "registration": "Реєстрація",
     "estimatedNetworkFee": "Оцінка плати за мережу",
-    "networkFee": "Плата за мережу",
+    "transactionFees": "Плата за транзакцію",
     "temporaryPremium": "Тимчасовий преміум",
     "total": "Орієнтовна сума",
     "totalPaid": "Всього сплачено"

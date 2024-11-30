@@ -24,6 +24,8 @@ const config: KnipConfig = {
     'src/utils/query/match/matchExactOrNullParamItem.test-d.ts',
     'src/utils/query/match/matchQueryKeyMeta.test-d.ts',
     'src/utils/query/match/queryKeyToInternalParams.test-d.ts',
+    // Will need later
+    'src/components/pages/migrate/Carousel.tsx',
   ],
 }
 

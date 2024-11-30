@@ -8,6 +8,7 @@ import FaucetBanner from '@app/components/@molecules/FaucetBanner'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
+import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
 import { VerificationErrorDialog } from '@app/components/pages/VerificationErrorDialog'
 import { useVerificationOAuthHandler } from '@app/hooks/verification/useVerificationOAuthHandler/useVerificationOAuthHandler'
 
@@ -112,9 +113,11 @@ export default function Page() {
             </Typography>
           </SubtitleWrapper>
           <SearchInput />
+
+          <AnnouncementBanner />
         </Stack>
       </Container>
-      {dialogProps && <VerificationErrorDialog {...dialogProps} />}
+      <VerificationErrorDialog {...(dialogProps ?? {})} />
     </>
   )
 }

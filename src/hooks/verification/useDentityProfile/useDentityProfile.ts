@@ -1,7 +1,7 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
 import { Hash } from 'viem'
 
-import { getOwner, getRecords } from '@ensdomains/ensjs/public'
+import { getName, getOwner, getRecords } from '@ensdomains/ensjs/public'
 
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
@@ -9,26 +9,25 @@ import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
-import { getAPIEndpointForVerifier } from './utils/getAPIEndpointForVerifier'
+import { type DentityFederatedToken } from '../useDentityToken/useDentityToken'
 
 type UseVerificationOAuthParameters = {
-  verifier?: VerificationProtocol | null
-  code?: string | null
-  onSuccess?: (resp: UseVerificationOAuthReturnType) => void
+  token?: DentityFederatedToken
 }
 
-export type UseVerificationOAuthReturnType = {
+export type UseDentityProfileReturnType = {
   verifier: VerificationProtocol
-  name: string
-  owner: Hash
+  name?: string
+  owner?: Hash | null
   manager?: Hash
-  address: Hash
-  resolverAddress: Hash
-  verifiedPresentationUri: string
+  primaryName?: string
+  address?: Hash
+  resolverAddress?: Hash
+  verifiedPresentationUri?: string
   verificationRecord?: string
 }
 
-type UseVerificationOAuthConfig = QueryConfig<UseVerificationOAuthReturnType, Error>
+type UseVerificationOAuthConfig = QueryConfig<UseDentityProfileReturnType, Error>
 
 type QueryKey<TParams extends UseVerificationOAuthParameters> = CreateQueryKey<
   TParams,
@@ -36,52 +35,46 @@ type QueryKey<TParams extends UseVerificationOAuthParameters> = CreateQueryKey<
   'standard'
 >
 
-export const getVerificationOAuth =
+export const getDentityProfile =
   (config: ConfigWithEns) =>
   async <TParams extends UseVerificationOAuthParameters>({
-    queryKey: [{ verifier, code }, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerificationOAuthReturnType> => {
-    // Get federated token from oidc worker
-    const url = getAPIEndpointForVerifier(verifier)
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ code }),
-    })
-    const json = await response.json()
-
-    const { name } = json as UseVerificationOAuthReturnType
-
-    if (!name)
+    queryKey: [{ token }, chainId],
+  }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseDentityProfileReturnType> => {
+    if (!token || !token.name || !token.verifiedPresentationUri) {
       return {
-        verifier,
-        ...json,
+        verifier: 'dentity',
+        ...token,
       }
+    }
+
+    const { name } = token
 
     // Get resolver address since it will be needed for setting verification record
     const client = config.getClient({ chainId })
     const records = await getRecords(client, { name, texts: [VERIFICATION_RECORD_KEY] })
-
     // Get owner data to
     const ownerData = await getOwner(client, { name })
     const { owner, registrant, ownershipLevel } = ownerData || {}
-
     const _owner = ownershipLevel === 'registrar' ? registrant : owner
     const manager = ownershipLevel === 'registrar' ? owner : undefined
-
+    const userWithSetRecordAbility = manager ?? _owner
+    const primaryName = userWithSetRecordAbility
+      ? await getName(client, { address: userWithSetRecordAbility })
+      : undefined
     const data = {
-      ...json,
-      verifier,
+      ...token,
+      verifier: 'dentity' as const,
       owner: _owner,
       manager,
+      primaryName: primaryName?.name,
       resolverAddress: records.resolverAddress,
       verificationRecord: records.texts.find((text) => text.key === VERIFICATION_RECORD_KEY)?.value,
     }
     return data
   }
 
-export const useVerificationOAuth = <TParams extends UseVerificationOAuthParameters>({
+export const useDentityProfile = <TParams extends UseVerificationOAuthParameters>({
   enabled = true,
-  onSuccess,
   gcTime,
   staleTime,
   scopeKey,
@@ -92,13 +85,13 @@ export const useVerificationOAuth = <TParams extends UseVerificationOAuthParamet
     scopeKey,
     functionName: 'getVerificationOAuth',
     queryDependencyType: 'standard',
-    queryFn: getVerificationOAuth,
+    queryFn: getDentityProfile,
   })
 
   const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    enabled: enabled && !!params.verifier && !!params.code,
+    enabled: enabled && !!params.token,
     gcTime,
     staleTime,
     retry: 0,

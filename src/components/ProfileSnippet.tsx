@@ -1,6 +1,8 @@
-import { useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
@@ -8,6 +10,7 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
@@ -192,6 +195,8 @@ export const ProfileSnippet = ({
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
+  const details = useNameDetails({ name })
+  const { isConnected } = useAccount()
 
   const beautifiedName = useBeautifiedName(name)
 
@@ -200,6 +205,27 @@ export const ProfileSnippet = ({
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value
   const recordName = getTextRecord?.('name')?.value
+
+  const searchParams = useSearchParams()
+
+  const renew = (searchParams.get('renew') ?? null) !== null
+  const available = details.registrationStatus === 'available'
+
+  const { canSelfExtend, canEdit } = abilities.data ?? {}
+
+  useEffect(() => {
+    if (renew && !isConnected) {
+      return router.push(`/${name}/register`)
+    }
+
+    if (renew && !available) {
+      showExtendNamesInput(`extend-names-${name}`, {
+        names: [name],
+        isSelf: canSelfExtend,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, available, renew, name, canSelfExtend])
 
   const ActionButton = useMemo(() => {
     if (button === 'extend')
@@ -212,7 +238,7 @@ export const ProfileSnippet = ({
           onClick={() => {
             showExtendNamesInput(`extend-names-${name}`, {
               names: [name],
-              isSelf: abilities.data?.canSelfExtend,
+              isSelf: canSelfExtend,
             })
           }}
         >
@@ -240,7 +266,7 @@ export const ProfileSnippet = ({
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, abilities.data])
+  }, [button, name, canSelfExtend])
 
   return (
     <Container $banner={banner} data-testid="profile-snippet">
@@ -249,7 +275,7 @@ export const ProfileSnippet = ({
           size={{ min: '24', sm: '32' }}
           label={name}
           name={name}
-          noCache={abilities.data.canEdit}
+          noCache={canEdit}
           decoding="sync"
         />
         <ButtonStack>

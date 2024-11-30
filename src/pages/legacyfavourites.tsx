@@ -70,7 +70,7 @@ export default function Page() {
                           name,
                           network: chainId,
                           hasOtherItems: false,
-                          expiryDate: { date: expiry, value: expiry.getTime() },
+                          expiryDate: { date: expiry, value: expiry?.getTime() },
                         }}
                       />
                     ))}

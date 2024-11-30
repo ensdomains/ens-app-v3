@@ -6,7 +6,7 @@
     "timeRegistration": "注册{{time}}",
     "registration": "注册",
     "estimatedNetworkFee": "预估网络费",
-    "networkFee": "网络费",
+    "transactionFees": "网络费",
     "temporaryPremium": "临时溢价",
     "total": "预估总额",
     "totalPaid": "支付总额"
@@ -161,10 +161,7 @@
         "等待计时器完成 60 秒计时",
         "完成第二笔交易来获得该名称"
       ],
-      "moonpayItems": [
-        "创建或登录现有的 Moonpay 账户", 
-        "使用信用卡或借记卡完成单笔交易"
-      ],
+      "moonpayItems": ["创建或登录现有的 Moonpay 账户", "使用信用卡或借记卡完成单笔交易"],
       "setupProfile": "我希望先创建我的个人资料",
       "paymentMethod": "支付方式",
       "notEnoughEth": "钱包中的 ETH 不足",

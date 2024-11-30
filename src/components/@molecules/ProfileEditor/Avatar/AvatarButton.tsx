@@ -88,6 +88,7 @@ export type AvatarClickType = 'upload' | 'nft'
 type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
 
 type Props = {
+  disabledUpload?: boolean
   validated?: boolean
   dirty?: boolean
   error?: boolean
@@ -100,6 +101,7 @@ type Props = {
 
 const AvatarButton = ({
   validated,
+  disabledUpload,
   dirty,
   error,
   src,
@@ -137,11 +139,15 @@ const AvatarButton = ({
             color: 'black',
             onClick: handleSelectOption('nft'),
           },
-          {
-            label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-            color: 'black',
-            onClick: handleSelectOption('upload'),
-          },
+          ...(disabledUpload
+            ? []
+            : [
+                {
+                  label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
+                  color: 'black',
+                  onClick: handleSelectOption('upload'),
+                },
+              ]),
           ...(validated
             ? [
                 {

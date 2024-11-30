@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
@@ -41,6 +42,7 @@ const Content = styled.div(
 )
 
 export const VerificationBadgeAccountTooltipContent = ({ verifiers }: Props) => {
+  const { t } = useTranslation('common')
   const verifier = verifiers?.[0]
   return match(verifier)
     .with('dentity', () => (
@@ -48,7 +50,7 @@ export const VerificationBadgeAccountTooltipContent = ({ verifiers }: Props) => 
         <DentitySVG />
         <Content>
           <Typography fontVariant="bodyBold" color="inherit">
-            Verified by Dentity
+            {t('verification.verifiedBy', { issuer: 'Dentity' })}
           </Typography>
           <OutlinkSVG />
         </Content>

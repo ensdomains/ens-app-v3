@@ -57,6 +57,7 @@ export const DisabledButtonWithTooltip = ({
           data-testid={buttonId}
           width={buttonWidth}
           loading={loading}
+          disabled
         >
           {buttonText}
         </Button>

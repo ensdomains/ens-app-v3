@@ -1,10 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { match, P } from 'ts-pattern'
 import { labelhash, namehash } from 'viem'
 
-import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { Tag, Typography } from '@ensdomains/thorin'
+import { mq, Tag, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
@@ -12,21 +10,13 @@ import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
-import { Profile } from '@app/types'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
-import UnwrapButton from './UnwrapButton'
-import WrapButton from './WrapButton'
 
 type Props = {
   name: string
   isWrapped: boolean
-  canBeWrapped: boolean
-  ownerData?: GetOwnerReturnType
-  wrapperData?: GetWrapperDataReturnType
-  profile: Profile | undefined
 }
 
 const Container = styled(TabWrapper)(
@@ -46,7 +36,7 @@ const Container = styled(TabWrapper)(
       border-bottom: none;
     }
 
-    @media (min-width: 640px) {
+    ${mq.sm.min(css`
       & > div {
         padding: ${theme.space['4']} ${theme.space['6']};
       }
@@ -54,7 +44,7 @@ const Container = styled(TabWrapper)(
       & > div:first-of-type {
         padding: ${theme.space['6']};
       }
-    }
+    `)}
   `,
 )
 
@@ -80,9 +70,9 @@ const IdsContainer = styled.div(
     justify-content: center;
     gap: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+    ${mq.sm.min(css`
       gap: ${theme.space['2']};
-    }
+    `)}
   `,
 )
 
@@ -96,9 +86,9 @@ const ItemsContainer = styled(CacheableComponent)(
 
     overflow: hidden;
 
-    @media (min-width: 640px) {
+    ${mq.sm.min(css`
       flex-direction: row;
-    }
+    `)}
   `,
 )
 
@@ -107,28 +97,20 @@ const NftBox = styled(NFTWithPlaceholder)(
     max-width: 100%;
     aspect-ratio: 1;
 
-    @media (min-width: 640px) {
+    ${mq.sm.min(css`
       max-width: ${theme.space['36']};
       max-height: ${theme.space['36']};
-    }
+    `)}
   `,
 )
 
-const getFuseStateFromWrapperData = (wrapperData?: GetWrapperDataReturnType): NameWrapperState =>
-  match(wrapperData)
-    .with(P.nullish, () => 'unwrapped' as const)
-    .with({ fuses: { child: { CANNOT_UNWRAP: true } } }, () => 'locked' as const)
-    .with({ fuses: { parent: { PARENT_CANNOT_CONTROL: true } } }, () => 'emancipated' as const)
-    .otherwise(() => 'wrapped')
-
-const Token = ({ name, isWrapped, canBeWrapped, ownerData, wrapperData, profile }: Props) => {
+const Token = ({ name, isWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
   const networkName = useChainName()
   const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
   const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
 
-  const status: NameWrapperState = getFuseStateFromWrapperData(wrapperData)
   const is2ldEth = checkETH2LDFromName(name)
 
   const hex = isWrapped ? namehash(name) : labelhash(name.split('.')[0])
@@ -162,23 +144,6 @@ const Token = ({ name, isWrapped, canBeWrapped, ownerData, wrapperData, profile 
           <NftBox id="nft" name={name} />
         </ItemsContainer>
       )}
-      <ItemsContainer>
-        <RecordItem
-          itemKey={t('tabs.more.token.wrapper')}
-          value={t(`tabs.more.token.status.${status}`)}
-          type="text"
-        />
-        {isWrapped ? (
-          <UnwrapButton name={name} ownerData={ownerData} status={status} />
-        ) : (
-          <WrapButton
-            name={name}
-            ownerData={ownerData}
-            profile={profile}
-            canBeWrapped={canBeWrapped}
-          />
-        )}
-      </ItemsContainer>
     </Container>
   )
 }

@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef, ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { RightArrowSVG, Tag, Typography } from '@ensdomains/thorin'
@@ -53,6 +54,7 @@ const ArrowWrapper = styled.div(
 )
 
 export const VerificationOptionButton = ({ icon, children, verified, ...props }: Props) => {
+  const { t } = useTranslation('transactionFlow')
   return (
     <Container {...props} data-testid={`verification-option-${children}`}>
       {icon && <IconWrapper>{icon}</IconWrapper>}
@@ -61,7 +63,7 @@ export const VerificationOptionButton = ({ icon, children, verified, ...props }:
       </Label>
       {verified && (
         <Tag size="small" colorStyle="greenSecondary" data-testid="verification-option-added">
-          Added
+          {t('input.verifyProfile.list.added')}
         </Tag>
       )}
       <ArrowWrapper>

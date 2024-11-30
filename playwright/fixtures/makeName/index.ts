@@ -91,18 +91,21 @@ export function createMakeNames({ accounts, time, subgraph }: Dependencies) {
 
     await testClient.setAutomine(true)
 
-    // Finish setting up names
-    await Promise.all(
-      adjustedNames.map((name) => {
+    // Make sure that registration and subnames are on different block or it might cause the subgraph to crash due to
+    // RegisterName and TransferName event having the same event ids.
+    await testClient.mine({ blocks: 1 })
+
+    // Finish setting up names 
+    for (const name of adjustedNames) {
         if (isWrappendName(name)) {
-          return wrappedNameGenerator.configure(name)
+          await wrappedNameGenerator.configure(name)
         } else if (isLegacyName(name)) {
-          return legacyRegisterNameGenerator.configure(name)
+          console.log('registering legacy name:', name)
+          await legacyRegisterNameGenerator.configure(name)
         } else {
-          return legacyNameGenerator.configure(name)
+          await legacyNameGenerator.configure(name)
         }
-      }),
-    )
+    }
 
     if (offset > 0) {
       console.warn('You are increasing the block timestamp. Do not run this test in parallel mode.')

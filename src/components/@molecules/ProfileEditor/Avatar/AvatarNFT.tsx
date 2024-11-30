@@ -11,11 +11,13 @@ import {
   Dialog,
   Heading,
   MagnifyingGlassSVG,
+  mq,
   Typography,
 } from '@ensdomains/thorin'
 
 import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
 
@@ -60,8 +62,65 @@ type NFTResponse = {
   totalCount: number
 }
 
-const makeBaseURL = (network: string) =>
-  `https://ens-nft-worker.ens-cf.workers.dev/v1/${network}/getNfts/`
+async function getNfts({
+  network,
+  owner,
+  pageKey,
+}: {
+  network: string
+  owner: string
+  pageKey: string
+}) {
+  const baseURL = `https://ens-nft-worker.ens-cf.workers.dev/v1/${network}/getNfts/`
+
+  const urlParams = new URLSearchParams()
+
+  urlParams.append('owner', owner)
+  urlParams.append('filters[]', 'SPAM')
+
+  if (pageKey) {
+    urlParams.append('pageKey', pageKey)
+  }
+
+  const res = await fetch(`${baseURL}?${urlParams.toString()}`, {
+    method: 'GET',
+    redirect: 'follow',
+  })
+
+  return (await res.json()) as NFTResponse
+}
+
+function useNtfs(chain: string, address: string) {
+  const client = useClient()
+
+  return useInfiniteQuery({
+    queryKey: [chain, address, 'NFTs'],
+    queryFn: async ({ pageParam }) => {
+      const response = await getNfts({ network: chain, owner: address, pageKey: pageParam })
+
+      return {
+        ...response,
+        ownedNfts: response.ownedNfts.filter(
+          (nft) =>
+            (nft.media?.[0]?.thumbnail || nft.media?.[0]?.gateway) &&
+            nft.contract.address !==
+              getSupportedChainContractAddress({
+                client,
+                contract: 'ensBaseRegistrarImplementation',
+              }) &&
+            nft.contract.address !==
+              getSupportedChainContractAddress({
+                client,
+                contract: 'ensNameWrapper',
+              }),
+        ),
+      }
+    },
+    initialPageParam: '',
+    placeholderData: keepPreviousData,
+    getNextPageParam: (lastPage) => lastPage.pageKey,
+  })
+}
 
 const ScrollBoxContent = styled.div(
   ({ theme }) => css`
@@ -99,7 +158,7 @@ const NFTContainer = styled.div(
     &[aria-disabled='true'] {
       cursor: not-allowed;
       opacity: 1;
-      color: ${theme.colors.grey};
+      color: ${theme.colors.textTertiary};
     }
   `,
 )
@@ -141,8 +200,8 @@ const NFTName = styled(Typography)(
   `,
 )
 
-const SelectedNFTContainer = styled.div(
-  ({ theme }) => css`
+const SelectedNFTContainer = styled.div(({ theme }) => [
+  css`
     width: 100%;
     & div {
       padding: 0 ${theme.radii['2.5xLarge']};
@@ -150,12 +209,12 @@ const SelectedNFTContainer = styled.div(
         font-size: ${theme.fontSizes.headingThree};
       }
     }
-    @media (min-width: 640px) {
-      width: calc(80vw - 2 * ${theme.space['6']});
-      max-width: ${theme.space['128']};
-    }
   `,
-)
+  mq.sm.min(css`
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
+  `),
+])
 
 const SelectedNFTImageWrapper = styled.div(
   () => css`
@@ -173,8 +232,30 @@ const SelectedNFTImage = styled.img(
   `,
 )
 
-const LoadingContainer = styled.div(
+const FilterContainer = styled.div(
   ({ theme }) => css`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: ${theme.space['4']};
+    margin-bottom: ${theme.space['4']};
+
+    ${mq.sm.min(css`
+      margin-bottom: ${theme.space['6']};
+    `)}
+
+    & > button {
+      flex-basis: 100px;
+      margin-bottom: -${theme.space['4']};
+      ${mq.sm.min(css`
+        margin-bottom: -${theme.space['6']};
+      `)}
+    }
+  `,
+)
+
+const LoadingContainer = styled.div(({ theme }) => [
+  css`
     width: ${theme.space.full};
     min-height: ${theme.space['32']};
 
@@ -183,11 +264,11 @@ const LoadingContainer = styled.div(
     justify-content: center;
     flex-direction: column;
     gap: ${theme.space['4']};
-    @media (min-width: 640px) {
-      gap: ${theme.space['6']};
-    }
   `,
-)
+  mq.sm.min(css`
+    gap: ${theme.space['6']};
+  `),
+])
 
 const LoadFailureContainer = styled.div(
   ({ theme }) => css`
@@ -205,7 +286,7 @@ const LoadFailureContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
 
     background-color: ${theme.colors.greySurface};
-    color: ${theme.colors.grey};
+    color: ${theme.colors.textTertiary};
 
     & > svg {
       width: ${theme.space['5']};
@@ -248,7 +329,7 @@ const NftItem = ({
       ) : (
         <LoadFailureContainer>
           <AlertSVG />
-          <Typography fontVariant="smallBold" color="grey">
+          <Typography fontVariant="smallBold" color="textTertiary">
             {t('input.profileEditor.tabs.avatar.nft.loadError')}
           </Typography>
         </LoadFailureContainer>
@@ -258,72 +339,54 @@ const NftItem = ({
   )
 }
 
+function useProfileAddresses(name: string) {
+  const { profile } = useNameDetails({ name })
+
+  const addresses = (profile?.coins ?? []).filter((x) => ['eth'].includes(x.name.toLowerCase()))
+
+  const ethAddress = addresses[0]?.value
+
+  return {
+    ethAddress,
+  }
+}
+
 export const AvatarNFT = ({
+  name,
   handleCancel,
   handleSubmit,
 }: {
+  name: string
   handleCancel: () => void
   handleSubmit: (type: 'nft', uri: string, display: string) => void
 }) => {
-  const chain = useChainName()
   const { t } = useTranslation('transactionFlow')
 
+  const chain = useChainName()
   const { address: _address } = useAccount()
   const address = _address!
 
-  const client = useClient()
-
-  const {
-    data: NFTPages,
-    fetchNextPage,
-    isLoading,
-  } = useInfiniteQuery({
-    queryKey: [chain, address, 'NFTs'],
-    queryFn: async ({ pageParam }) => {
-      const urlParams = new URLSearchParams()
-      urlParams.append('owner', address)
-      urlParams.append('filters[]', 'SPAM')
-      if (pageParam) {
-        urlParams.append('pageKey', pageParam)
-      }
-      const response = (await fetch(`${makeBaseURL(chain)}?${urlParams.toString()}`, {
-        method: 'GET',
-        redirect: 'follow',
-      }).then((res) => res.json())) as NFTResponse
-
-      return {
-        ...response,
-        ownedNfts: response.ownedNfts.filter(
-          (nft) =>
-            (nft.media?.[0]?.thumbnail || nft.media?.[0]?.gateway) &&
-            nft.contract.address !==
-              getSupportedChainContractAddress({
-                client,
-                contract: 'ensBaseRegistrarImplementation',
-              }) &&
-            nft.contract.address !==
-              getSupportedChainContractAddress({
-                client,
-                contract: 'ensNameWrapper',
-              }),
-        ),
-      }
-    },
-    initialPageParam: '',
-    placeholderData: keepPreviousData,
-    getNextPageParam: (lastPage) => lastPage.pageKey,
-  })
+  const { ethAddress } = useProfileAddresses(name)
 
   const [searchedInput, setSearchedInput] = useState('')
+  const [selectedAddress, setSelectedAddress] = useState<string>(address)
   const [selectedNFT, setSelectedNFT] = useState<number | null>(null)
 
-  const NFTs = NFTPages?.pages
+  const { data: NFTPages, fetchNextPage, isLoading } = useNtfs(chain, selectedAddress)
+
+  const NFTs = (NFTPages?.pages ?? [])
     .reduce((prev, curr) => [...prev, ...curr.ownedNfts], [] as OwnedNFT[])
     .filter((nft) => nft.title.toLowerCase().includes(searchedInput))
 
   const hasNFTs = NFTs && (NFTs.length > 0 || searchedInput !== '')
   const hasNextPage = !!NFTPages?.pages[NFTPages.pages.length - 1].pageKey
   const fetchPage = useCallback(() => fetchNextPage(), [fetchNextPage])
+
+  const handleSelectAddress = () => {
+    if (!ethAddress) return
+
+    setSelectedAddress((prev) => (prev === address ? ethAddress : address))
+  }
 
   if (selectedNFT !== null) {
     const nftReference = NFTs?.[selectedNFT]!
@@ -368,6 +431,31 @@ export const AvatarNFT = ({
 
   let innerContent: ReactNode
 
+  const searchBox = (
+    <FilterContainer>
+      {!ethAddress ||
+        (address !== ethAddress && (
+          <Button onClick={handleSelectAddress}>
+            {t(
+              `input.profileEditor.tabs.avatar.nft.address.${
+                selectedAddress === address ? 'other' : 'owned'
+              }`,
+            )}
+          </Button>
+        ))}
+      <DialogInput
+        icon={<MagnifyingGlassSVG />}
+        hideLabel
+        label="search"
+        value={searchedInput}
+        onChange={(e) => setSearchedInput(e.target.value)}
+        placeholder={t('input.profileEditor.tabs.avatar.nft.searchPlaceholder')}
+        data-testid="avatar-search-input"
+        clearable
+      />
+    </FilterContainer>
+  )
+
   if (isLoading) {
     innerContent = (
       <Dialog.Content>
@@ -380,16 +468,7 @@ export const AvatarNFT = ({
   } else if (hasNFTs) {
     innerContent = (
       <>
-        <DialogInput
-          icon={<MagnifyingGlassSVG />}
-          hideLabel
-          label="search"
-          value={searchedInput}
-          onChange={(e) => setSearchedInput(e.target.value)}
-          placeholder={t('input.profileEditor.tabs.avatar.nft.searchPlaceholder')}
-          data-testid="avatar-search-input"
-          clearable
-        />
+        {searchBox}
         {NFTs.length > 0 ? (
           <Dialog.Content
             data-testid="nft-scroll-box"
@@ -397,7 +476,7 @@ export const AvatarNFT = ({
             onReachedBottom={fetchPage}
           >
             <ScrollBoxContent>
-              {NFTs?.map((NFT, i) => (
+              {NFTs.map((NFT, i) => (
                 <NftItem
                   t={t}
                   nft={NFT}
@@ -421,6 +500,7 @@ export const AvatarNFT = ({
   } else {
     innerContent = (
       <Dialog.Content>
+        {searchBox}
         <LoadingContainer>
           <Heading>{t('input.profileEditor.tabs.avatar.nft.noNFTs')}</Heading>
         </LoadingContainer>

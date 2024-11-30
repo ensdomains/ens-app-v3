@@ -328,7 +328,6 @@ test.describe('Send name', () => {
   })
 
   test('should be able to send manager and eth-record if user is manager and not parent owner of unwrapped subname', async ({
-    page,
     login,
     accounts,
     makeName,
@@ -389,7 +388,7 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager', {
       timeout: 15000,
     })
-    await page.pause()
+
     await expect(ownershipPage.roleRow(accounts.getAddress('user2'))).toContainText('Parent owner')
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
   })
@@ -436,7 +435,6 @@ test.describe('Send name', () => {
     await profilePage.goto(subname)
     await login.connect()
     await expect(profilePage.record('text', 'nickname')).toContainText('test')
-    await page.pause()
 
     await ownershipPage.goto(subname)
     await ownershipPage.sendNameButton.click()
@@ -460,7 +458,7 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager', {
       timeout: 15000,
     })
-    await page.pause()
+
     await expect(ownershipPage.roleRow(accounts.getAddress('user'))).toContainText('Parent owner')
     await expect(ownershipPage.roleRow('0x42D63ae25990889E35F215bC95884039Ba354115')).toContainText(
       'ETH record',
@@ -535,7 +533,7 @@ test.describe('Send name', () => {
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('manager', {
       timeout: 15000,
     })
-    await page.pause()
+
     await expect(ownershipPage.roleRow(accounts.getAddress('user2'))).toContainText('Parent owner')
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('ETH record')
 
@@ -601,7 +599,6 @@ test.describe('Send name', () => {
     await sendNameModal.searchResult(accounts.getAddress('user3')).click()
     await sendNameModal.resetProfileSwitch.check()
 
-    await page.pause()
     // Should not be able to set owner because name is unwrapped
     // Should not be able to set eth record because user is not the manager
     // Should not be able to reset profile since old resolver does not support VersionableResolver
@@ -657,7 +654,6 @@ test.describe('Edit roles: Happy ', () => {
   })
 
   test('Should allow manager to change manager when they are not the owner', async ({
-    page,
     login,
     accounts,
     makeName,
@@ -682,7 +678,7 @@ test.describe('Edit roles: Happy ', () => {
     // Should not allow the manager to change the owner
     await expect(editRolesModal.roleCard('owner')).toHaveCount(0)
     await editRolesModal.roleCardChangeButton('manager').click()
-    await page.pause()
+
     await editRolesModal.searchInput.fill(accounts.getAddress('user3'))
     await editRolesModal.searchResult(accounts.getAddress('user3')).click()
     await editRolesModal.saveButton.click()
@@ -889,7 +885,6 @@ test.describe('Edit roles: Unwrapped subnames', () => {
 
     await ownershipPage.goto(subname)
     await login.connect()
-    await page.pause()
 
     await page.waitForTimeout(2000)
     await expect(ownershipPage.sendNameButton).toHaveCount(0)
@@ -932,7 +927,6 @@ test.describe('Edit roles: Unwrapped name', () => {
 
 test.describe('Edit roles: Wrapped subnames', () => {
   test('should allow namewrapper subname owner to send name', async ({
-    page,
     login,
     accounts,
     makeName,
@@ -959,7 +953,6 @@ test.describe('Edit roles: Wrapped subnames', () => {
     await ownershipPage.goto(subname)
     await login.connect()
 
-    await page.pause()
     await ownershipPage.editRolesButton.click()
 
     await editRolesModal.roleCardChangeButton('manager').click()
@@ -1143,14 +1136,13 @@ test.describe('Extend name', () => {
 
     await ownershipPage.goto(name)
     await login.connect()
-    await page.pause()
 
     const timestamp = await ownershipPage.getExpiryTimestamp()
 
     await ownershipPage.extendButton.click()
 
     await test.step('should show ownership warning', async () => {
-      await expect(page.getByText('You do not own this name')).toBeVisible()
+      await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
       await page.getByRole('button', { name: 'I understand' }).click()
     })
     await test.step('should show the correct price data', async () => {
@@ -1158,12 +1150,6 @@ test.describe('Extend name', () => {
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
       await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
       await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
-    })
-
-    await test.step('should show the cost comparison data', async () => {
-      await expect(page.getByTestId('year-marker-0')).toContainText('2% gas')
-      await expect(page.getByTestId('year-marker-1')).toContainText('1% gas')
-      await expect(page.getByTestId('year-marker-2')).toContainText('1% gas')
     })
 
     await test.step('should work correctly with plus minus control', async () => {

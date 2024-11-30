@@ -35,6 +35,7 @@ vi.mock('react-i18next', () => ({
     i18n: {
       isInitialized: true,
     },
+    ready: true,
   }),
   Trans: ({ i18nKey, values }: { i18nKey: string; values: string[] }) =>
     `${i18nKey} ${values ? Object.values(values).join(', ') : ''}`,

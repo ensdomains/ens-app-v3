@@ -23,6 +23,9 @@ export type RegistrationStepData = {
     seconds: number
     reverseRecord: boolean
     paymentMethodChoice: PaymentMethod | ''
+    estimatedTotal?: bigint
+    ethPrice?: bigint
+    durationType: 'date' | 'years'
   }
   profile: {
     records: ProfileRecord[]

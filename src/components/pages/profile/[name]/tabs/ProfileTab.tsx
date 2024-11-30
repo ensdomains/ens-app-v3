@@ -79,6 +79,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const { data: verifiedData, appendVerificationProps } = useVerifiedRecords({
     verificationsRecord: profile?.texts?.find(({ key }) => key === VERIFICATION_RECORD_KEY)?.value,
+    ownerAddress: ownerData?.registrant || ownerData?.owner,
+    name: normalisedName,
   })
 
   const isOffchainImport = useIsOffchainName({
