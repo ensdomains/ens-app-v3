@@ -181,6 +181,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverStatus = useResolverStatus({
     name,
   })
+  console.log('resolverStatus', resolverStatus)
 
   const chainId = useChainId()
 
@@ -233,11 +234,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     setView('addRecord')
   }
 
-  const canEditRecordsWhenWrapped = match(isWrapped)
-    .with(true, () =>
-      getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress }),
-    )
-    .otherwise(() => true)
+  const canEditRecordsWhenWrapped = !!resolverStatus.data?.isAuthorized
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
