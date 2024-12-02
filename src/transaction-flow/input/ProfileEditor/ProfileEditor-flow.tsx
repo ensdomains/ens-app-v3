@@ -29,7 +29,8 @@ import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEd
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { getResolverWrapperAwareness } from '@app/utils/utils'
+
+// import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
