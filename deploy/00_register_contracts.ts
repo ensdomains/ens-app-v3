@@ -3,7 +3,7 @@
 /* eslint-disable no-await-in-loop */
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { namehash } from 'viem'
+import { Address, namehash } from 'viem'
 
 import { getContract } from './utils/viem-hardhat'
 

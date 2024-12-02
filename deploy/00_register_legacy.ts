@@ -409,13 +409,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       { label, registrant, secret, resolver, addr }: ReturnType<typeof makeData>,
       index: number,
     ) => {
-      const commitment = await controller.makeCommitmentWithConfig(
+      const commitment = await controller.write.makeCommitmentWithConfig([
         label,
         registrant,
         secret,
         resolver,
         addr,
-      )
+      ])
 
       const _controller = controller.connect(await ethers.getSigner(registrant))
       const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
@@ -430,7 +430,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       { label, registrant, secret, resolver, addr, duration }: ReturnType<typeof makeData>,
       index: number,
     ) => {
-      const price = await controller.rentPrice(label, duration)
+      const price = await controller.read.rentPrice(label, duration)
 
       const _controller = controller.connect(await ethers.getSigner(registrant))
 
