@@ -4,7 +4,8 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
-import { useChainId } from 'wagmi'
+
+// import { useChainId } from 'wagmi'
 
 import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
@@ -184,7 +185,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   })
   console.log('resolverStatus', resolverStatus)
 
-  const chainId = useChainId()
+  // const chainId = useChainId()
 
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
