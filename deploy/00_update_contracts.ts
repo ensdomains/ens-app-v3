@@ -9,7 +9,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const dummyOracale = (await getContract(hre)('DummyOracle', deployer))!
 
-  const txHash = await dummyOracale.write['set(int256)'](['156058000000'], {})
+  const txHash = await dummyOracale.write['set(int256)'](['156058000000'], {
+    account: deployer.account,
+    chain: deployer.public.chain,
+  })
 
   console.log(`Setting dummy oracle to 156058000000 (tx: ${txHash})...`)
   return true
