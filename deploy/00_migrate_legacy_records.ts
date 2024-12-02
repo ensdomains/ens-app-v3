@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-
 import { namehash } from 'viem'
+
+import { getContract } from './utils/viem-hardhat'
 
 const names = [
   {
@@ -32,7 +32,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = await getNamedAccounts()
 
-  const publicResolver = await ethers.getContract('PublicResolver')
+  const publicResolver = await getContract(hre)('PublicResolver')
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 

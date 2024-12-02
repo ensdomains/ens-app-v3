@@ -68,8 +68,6 @@
   "exclude": [
     "**/*.ignore.ts",
     "**/*.ignore.tsx",
-    "functions/**/*",
-    "deploy/**/*",
-    "hardhat.config.ts"
+    "functions/**/*"
   ]
 }

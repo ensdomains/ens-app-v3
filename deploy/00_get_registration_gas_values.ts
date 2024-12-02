@@ -2,10 +2,10 @@
 
 /* eslint-disable no-await-in-loop */
 import fs from 'fs/promises'
+
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-
 import { namehash } from 'viem'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -180,12 +180,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const makeUniques = () =>
     gasValues
-      .reduce((prev, curr, inx) => {
-        if (prev.find((p) => p[1] === curr)) {
-          return prev
-        }
-        return [...prev, [inx, curr] as [number, number]]
-      }, [] as [number, number][])
+      .reduce(
+        (prev, curr, inx) => {
+          if (prev.find((p) => p[1] === curr)) {
+            return prev
+          }
+          return [...prev, [inx, curr] as [number, number]]
+        },
+        [] as [number, number][],
+      )
       .reverse()
 
   await fs.writeFile('./textRecordGasCosts-1.json', JSON.stringify(makeUniques()))

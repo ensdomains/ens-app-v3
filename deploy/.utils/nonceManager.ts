@@ -1,9 +1,3 @@
-import type { ethers as EthersT } from 'ethers'
-
-type Ethers = typeof EthersT & {
-  provider: EthersT.providers.JsonRpcProvider
-}
-
 export const nonceManager =
   <T extends object>(
     ethers: Ethers,

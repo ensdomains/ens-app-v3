@@ -2,11 +2,12 @@
 
 /* eslint-disable no-await-in-loop */
 import cbor from 'cbor'
-import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import pako from 'pako'
 import { labelhash, namehash, stringToBytes } from 'viem'
+
+import { getContract } from './utils/viem-hardhat'
 
 const dummyABI = [
   {
@@ -370,9 +371,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = await getNamedAccounts()
 
-  const registry = await ethers.getContract('ENSRegistry')
-  const controller = await ethers.getContract('LegacyETHRegistrarController')
-  const publicResolver = await ethers.getContract('LegacyPublicResolver')
+  const registry = await getContract(hre)('ENSRegistry')
+  const controller = (await getContract(hre)('LegacyETHRegistrarController'))!
+  const publicResolver = await getContract(hre)('LegacyPublicResolver')
 
   const makeData = ({
     namedOwner,

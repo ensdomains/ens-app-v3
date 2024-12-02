@@ -1,29 +1,32 @@
 /* eslint-disable import/no-extraneous-dependencies, import/extensions */
-import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { labelhash, namehash } from 'viem'
 
-import { namehash, labelhash } from 'viem'
+import { getContract, getNamedClients } from './utils/viem-hardhat'
 
 const ZERO_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 const names = ['legacy']
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts } = hre
-  const { owner } = await getNamedAccounts()
+  const { owner } = await getNamedClients(hre)()
 
-  const registry = await ethers.getContract('LegacyENSRegistry', owner)
+  const registry = (await getContract(hre)('LegacyENSRegistry', owner))!
 
-  const tldTx = await registry.setSubnodeOwner(ZERO_HASH, labelhash('test'), owner)
-  console.log(`Creating .test TLD (tx: ${tldTx.hash})...`)
-  await tldTx.wait()
+  const tldTx = await registry.write.setSubnodeOwner(
+    [ZERO_HASH, labelhash('test'), owner.address],
+    { chain: owner.public.chain, account: owner.account },
+  )
+  console.log(`Creating .test TLD (tx: ${tldTx})...`)
 
   await Promise.all(
     names.map(async (name) => {
-      const nameTx = await registry.setSubnodeOwner(namehash('test'), labelhash(name), owner)
-      console.log(`Creating ${name}.test (tx: ${nameTx.hash})...`)
-      await nameTx.wait()
+      const nameTx = await registry.write.setSubnodeOwner(
+        [namehash('test'), labelhash(name), owner.address],
+        { chain: owner.public.chain, account: owner.account },
+      )
+      console.log(`Creating ${name}.test (tx: ${nameTx})...`)
     }),
   )
 
@@ -34,13 +37,12 @@ func.id = 'legacy-registry-names'
 func.tags = ['legacy-registry-names']
 func.dependencies = ['ENSRegistry']
 func.skip = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts } = hre
-  const { owner } = await getNamedAccounts()
+  const { owner } = await getNamedClients(hre)()
 
-  const registry = await ethers.getContract('LegacyENSRegistry')
+  const registry = (await getContract(hre)('LegacyENSRegistry', owner))!
 
-  const ownerOfTestTld = await registry.owner(namehash('test'))
-  if (ownerOfTestTld !== owner) {
+  const ownerOfTestTld = await registry.read.owner([namehash('test')])
+  if (ownerOfTestTld !== owner.address) {
     return false
   }
   return true

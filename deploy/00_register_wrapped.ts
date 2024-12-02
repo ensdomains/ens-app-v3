@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { Address, namehash } from 'viem'
@@ -15,6 +14,7 @@ import {
 } from '@ensdomains/ensjs/utils'
 
 import { nonceManager } from './.utils/nonceManager'
+import { getContract } from './utils/viem-hardhat'
 
 type Name = {
   name: string
@@ -148,16 +148,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = (await getNamedAccounts()) as Record<string, Address>
 
-  const controller = await ethers.getContract('ETHRegistrarController')
-  const publicResolver = await ethers.getContract('PublicResolver')
-  const nameWrapper = await ethers.getContract('NameWrapper')
+  const controller = (await getContract(hre)('ETHRegistrarController'))!
+  const publicResolver = (await getContract(hre)('PublicResolver'))!
+  const nameWrapper = (await getContract(hre)('NameWrapper'))!
 
   const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
-    const resolverAddress = publicResolver.address as Address
+    const resolverAddress = publicResolver.address
 
     const secret =
       // eslint-disable-next-line no-restricted-syntax
-      '0x0000000000000000000000000000000000000000000000000000000000000000' as Address
+      '0x0000000000000000000000000000000000000000000000000000000000000000' as const
     const duration = customDuration || 31536000
     // 1659467455 is the approximate time of the transaction, this is for keeping block hashes the same
     const wrapperExpiry = 1659467455 + duration
@@ -191,16 +191,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     async ({ owner, name, ...rest }: ProcessedNameData, index: number) => {
       const commitment = generateCommitment({ owner, name, ...rest })
 
-      const _controller = controller.connect(await ethers.getSigner(owner))
-      const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
-      console.log(`Commiting commitment for ${name} (tx: ${commitTx.hash})...`)
+      const commitTx = await controller.write.commit([commitment], {
+        nonce: nonce + index,
+        account: owner,
+      })
+      console.log(`Commiting commitment for ${name} (tx: ${commitTx})...`)
       return 1
     }
 
   const makeRegistration =
     (nonce: number) =>
     async ({ owner, name, duration, label, ...rest }: ProcessedNameData, index: number) => {
-      const [price] = await controller.rentPrice(label, duration)
+      const [price] = await controller.read.rentPrice([label, duration])
 
       const _controller = controller.connect(await ethers.getSigner(owner))
 

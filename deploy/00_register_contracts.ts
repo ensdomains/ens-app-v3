@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-
 import { namehash } from 'viem'
+
+import { getContract } from './utils/viem-hardhat'
 
 const names = [
   {
@@ -28,19 +28,20 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = await getNamedAccounts()
 
-  const controller = await ethers.getContract('ETHRegistrarController')
-  const publicResolver = await ethers.getContract('PublicResolver')
+  const controller = (await getContract(hre)('ETHRegistrarController'))!
+  const publicResolver = (await getContract(hre)('PublicResolver'))!
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
   for (const { label, namedOwner, data, reverseRecord, fuses, subnames } of names) {
+    // eslint-disable-next-line no-restricted-syntax
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
-    const owner = allNamedAccts[namedOwner]
+    const owner = allNamedAccts[namedOwner] as Address
     const resolver = publicResolver.address
     const duration = 31536000
     const wrapperExpiry = 1659467455 + duration
 
-    const commitment = await controller.makeCommitment(
+    const commitment = await controller.write.makeCommitment([
       label,
       owner,
       duration,
@@ -49,32 +50,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       data,
       reverseRecord,
       fuses,
-    )
+    ])
 
-    const _controller = controller.connect(await ethers.getSigner(owner))
-    const commitTx = await controller.commit(commitment)
-    console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`)
-    await commitTx.wait()
+    const commitTx = await controller.write.commit(commitment)
+    console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx})...`)
 
     await network.provider.send('evm_mine')
 
-    const [price] = await controller.rentPrice(label, duration)
+    const [price] = await controller.read.rentPrice([label, duration])
 
-    const registerTx = await _controller.register(
-      label,
-      owner,
-      duration,
-      secret,
-      resolver,
-      data,
-      reverseRecord,
-      fuses,
+    const registerTx = await controller.write.register(
+      [label, owner, duration, secret, resolver, data, reverseRecord, fuses],
       {
         value: price,
+        account: owner,
       },
     )
-    console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
-    await registerTx.wait()
+    console.log(`Registering name ${label}.eth (tx: ${registerTx})...`)
 
     if (subnames) {
       console.log(`Setting subnames for ${label}.eth...`)
