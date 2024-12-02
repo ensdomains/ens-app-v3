@@ -56,34 +56,31 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await root.write.setSubnodeOwner([labelhash('eth')], owner)
 
   console.log('Set default resolver for eth tld to public resolver')
-  const tx111 = await registry.write.setResolver([namehash('eth'), resolver.address])
+  await registry.write.setResolver([namehash('eth'), resolver.address])
 
   console.log('Set interface implementor of eth tld for bulk renewal')
-  const tx2 = await resolver.write.setInterface([
+  await resolver.write.setInterface([
     namehash('eth'),
     createInterfaceId(bulkRenewal.abi),
     bulkRenewal.address,
   ])
 
   console.log('Set interface implementor of eth tld for registrar controller')
-  const tx3 = await resolver.setInterface(
+  await resolver.write.setInterface([
     namehash('eth'),
     createInterfaceId(controllerArtifact.abi),
     controller.address,
-  )
-  await tx3.wait()
+  ])
 
   console.log('Set interface implementor of eth tld for name wrapper')
-  const tx4 = await resolver.setInterface(
+  await resolver.write.setInterface([
     namehash('eth'),
     createInterfaceId(wrapper.interface),
     wrapper.address,
-  )
-  await tx4.wait()
+  ])
 
   console.log('Set owner of eth tld back to registrar')
-  const tx11 = await root.setSubnodeOwner(labelhash('eth'), registrar.address)
-  await tx11.wait()
+  await root.write.setSubnodeOwner([labelhash('eth')], registrar.address)
 
   return true
 }

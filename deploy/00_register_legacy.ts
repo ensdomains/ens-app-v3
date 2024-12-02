@@ -430,7 +430,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       { label, registrant, secret, resolver, addr, duration }: ReturnType<typeof makeData>,
       index: number,
     ) => {
-      const price = await controller.read.rentPrice(label, duration)
+      const price = await controller.read.rentPrice([label, duration])
 
       const _controller = controller.connect(await ethers.getSigner(registrant))
 
