@@ -218,7 +218,8 @@ export const TabBar = () => {
   const { address } = useAccountSafely()
   const primary = usePrimaryName({ address })
 
-  const hasPrimary = !!primary.data?.name
+  const primaryName = primary.data?.name
+  const hasPrimary = !!primaryName
   const hasBack = !!router.query.from
 
   const [isOpen, setIsOpen] = useState(false)
@@ -243,7 +244,7 @@ export const TabBar = () => {
     <>
       <TabWrapper id="tabbar">
         {hasBack && (
-          <BackButton onClick={() => router.back()}>
+          <BackButton data-testid="tabbar-back" onClick={() => router.back()}>
             <LeftChevronSVG />
           </BackButton>
         )}
@@ -260,7 +261,7 @@ export const TabBar = () => {
                   address={address}
                   isOpen={isOpen}
                   setIsOpen={setIsOpen}
-                  name={primary.data?.name}
+                  name={primaryName}
                 />
               </>
             )}

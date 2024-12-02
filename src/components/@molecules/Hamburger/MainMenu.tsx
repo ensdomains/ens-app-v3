@@ -12,14 +12,6 @@ import {
   WalletSVG,
 } from '@ensdomains/thorin'
 
-import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
-import SocialDiscourse from '@app/assets/social/SocialDiscourse.svg'
-import SocialDiscourseColour from '@app/assets/social/SocialDiscourseColour.svg'
-import SocialGithub from '@app/assets/social/SocialGithub.svg'
-import SocialMirror from '@app/assets/social/SocialMirror.svg'
-import SocialMirrorColour from '@app/assets/social/SocialMirrorColour.svg'
-import SocialX from '@app/assets/social/SocialX.svg'
-import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/chain/useChainName'
@@ -295,24 +287,12 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         ))}
       </RoutesSection>
       <SocialSection>
-        <SocialIcon Icon={SocialX} color="black" href="https://x.com/ensdomains" />
-        <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
-        <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
-        <SocialIcon
-          Icon={SocialMirror}
-          ColoredIcon={SocialMirrorColour}
-          href="https://ens.mirror.xyz"
-        />
-        <SocialIcon
-          Icon={SocialDiscourse}
-          ColoredIcon={SocialDiscourseColour}
-          href="https://discuss.ens.domains/"
-        />
-        <SocialIcon
-          Icon={SocialYoutube}
-          color="#EE1919"
-          href="https://www.youtube.com/ensdomains"
-        />
+        <SocialIcon social="x" color="black" href="https://x.com/ensdomains" />
+        <SocialIcon social="github" color="#0F0F0F" href="https://github.com/ensdomains" />
+        <SocialIcon social="discord" color="#7F83FF" href="https://chat.ens.domains" />
+        <SocialIcon social="mirror" href="https://ens.mirror.xyz" />
+        <SocialIcon social="discourse" href="https://discuss.ens.domains/" />
+        <SocialIcon social="youtube" color="#EE1919" href="https://www.youtube.com/ensdomains" />
       </SocialSection>
       <NetworkSection />
     </Container>
