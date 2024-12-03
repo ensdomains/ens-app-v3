@@ -1,7 +1,8 @@
 // import { useSearchParams } from 'next/dist/client/components/navigation'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+
+import { getChainFromSubdomain, getChainFromUrl } from '@app/utils/utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -41,7 +42,7 @@ const useGetConifguredChain = () => {
   */
 
 export const TestnetWarning = () => {
-  const { chain } = useAccount()
+  const chain = getChainFromUrl()
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {

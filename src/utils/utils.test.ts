@@ -1,4 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+
+import { holeskyWithEns, mainnetWithEns, sepoliaWithEns } from '@app/constants/chains'
 
 import { dateFromDateDiff } from './date'
 import {
@@ -12,6 +14,7 @@ import {
   formatDurationOfDates,
   formatExpiry,
   formatFullExpiry,
+  getChainFromUrl,
   getEncodedLabelAmount,
   getLabelFromName,
   getResolverWrapperAwareness,
@@ -131,7 +134,7 @@ describe('formatDurationOfDates', () => {
       formatDurationOfDates({
         startDate: new Date(),
         endDate: new Date(Date.now() + 123 * 1000),
-        t: (x, options: any) =>  x + options?.count,
+        t: (x, options: any) => x + options?.count,
       }),
     ).toEqual('unit.days0')
   })
@@ -352,5 +355,83 @@ describe('getEncodedLabelAmount', () => {
       '[fa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b].[fa1ea47215815692a5f1391cff19abbaf694c82fb2151a4c351b6c0eeaaf317b].eth'
     const result = getEncodedLabelAmount(name)
     expect(result).toEqual(2)
+  })
+})
+
+describe('getChainFromSubdomain', () => {
+  const originalWindow = { ...window }
+
+  beforeEach(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        hostname: '',
+      },
+      writable: true,
+    })
+  })
+
+  afterEach(() => {
+    window.location = originalWindow.location
+  })
+
+  it('should return sepoliaWithEns for valid sepolia subdomain', () => {
+    window.location.hostname = 'sepolia.app.ens.domains'
+    const chain = getChainFromUrl()
+    expect(chain).toBe(sepoliaWithEns)
+  })
+
+  it('should return holeskyWithEns for valid holesky subdomain', () => {
+    window.location.hostname = 'holesky.app.ens.domains'
+    const chain = getChainFromUrl()
+    expect(chain).toBe(holeskyWithEns)
+  })
+
+  it('should return mainnetWithEns for non-app.ens.domains hostname', () => {
+    window.location.hostname = 'sepolia.other.domain.com'
+    const chain = getChainFromUrl()
+    expect(chain).toBe(mainnetWithEns)
+  })
+
+  it('should return mainnetWithEns for hostname with incorrect segment count', () => {
+    window.location.hostname = 'test.sepolia.app.ens.domains' // 5 segments
+    const chain = getChainFromUrl()
+    expect(chain).toBe(mainnetWithEns)
+  })
+
+  it('should return mainnetWithEns when window is undefined', () => {
+    const originalWindow = global.window
+    // @ts-ignore
+    delete global.window
+    const chain = getChainFromUrl()
+    expect(chain).toBe(mainnetWithEns)
+    global.window = originalWindow
+  })
+
+  it('should use chain param for dev environment', () => {
+    window.location.hostname = 'test.ens-app-v3.pages.dev'
+    window.location.search = '?chain=sepolia'
+    const chain = getChainFromUrl()
+    expect(chain).toBe(sepoliaWithEns)
+  })
+
+  it('should use holesky chain param for dev environment', () => {
+    window.location.hostname = 'test.ens-app-v3.pages.dev'
+    window.location.search = '?chain=holesky'
+    const chain = getChainFromUrl()
+    expect(chain).toBe(holeskyWithEns)
+  })
+
+  it('should fallback to mainnet for dev environment with invalid chain param', () => {
+    window.location.hostname = 'test.ens-app-v3.pages.dev'
+    window.location.search = '?chain=invalid'
+    const chain = getChainFromUrl()
+    expect(chain).toBe(mainnetWithEns)
+  })
+
+  it('should ignore chain param for non-dev environment', () => {
+    window.location.hostname = 'sepolia.app.ens.domains'
+    window.location.search = '?chain=holesky'
+    const chain = getChainFromUrl()
+    expect(chain).toBe(sepoliaWithEns)
   })
 })
