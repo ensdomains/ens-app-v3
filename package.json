@@ -123,7 +123,7 @@
     "@types/node": "^18.7.13",
     "@types/pako": "^2.0.0",
     "@types/prettier": "^2.7.0",
-    "@types/react": "18.2.21",
+    "@types/react": "18.3.12",
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "5.1.23",
     "@types/ws": "^8.5.10",
