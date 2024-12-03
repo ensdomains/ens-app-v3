@@ -182,7 +182,6 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
 
   const abilities = useAbilities({ name: normalisedName })
 
-  useRenew(normalisedName)
   // hook for redirecting to the correct profile url
   // profile.decryptedName fetches labels from NW/subgraph
   // normalisedName fetches labels from localStorage
@@ -202,6 +201,8 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   //     router.push(`/import/${name}`)
   //   }
   // }, [name, router, transactions])
+
+  useRenew(normalisedName)
 
   const infoBanner = useMemo(() => {
     if (

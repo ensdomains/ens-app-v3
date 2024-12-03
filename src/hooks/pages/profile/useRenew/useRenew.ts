@@ -7,9 +7,9 @@ import { useAccount } from 'wagmi'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { validateExtendNamesDuration } from '@app/transaction-flow/input/ExtendNames/utils/validateExtendNamesDuration'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { RegistrationStatus } from '@app/utils/registrationStatus'
-import { parseNumericString } from '@app/utils/string'
 
 type RenewStatus = 'connect-user' | 'display-extend-names' | 'idle'
 
@@ -44,15 +44,10 @@ export const calculateRenewState = ({
     !!name &&
     isNameRegisteredOrGracePeriod &&
     !!renewSeconds &&
-    !connectModalOpen
-
-  if (
-    isRenewActive &&
-    accountStatus === 'disconnected' &&
-    !!openConnectModal &&
+    !connectModalOpen &&
     !openedConnectModal
-  )
-    return 'connect-user'
+
+  if (isRenewActive && accountStatus === 'disconnected' && !!openConnectModal) return 'connect-user'
   if (isRenewActive && accountStatus === 'connected' && !isAbilitiesLoading)
     return 'display-extend-names'
   return 'idle'
@@ -86,7 +81,7 @@ export function useRenew(name: string) {
 
   const { data: { canSelfExtend } = {}, isLoading: isAbilitiesLoading } = abilities
 
-  const renewSeconds = parseNumericString(searchParams.get('renew'))
+  const renewSeconds = validateExtendNamesDuration({ duration: searchParams.get('renew') })
 
   const renewState = calculateRenewState({
     registrationStatus,
