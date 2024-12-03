@@ -94,7 +94,8 @@ export const useResolverStatus = ({
       hasResolver: !!profileResolverAddress && profileResolverAddress !== emptyAddress,
       hasLatestResolver: resolverType.data?.type === 'latest',
       isNameWrapperAware: profileResolverAddress
-        ? getResolverWrapperAwareness({ resolverAddress: profileResolverAddress, chainId })
+        ? getResolverWrapperAwareness({ resolverAddress: profileResolverAddress, chainId }) ||
+          resolverIsAuthorised.data?.isAuthorised
         : false,
       hasProfile: profileHasRecords(profile),
     }
