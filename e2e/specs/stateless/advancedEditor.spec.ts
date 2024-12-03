@@ -152,7 +152,6 @@ test('should maintain state and when returning from transaction modal when addin
 
   await recordsPage.goto(name)
   await login.connect()
-  await page.pause()
 
   // Validate records
   await expect(recordsPage.getRecordValue('text', 'name')).toHaveText('Bob')
@@ -257,7 +256,7 @@ test('should maintain state and when returning from transaction modal when addin
   await transactionModal.autoComplete()
 
   // Validate change in records
-  await page.pause()
+
   await expect(recordsPage.getRecordValue('text', 'name')).toHaveText('Nick')
   await expect(recordsPage.getRecordValue('text', 'another text')).toHaveText('another record')
   await expect(recordsPage.getRecordValue('address', 'bnb')).toHaveText(
@@ -266,7 +265,7 @@ test('should maintain state and when returning from transaction modal when addin
   await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
     '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
   )
-  await page.pause()
+
   await expect(recordsPage.getRecordValue('contentHash')).toHaveText(
     'bzz://e40101fa011b20d1de9994b4d039f6548d191eb26786769f580809256b4685ef316805265ea162'.toLowerCase(),
   )

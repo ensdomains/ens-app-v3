@@ -186,7 +186,7 @@ test.describe('profile', () => {
 
     await morePage.goto(subname)
     await login.connect()
-    await page.pause()
+
     await expect(morePage.resolver).toContainText(UNAUTHORISED_RESOLVER)
 
     await profilePage.goto(subname)
@@ -317,7 +317,7 @@ test.describe('profile', () => {
 
     await profilePage.goto(subname)
     await login.connect()
-    await page.pause()
+
     // Assert state
     await expect(page.getByTestId('profile-title')).not.toContainText(subname)
 
@@ -426,8 +426,6 @@ test.describe('profile', () => {
     await profilePage.goto(subname)
     await login.connect()
 
-    await page.pause()
-
     // Assert state
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(
       accounts.getAddress('user', 5),
@@ -481,8 +479,6 @@ test.describe('profile', () => {
 
     await profilePage.goto(name)
     await login.connect()
-
-    await page.pause()
 
     await expect(page.getByTestId('profile-action-Set as primary name')).toHaveCount(0)
 
