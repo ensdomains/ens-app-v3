@@ -13,6 +13,7 @@ import {
 import { TFunction, useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { Address, isAddress } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
 
@@ -343,17 +344,12 @@ const createSearchHandler =
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
 
-    if (path === `/register/${text}`) {
-      trackEvent({
-        eventName: 'search_selected_eth',
-        customProperties: { name: text },
-      })
-    } else if (path === `/dotbox/${text}`) {
-      trackEvent({
-        eventName: 'search_selected_box',
-        customProperties: { name: text },
-      })
-    }
+    const eventName = match(path)
+      .with(`/register/${text}`, () => 'search_selected_eth' as const)
+      .with(`/dotbox/${text}`, () => 'search_selected_box' as const)
+      .with(`/import/${text}`, () => 'search_selected_dns' as const)
+      .otherwise(() => undefined)
+    if (eventName) trackEvent({ eventName, customProperties: { name: text } })
 
     setInputVal('')
     searchInputRef.current?.blur()

@@ -469,6 +469,15 @@ export const TransactionStageModal = ({
   }, [helper])
 
   const ActionButton = useMemo(() => {
+    const handleCompleteTransaction = () => {
+      dispatch({ name: 'incrementTransaction' })
+
+      if (actionName === 'approveDnsRegistrar') {
+        trackEvent({
+          eventName: 'register_started_dns',
+        })
+      }
+    }
     if (stage === 'complete') {
       const final = currentStep + 1 === stepCount
 
@@ -486,7 +495,7 @@ export const TransactionStageModal = ({
       return (
         <Button
           data-testid="transaction-modal-complete-button"
-          onClick={() => dispatch({ name: 'incrementTransaction' })}
+          onClick={() => handleCompleteTransaction()}
         >
           {t('action.next')}
         </Button>
@@ -542,12 +551,14 @@ export const TransactionStageModal = ({
         onClick={() => {
           sendTransaction(request!)
 
-          if (['commitName', 'registerName'].includes(actionName)) {
-            trackEvent({
-              eventName:
-                actionName === 'commitName' ? 'commit_wallet_opened' : 'register_wallet_opened',
-            })
-          }
+          const eventName = match(actionName)
+            .with('commitName', () => 'commit_wallet_opened' as const)
+            .with('registerName', () => 'register_wallet_opened' as const)
+            .with('approveDnsRegistrar', () => 'dns_approve_registrar_wallet_opened' as const)
+            .with('importDnsName', () => 'dns_import_wallet_opened' as const)
+            .with('claimDnsName', () => 'dns_claim_wallet_opened' as const)
+            .otherwise(() => undefined)
+          if (eventName) trackEvent({ eventName })
         }}
         data-testid="transaction-modal-confirm-button"
       >

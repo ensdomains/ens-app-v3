@@ -18,7 +18,6 @@ test('should go to the address page', async ({ page, login }) => {
   await page.goto('/')
   await login.connect()
 
-  await page.pause()
   await page
     .getByPlaceholder('Search for a name')
     .fill('0xFc5958B4B6F9a06D21E06429c8833f865577acf0')

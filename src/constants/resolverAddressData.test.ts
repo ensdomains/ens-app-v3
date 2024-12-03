@@ -1,7 +1,7 @@
 import { getChainContractAddress } from 'viem/utils'
-import { describe, expect, it } from 'vitest'
+import { expect, it } from 'vitest'
 
-import { goerliWithEns, localhostWithEns, mainnetWithEns, sepoliaWithEns } from './chains'
+import { mainnetWithEns, sepoliaWithEns } from './chains'
 
 ;(process.env as any).NODE_ENV = 'development'
 
@@ -11,9 +11,6 @@ it('should have the most recent resolver as the first address', async () => {
 
   expect(KNOWN_RESOLVER_DATA['1']![0].address).toEqual(
     getChainContractAddress({ chain: mainnetWithEns, contract: 'ensPublicResolver' }),
-  )
-  expect(KNOWN_RESOLVER_DATA['5']![0].address).toEqual(
-    getChainContractAddress({ chain: goerliWithEns, contract: 'ensPublicResolver' }),
   )
   expect(KNOWN_RESOLVER_DATA['11155111']![0].address).toEqual(
     getChainContractAddress({ chain: sepoliaWithEns, contract: 'ensPublicResolver' }),

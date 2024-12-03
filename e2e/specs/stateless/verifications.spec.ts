@@ -272,8 +272,6 @@ test.describe('Verified records', () => {
 
     await page.goto(`/${name}`)
 
-    await page.pause()
-
     await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
 
     await profilePage.isRecordVerified('text', 'com.twitter', false)
@@ -346,8 +344,6 @@ test.describe('Verified records', () => {
     })
 
     await page.goto(`/${name}`)
-
-    await page.pause()
 
     await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
 
