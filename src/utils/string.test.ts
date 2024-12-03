@@ -1,5 +1,6 @@
-import { it, describe, expect } from "vitest";
-import { parseNumericString } from "./string";
+import { describe, expect, it } from 'vitest'
+
+import { parseNumericString } from './string'
 
 describe('parseNumericString', () => {
   it('should return an integer', () => {
@@ -22,7 +23,7 @@ describe('parseNumericString', () => {
     expect(parseNumericString('-123')).toBe(null)
   })
 
-  it('should return null for a negative number', () => {
+  it('should return null for a invalid number', () => {
     expect(parseNumericString('1a23')).toBe(null)
   })
 })

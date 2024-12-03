@@ -1,9 +1,11 @@
-export const parseNumericString = (time: string | null): number | null => {
-  if (!time) return null
+export const parseNumericString = (value: string | null): number | null => {
+  if (!value) return null
 
-  if (typeof +time === 'number' && !Number.isNaN(+time)) {
-    return +time
+  const parsed = Number(value)
+
+  if (typeof parsed !== 'number' || Number.isNaN(parsed) || parsed < 0) {
+    return null
   }
 
-  return null
+  return parseInt(String(parsed))
 }
