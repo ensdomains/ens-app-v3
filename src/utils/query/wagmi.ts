@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import { createClient, type FallbackTransport, type HttpTransport, type Transport } from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
 import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
@@ -105,7 +106,13 @@ const wagmiConfig_ = createConfig({
   multiInjectedProviderDiscovery: true,
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
-  client: ({ chain }) => {
+  client: () => {
+    const subdomain = typeof window !== 'undefined' ? window.location.hostname.split('.')[0] : ''
+    const chain = match(subdomain)
+      .with('sepolia', () => sepoliaWithEns)
+      .with('holesky', () => holeskyWithEns)
+      .otherwise(() => mainnetWithEns)
+
     const chainId = chain.id
 
     return createClient<Transport, typeof chain>({
