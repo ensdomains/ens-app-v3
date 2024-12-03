@@ -4,7 +4,8 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
-import { useChainId } from 'wagmi'
+
+// import { useChainId } from 'wagmi'
 
 import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
@@ -29,7 +30,8 @@ import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEd
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { getResolverWrapperAwareness } from '@app/utils/utils'
+
+// import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
@@ -181,8 +183,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverStatus = useResolverStatus({
     name,
   })
+  console.log('resolverStatus', resolverStatus)
 
-  const chainId = useChainId()
+  // const chainId = useChainId()
 
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
@@ -233,11 +236,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     setView('addRecord')
   }
 
-  const canEditRecordsWhenWrapped = match(isWrapped)
-    .with(true, () =>
-      getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress }),
-    )
-    .otherwise(() => true)
+  const canEditRecordsWhenWrapped = !!resolverStatus.data?.isAuthorized
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
