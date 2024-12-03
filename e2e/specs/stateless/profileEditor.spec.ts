@@ -84,7 +84,7 @@ const makeRecords = async (overwrites: RecordOptions = {}): Promise<RecordOption
 }
 
 test.describe('profile', () => {
-  test('should display profile records', async ({ page, login, makeName, makePageObject }) => {
+  test('should display profile records', async ({ login, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'profile',
       type: 'legacy',
@@ -96,7 +96,6 @@ test.describe('profile', () => {
     await profilePage.goto(name)
     await login.connect()
 
-    await page.pause()
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
     await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
     await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
@@ -126,7 +125,6 @@ test.describe('profile', () => {
 
     await expect(page).toHaveURL(`/${name}`)
 
-    await page.pause()
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
     await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
     await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
@@ -196,7 +194,6 @@ test.describe('migrations', () => {
   })
 
   test('should force a name with an unauthorised resolver to update their resolver', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -215,7 +212,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect('user2')
-    await page.pause()
 
     await expect(morePage.resolver.getByText(ownedResolverAddress)).toBeVisible()
 
@@ -231,7 +227,6 @@ test.describe('migrations', () => {
   })
 
   test('should force a name with an invalid resolver to update their resolver', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -250,7 +245,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(invalidResolverAddress)).toBeVisible()
 
@@ -266,7 +260,6 @@ test.describe('migrations', () => {
   })
 
   test('should force a wrapped name with a resolver that is not name wrapper aware to migrate update their resolver', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -283,7 +276,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver).toHaveText(oldResolver)
 
@@ -329,7 +321,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
@@ -350,7 +341,7 @@ test.describe('migrations', () => {
     await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
 
     await recordsPage.goto(name)
-    await page.pause()
+
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('Hello2')
     await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
@@ -399,7 +390,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
@@ -424,7 +414,7 @@ test.describe('migrations', () => {
     await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
 
     await recordsPage.goto(name)
-    await page.pause()
+
     await expect(page.getByTestId('text-amount')).toHaveText('0 Records')
     await expect(page.getByTestId('address-amount')).toHaveText('0 Records')
     await expect(page.getByText('No Content Hash')).toBeVisible()
@@ -466,7 +456,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
@@ -484,7 +473,7 @@ test.describe('migrations', () => {
     await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
 
     await recordsPage.goto(name)
-    await page.pause()
+
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('New profile')
     await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
@@ -538,7 +527,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
@@ -547,7 +535,6 @@ test.describe('migrations', () => {
     await expect(page.getByText('Resolver out of sync')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
-    await page.pause()
     await page.getByTestId('migrate-profile-selector-current').check()
     await expect(page.getByTestId('migrate-profile-selector-current')).toBeChecked()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -561,7 +548,7 @@ test.describe('migrations', () => {
     await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
 
     await recordsPage.goto(name)
-    await page.pause()
+
     await expect(page.getByTestId('text-amount')).toHaveText('3 Records')
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('Hello2')
@@ -615,7 +602,6 @@ test.describe('migrations', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
@@ -624,12 +610,9 @@ test.describe('migrations', () => {
     await expect(page.getByText('Resolver out of sync')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
-    await page.pause()
     await page.getByTestId('migrate-profile-selector-reset').check()
     await expect(page.getByTestId('migrate-profile-selector-reset')).toBeChecked()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
-
-    await page.pause()
 
     await expect(page.getByText('Reset profile')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -640,7 +623,7 @@ test.describe('migrations', () => {
     await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
 
     await recordsPage.goto(name)
-    await page.pause()
+
     await expect(page.getByTestId('text-amount')).toHaveText('0 Records')
     await expect(page.getByTestId('address-amount')).toHaveText('0 Records')
     await expect(page.getByText('No Content Hash')).toBeVisible()
@@ -650,7 +633,6 @@ test.describe('migrations', () => {
 
 test.describe('unwrapped', () => {
   test('should be able to add/update profile records without migration', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -670,7 +652,6 @@ test.describe('unwrapped', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
@@ -702,7 +683,6 @@ test.describe('unwrapped', () => {
     await morePage.goto(name)
     await expect(morePage.resolver).toHaveText(oldResolver)
 
-    await page.pause()
     await recordsPage.goto(name)
     await expect(recordsPage.getRecordValue('text', 'location')).toHaveText('L1 chain')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('new name')
@@ -737,7 +717,6 @@ test.describe('unwrapped', () => {
 
     await morePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
 
@@ -785,7 +764,6 @@ test.describe('unwrapped', () => {
     await morePage.goto(name)
     await expect(morePage.resolver).toHaveText(oldResolver)
 
-    await page.pause()
     await recordsPage.goto(name)
     await expect(page.getByTestId('text-amount')).toHaveText('0 Records')
     await expect(page.getByTestId('address-amount')).toHaveText('0 Records')
@@ -796,7 +774,6 @@ test.describe('unwrapped', () => {
 
 test.describe('wrapped', () => {
   test('should be able to add/update profile records without migration', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -814,7 +791,6 @@ test.describe('wrapped', () => {
 
     await profilePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
     await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
@@ -838,7 +814,6 @@ test.describe('wrapped', () => {
 
     await transactionModal.autoComplete()
 
-    await page.pause()
     await recordsPage.goto(name)
     await expect(recordsPage.getRecordValue('text', 'location')).toHaveText('L1 chain')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('new name')
@@ -871,7 +846,6 @@ test.describe('wrapped', () => {
 
     await profilePage.goto(name)
     await login.connect()
-    await page.pause()
 
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
     await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
@@ -911,7 +885,6 @@ test.describe('wrapped', () => {
 
     await transactionModal.autoComplete()
 
-    await page.pause()
     await recordsPage.goto(name)
     await expect(page.getByTestId('text-amount')).toHaveText('0 Records')
     await expect(page.getByTestId('address-amount')).toHaveText('0 Records')

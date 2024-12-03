@@ -85,7 +85,6 @@ const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: 
     errorForRecordAtIndex,
     isDirtyForRecordAtIndex,
   } = useProfileEditorForm(existingRecords)
-  console.log(existingRecords)
   const handleSubmit = () => {
     const payload = [
       createTransactionItem('createSubname', {

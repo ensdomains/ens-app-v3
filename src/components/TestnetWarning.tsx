@@ -1,4 +1,4 @@
-import { useSearchParams } from 'next/dist/client/components/navigation'
+// import { useSearchParams } from 'next/dist/client/components/navigation'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -14,6 +14,7 @@ const Container = styled.div(
   `,
 )
 
+/*
 const getChainFromQueryString = (searchParams: URLSearchParams) => {
   // Query param only possible in test/dev
   if (
@@ -29,14 +30,15 @@ const getChainFromQueryString = (searchParams: URLSearchParams) => {
 }
 
 const getChainFromSubdomain = (subdomain: string) => {
-  if (subdomain === 'testnet') return chains[0]
-  if (subdomain === 'beta') return chains[1]
-  return chains[2]
+  // if (subdomain === 'testnet') return chains[0]
+  // if (subdomain === 'beta') return chains[1]
+  // return chains[2]
 }
 
 const useGetConifguredChain = () => {
   const searchParams = useSearchParams()
 }
+  */
 
 export const TestnetWarning = () => {
   const { chain } = useAccount()
