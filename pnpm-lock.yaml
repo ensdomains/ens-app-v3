@@ -128,8 +128,8 @@ importers:
         specifier: 4.0.2
         version: 4.0.2(encoding@0.1.13)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       '@ensdomains/thorin':
-        specifier: 1.0.0-beta.10
-        version: 1.0.0-beta.10(@vanilla-extract/css@1.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 1.0.0-beta.11
+        version: 1.0.0-beta.11(@vanilla-extract/css@1.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@metamask/post-message-stream':
         specifier: ^6.1.2
         version: 6.2.0
@@ -1648,8 +1648,8 @@ packages:
   '@ensdomains/solsha1@0.0.3':
     resolution: {integrity: sha512-uhuG5LzRt/UJC0Ux83cE2rCKwSleRePoYdQVcqPN1wyf3/ekMzT/KZUF9+v7/AG5w9jlMLCQkUM50vfjr0Yu9Q==}
 
-  '@ensdomains/thorin@1.0.0-beta.10':
-    resolution: {integrity: sha512-Lvfuq60XVHoGJvRFB2rI6wD96E9VHomKx5KHiN5dt0Ij0sok3tcbNnC6vcY9J9RI44Z0WMPwPhxaVXk/vN+7/Q==}
+  '@ensdomains/thorin@1.0.0-beta.11':
+    resolution: {integrity: sha512-92B8qTpzNw30mh6gJcXAA8RdgbYJzis2zKank3crBxyxPj1KNW9jmZ6j+tWG1sgZA724woOk3VFCLLEkAVw5+A==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -11599,7 +11599,7 @@ snapshots:
     dependencies:
       hash-test-vectors: 1.3.2
 
-  '@ensdomains/thorin@1.0.0-beta.10(@vanilla-extract/css@1.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@ensdomains/thorin@1.0.0-beta.11(@vanilla-extract/css@1.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@vanilla-extract/sprinkles': 1.6.3(@vanilla-extract/css@1.14.0)
       clsx: 2.1.1
