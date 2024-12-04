@@ -143,7 +143,7 @@ const LanguageMenu = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialLanguage = useMemo(() => i18n.resolvedLanguage, [])
   const languages = (i18n.options.supportedLngs || [])
-    .filter((lang: string) => lang && lang !== 'cimode')
+    .filter((lang) => lang && lang !== 'cimode')
     .sort((a, b) => {
       if (a === initialLanguage) {
         return -1
@@ -157,7 +157,7 @@ const LanguageMenu = ({
   return (
     <Container>
       <HeadingWrapper>
-        <Heading onClick={() => setCurrentView('main')}>
+        <Heading data-testid="lang-header" onClick={() => setCurrentView('main')}>
           <LeftArrowSVG />
           <InnerHeading>
             <LanguageSVG />
@@ -166,11 +166,16 @@ const LanguageMenu = ({
         </Heading>
       </HeadingWrapper>
       <LanguagesContainer>
-        {languages.map((lang: string) => (
-          <LanguageItem key={lang} onClick={() => i18n.changeLanguage(lang)}>
+        {languages.map((lang) => (
+          <LanguageItem
+            key={lang}
+            data-testid={`lang-${lang}`}
+            onClick={() => i18n.changeLanguage(lang)}
+          >
             <div>
               <CheckIcon
                 as={CheckCircleSVG}
+                data-testid={`check-lang-${lang}`}
                 style={{ display: i18n.resolvedLanguage === lang ? 'block' : 'none' }}
               />
               <Typography>{ISO6391.getNativeName(lang)}</Typography>
