@@ -18,7 +18,7 @@ describe('calculateRenewState', () => {
     })).toBe('connect-user')
   })
 
-  it('should return connect-user if accountStatus is connected', () => {
+  it('should return display-extend-names if accountStatus is connected', () => {
     expect(calculateRenewState({
       registrationStatus: 'registered',
       isRegistrationStatusLoading: false,
