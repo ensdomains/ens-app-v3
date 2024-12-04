@@ -248,7 +248,7 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
   const { userConfig, setCurrency } = useUserConfig()
 
   return (
-    <Container>
+    <Container data-testid="main-menu">
       <SettingsSection>
         <HoverableSettingsItem onClick={() => setCurrentView('language')}>
           <div>

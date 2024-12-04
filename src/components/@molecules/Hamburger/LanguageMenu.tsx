@@ -155,7 +155,7 @@ const LanguageMenu = ({
     })
 
   return (
-    <Container>
+    <Container data-testid="lang-menu">
       <HeadingWrapper>
         <Heading data-testid="lang-header" onClick={() => setCurrentView('main')}>
           <LeftArrowSVG />
