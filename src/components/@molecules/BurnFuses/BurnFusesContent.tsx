@@ -128,20 +128,20 @@ const ButtonsContainer = styled.div(
   `,
 )
 
-const canContinue = (
+export const canContinue = (
   fuseData: CurrentChildFuses,
   fuseSelected: CurrentChildFuses,
   canUnsetFuse: boolean,
 ) => {
   const filteredInitialFuseData: CurrentChildFuses = { ...fuseData }
-  Object.keys(filteredInitialFuseData).forEach((key: string) => {
+  Object.keys(filteredInitialFuseData).forEach((key) => {
     if (filteredInitialFuseData[key as ChildFuseReferenceType['Key']]) {
       delete filteredInitialFuseData[key as ChildFuseReferenceType['Key']]
     }
   })
   const cannotUnwrap = !fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP
   if (canUnsetFuse) {
-    if (Object.values(fuseSelected).some((val) => val) && !fuseSelected.CANNOT_UNWRAP) return true
+    if (Object.values(fuseSelected).some((v) => v) && !fuseSelected.CANNOT_UNWRAP) return true
     return false
   }
   return isEqual(filteredInitialFuseData, fuseSelected) || cannotUnwrap
@@ -229,6 +229,7 @@ const BurnFusesContent = ({
       <BurnButtonsContainer>
         {Object.entries(_fuseData).map(([key, value]) => (
           <BurnButton
+            key={key}
             {...{
               permission: key as ChildFuseReferenceType['Key'],
               isBurned: !!value && !canUnsetFuse,
