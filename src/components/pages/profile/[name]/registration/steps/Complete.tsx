@@ -50,9 +50,9 @@ const ButtonContainer = styled.div(
     justify-content: center;
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}) {
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -77,10 +77,11 @@ const InvoiceContainer = styled.div(
     justify-content: center;
     flex-direction: column;
     gap: ${theme.space['4']};
-    ${mq.sm.min(css`
+
+    @media (min-width: ${theme.breakpoints.sm}) {
       gap: ${theme.space['6']};
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -109,7 +110,7 @@ const SubtitleWithGradient = styled(Typography)(
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
 
-    background-image: ${theme.colors.gradients.blue};
+    background-image: ${theme.colors.blueGradient};
     /* stylelint-disable property-no-vendor-prefix */
     -webkit-background-clip: text;
     -moz-background-clip: text;

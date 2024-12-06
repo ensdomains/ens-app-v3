@@ -21,7 +21,7 @@ const Container = styled.div<{ $banner?: string }>(
     width: 100%;
     padding: ${theme.space['4']};
     padding-top: ${theme.space['18']};
-    background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
+    background-image: ${$banner ? `url(${$banner})` : theme.colors.blueGradient};
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-size: 100% ${theme.space['28']};

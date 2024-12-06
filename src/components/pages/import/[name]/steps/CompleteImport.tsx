@@ -68,7 +68,7 @@ const SubtitleWithGradient = styled(Typography)(
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
 
-    background: ${theme.colors.gradients.blue};
+    background: ${theme.colors.blueGradient};
     /* stylelint-disable property-no-vendor-prefix */
     -webkit-background-clip: text;
     -moz-background-clip: text;

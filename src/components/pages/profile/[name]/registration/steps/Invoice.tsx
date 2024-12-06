@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CalendarSVG, Colors, Dropdown, mq, Skeleton, Typography } from '@ensdomains/thorin'
+import { CalendarSVG, Colors, Dropdown, Skeleton, Typography } from '@ensdomains/thorin'
 
 import { CurrencyText } from '@app/components/@atoms/CurrencyText/CurrencyText'
 import { useCalendarOptions } from '@app/hooks/useCalendarOptions'
@@ -27,10 +27,10 @@ const Container = styled.div(
     border-radius: ${theme.space['2']};
     border: 1px solid #e8e8e8;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}) {
       grid-template-columns: 1fr;
-      column-gap: 0px;
-    `)}
+      column-gap: 0;
+    }
   `,
 )
 
@@ -41,7 +41,7 @@ const LineItem = styled.div<{ $color?: Colors }>(
     justify-content: space-between;
     gap: ${theme.space['1']};
     line-height: ${theme.space['5']};
-    color: ${$color ? theme.colors[$color] : theme.colors.textTertiary};
+    color: ${$color ? theme.colors[$color] : theme.colors.grey};
 
     &:not(:last-of-type) {
       padding-bottom: ${theme.space['4']};
@@ -90,7 +90,7 @@ export const Invoice = ({ name, expiryTitle, expiryDate, items }: Props) => {
     <Container>
       {items.map(({ label, value, bufferPercentage }, inx) => (
         <LineItem data-testid={`invoice-item-${inx}`} key={label}>
-          <Typography fontVariant="small" color="textTertiary">
+          <Typography fontVariant="small" color="grey">
             {label}
           </Typography>
           <Skeleton loading={!value}>
@@ -99,7 +99,7 @@ export const Invoice = ({ name, expiryTitle, expiryDate, items }: Props) => {
             </Typography>
             <Typography
               fontVariant="small"
-              color="textTertiary"
+              color="grey"
               data-testid={`invoice-item-${inx}-amount-usd`}
             >
               <CurrencyText bufferPercentage={bufferPercentage} eth={value || 0n} currency="usd" />
@@ -109,7 +109,7 @@ export const Invoice = ({ name, expiryTitle, expiryDate, items }: Props) => {
       ))}
 
       <LineItem data-testid="invoice-item-expiry">
-        <Typography fontVariant="small" color="textTertiary">
+        <Typography fontVariant="small" color="grey">
           {expiryTitle}
         </Typography>
         <Typography color="textPrimary" data-testid="invoice-item-expiry-date">

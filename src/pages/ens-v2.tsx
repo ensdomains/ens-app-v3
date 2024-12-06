@@ -222,9 +222,9 @@ const AnnouncementContainer = styled.div(
     flex-direction: column;
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}) {
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -271,7 +271,7 @@ export default function ENSv2() {
         allowFullScreen
       />
       <CenteredCard>
-        <Typography fontVariant="headingTwo" asProp="h2">
+        <Typography fontVariant="headingTwo" as="h2">
           {t('learn-more.title')}
         </Typography>
         <Typography fontVariant="body">{t('learn-more.caption')}</Typography>
@@ -288,7 +288,7 @@ export default function ENSv2() {
       </CenteredCard>
       <GridOneToThree>
         <CardWithEmoji>
-          <Typography fontVariant="headingTwo" asProp="h2">
+          <Typography fontVariant="headingTwo" as="h2">
             {t('accessible.title')}
           </Typography>
           <Typography fontVariant="body">{t('accessible.caption')}</Typography>
@@ -326,7 +326,7 @@ export default function ENSv2() {
         </Card>
       </GridOneToThree>
       <SlideshowContainer>
-        <Typography asProp="h3" fontVariant="headingThree">
+        <Typography as="h3" fontVariant="headingThree">
           {t('announcement.title')}
         </Typography>
         {/* <Carousel>
