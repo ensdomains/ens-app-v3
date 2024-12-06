@@ -50,7 +50,22 @@ const getAmountFromHex = (hex: `0x${string}`) => formatEther(BigInt(hex))
 const msToDays = (ms: number) => Math.floor(ms / 1000 / 60 / 60 / 24)
 const chainEthTicker = (chainName: string) => `${chainName.slice(0, 2)}ETH`
 
+const useDialogState = () => {
+  const [isOpen, setOpen] = useState(false)
+
+  const closeDialog = () => setOpen(false)
+  const openDialog = () => setOpen(true)
+
+  return {
+    isOpen,
+    openDialog,
+    closeDialog,
+  }
+}
+
 const FaucetBanner = () => {
+  const { t } = useTranslation()
+
   const chainName = useChainName()
   const { isReady } = useRouter()
   const { address } = useAccountSafely()
@@ -59,12 +74,10 @@ const FaucetBanner = () => {
     isLoading,
     mutation: { isPending: mutationLoading, isError, mutate, isSuccess, error },
   } = useFaucet()
-  const dialogStage = isSuccess ? 'success' : 'default'
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const { t } = useTranslation()
 
-  const closeDialog = () => setDialogOpen(false)
-  const openDialog = () => setDialogOpen(true)
+  const dialogStage = isSuccess ? 'success' : 'default'
+
+  const { isOpen: dialogOpen, closeDialog, openDialog } = useDialogState()
 
   const amount = useMemo(() => getAmountFromHex(data?.amount || '0x0'), [data?.amount])
 
@@ -78,6 +91,7 @@ const FaucetBanner = () => {
   const BannerComponent = (
     <BannerWrapper>
       <StyledBanner
+        data-testid="faucet-banner-trigger"
         actionIcon={<RightArrowSVG />}
         icon={<EthSVG />}
         onClick={openDialog}
