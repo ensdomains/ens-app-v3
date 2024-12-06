@@ -26,6 +26,10 @@ vi.mock('@app/hooks/useRegistrationReducer', () => vi.fn(() => ({ item: { stepIn
 
 export const mockUseAccountReturnValue = { address: '0x123' }
 
+export const changeLanguageMock = vi.fn()
+
+export const mockSupportedLngs = ['en', 'fr', 'de', 'es', 'cimode']
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (value: string, opts: any) => {
@@ -34,6 +38,11 @@ vi.mock('react-i18next', () => ({
     },
     i18n: {
       isInitialized: true,
+      resolvedLanguage: 'en',
+      options: {
+        supportedLngs: mockSupportedLngs,
+      },
+      changeLanguage: changeLanguageMock,
     },
     ready: true,
   }),

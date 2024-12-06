@@ -38,19 +38,20 @@ export const DogFood = ({
   trigger,
 }: DogFoodProps) => {
   const { t } = useTranslation('profile')
+
+  const chainId = useChainId()
+  const { address } = useAccount()
   const queryClient = useQueryClient()
 
-  const inputWatch: string | undefined = watch('dogfoodRaw')
+  const inputWatch: string = watch('dogfoodRaw') ?? ''
 
   // Throttle the change of the input
   const [ethNameInput, setEthNameInput] = useState('')
   const throttledSetEthNameInput = useDebouncedCallback(setEthNameInput, 500)
-  useEffect(() => {
-    throttledSetEthNameInput((inputWatch || '').toLocaleLowerCase())
-  }, [inputWatch, throttledSetEthNameInput])
 
-  const chainId = useChainId()
-  const { address } = useAccount()
+  useEffect(() => {
+    throttledSetEthNameInput(inputWatch.toLocaleLowerCase())
+  }, [inputWatch, throttledSetEthNameInput])
 
   const { data: addressRecordData } = useAddressRecord({
     enabled: !!ethNameInput?.includes('.'),
@@ -62,7 +63,8 @@ export const DogFood = ({
   }, [addressRecordData?.value])
 
   // Update react value of address
-  const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
+  const finalValue = inputWatch.includes('.') ? ethNameAddress : inputWatch
+
   useEffect(() => {
     setValue('address', finalValue)
     if (finalValue) trigger('dogfoodRaw')
@@ -118,7 +120,7 @@ export const DogFood = ({
       />
       {!errorMessage && finalValue && !disabled && (
         <>
-          <Spacer $height="2" />
+          <Spacer data-testid="dogfood-items" $height="2" />
           <DisplayItems displayItems={[{ label: 'address', value: finalValue, type: 'address' }]} />
         </>
       )}

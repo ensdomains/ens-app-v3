@@ -90,20 +90,16 @@ const PersonOverlay = styled.div(
   `,
 )
 
+const getTestId = (isTabBar: boolean | undefined, inHeader: boolean | undefined) => {
+  if (isTabBar) return 'tabbar-connect-button'
+  if (!inHeader) return 'body-connect-button'
+  return 'connect-button'
+}
+
 type Props = {
   isTabBar?: boolean
   large?: boolean
   inHeader?: boolean
-}
-
-const calculateTestId = (isTabBar: boolean | undefined, inHeader: boolean | undefined) => {
-  if (isTabBar) {
-    return 'tabbar-connect-button'
-  }
-  if (!inHeader) {
-    return 'body-connect-button'
-  }
-  return 'connect-button'
 }
 
 export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
@@ -114,7 +110,7 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   return (
     <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
       <Button
-        data-testid={calculateTestId(isTabBar, inHeader)}
+        data-testid={getTestId(isTabBar, inHeader)}
         onClick={() => openConnectModal?.()}
         size={breakpoints.sm || large ? 'medium' : 'small'}
         width={inHeader ? '45' : undefined}
