@@ -1,7 +1,7 @@
 import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
 import '@rainbow-me/rainbowkit/styles.css'
-import '@ensdomains/thorin/dist/thorin.css'
+import '@ensdomains/thorin/dist/style.css'
 import '@splidejs/react-splide/css'
 
 import { NextPage } from 'next'

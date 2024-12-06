@@ -11,7 +11,7 @@ import {
 } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Colors, DownChevronSVG } from '@ensdomains/thorin'
+import { AsProp, Button, Colors, DownChevronSVG } from '@ensdomains/thorin'
 
 import { getTestId } from '@app/utils/utils'
 
@@ -34,7 +34,7 @@ type DropdownItemObject = {
   onClick?: (value?: string) => void
   wrapper?: (children: React.ReactNode, key: React.Key) => JSX.Element
   as?: 'button' | 'a'
-  icon?: React.ReactNode
+  icon?: AsProp
   value?: string
   color?: Colors
   disabled?: boolean
@@ -464,6 +464,10 @@ const ButtonWrapper = styled.div(
   `,
 )
 
+const ChevronSuffix =
+  ({ direction, isOpen }: { direction: Direction; isOpen?: boolean }) =>
+  () => <Chevron $direction={direction} $open={isOpen} />
+
 export const LegacyDropdown = ({
   children,
   buttonProps,
@@ -527,7 +531,7 @@ export const LegacyDropdown = ({
           <Button
             {...buttonProps}
             pressed={isOpen}
-            suffix={chevron && <Chevron $direction={direction} $open={isOpen} />}
+            suffix={chevron ? ChevronSuffix({ direction, isOpen }) : undefined}
             onClick={() => setIsOpen(!isOpen)}
           >
             {label}
