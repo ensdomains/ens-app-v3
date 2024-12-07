@@ -9,7 +9,7 @@ import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { TransactionDisplayItem } from '@app/types'
-import { formatDurationOfDates, formatExpiry, shortenAddress } from '@app/utils/utils'
+import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -231,7 +231,11 @@ const RecordsValue = ({ value }: { value: [string, string | undefined][] }) => {
   )
 }
 
-const DurationValue = ({ value }: { value: Record<string, 'duration' | 'newExpiry'> }) => {
+const DurationValue = ({
+  value,
+}: {
+  value: { duration: string; newExpiry?: string | undefined }
+}) => {
   const { t } = useTranslation('transactionFlow')
 
   if (!value) return null
@@ -250,6 +254,10 @@ const DurationValue = ({ value }: { value: Record<string, 'duration' | 'newExpir
 
 const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   const { value, type } = props as TransactionDisplayItem
+  if (type === 'duration') {
+    return <DurationValue value={value} />
+  }
+
   if (type === 'address') {
     return <AddressValue value={value} />
   }
@@ -264,9 +272,6 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   }
   if (type === 'records') {
     return <RecordsValue value={value} />
-  }
-  if (type === 'duration') {
-    return <DurationValue value={value} />
   }
   return <ValueTypography fontVariant="bodyBold">{value}</ValueTypography>
 }
