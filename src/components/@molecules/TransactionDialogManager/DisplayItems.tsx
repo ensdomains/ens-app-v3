@@ -9,7 +9,7 @@ import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { TransactionDisplayItem } from '@app/types'
-import { formatExpiry, shortenAddress } from '@app/utils/utils'
+import { formatDurationOfDates, formatExpiry, shortenAddress } from '@app/utils/utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -231,29 +231,18 @@ const RecordsValue = ({ value }: { value: [string, string | undefined][] }) => {
   )
 }
 
-const DurationValue = ({ value }: { value: string | undefined }) => {
+const DurationValue = ({ value }: { value: Record<string, 'duration' | 'newExpiry'> }) => {
   const { t } = useTranslation('transactionFlow')
 
   if (!value) return null
 
-  const regex = /(\d+)\s*years?\s*(?:,?\s*(\d+)?\s*months?)?/
-  const matches = value.match(regex) ?? []
-
-  const years = parseInt(matches.at(1) ?? '0')
-  const months = parseInt(matches.at(2) ?? '0')
-
-  const date = new Date()
-
-  if (years > 0) date.setFullYear(date.getFullYear() + years)
-  if (months > 0) date.setMonth(date.getMonth() + months)
-
   return (
     <DurationContainer>
       <Typography ellipsis>
-        <strong>{value}</strong>
+        <strong>{value.duration}</strong>
       </Typography>
       <Typography color="textTertiary" fontVariant="small">
-        {t('transaction.extendNames.newExpiry', { date: formatExpiry(date) })}
+        {t('transaction.extendNames.newExpiry', { date: value.newExpiry })}
       </Typography>
     </DurationContainer>
   )

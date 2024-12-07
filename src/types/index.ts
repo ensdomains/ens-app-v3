@@ -38,7 +38,7 @@ interface TransactionDisplayItemBase {
 
 export interface TransactionDisplayItemSingle extends TransactionDisplayItemBase {
   type?: 'name' | 'subname' | 'address' | 'duration' | undefined
-  value: string
+  value: string | Record<string, string | undefined>
 }
 
 export interface TransactionDisplayItemList extends TransactionDisplayItemBase {
