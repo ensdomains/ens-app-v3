@@ -161,7 +161,7 @@ export const calculateGasLimit = async ({
   }
 }
 
-type CreateTransactionRequestQueryKey = CreateQueryKey<
+export type CreateTransactionRequestQueryKey = CreateQueryKey<
   UniqueTransaction,
   'createTransactionRequest',
   'standard'
@@ -175,7 +175,7 @@ type CreateTransactionRequestUnsafeParameters = {
   chainId: SupportedChain['id']
 }
 
-const createTransactionRequestUnsafe = async ({
+export const createTransactionRequestUnsafe = async ({
   client,
   connectorClient,
   isSafeApp,

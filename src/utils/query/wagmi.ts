@@ -4,14 +4,9 @@ import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
-import {
-  holeskyWithEns,
-  localhostWithEns,
-  mainnetWithEns,
-  sepoliaWithEns,
-} from '@app/constants/chains'
+import { localhostWithEns } from '@app/constants/chains'
 
-import { getChainFromSubdomain, getChainFromUrl } from '../utils'
+import { getChainFromUrl } from '../utils'
 import { rainbowKitConnectors } from './wallets'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
@@ -78,12 +73,11 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
   }
 }
 
-const chains = [
-  ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-  mainnetWithEns,
-  sepoliaWithEns,
-  holeskyWithEns,
-] as const
+const getChain = () => {
+  if (isLocalProvider) return localhostWithEns
+  const chain = getChainFromUrl()
+  return chain
+}
 
 const transports = {
   ...(isLocalProvider
@@ -105,10 +99,8 @@ const wagmiConfig_ = createConfig({
   ssr: true,
   multiInjectedProviderDiscovery: true,
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
-  chains,
-  client: () => {
-    const chain = getChainFromUrl()
-
+  chains: [getChain()],
+  client: ({ chain }) => {
     const chainId = chain.id
 
     return createClient<Transport, typeof chain>({
