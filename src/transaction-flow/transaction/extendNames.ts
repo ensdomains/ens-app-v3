@@ -5,7 +5,7 @@ import { renewNames } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-import { calculateValueWithBuffer, formatDurationOfDates } from '../../utils/utils'
+import { calculateValueWithBuffer, formatDurationOfDates, formatExpiry } from '../../utils/utils'
 
 type Data = {
   names: string[]
@@ -31,11 +31,16 @@ const displayItems = (
     {
       type: 'duration',
       label: 'duration',
-      value: formatDurationOfDates({
-        startDate: startDateTimestamp ? new Date(startDateTimestamp) : undefined,
-        endDate: startDateTimestamp ? new Date(startDateTimestamp + duration * 1000) : undefined,
-        t,
-      }),
+      value: {
+        duration: formatDurationOfDates({
+          startDate: startDateTimestamp ? new Date(startDateTimestamp) : undefined,
+          endDate: startDateTimestamp ? new Date(startDateTimestamp + duration * 1000) : undefined,
+          t,
+        }),
+        newExpiry: startDateTimestamp
+          ? formatExpiry(new Date(startDateTimestamp + duration * 1000))
+          : undefined,
+      },
     },
     {
       label: 'cost',
