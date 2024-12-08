@@ -678,3 +678,52 @@ test('renew deep link should redirect to registration when not logged in', async
   await page.goto(`/${name}?renew=123`)
   await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 })
+
+test('should handle URL-based renew parameter', async ({ page, login, makeName }) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'legacy',
+    owner: 'user',
+  })
+
+  await test.step('should handle large duration', async () => {
+    await page.goto(`/${name}?renew=315360000`) // 10 years
+    await login.connect()
+    await expect(page.getByText('10 years extension', { exact: true })).toBeVisible()
+  })
+})
+
+test('should handle URL-based renew for names in grace period', async ({
+  page,
+  login,
+  makeName,
+}) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'legacy',
+    owner: 'user',
+    duration: -24 * 60 * 60,
+  })
+
+  await test.step('should allow extend in grace period', async () => {
+    await page.goto(`/${name}?renew=94608000`) // 3 years
+    await login.connect()
+
+    await expect(page.getByText(`${name} has expired`)).toBeVisible()
+    await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
+    await page.getByTestId('extend-names-confirm').click()
+
+    await expect(page.getByText('3 years extension', { exact: true })).toBeVisible()
+  })
+})
+
+test('should handle URL-based renew for disconnected users', async ({ page, makeName }) => {
+  const name = await makeName({
+    label: 'legacy',
+    type: 'legacy',
+    owner: 'user',
+  })
+
+  await page.goto(`/${name}?renew=94608000`)
+  await expect(page.getByText('Connect a wallet')).toBeVisible()
+})
