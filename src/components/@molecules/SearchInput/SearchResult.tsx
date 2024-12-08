@@ -36,7 +36,7 @@ const SearchItemContainer = styled.div<{
     gap: ${theme.space['2']};
     height: ${theme.space['14']};
     padding: 0 ${theme.space['4']};
-    border-bottom: ${theme.borderWidths['0.375']} ${theme.borderStyles.solid} ${theme.colors.border};
+    border-bottom: 0.0938rem ${theme.borderStyles.solid} ${theme.colors.border};
     &:last-of-type {
       border-bottom: 0;
     }
@@ -158,7 +158,7 @@ const StyledTag = styled(Tag)(
 
 const AddressTag = styled(StyledTag)(
   ({ theme }) => css`
-    border: ${theme.borderWidths['0.375']} solid ${theme.colors.border};
+    border: 0.0938rem solid ${theme.colors.border};
     background-color: transparent;
   `,
 )

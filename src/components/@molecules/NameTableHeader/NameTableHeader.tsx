@@ -216,7 +216,7 @@ export const NameTableHeader = ({
           value={searchQuery}
           onChange={(e) => onSearchChange?.(e.target.value)}
           hideLabel
-          icon={MagnifyingGlassSimpleSVG}
+          icon={<MagnifyingGlassSimpleSVG />}
           placeholder={t('action.search')}
         />
       </TableHeaderTrailing>
