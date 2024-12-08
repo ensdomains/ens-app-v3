@@ -186,7 +186,7 @@ export const PrimarySection = () => {
                     buttonId="disabled-reset-primary-name-button"
                     buttonText={t('action.remove', { ns: 'common' })}
                     content={t('errors.networkError.blurb', { ns: 'common' })}
-                    prefix={<CrossSVG />}
+                    prefix={CrossSVG}
                     size="medium"
                     mobilePlacement="top"
                     loading={hasGraphErrorLoading}
@@ -195,7 +195,7 @@ export const PrimarySection = () => {
                     buttonId="disabled-change-primary-name-button"
                     buttonText={t('action.change', { ns: 'common' })}
                     content={t('errors.networkError.blurb', { ns: 'common' })}
-                    prefix={<PersonPlusSVG />}
+                    prefix={PersonPlusSVG}
                     size="medium"
                     mobilePlacement="top"
                     loading={hasGraphErrorLoading}
@@ -205,7 +205,7 @@ export const PrimarySection = () => {
                 <>
                   <Button
                     data-testid="reset-primary-name-button"
-                    prefix={<CrossSVG />}
+                    prefix={CrossSVG}
                     colorStyle="redSecondary"
                     disabled={hasGraphErrorLoading}
                     loading={hasGraphErrorLoading}
@@ -215,7 +215,7 @@ export const PrimarySection = () => {
                   </Button>
                   <Button
                     data-testid="change-primary-name-button"
-                    prefix={<PersonPlusSVG />}
+                    prefix={PersonPlusSVG}
                     disabled={hasGraphErrorLoading}
                     loading={hasGraphErrorLoading}
                     onClick={changePrimary}
@@ -236,7 +236,7 @@ export const PrimarySection = () => {
                   buttonText={t('section.primary.choosePrimaryName')}
                   size="small"
                   content={t('errors.networkError.blurb', { ns: 'common' })}
-                  prefix={<PersonPlusSVG />}
+                  prefix={PersonPlusSVG}
                   mobilePlacement="top"
                   loading={hasGraphErrorLoading}
                 />
@@ -246,7 +246,7 @@ export const PrimarySection = () => {
                 <NoNameButton
                   data-testid="set-primary-name-button"
                   size="small"
-                  prefix={<PersonPlusSVG />}
+                  prefix={PersonPlusSVG}
                   loading={hasGraphErrorLoading}
                   disabled={hasGraphErrorLoading}
                   onClick={changePrimary}

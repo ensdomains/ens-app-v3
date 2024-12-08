@@ -280,7 +280,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
       <DialogInput
         label=""
         hideLabel
-        icon={<MagnifyingGlassSimpleSVG />}
+        icon={MagnifyingGlassSimpleSVG}
         size="medium"
         placeholder={t('action.search', { ns: 'common' })}
         value={search}

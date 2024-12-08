@@ -321,7 +321,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
             size="medium"
             onClick={handleShowAddRecordModal}
             data-testid="show-add-profile-records-modal-button"
-            prefix={<PlusSVG />}
+            prefix={PlusSVG}
           >
             {t('steps.profile.addMore')}
           </Button>

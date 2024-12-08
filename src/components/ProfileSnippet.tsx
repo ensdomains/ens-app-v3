@@ -233,7 +233,7 @@ export const ProfileSnippet = ({
         <Button
           size="small"
           colorStyle="accentSecondary"
-          prefix={<FastForwardSVG />}
+          prefix={FastForwardSVG}
           data-testid="extend-button"
           onClick={() => {
             showExtendNamesInput(`extend-names-${name}`, {

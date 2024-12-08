@@ -326,7 +326,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     size="medium"
                     onClick={handleShowAddRecordModal}
                     data-testid="show-add-profile-records-modal-button"
-                    prefix={<PlusSVG />}
+                    prefix={PlusSVG}
                   >
                     {t('steps.profile.addMore')}
                   </Button>

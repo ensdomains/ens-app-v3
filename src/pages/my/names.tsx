@@ -43,7 +43,7 @@ export default function Page() {
               target="_blank"
               rel="noopener noreferrer"
               href="https://support.ens.domains/en/articles/9375254-why-is-my-ens-name-not-in-my-names"
-              icon={<QuestionCircleSVG />}
+              icon={QuestionCircleSVG}
               title={t('offchainWarning.title')}
             >
               {t('offchainWarning.text')}

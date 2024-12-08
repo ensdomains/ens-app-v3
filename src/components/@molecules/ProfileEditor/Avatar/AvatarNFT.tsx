@@ -443,7 +443,7 @@ export const AvatarNFT = ({
           </Button>
         ))}
       <DialogInput
-        icon={<MagnifyingGlassSVG />}
+        icon={MagnifyingGlassSVG}
         hideLabel
         label="search"
         value={searchedInput}
