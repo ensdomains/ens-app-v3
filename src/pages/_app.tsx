@@ -153,7 +153,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
-                <ThorinThemeProvider>
+                <ThorinThemeProvider defaultMode="light">
                   <IntercomProvider appId={INTERCOM_ID}>
                     <GlobalStyle />
                     <SyncProvider>
