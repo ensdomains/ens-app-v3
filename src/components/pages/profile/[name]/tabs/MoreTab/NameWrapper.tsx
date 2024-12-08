@@ -4,7 +4,7 @@ import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { AlertSVG, CheckSVG, LockSVG, mq, Typography } from '@ensdomains/thorin'
+import { AlertSVG, CheckSVG, LockSVG, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -38,9 +38,9 @@ const Container = styled(TabWrapper)(
 
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}) {
       padding: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 

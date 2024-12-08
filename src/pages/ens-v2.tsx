@@ -9,7 +9,6 @@ import {
   GasPumpSVG,
   // InfoCircleSVG,
   KeySVG,
-  mq,
   // QuestionBubbleSVG,
   // QuestionCircleSVG,
   // RightArrowSVG,
@@ -179,6 +178,11 @@ const CardHeader = styled.h3(
     font-weight: ${theme.fontWeights.bold};
     gap: ${theme.space['2']};
     align-items: center;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   `,
 )
 

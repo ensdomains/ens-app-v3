@@ -48,10 +48,10 @@ const LineItem = styled.div<{ $color?: Colors }>(
       border-bottom: 1px solid #e8e8e8;
     }
 
-    ${mq.sm.max(css`
+    @media (max-width: ${theme.breakpoints.sm}) {
       &:not(:last-of-type) {
         border-bottom: none;
-        padding-bottom: 0px;
+        padding-bottom: 0;
       }
 
       &:first-of-type {
@@ -64,7 +64,7 @@ const LineItem = styled.div<{ $color?: Colors }>(
         padding-top: ${theme.space['4']};
         border-top: 1px solid #e8e8e8;
       }
-    `)}
+    }
   `,
 )
 
