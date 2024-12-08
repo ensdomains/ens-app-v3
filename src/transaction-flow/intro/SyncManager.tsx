@@ -24,7 +24,7 @@ export const SyncManager = ({ manager, isWrapped }: { manager: string; isWrapped
           values={{ manager: shortenAddress(manager) }}
         />
       </StyledTypography>
-      {isWrapped && <Helper type="warning">{t('intro.syncManager.wrappedWarning')}</Helper>}
+      {isWrapped && <Helper alert="warning">{t('intro.syncManager.wrappedWarning')}</Helper>}
     </>
   )
 }

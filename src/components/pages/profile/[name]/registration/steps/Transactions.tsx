@@ -5,7 +5,7 @@ import { match, P } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
 import { makeCommitment } from '@ensdomains/ensjs/utils'
-import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomains/thorin'
+import { Button, CountdownCircle, Dialog, Heading, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
@@ -88,10 +88,10 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Helper, mq } from '@ensdomains/thorin'
+import { Helper } from '@ensdomains/thorin'
 
 const InnerContainer = styled.div(
   ({ theme }) => css`
@@ -75,10 +75,10 @@ const Marker = styled.div<{ $percent: number }>(
       white-space: nowrap;
     }
 
-    ${mq.xs.min(css`
+    @media (min-width: 360px) {
       width: ${theme.space['18']};
       font-size: ${theme.fontSizes.small};
-    `)}
+    }
 
     &::before {
       content: '';
@@ -133,7 +133,7 @@ export const RegistrationTimeComparisonBanner = ({ message, yearlyFee, transacti
   const twentyRounded = calcPercent(twenty.gas, 3)
 
   return (
-    <Helper type="info">
+    <Helper alert="info">
       <InnerContainer>
         <div>{message}</div>
         <Bar $highlightPercent={twentyRounded} />

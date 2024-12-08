@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, mq } from '@ensdomains/thorin'
+import { Avatar } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'
@@ -39,10 +39,10 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     &:last-of-type {
       border: none;
     }
-    ${mq.sm.min(css`
+    @media (min-width: 640px) {
       padding: ${theme.space['3']} ${theme.space['4.5']};
       gap: ${theme.space['4']};
-    `)}
+    }
   `,
 )
 

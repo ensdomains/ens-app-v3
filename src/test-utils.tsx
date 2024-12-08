@@ -9,7 +9,7 @@ import { beforeEach, expect, MockedFunction, vi } from 'vitest'
 import type { Register } from 'wagmi'
 import { hashFn } from 'wagmi/query'
 
-import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+import { lightTheme } from '@ensdomains/thorin'
 
 import { mainnetWithEns } from '@app/constants/chains'
 
@@ -85,10 +85,7 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={lightTheme}>
-          <ThorinGlobalStyles />
-          {children}
-        </ThemeProvider>
+        <ThemeProvider theme={lightTheme}>{children}</ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )

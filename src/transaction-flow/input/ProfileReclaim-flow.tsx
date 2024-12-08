@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
-import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
@@ -33,14 +33,14 @@ const ButtonContainer = styled.div(
   `,
 )
 
-const ButtonWrapper = styled.div(({ theme }) => [
-  css`
+const ButtonWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space.full};
+    @media (min-width: ${theme.breakpoints.xs}) {
+      width: ${theme.space.max};
+    }
   `,
-  mq.xs.min(css`
-    width: max-content;
-  `),
-])
+)
 
 type Data = {
   name: string
@@ -190,7 +190,7 @@ const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: 
                     size="medium"
                     onClick={() => setView('add-record')}
                     data-testid="show-add-profile-records-modal-button"
-                    prefix={<PlusSVG />}
+                    prefix={PlusSVG}
                   >
                     {registerT('steps.profile.addMore')}
                   </Button>
