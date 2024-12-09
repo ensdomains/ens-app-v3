@@ -7,6 +7,7 @@ export const supportedAddresses = [
   'base',
   'matic',
   'linea',
+  'scr',
 ] as const
 
 export type SupportedAddress = (typeof supportedAddresses)[number]
