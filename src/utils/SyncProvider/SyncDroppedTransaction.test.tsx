@@ -28,10 +28,9 @@ const ADDRESS = '0x1234567890abcdef'
 
 export const handlers = [
   http.get(getAccountHistoryEndpoint(ADDRESS, 1), () => {
-    return HttpResponse.json(
-      { hash: '0xabc123', input: 'input', timeStamp: '1', nonce: 0 },
-      { status: 200 },
-    )
+    return HttpResponse.json([{ hash: '0xabc123', input: 'input', timeStamp: '1', nonce: 0 }], {
+      status: 200,
+    })
   }),
 ]
 

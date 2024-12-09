@@ -7,8 +7,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, test, vi } from '
 import { EARNIFI_ENDPOINT, getErrorMessage, useSubscribeToEarnifi } from './useSubscribeToEarnifi'
 
 export const handlers = [
-  http.post(EARNIFI_ENDPOINT, async (req) => {
-    const { email, address, chainId } = (await req.request.json()) as Record<string, string>
+  http.post(EARNIFI_ENDPOINT, async ({request}) => {
+    const { email, address, chainId } = (await request.json()) as Record<string, string>
     if (email && address && chainId) {
       return HttpResponse.json({}, {status: 200})
     }
