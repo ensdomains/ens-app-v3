@@ -4,7 +4,7 @@ import { Address } from 'viem'
 import { deploymentAddresses } from './chains'
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceId } from './resolverInterfaceIds'
 
-type KnownResolverItem = {
+export type KnownResolverItem = {
   address: Address
   deployer: string
   tag: 'latest' | 'outdated' | null

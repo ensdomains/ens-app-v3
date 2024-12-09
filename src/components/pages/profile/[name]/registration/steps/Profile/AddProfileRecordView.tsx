@@ -3,14 +3,14 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, MagnifyingGlassSimpleSVG, mq, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, Helper, MagnifyingGlassSimpleSVG, mq, ScrollBox } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
 import { DialogInput } from '@app/components/@molecules/DialogComponentVariants/DialogInput'
 import {
-  grouped as options,
+  getGroupedProfileRecordsForInterfaces,
   ProfileRecord,
   ProfileRecordGroup,
 } from '@app/constants/profileRecordOptions'
@@ -111,12 +111,25 @@ const DismissButtonWrapper = styled.div(
 
 type Props = {
   control: Control<ProfileEditorForm, any>
+  hasTextInterface?: boolean
+  hasAddressInterface?: boolean
+  hasContenthashInterface?: boolean
+  hasAbiInterface?: boolean
   onAdd?: (records: ProfileRecord[]) => void
   onClose?: () => void
   showDismiss?: boolean
 }
 
-export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: Props) => {
+export const AddProfileRecordView = ({
+  control,
+  hasTextInterface = true,
+  hasAddressInterface = true,
+  hasContenthashInterface = true,
+  hasAbiInterface = true,
+  onAdd,
+  onClose,
+  showDismiss,
+}: Props) => {
   const { t, i18n } = useTranslation('register')
 
   const currentRecords = useWatch({ control, name: 'records' })
@@ -125,6 +138,12 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
   const [search, setSearch] = useState('')
 
   const filteredOptions = useMemo(() => {
+    const options = getGroupedProfileRecordsForInterfaces({
+      textResolver: hasTextInterface,
+      addressResolver: hasAddressInterface,
+      contentHashResolver: hasContenthashInterface,
+      abiResolver: hasAbiInterface,
+    })
     if (!i18n.isInitialized || !search) return options
     const matchSearch = (s: string) => s.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     return options.map((option) => {
@@ -150,7 +169,15 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
         items,
       }
     })
-  }, [search, t, i18n])
+  }, [
+    search,
+    t,
+    i18n,
+    hasTextInterface,
+    hasAddressInterface,
+    hasContenthashInterface,
+    hasAbiInterface,
+  ])
 
   // Tracks when to skip updating the sidebar while options grid is scrolling
   const shouldSkipObserverUpdateRef = useRef<boolean>()
@@ -307,6 +334,9 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
           <ScrollBox hideDividers>
             <div ref={topRef} style={{ height: '1px' }} data-group="top" />
             <Spacer $height="4" />
+            <Helper type="warning" alignment="horizontal">
+              Your custom resolver doesn't support all records
+            </Helper>
             {filteredOptions.map((option) => {
               const showLabel = !['address', 'website'].includes(option.group)
               if (option.items.length === 0 && option.group !== 'other') return null

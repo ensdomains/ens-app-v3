@@ -4,7 +4,10 @@ import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { supportedContentHashKeys } from '@app/constants/supportedContentHashKeys'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
-import { supportedOtherRecordKeys } from '@app/constants/supportedOtherRecordKeys'
+import {
+  getSupportedOtherRecordKeysForInterfaces,
+  supportedOtherRecordKeys,
+} from '@app/constants/supportedOtherRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
 export type ProfileRecordGroup =
@@ -117,4 +120,50 @@ export const sortValues: { [key: string]: { [key: string]: number } } = {
     acc[key] = index + 500
     return acc
   }, {}),
+}
+
+export const getGroupedProfileRecordsForInterfaces = (
+  interfaces:
+    | {
+        textResolver: boolean
+        addressResolver: boolean
+        abiResolver: boolean
+        contentHashResolver: boolean
+      }
+    | undefined,
+) => {
+  const {
+    textResolver = true,
+    addressResolver = true,
+    abiResolver = true,
+    contentHashResolver = true,
+  } = interfaces || {}
+  if (textResolver && addressResolver && abiResolver && contentHashResolver) return grouped
+  return [
+    {
+      group: 'general',
+      items: textResolver ? general : [],
+    },
+    {
+      group: 'social',
+      items: textResolver ? social : [],
+    },
+    {
+      group: 'address',
+      items: addressResolver ? address : [],
+    },
+    {
+      group: 'website',
+      items: contentHashResolver ? website : [],
+    },
+    {
+      group: 'other',
+      items: other.filter(
+        ({ type }) =>
+          (type === 'abi' && abiResolver) ||
+          (type === 'contenthash' && contentHashResolver) ||
+          (type === 'text' && textResolver),
+      ),
+    },
+  ] as const
 }

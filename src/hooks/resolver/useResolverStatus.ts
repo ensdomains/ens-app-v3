@@ -81,6 +81,7 @@ export const useResolverStatus = ({
       hasResolver: false,
       hasLatestResolver: false,
       hasValidResolver: false,
+      isKnownResolver: false,
       isAuthorized: false,
       isNameWrapperAware: false,
       hasProfile: false,
@@ -93,6 +94,7 @@ export const useResolverStatus = ({
       ...defaultResults,
       hasResolver: !!profileResolverAddress && profileResolverAddress !== emptyAddress,
       hasLatestResolver: resolverType.data?.type === 'latest',
+      isKnownResolver: resolverType.data?.type !== 'custom',
       isNameWrapperAware: profileResolverAddress
         ? getResolverWrapperAwareness({ resolverAddress: profileResolverAddress, chainId }) ||
           resolverIsAuthorised.data?.isAuthorised

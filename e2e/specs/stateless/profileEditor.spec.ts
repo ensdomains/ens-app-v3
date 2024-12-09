@@ -20,6 +20,12 @@ const ownedResolverAddress =
   JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.OwnedResolver || ''
 const invalidResolverAddress =
   JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.NameWrapper || ''
+const noMulticallResolverAddress =
+  JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.NoMulticallResolverAddress || ''
+const oldestResolverAddress =
+  JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.OldesResolver || ''
+const noTextResolverAddress =
+  JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.NoTextResolver || ''
 
 const dummyABI = {
   test: 'test',
@@ -147,6 +153,7 @@ test.describe('migrations', () => {
     const profilePage = makePageObject('ProfilePage')
     await profilePage.editProfileButton.click()
 
+    await page.pause()
     await expect(page.getByText('Registry out of date')).toBeVisible()
     await expect(page.getByTestId('warning-overlay-next-button')).toHaveAttribute(
       'href',
@@ -155,6 +162,7 @@ test.describe('migrations', () => {
   })
 
   test('should force a name without a resolver to update their resolver', async ({
+    page,
     login,
     makeName,
     makePageObject,
@@ -182,6 +190,7 @@ test.describe('migrations', () => {
     await login.connect()
 
     await profilePage.editProfileButton.click()
+    await page.pause()
     await expect(profilePage.profileEditor.locator('text=No resolver set')).toBeVisible()
 
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -195,6 +204,7 @@ test.describe('migrations', () => {
 
   test('should force a name with an unauthorised resolver to update their resolver', async ({
     login,
+    page,
     makeName,
     makePageObject,
   }) => {
@@ -217,6 +227,7 @@ test.describe('migrations', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
+    await page.pause()
     await expect(profilePage.profileEditor.getByText('Unauthorised resolver')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
@@ -228,6 +239,7 @@ test.describe('migrations', () => {
 
   test('should force a name with an invalid resolver to update their resolver', async ({
     login,
+    page,
     makeName,
     makePageObject,
   }) => {
@@ -250,6 +262,7 @@ test.describe('migrations', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
+    await page.pause()
     await expect(profilePage.profileEditor.getByText('Unauthorised resolver')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
@@ -261,6 +274,7 @@ test.describe('migrations', () => {
 
   test('should force a wrapped name with a resolver that is not name wrapper aware to migrate update their resolver', async ({
     login,
+    page,
     makeName,
     makePageObject,
   }) => {
@@ -281,6 +295,7 @@ test.describe('migrations', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
+    await page.pause()
 
     await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -607,6 +622,65 @@ test.describe('migrations', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
+    await expect(page.getByText('Resolver out of sync')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await page.getByTestId('migrate-profile-selector-reset').check()
+    await expect(page.getByTestId('migrate-profile-selector-reset')).toBeChecked()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await expect(page.getByText('Reset profile')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
+
+    await recordsPage.goto(name)
+
+    await expect(page.getByTestId('text-amount')).toHaveText('0 Records')
+    await expect(page.getByTestId('address-amount')).toHaveText('0 Records')
+    await expect(page.getByText('No Content Hash')).toBeVisible()
+    await expect(page.getByText('No ABI')).toBeVisible()
+  })
+
+  test('old resolver', async ({ page, login, accounts, makeName, makePageObject }) => {
+    const name = await makeName({
+      label: 'unwrapped',
+      type: 'legacy',
+      owner: 'user',
+      resolver: noTextResolverAddress,
+      records: await makeRecords(),
+    })
+
+    // Add records to latest resolver
+    await generateRecords({ accounts })({
+      name,
+      owner: 'user',
+      resolver: newResolver,
+      records: await makeRecords({
+        texts: [{ key: 'description', value: 'New profile' }],
+        coins: [{ coin: 'eth', value: createAccounts().getAddress('user2') }],
+        contentHash: 'bzz://d1de9994b4d039f6548d191eb26786769f580809256b4685ef316805265ea162',
+        abi: await encodeAbi({ encodeAs: 'cbor', data: { test2: 'test2' } }),
+      }),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const recordsPage = makePageObject('RecordsPage')
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    // await expect(morePage.resolver.getByText(oldResolver)).toBeVisible()
+
+    await profilePage.goto(name)
+    await profilePage.editProfileButton.click()
+    await page.pause()
+
     await expect(page.getByText('Resolver out of sync')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 

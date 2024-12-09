@@ -27,10 +27,12 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
+import { useProfileEditorReducer } from './hooks/useProfileEditorReducer'
 // import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -145,6 +147,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     isDirtyForRecordAtIndex,
     hasErrors,
   } = useProfileEditorForm(existingRecords)
+  console.log('profileRecords', profileRecords, 'isLoading', isLoading)
 
   // Update profile records if transaction data exists
   const [isRecordsUpdated, setIsRecordsUpdated] = useState(false)
@@ -185,6 +188,15 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   })
   console.log('resolverStatus', resolverStatus)
 
+  const { data: interfacesData } = useResolverHasInterfaces({
+    resolverAddress: profile?.resolverAddress!,
+    interfaceNames: ['TextResolver', 'AddressResolver', 'AbiResolver', 'ContentHashResolver'],
+    enabled: !!profile?.resolverAddress,
+  })
+  const [hasTextInterface, hasAddressInterface, hasAbiInterface, hasContenthashInterface] =
+    interfacesData || []
+  console.log(interfacesData)
+
   // const chainId = useChainId()
 
   const handleCreateTransaction = useCallback(
@@ -211,21 +223,19 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
 
+  const hasOutdatedKnownResolver =
+    !resolverStatus.isLoading &&
+    !resolverStatus.data?.hasLatestResolver &&
+    !!resolverStatus.data?.isKnownResolver &&
+    transactions.length === 0
+  console.log('hasOutdatedKnownResolver', hasOutdatedKnownResolver, resolverStatus)
+  const hasNotMigratedProfile = !isProfileLoading && profile?.isMigrated === false
+  const shouldShowResolverWarning = hasOutdatedKnownResolver || hasNotMigratedProfile
   useEffect(() => {
-    if (
-      !resolverStatus.isLoading &&
-      !resolverStatus.data?.hasLatestResolver &&
-      transactions.length === 0
-    ) {
+    if (shouldShowResolverWarning) {
       setView('warning')
     }
-  }, [resolverStatus.isLoading, resolverStatus.data?.hasLatestResolver, transactions.length])
-
-  useEffect(() => {
-    if (!isProfileLoading && profile?.isMigrated === false) {
-      setView('warning')
-    }
-  }, [isProfileLoading, profile?.isMigrated])
+  }, [shouldShowResolverWarning])
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
@@ -237,6 +247,36 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   }
 
   const canEditRecordsWhenWrapped = !!resolverStatus.data?.isAuthorized
+  console.log('canEditRecordsWhenWrapped', canEditRecordsWhenWrapped)
+
+  console.log('resolverStatus', resolverStatus.isLoading)
+  const isLoading_ = isLoading || resolverStatus.isLoading
+  const [editorState, editorDispatch] = useProfileEditorReducer(
+    {
+      profile,
+      resolverStatus: resolverStatus.data,
+      isWrapped,
+      isLoading: isLoading_,
+    },
+    {},
+  )
+  const view_ = editorState.flow[editorState.currentIndex]
+  console.log('editorState', editorState.flow[editorState.currentIndex])
+
+  const shouldInitializeEditorState = !isLoading_ && view_ === 'loading'
+  useEffect(() => {
+    if (shouldInitializeEditorState)
+      editorDispatch({
+        type: 'init',
+        payload: {
+          profile,
+          resolverStatus: resolverStatus.data,
+          isWrapped,
+          isLoading: isLoading_,
+        },
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldInitializeEditorState])
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
@@ -366,6 +406,10 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         .with('addRecord', () => (
           <AddProfileRecordView
             control={control}
+            hasTextInterface={hasTextInterface}
+            hasAddressInterface={hasAddressInterface}
+            hasAbiInterface={hasAbiInterface}
+            hasContenthashInterface={hasContenthashInterface}
             onAdd={(newRecords) => {
               addRecords(newRecords)
               setView('editor')
