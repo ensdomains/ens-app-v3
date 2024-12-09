@@ -1,0 +1,421 @@
+{
+  "title": "Tu nombre de usuario web3",
+  "description": "Tu identidad en el mundo web3, un solo nombre para todas tus direcciones cripto y tu sitio web descentralizado.",
+  "loading": "Cargando",
+  "unsupportedNetwork": "Red no compatible",
+  "notFound": "404 Página no encontrada",
+  "etherscan": "Etherscan",
+  "action": {
+    "cancel": "Cancelar",
+    "change": "Cambiar",
+    "upload": "Subir",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "view": "Ver",
+    "clear": "Limpiar",
+    "update": "Actualizar",
+    "learnMore": "Saber más",
+    "send": "Enviar",
+    "next": "Siguiente",
+    "add": "Agregar",
+    "set": "Fijar",
+    "search": "Buscar",
+    "back": "Volver",
+    "continue": "Seguir",
+    "confirm": "Confirmar",
+    "remove": "Quitar",
+    "sign": "Firmar",
+    "reset": "Reiniciar",
+    "restart": "Volver a empezar",
+    "transfer": "Transferir",
+    "tryAgain": "Intentar de nuevo",
+    "done": "Listo",
+    "burnSelected": "Quemar seleccionados",
+    "extend": "Extender",
+    "delete": "Borrar",
+    "sort": "Ordenar",
+    "check": "Chequear",
+    "claim": "Reclamar",
+    "remindMe": "Recordame",
+    "begin": "Empezar",
+    "finish": "Terminar",
+    "skip": "Saltar",
+    "changeNetwork": "Cambiar de red",
+    "understand": "Entiendo",
+    "feedback": "Opinión",
+    "enterEmail": "Ingresá tu mail",
+    "migrate": "Migrar",
+    "setToSelf": "Asignar a mí mismo",
+    "editRoles": "Editar roles",
+    "setReminder": "Poner recordatorio",
+    "import": "Importar",
+    "connect": "Conectar",
+    "goToProfile": "Ir al perfil"
+  },
+  "unit": {
+    "years_one": "{{count}} año",
+    "years_other": "{{count}} años",
+    "months_one": "{{count}} mes",
+    "months_other": "{{count}} meses",
+    "days_one": "{{count}} día",
+    "days_other": "{{count}} días",
+    "hours_one": "{{count}} hora",
+    "hours_other": "{{count}} horas",
+    "minutes_one": "{{count}} minuto",
+    "minutes_other": "{{count}} minutos",
+    "invalid_date": "Fecha inválida",
+    "yrs_one": "{{count}} año",
+    "yrs_other": "{{count}} años",
+    "gas": "{{value}} de gas",
+    "selected": "{{count}} seleccionado",
+    "perPage": "{{count}} por página"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "names": "Mis Nombres",
+    "favourites": "Favoritos",
+    "settings": "Configuración",
+    "governance": "Gobernanza",
+    "community": "Comunidad",
+    "developers": "Desarrolladores",
+    "support": "Ayuda",
+    "bounty": "Recompensa por Bugs",
+    "terms": "Términos de Uso",
+    "privacy": "Política de Privacidad",
+    "back": "Volver",
+    "oldApp": "App ENS Anterior",
+    "language": "Idioma",
+    "currency": "Moneda",
+    "ipfsApp": "App ENS en IPFS",
+    "feedback": "Opinión",
+    "syncMessage": "Sincronizando con la red. Los cambios de tu transacción pueden tardar un toque en aparecer."
+  },
+  "wallet": {
+    "myProfile": "Mi Perfil",
+    "disconnect": "Desconectar",
+    "connect": "Conectar",
+    "noPrimaryName": "Sin Nombre Principal",
+    "viewProfile": "Ver Perfil",
+    "viewDetails": "Ver Detalles",
+    "register": "Registrar"
+  },
+  "name": {
+    "registered": "Registrado",
+    "expires": "Vence",
+    "graceEnd": "Fin del período de gracia",
+    "noExpiry": "No vence",
+    "expiry": "Vencimiento",
+    "parent": "Padre",
+    "noParent": "Sin padre",
+    "registrant": "Registrante",
+    "controller": "Controlador",
+    "dnsOwner": "Dueño DNS",
+    "owner": "Dueño",
+    "notOwned": "No es tuyo",
+    "manager": "Administrador",
+    "all": "Todos los Nombres",
+    "copy": "Copiar nombre",
+    "yourPrimaryName": "Tu nombre principal",
+    "expiresInYears_one": "Vence en {{count}} año",
+    "expiresInYears_other": "Vence en {{count}} años",
+    "expiresInMonths_one": "Vence en {{count}} mes",
+    "expiresInMonths_other": "Vence en {{count}} meses",
+    "expiresInDays_one": "Vence en {{count}} día",
+    "expiresInDays_other": "Vence en {{count}} días",
+    "expiresInHours_one": "Vence en {{count}} hora",
+    "expiresInHours_other": "Vence en {{count}} horas",
+    "expiresInHours_zero": "Vence en menos de una hora",
+    "expiredInHours_one": "Venció hace {{count}} hora",
+    "expiredInHours_other": "Venció hace {{count}} horas",
+    "expiredInHours_zero": "Venció hace menos de una hora",
+    "expiredInDays_one": "Venció hace {{count}} día",
+    "expiredInDays_other": "Venció hace {{count}} días",
+    "expiredInMonths_one": "Venció hace {{count}} mes",
+    "expiredInMonths_other": "Venció hace {{count}} meses",
+    "expiredInYears_one": "Venció hace {{count}} año",
+    "expiredInYears_other": "Venció hace {{count}} años",
+    "gracePeriod": {
+      "expiresInYears_one": "El período de gracia termina en {{count}} año",
+      "expiresInYears_other": "El período de gracia termina en {{count}} años",
+      "expiresInMonths_one": "El período de gracia termina en {{count}} mes",
+      "expiresInMonths_other": "El período de gracia termina en {{count}} meses",
+      "expiresInDays_one": "El período de gracia termina en {{count}} día",
+      "expiresInDays_other": "El período de gracia termina en {{count}} días",
+      "expiresInHours_one": "El período de gracia termina en {{count}} hora",
+      "expiresInHours_other": "El período de gracia termina en {{count}} horas",
+      "expiresInHours_zero": "El período de gracia termina en menos de una hora"
+    },
+    "extend": "Extender",
+    "send": "Enviar",
+    "transfer": "Transferir",
+    "sendManager": "Enviar Administrador",
+    "sendOwner": "Enviar Dueño",
+    "renew": "Renovar {{name}}"
+  },
+  "address": {
+    "label": "Dirección",
+    "viewAddress": "Ver dirección",
+    "copyAddress": "Copiar dirección"
+  },
+  "records": {
+    "label": "Registros"
+  },
+  "sortTypes": {
+    "expiryDate": "Fecha de vencimiento",
+    "labelName": "Nombre",
+    "createdAt": "Fecha de creación"
+  },
+  "errors": {
+    "noResults": "No encontramos nada",
+    "emailRequired": "Necesitamos tu email",
+    "emailInvalid": "Ese email no parece válido",
+    "invalidAddress": "Dirección inválida",
+    "addressRequired": "Necesitamos una dirección",
+    "indexingErrors": {
+      "title": "Hubo un problema al sincronizar datos",
+      "message": "Estos datos pueden estar desactualizados. Usá con cuidado.",
+      "message_datetime": "Estos datos se actualizaron por última vez el {{datetime}} y pueden estar desactualizados. Ojo al piojo."
+    },
+    "networkError": {
+      "title": "Hubo un problema al sincronizar datos",
+      "message": "Estos datos pueden estar desactualizados. Usá con cuidado.",
+      "blurb": "Este botón está desactivado por problemas de sincronización de datos."
+    },
+    "networkLatency": {
+      "title": "La sincronización de datos está lenta",
+      "message": "La app ENS está medio lerda por problemas de latencia en la red."
+    }
+  },
+  "transaction": {
+    "description": {
+      "setName": "Poner nombre",
+      "setRecords": "Establecer registros",
+      "test": "Transacción de prueba",
+      "addSuccess": "Agregar éxito",
+      "sendName": "Enviar nombre",
+      "migrateProfile": "Migrar perfil",
+      "migrateProfileWithReset": "Migrar perfil",
+      "migrateProfileWithSync": "Migrar y actualizar perfil",
+      "migrateProfileWithEthAddress": "Migrar y actualizar dirección ETH",
+      "wrapName": "Envolver nombre",
+      "updateResolver": "Actualizar resolvedor",
+      "updateProfile": "Actualizar perfil",
+      "setPrimaryName": "Establecer nombre principal",
+      "resetPrimaryName": "Quitar nombre principal",
+      "updateEthAddress": "Actualizar dirección ETH",
+      "testSendName": "Enviar nombre",
+      "burnFuses": "Quemar permisos",
+      "createSubname": "Crear subnombre",
+      "deleteSubname": "Borrar subnombre",
+      "extendNames": "Extender nombres",
+      "approveDnsRegistrar": "Aprobar registrador DNS",
+      "claimDnsName": "Reclamar nombre DNS",
+      "importDnsName": "Importar nombre DNS",
+      "commitName": "Iniciar temporizador",
+      "registerName": "Registrar nombre",
+      "approveNameWrapper": "Aprobar NameWrapper",
+      "clearRecords": "Borrar registros",
+      "updateRecords": "Actualizar registros",
+      "updateRecord": "Actualizar registro",
+      "removeRecord": "Quitar registro",
+      "resetProfileWithRecords": "Reiniciar perfil con registros",
+      "transferName": "Transferir nombre",
+      "transferSubname": "Transferir subnombre",
+      "changePermissions": "Cambiar permisos",
+      "syncManager": "Sincronizar administrador",
+      "updateProfileRecords": "Actualizar perfil",
+      "resetProfile": "Reiniciar perfil",
+      "unwrapName": "Desenvolver nombre",
+      "updateVerificationRecord": "Actualizar registro de verificación",
+      "removeVerificationRecord": "Quitar registro de verificación"
+    },
+    "info": {
+      "sendName": "Establecer el controlador y registrante del nombre",
+      "migrateProfile": "Pasar registros existentes a nuevo resolvedor",
+      "migrateProfileWithReset": "Pasar registros existentes a nuevo resolvedor",
+      "migrateProfileWithSync": "Pasar registros existentes a nuevo resolvedor",
+      "migrateProfileWithEthAddress": "Pasar registros existentes y dirección ETH a nuevo resolvedor",
+      "wrapName": "Envolver el nombre",
+      "updateResolver": "Cambiar resolvedor a",
+      "updateProfile": "Actualizar registros en resolvedor existente",
+      "setPrimaryName": "Establecer el nombre principal para tu dirección",
+      "updateEthAddress": "Actualizar dirección ETH a esta dirección",
+      "updateEthAddressOnLatestResolver": "Actualizar dirección ETH en el resolvedor más nuevo",
+      "testSendName": "Establecer el controlador y registrante del nombre",
+      "createSubname": "Crear un nuevo subnombre",
+      "burnFuses": "Quemar los permisos elegidos hasta que venza el nombre",
+      "commitName": "Iniciar temporizador para registrar nombre",
+      "approveNameWrapper": "Aprobar el NameWrapper para manejar tus nombres",
+      "fuses": {
+        "revoke": "Revocar",
+        "grant": "Otorgar",
+        "setExpiry": "Fijar vencimiento",
+        "PARENT_CANNOT_CONTROL": "Sacarle el control al padre",
+        "CAN_EXTEND_EXPIRY": "Extender vencimiento",
+        "CANNOT_UNWRAP": "Desenvolver este nombre",
+        "CANNOT_CREATE_SUBDOMAIN": "Crear subdominios",
+        "CANNOT_SET_RESOLVER": "Establecer resolvedor",
+        "CANNOT_SET_TTL": "Establecer TTL",
+        "CANNOT_TRANSFER": "Enviar este nombre",
+        "CANNOT_BURN_FUSES": "Cambiar permisos",
+        "CANNOT_APPROVE": "Cambiar administrador de renovación"
+      }
+    },
+    "itemLabel": {
+      "name": "Nombre",
+      "address": "Dirección",
+      "action": "Acción",
+      "info": "Info",
+      "to": "Para",
+      "subname": "Subnombre",
+      "duration": "Duración",
+      "cost": "Costo",
+      "update": "Actualizar",
+      "resolver": "Resolvedor",
+      "records": "Registros",
+      "record": "Registro"
+    },
+    "itemValue": {
+      "records_one": "{{count}} registro",
+      "records_other": "{{count}} registros"
+    },
+    "status": {
+        "pending": {
+          "regular": "En proceso"
+        },
+        "confirmed": {
+          "regular": "Confirmado",
+          "notifyTitle": "¡Transacción exitosa!",
+          "notifyMessage": "Tu transacción \"{{action}}\" salió joya"
+        },
+        "failed": {
+          "regular": "Falló",
+          "notifyTitle": "La transacción no funcionó",
+          "notifyMessage": "Tu transacción \"{{action}}\" falló y se revirtió"
+        }
+      },
+      "dialog": {
+        "intro": {
+          "trailingButton": "Empezar",
+          "trailingButtonResume": "Continuar",
+          "step": "Paso {{step}}"
+        },
+        "confirm": {
+          "title": "Confirmá los detalles",
+          "message": "Chequeá estos detalles antes de confirmar en tu billetera.",
+          "waitingForWallet": "Esperando la billetera",
+          "openWallet": "Abrir billetera"
+        },
+        "sent": {
+          "title": "Transacción enviada",
+          "message": "Tu transacción está en proceso, podés cerrar esto y volver más tarde.",
+          "progress": {
+            "title": "Enviado",
+            "message": "Está tardando más de lo esperado"
+          },
+          "learn": "Aprender sobre transacciones que tardan mucho"
+        },
+        "complete": {
+          "title": "¡Transacción completada!",
+          "message": "¡Tu transacción ya está lista!",
+          "progress": {
+            "title": "Listo"
+          }
+        },
+        "failed": {
+          "title": "La transacción falló",
+          "progress": {
+            "title": "Falló"
+          }
+        },
+        "error": {
+          "gasLimit": "El límite de gas en tu transacción no fue suficiente, por favor intentá de nuevo."
+        }
+      },
+      "error": {
+        "unknown": "Ocurrió un error desconocido"
+      },
+      "viewEtherscan": "Ver en Etherscan",
+      "viewMore": "Ver más"
+    },
+    "search": {
+      "label": "Buscar nombre",
+      "placeholder": "Buscá un nombre",
+      "emptyText": "Escribí un nombre o dirección para buscar...",
+      "address": "Dirección",
+      "errors": {
+        "tooShort": "El nombre es muy corto",
+        "invalid": "Formato de nombre inválido"
+      },
+      "status": {
+        "registered": "Registrado",
+        "gracePeriod": "Período de gracia",
+        "premium": "Premium temporario",
+        "available": "Disponible",
+        "notOwned": "No es tuyo",
+        "notImported": "No importado",
+        "short": "Muy corto",
+        "default": "Inválido",
+        "invalid": "Inválido",
+        "unsupportedTLD": "No soportado",
+        "imported": "Importado",
+        "owned": "Es tuyo",
+        "offChain": "Ver"
+      }
+    },
+    "selectableInput": {
+      "add": "Agregar",
+      "placeholder": "Elegí una opción",
+      "empty": "No se encontraron opciones"
+    },
+    "testnetFaucet": {
+      "explanation": "Cada dirección en {{ testnet }} puede reclamar {{ amount }} {{ ticker }} para probar la app ENS y otros usos en la testnet.",
+      "note": "Puede tardar unos minutos en aparecer en tu billetera."
+    },
+    "roles": {
+      "owner": {
+        "title": "dueño",
+        "description": "La dirección que es dueña de este nombre."
+      },
+      "dns-owner": {
+        "title": "dueño DNS",
+        "description": "La dirección que es dueña de este nombre."
+      },
+      "parent-owner": {
+        "title": "dueño padre",
+        "description": "La dirección que es dueña del padre de este nombre."
+      },
+      "manager": {
+        "title": "administrador",
+        "description": "Una dirección o contrato que puede cambiar el perfil, la configuración y los administradores del perfil."
+      },
+      "profile-editor": {
+        "title": "editor de perfil",
+        "description": "Una dirección que puede cambiar el perfil."
+      },
+      "eth-record": {
+        "title": "registro ETH",
+        "description": "La dirección a la que apunta este nombre."
+      }
+    },
+    "dns": {
+      "refresh": "Actualizar DNS"
+    },
+    "calendar": {
+      "pick_by_years": "Elegir por años",
+      "pick_by_date": "Elegir por fecha"
+    },
+    "verification": {
+      "verifiedBy": "Verificado por {{ issuer }}",
+      "personhoodVerified": "Identidad verificada",
+      "verificationFailed": "La verificación falló, por favor volvé a verificar tu perfil"
+    },
+    "verificationErrorDialog": {
+      "title": "La verificación falló",
+      "resolverRequired": "Se necesita un resolvedor válido para completar el proceso de verificación",
+      "ownerNotManager": "Tenés que estar conectado como el Administrador de este nombre para establecer el registro de verificación. Podés ver y actualizar el Administrador en la pestaña de Propiedad.",
+      "wrongAccount": "Tenés que estar conectado como <strong>{{ nameOrAddress }}</strong> para establecer el registro de verificación.",
+      "default": "No pudimos verificar tu cuenta. Por favor, volvé a Dentity e intentalo de nuevo."
+    }
+}
