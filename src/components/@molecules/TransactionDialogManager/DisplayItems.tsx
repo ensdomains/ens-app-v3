@@ -252,7 +252,7 @@ const DurationValue = ({ value }: { value: string | undefined }) => {
       <Typography ellipsis>
         <strong>{value}</strong>
       </Typography>
-      <Typography color="textTertiary" fontVariant="small">
+      <Typography color="grey" fontVariant="small">
         {t('transaction.extendNames.newExpiry', { date: formatExpiry(date) })}
       </Typography>
     </DurationContainer>

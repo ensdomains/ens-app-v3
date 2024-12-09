@@ -22,7 +22,7 @@ import {
   GetPriceReturnType,
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
-import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
+import { BackdropSurface, Portal, Typography } from '@ensdomains/thorin'
 
 import { SupportedChain } from '@app/constants/chains'
 import {
@@ -57,10 +57,10 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&
-    mq.sm.min(css`
-      padding-left: 48px;
+    `@media (min-width: 640px) {
+       padding-left: 48px;
       padding-right: 48px;
-    `)}
+    }`}
   `,
 )
 

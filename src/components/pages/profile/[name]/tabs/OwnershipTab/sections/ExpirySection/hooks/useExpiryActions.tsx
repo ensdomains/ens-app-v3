@@ -47,14 +47,14 @@ export const useExpiryActions = ({
     {
       label: t('action.setReminder'),
       type: 'set-reminder',
-      icon: <CalendarSVG />,
+      icon: CalendarSVG,
       primary: false,
       expiryDate,
     },
     {
       label: t('action.extend'),
       type: 'extend',
-      icon: <FastForwardSVG />,
+      icon: FastForwardSVG,
       primary: true,
       onClick: () => {
         showExtendNamesInput(`extend-names-${name}`, {

@@ -22,7 +22,7 @@ const LabelsContainer = styled.div(
 
 const Label = styled.div(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
     font-weight: ${theme.fontWeights.bold};
     line-height: ${theme.space['5']};
   `,
@@ -30,7 +30,7 @@ const Label = styled.div(
 
 const SecondaryLabel = styled.div(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
     font-size: ${theme.space['3']};
   `,
 )

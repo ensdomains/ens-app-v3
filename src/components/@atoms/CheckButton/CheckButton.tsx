@@ -1,27 +1,26 @@
 import styled, { css } from 'styled-components'
 
-import CircleTick from '@app/assets/CircleTick.svg'
-
 const Container = styled.button<{ $active: boolean }>(
   ({ theme, $active }) => css`
     cursor: pointer;
     flex: 0 0 ${theme.space['9']};
     width: ${theme.space['9']};
     height: ${theme.space['9']};
+    color: ${$active ? theme.colors.accent : theme.colors.grey};
     svg {
       path,
       rect {
         transition: all 0.15s ease-in-out;
-        stroke: ${$active ? theme.colors.accent : theme.colors.textTertiary};
+
         stroke-width: 1px;
       }
     }
 
     &:hover {
+      color: ${theme.colors.accent};
       svg {
         path,
         rect {
-          stroke: ${theme.colors.accent};
           stroke-width: 1.5px;
         }
       }
@@ -42,7 +41,26 @@ export const CheckButton = ({ active = false, onChange }: Props) => {
       onClick={() => onChange?.(!active)}
       data-testid="check-button"
     >
-      <CircleTick />
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          fill="none"
+          d="M7 12.3125L11.0625 16.0625L17 7.9375"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <rect
+          fill="none"
+          x="1"
+          y="1"
+          width="22"
+          height="22"
+          rx="11"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+      </svg>
     </Container>
   )
 }
