@@ -1,0 +1,461 @@
+{
+  "input": {
+    "profileEditor": {
+      "tabs": {
+        "avatar": {
+          "dropdown": {
+            "selectNFT": "Seleccionar NFT",
+            "uploadImage": "Subir imagen"
+          },
+          "nft": {
+            "title": "Seleccione una NFT",
+            "searchPlaceholder": "Buscar un NFT",
+            "loading": "Cargando tu NFTs",
+            "unknown": "Desconocido NFT",
+            "loadError": "NFT No se puede cargar",
+            "noNFTs": "No se encontraron NFT para esta dirección.",
+            "address": {
+              "owned": "Propiedad",
+              "other": "Otro"
+            },
+            "selected": {
+              "title": "Seleccionado NFT",
+              "subtitle": "Estás segura de que quieres usar esta NFT?"
+            },
+            "noResults": "No se encontraron resultados."
+          },
+          "image": {
+            "title": "Editar imagen",
+            "upload": {
+              "title": "Subir avatar",
+              "subtitle": "Para subir un avatar, debes firmar un mensaje. No te costará nada.",
+              "action": "Firmar y Subir"
+            }
+          }
+        },
+        "general": {
+          "label": "General",
+          "name": {
+            "label": "Apodo",
+            "placeholder": "John Smith"
+          },
+          "url": {
+            "label": "Website",
+            "placeholder": "https://ens.domains"
+          },
+          "location": {
+            "label": "Ubicación",
+            "placeholder": "Metaverso"
+          },
+          "description": {
+            "label": "Bio corta",
+            "placeholder": "Soy un agricultor de rendimiento de Tennessee rural."
+          }
+        },
+        "accounts": {
+          "label": "Cuentas",
+          "addAccount": "Agregar cuenta",
+          "noOptions": "No hay opciones de cuenta disponibles",
+          "placeholder": {
+            "default": "Añade nombre de usuario aquí",
+            "com.twitter": "e.g. nicksdjohnson",
+            "com.github": "e.g. arachnid",
+            "com.discord": "e.g. nickjohnson",
+            "org.telegram": "e.g. nicksdjohnson",
+            "email": "e.g. hello@example.com"
+          }
+        },
+        "address": {
+          "label": "Dirección",
+          "addAddress": "Agregar dirección",
+          "noOptions": "No dirección opciones disponibles",
+          "placeholder": {
+            "default": "Añade la dirección aquí",
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
+          }
+        },
+        "contentHash": {
+          "label": "Website",
+          "addContentHash": "Agregar decentralized website",
+          "placeholder": {
+            "default": "Agregar url aquí",
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "ar://...",
+            "swarm": "bzz://...",
+            "onion": "onion3://..."
+          }
+        },
+        "other": {
+          "label": "Otro",
+          "addRecord": "Agregar registro",
+          "createRecord": "Escriba un nombre de registro...",
+          "placeholder": {
+            "default": "Añade un valor aquí..."
+          }
+        }
+      },
+      "warningOverlay": {
+        "action": {
+          "learnMoreResolvers": "Obtenga más información sobre resolvers",
+          "updateResolver": "Actualizar resolver",
+          "setResolver": "Colocar resolver",
+          "ignoreUpdate": "Ignore esto y continúe usando su resolver actual. Se le preguntará nuevamente la próxima vez."
+        },
+        "invalidResolver": {
+          "title": "No autorizado resolver",
+          "subtitle": "No tienes permiso para establecer registros para esto resolver. Necesitarás actualizar a la última versión resolver para editar tu perfil.",
+          "action": "Actualizar resolver"
+        },
+        "migrateProfileSelector": {
+          "title": "Perfil",
+          "subtitle": "Los registros de perfil de cada uno resolver no coinciden. Qué conjunto de registros le gustaría utilizar?",
+          "option": {
+            "latest": "Registros de perfil en nuevos resolver",
+            "current": "Registros de perfil actuales",
+            "reset": "Restablecer tu perfil",
+            "resetSubtitle": "Eliminar todos los registros del perfil"
+          }
+        },
+        "migrateProfileWarning": {
+          "title": "Migrar perfil",
+          "subtitle": "Estás migrando tus registros de perfil a la última versión resolver. Esto borrará permanentemente cualquier registro existente en la última versión resolver y reemplazarlos con sus registros actuales."
+        },
+        "migrateRegistry": {
+          "title": "Registro desactualizado",
+          "subtitle": "Necesitará migrar el registro antes de realizar cambios en este nombre.",
+          "action": "Migrar"
+        },
+        "noResolver": {
+          "title": "No resolver colocar",
+          "subtitle": "Es necesario establecer una resolver antes de editar su perfil.",
+          "action": "Update"
+        },
+        "resetProfile": {
+          "title": "Restablecer perfil",
+          "subtitle": "Estás restableciendo los registros de tu perfil. Perderás toda la información de perfil existente, como la dirección ETH, el avatar y los registros sociales. Puedes volver a agregarlos editando tu perfil."
+        },
+        "resolverNotNameWrapperAware": {
+          "title": "Resolver incompatible",
+          "subtitle": "Tu solucionador actual no es compatible con los nombres encapsulados. Deberás actualizar el solucionador antes de editar tu perfil.",
+          "toggle": {
+            "title": "Transferir perfil actual",
+            "subtitle": "Si deselecciona esta opción, solo se actualizará su resolver."
+          }
+        },
+        "resolverOutOfDate": {
+          "title": "Resolver fuera de fecha",
+          "subtitle": "El resolver no está actualizado. Se recomienda que lo actualices antes de editar tu perfil.."
+        },
+        "resolverOutOfSync": {
+          "title": "Resolver fuera de sincronía",
+          "subtitle": "No estás utilizando la última versión pública resolver, pero tienes registros de perfil almacenados allí. Se recomienda que cambies a la última versión pública resolver antes de editar tu perfil."
+        },
+        "transferOrResetProfile": {
+          "title": "Perfil",
+          "subtitle": "Puedes transferir tu perfil actual al nuevo resolver antes de actualizar su resolver.",
+          "toggle": {
+            "title": "Corriente de transferencia profile",
+            "subtitle": "Si deselecciona esta opción, solo se actualizará su resolver."
+          }
+        },
+        "updateResolverOrResetProfile": {
+          "title": "Perfil",
+          "subtitle": "Puedes mantener tu perfil actual en el nuevo resolver, o restablecerlo y eliminar todos los registros del perfil.",
+          "toggle": {
+            "title": "Mantener el perfil actualizado",
+            "subtitle": "Si deseleccionas esta opción, se restablecerá tu perfil.."
+          }
+        },
+        "links": {
+          "learnMoreResolvers": "Obtenga más información sobre resolvers"
+        }
+      },
+      "intro": {
+        "resetProfile": {
+          "title": "Reiniciar perfil",
+          "description": "Esto eliminará todos los registros de perfil del último resolver y luego actualice el resolver."
+        },
+        "migrateProfile": {
+          "title": "Migrar perfil",
+          "description": "Esto migrará sus registros de perfil actuales a los más recientes resolver."
+        },
+        "migrateCurrentProfile": {
+          "title": "Migrar perfil",
+          "description": "Esto migrará sus registros de perfil actuales a los más recientes resolver."
+        }
+      }
+    },
+    "editResolver": {
+      "title": "Editar Resolver",
+      "latestLabel": "Usar lo último resolver",
+      "etherscan": "Etherscan",
+      "latestMessage": "Estás en lo último resolver",
+      "customLabel": "Costumbre resolver",
+      "customPlaceholder": "Ingresar personalizado resolver dirección"
+    },
+    "editRoles": {
+      "views": {
+        "main": {
+          "title": "Editar roles",
+          "noneSet": "Ninguno establecido"
+        },
+        "editRole": {
+          "title": "Cambiar {{role}}",
+          "views": {
+            "intro": {
+              "current": "Actual {{role}}"
+            }
+          }
+        }
+      }
+    },
+    "extendNames": {
+      "title_one": "Extender nombre",
+      "title_other": "Extender {{count}} Nombres",
+      "ownershipWarning": {
+        "title_one": "No eres dueño de este nombre",
+        "title_other": "No eres dueño de todos estos nombres",
+        "description_one": "Extender este nombre extenderá la duración del registro del propietario actual. Esto no le otorgará la propiedad del mismo.",
+        "description_other": "La extensión de estos nombres extenderá la duración del registro del propietario actual. Esto no le otorgará la propiedad si aún no es el propietario."
+      },
+      "invoice": {
+        "extension": "{{time}} extensión",
+        "transaction": "Transacción tarifa",
+        "total": "Total estimado"
+      },
+      "bannerMsg": "EExtenderlo por varios años ahorrará dinero en costos de red al evitar transacciones anuales..",
+      "gasLimitError": "Fondos insuficientes"
+    },
+    "transferProfile": {
+      "title": "Perfil de transferencia",
+      "message1": "Antes de actualizar, puedes transferir tu perfil actual si lo deseas; de lo contrario, se restablecerá cuando actualices.",
+      "message2": "Quieres transferir tu perfil actual?"
+    },
+    "revokePermissions": {
+      "views": {
+        "revokeWarning": {
+          "title": "Esto hará cambios permanentes",
+          "subtitle": "Los permisos son una función avanzada que permite realizar cambios permanentes en su nombre. No podrá deshacer estos cambios y solo se restablecerán si el nombre caduca.",
+          "subtitle2": "Asegúrate de que estás seguro de utilizar esta función antes de continuar. <infoLink>Más información sobre permisos</infoLink>"
+        },
+        "revokePCC": {
+          "title": "Renunciar a la propiedad",
+          "subtitle": "Esto le dará la propiedad de este nombre al administrador ({{account}}). A menos que también seas el administrador, ya no podrás realizar cambios en este nombre."
+        },
+        "grantExtendExpiry": {
+          "title": "Cambiar permisos",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "Otorgar permiso para: Extender el vencimiento"
+          }
+        },
+        "setExpiry": {
+          "title": "Establecer fecha de caducidad del nombre",
+          "subtitle": "Establezca una fecha en la que caducarán los permisos. Esta fecha no puede ser mayor que la fecha de caducidad de su padre ({{parent}}).",
+          "subtitleWithCEE": "Establece una fecha en la que expirará este nombre. Esta fecha sustituirá a la fecha de expiración del permiso existente ({{expiry}}), y no puede ser posterior a la expiración de su padres ({{parent}}).",
+          "options": {
+            "max": "Máximo",
+            "custom": "Elija una fecha anterior"
+          },
+          "error": {
+            "required": "Se requiere una fecha si se selecciona una fecha personalizada",
+            "min": "La fecha debe ser mayor que {{date}}",
+            "max": "La fecha debe ser menor a {{date}}"
+          }
+        },
+        "revokeAdditional": {
+          "title": "Revocar permisos",
+          "subtitle": "Desea revocar los permisos de este nombre antes de renunciar a la propiedad? Esto solo se puede hacer ahora.",
+          "action": {
+            "title": "Revocar permisos adicionales",
+            "description": "A menos que también sea el administrador, no podrá revocar permisos adicionales después de esto."
+          }
+        },
+        "revokeUnwrap": {
+          "title": "Revocar permisos",
+          "subtitle": "Debes revocar este permiso antes de poder revocar otros. Esto evita que se eliminen permisos.",
+          "fuses": {
+            "CANNOT_UNWRAP": "Revocar permiso para: Unwrap este nombre"
+          }
+        },
+        "revokePermissions": {
+          "title": "Revocar permisos",
+          "unwrapSubtitle": "Seleccione esto para habilitar los demás",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "Otorgar permiso para: Extender el expiración.",
+            "CANNOT_UNWRAP": "Revocar permiso para: Unwrap este nombre",
+            "CANNOT_CREATE_SUBDOMAIN": "Revocar permiso para: Crear subdominios",
+            "CANNOT_TRANSFER": "Revocar permiso para: Envía este nombre",
+            "CANNOT_SET_RESOLVER": "Revocar permiso para: Colocar resolver",
+            "CANNOT_SET_TTL": "Revocar permiso para: Colocar TTL",
+            "CANNOT_BURN_FUSES": "Revocar permiso para: Cambiar permisos",
+            "CANNOT_APPROVE": "Revocar permiso para: Cambiar el administrador de renovación"
+          }
+        },
+        "revokeChangeFuses": {
+          "title": "Revocar permisos",
+          "subtitle": "Al revocar este permiso, perderá de forma permanente la posibilidad de cambiar los fusibles restantes. Esto solo se restablecerá si el nombre caduca.",
+          "fuses": {
+            "CANNOT_BURN_FUSES": "Revocar permiso para: Cambiar permisos"
+          }
+        },
+        "revokeChangeFusesWarning": {
+          "title": "Los permisos restantes quedarán bloqueados.",
+          "subtitle": "Los permisos y los fusibles personalizados se bloquearán permanentemente en su estado actual después ‘cambiar permisos’ se revoca. Esto solo se restablecerá si el nombre caduca."
+        },
+        "lastWarning": {
+          "title": "Estas absolutamente seguro?",
+          "subtitle": "Estás realizando cambios que solo se pueden deshacer cuando el nombre caduque ({{date}}).",
+          "message": "Por favor, escriba su nombre ENS({{name}}) para confirmar."
+        }
+      },
+      "action": {
+        "revoke": "Revocar"
+      }
+    },
+    "unknownLabels": {
+      "title": "Confirma tu nombre",
+      "subtitle": "Algunas de las etiquetas de tu nombre no son conocidas. Introdúcelas para continuar."
+    },
+    "deleteEmancipatedSubnameWarning": {
+      "title": "Este subnombre no se puede volver a crear",
+      "message": "La eliminación de este subnombre impedirá que se utilice o se vuelva a crear hasta que haya caducado{{date}}. Esto no se puede deshacer porque se han revocado los permisos de control principal."
+    },
+    "deleteSubnameNotParentWarning": {
+      "title": "No puedes recrear este subnombre",
+      "message": "Sólo el {{ownershipTerm}} del nombre del padre (<b>{{parentOwner}}</b>) puede volver a crear este subnombre. No podrá volver a crear este nombre una vez que haya sido eliminado."
+    },
+    "selectPrimaryName": {
+      "title": "Seleccione un nombre principal",
+      "errors": {
+        "noNamesFound": "No se encontraron nombres",
+        "noEligibleNames": "No hay nombres elegibles"
+      }
+    },
+    "resetPrimaryName": {
+      "title": "Eliminar nombre principal",
+      "description": "Este nombre ya no aparecerá como el nombre de esta dirección. Sin embargo, las transacciones con este nombre se seguirán resolviendo en esta dirección a menos que elimines el registro ETH."
+    },
+    "sendName": {
+      "views": {
+        "error": {
+          "title": "No se puede enviar el nombre",
+          "description": "No tienes permiso para enviar este nombre."
+        },
+        "search": {
+          "placeholder": "ENS nombre o dirección de Ethereum",
+          "views": {
+            "error": {
+              "message": "Algo salió mal. Inténtalo de nuevo.."
+            },
+            "intro": {
+              "message": "Busque un nombre ENS o una dirección ETH"
+            },
+            "noResults": {
+              "message": "No se encontraron resultados"
+            }
+          }
+        },
+        "summary": {
+          "title": "Enviar nombre",
+          "fields": {
+            "name": {
+              "label": "Nombre",
+              "expires": "Expires {{date}}"
+            },
+            "recipient": "Beneficiario",
+            "options": {
+              "label": "Opciones",
+              "title": "Restablecer perfil",
+              "description": "Eliminar todos los registros del perfil. Esto cuesta más gasolina."
+            },
+            "summary": {
+              "title": "Resumen de cambios",
+              "updates": {
+                "role": "Actualizar {{role}} papel para {{address}}",
+                "eth-record": "Actualizar ETH grabar a {{address}}"
+              },
+              "remove": {
+                "profile": "Eliminar registros de perfil"
+              }
+            }
+          }
+        },
+        "confirmation": {
+          "title": "Enviando nombre",
+          "description": "Al enviar este nombre se transfiere la propiedad al destinatario, lo que le otorga su control.",
+          "warning": "Perderá la capacidad de modificarlo, recibir pagos o usarlo como su nombre principal.",
+          "learnMore": "Conozca más sobre envío de nombres"
+        }
+      }
+    },
+    "syncManager": {
+      "title": "Administrador de sincronización",
+      "description": "Al sincronizar el administrador, usted será el nuevo administrador con este nombre. El administrador actual <strong>({{manager}})</strong> ya no se podrán hacer cambios.",
+      "warning": "Al sincronizar el administrador, también se desenvolverá este nombre. Esto grabará el NFT y restablecerá los permisos."
+    },
+    "verifyProfile": {
+      "list": {
+        "title": "Verifica tu perfil",
+        "message": " Puede verificar la información del perfil y agregar pruebas de personhood. Los registros verificados se marcarán en su perfil con una marca de verificación azul.",
+        "added": "Added"
+      },
+      "dentity": {
+        "title": "Dentity verificación",
+        "description": "Proceder a Dentity para verificar tu perfil. Necesitará proporcionar prueba de propiedad de los registros que desea verificar. Dentity no comparte ninguna información privada con ENS.",
+        "helper": "Su verificación no estará completa hasta que haya regresado a ENS y actualizado sus registros. Esto requerirá una transacción.",
+        "remove": "Eliminar Dentity del perfil",
+        "link": "Ir a Dentity"
+      }
+    }
+  },
+  "transaction": {
+    "extendNames": {
+      "actionValue": "Ampliar registro",
+      "costValue": "{{value}} + honorarios",
+      "warning": "Extender este nombre no le dará la propiedad del mismo."
+    },
+    "deleteSubname": {
+      "warning": "Hola allí afuera"
+    }
+  },
+  "intro": {
+    "migrateAndUpdateResolver": {
+      "title": "Acción requerida",
+      "heading": "Las ediciones que desea guardar en su perfil requieren que actualice su resolver.",
+      "link": "Obtenga más información sobre resolver actualizaciones",
+      "warning": "Tenga en cuenta que si cancela esto en cualquier momento, sus cambios no se guardarán.."
+    },
+    "syncManager": {
+      "description": "Al sincronizar el administrador, usted se convertirá en el nuevo administrador de este nombre. El gerente actual <b>({{manager}})</b> ya no se podrán realizar cambios.",
+      "wrappedWarning": "Al sincronizar el administrador, también se desenvolverá este nombre. Esto grabará el NFT y restablecerá los permisos."
+    },
+    "selectPrimaryName": {
+      "updateEthAddress": {
+        "title": "Actualizar la dirección ETH",
+        "description": "La dirección ETH de este nombre no coincide con esta billetera. Para usar esto como su nombre principal, primero deberá actualizar la dirección ETH."
+      },
+      "noResolver": {
+        "title": "No resolver colocar",
+        "description": "Para usar esto como su nombre principal, primero deberá configurar un solucionador y actualizar la dirección ETH."
+      },
+      "invalidResolver": {
+        "title": "Colocar resolución no autorizada",
+        "description": "Para usar esto como su nombre principal, primero deberá configurar un solucionador válido y actualizar la dirección ETH."
+      }
+    },
+    "multiStepSubnameDelete": {
+      "title": "Eliminar subnombre",
+      "description": "Para eliminar este subnombre se requieren varias transacciones"
+    }
+  },
+  "errors": {
+    "duplicateKey": "{{value}} es una clave duplicada"
+  }
+}
