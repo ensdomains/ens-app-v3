@@ -216,7 +216,7 @@ export const SubnamesTab = ({
             <Button
               data-testid="add-subname-action"
               onClick={createSubname}
-              prefix={<PlusPrefix as={PlusSVG} />}
+              prefix={() => <PlusPrefix as={PlusSVG} />}
             >
               {t('details.tabs.subnames.addSubname.action')}
             </Button>

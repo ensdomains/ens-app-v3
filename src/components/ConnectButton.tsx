@@ -153,7 +153,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
                   ),
                   as: 'a' as 'a',
                   color: 'text',
-                  icon: <PersonSVG />,
+                  icon: PersonSVG,
                 },
               ]
             : []),
@@ -166,7 +166,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
               </BaseLink>
             ),
             as: 'a',
-            icon: <CogSVG />,
+            icon: CogSVG,
             showIndicator: hasPendingTransactions,
           },
           <SectionDivider key="divider" />,
@@ -174,13 +174,13 @@ const HeaderProfile = ({ address }: { address: Address }) => {
             label: shortenAddress(address),
             color: 'text',
             onClick: () => copy(address),
-            icon: copied ? <CheckSVG /> : <CopySVG />,
+            icon: copied ? CheckSVG : CopySVG,
           },
           {
             label: t('wallet.disconnect'),
             color: 'red',
             onClick: () => disconnect(),
-            icon: <ExitSVG />,
+            icon: ExitSVG,
           },
         ] as DropdownItem[]
       }
@@ -188,7 +188,6 @@ const HeaderProfile = ({ address }: { address: Address }) => {
         src: avatar || zorb,
         decoding: 'sync',
         loading: 'eager',
-        noBorder: true,
         overlay: avatar ? undefined : (
           <PersonOverlay>
             <PersonSVG />
