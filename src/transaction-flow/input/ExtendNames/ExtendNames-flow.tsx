@@ -30,6 +30,7 @@ import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
 import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
+import { validateExtendNamesDuration } from './utils/validateExtendNamesDuration'
 
 type View = 'name-list' | 'no-ownership-warning' | 'registration'
 
@@ -161,6 +162,7 @@ const NamesList = ({ names }: NamesListProps) => {
 
 type Data = {
   names: string[]
+  seconds?: number
   isSelf?: boolean
 }
 
@@ -170,10 +172,16 @@ export type Props = {
 
 const minSeconds = ONE_DAY
 
-const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
+const ExtendNames = ({
+  data: { seconds: defaultSeconds, names, isSelf },
+  dispatch,
+  onDismiss,
+}: Props) => {
   const { t } = useTranslation(['transactionFlow', 'common'])
 
-  const [seconds, setSeconds] = useState(ONE_YEAR)
+  const [seconds, setSeconds] = useState(
+    validateExtendNamesDuration({ duration: defaultSeconds ?? ONE_YEAR })!,
+  )
   const years = secondsToYears(seconds)
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 

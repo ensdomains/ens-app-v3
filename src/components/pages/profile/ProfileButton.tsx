@@ -104,19 +104,19 @@ export const AddressProfileButton = ({
   const items = [
     iconKey === 'eth'
       ? {
-          icon: <UpRightArrowSVG />,
+          icon: UpRightArrowSVG,
           label: 'View address',
           href: getDestination(`/${address}`) as string,
         }
       : undefined,
     {
-      icon: <CopySVG />,
+      icon: CopySVG,
       label: 'Copy address',
       onClick: () => copy(address),
     },
     defaultBlockExplorer
       ? {
-          icon: <UpRightArrowSVG />,
+          icon: UpRightArrowSVG,
           label: `View on ${defaultBlockExplorer?.name}`,
           href: `${defaultBlockExplorer?.url}/address/${address}`,
         }
@@ -128,7 +128,7 @@ export const AddressProfileButton = ({
       <RecordItem
         data-testid={`address-profile-button-${iconKey}`}
         postfixIcon={VerticalDotsSVG}
-        icon={<StyledAddressIcon name={iconKey} />}
+        icon={() => <StyledAddressIcon name={iconKey} />}
         value={address}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
@@ -324,14 +324,14 @@ export const OwnerProfileButton = ({
   const items = [
     link
       ? {
-          icon: <UpRightArrowSVG />,
+          icon: UpRightArrowSVG,
           label: 'View profile',
           href: link,
         }
       : undefined,
     primary.data?.name
       ? {
-          icon: <CopySVG />,
+          icon: CopySVG,
           label: 'Copy name',
           onClick: () => copy(primary.data?.name!),
         }
@@ -339,17 +339,17 @@ export const OwnerProfileButton = ({
     ...(dataType === 'address'
       ? ([
           {
-            icon: <UpRightArrowSVG />,
+            icon: UpRightArrowSVG,
             label: 'View address',
             href: getDestination(`/${addressOrNameOrDate}`) as string,
           },
           {
-            icon: <CopySVG />,
+            icon: CopySVG,
             label: 'Copy address',
             onClick: () => copy(addressOrNameOrDate),
           },
           {
-            icon: <UpRightArrowSVG />,
+            icon: UpRightArrowSVG,
             label: 'View on Etherscan',
             href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
           },
@@ -407,7 +407,7 @@ export const VerificationProfileButton = ({
       tooltipContent={<VerificationBadgeVerifierTooltipContent isVerified={!!isVerified} />}
     >
       <RecordItem
-        icon={<DynamicVerificationIcon name={iconKey} />}
+        icon={() => <DynamicVerificationIcon name={iconKey} />}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`verification-profile-button-${iconKey}`}
