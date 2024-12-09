@@ -1,6 +1,6 @@
 import { UseFormRegister, UseFormTrigger } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { CrossSVG, Input } from '@ensdomains/thorin'
 
@@ -110,7 +110,6 @@ export const CustomProfileRecordInput = ({
   error,
   onDelete,
 }: Props) => {
-  const theme = useTheme()
   const { t } = useTranslation('register')
   return (
     <Container>
@@ -121,9 +120,6 @@ export const CustomProfileRecordInput = ({
               label=""
               hideLabel
               error={!!error}
-              parentStyles={css`
-                height: ${theme.space[12]};
-              `}
               placeholder={t('steps.profile.options.groups.custom.key')}
               {...register(`records.${index}.key`, {
                 required: t('steps.profile.errors.labelRequired'),

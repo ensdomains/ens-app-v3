@@ -44,7 +44,7 @@ export const SearchView = ({ name, senderRole, onCancel, onSelect }: Props) => {
         label="Name"
         size="medium"
         hideLabel
-        icon={MagnifyingGlassSimpleSVG}
+        icon={<MagnifyingGlassSimpleSVG />}
         clearable
         {...register('query', {
           onChange: (e) => {

@@ -188,11 +188,13 @@ const HeaderProfile = ({ address }: { address: Address }) => {
         src: avatar || zorb,
         decoding: 'sync',
         loading: 'eager',
-        overlay: avatar ? undefined : (
-          <PersonOverlay>
-            <PersonSVG />
-          </PersonOverlay>
-        ),
+        icon: avatar
+          ? undefined
+          : () => (
+              <PersonOverlay>
+                <PersonSVG />
+              </PersonOverlay>
+            ),
       }}
       size="medium"
       alignDropdown="left"

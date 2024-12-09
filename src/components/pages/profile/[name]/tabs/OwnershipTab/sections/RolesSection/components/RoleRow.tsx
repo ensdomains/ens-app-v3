@@ -81,7 +81,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     return {
       label: t('transaction.viewEtherscan', { ns: 'common' }),
       onClick: () => window.open(makeEtherscanLink(address!, networkName, 'address'), '_blank'),
-      icon: <OutlinkSVG />,
+      icon: OutlinkSVG,
     }
   }, [primary.data?.name, isWrapped, t, address, networkName])
 
@@ -93,7 +93,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
 
   const items: DropdownItem[] = [
     ...(primary.data?.name
-      ? ([
+      ? [
           {
             label: t('wallet.viewProfile'),
             onClick: () => router.push(getDestination(`/profile/${primary.data!.name}`) as string),
@@ -106,7 +106,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
             color: 'text',
             icon: CopySVG,
           },
-        ] as DropdownItem[])
+        ]
       : []),
     {
       label: t('address.viewAddress'),
@@ -123,7 +123,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     ...(etherscanAction ? [etherscanAction] : []),
     ...(editRolesAction ? [editRolesAction] : []),
     ...(syncManagerAction ? [syncManagerAction] : []),
-  ]
+  ] as DropdownItem[]
 
   const { isLoading } = primary
 

@@ -66,12 +66,12 @@ export const SocialProfileButton = ({
       tooltipContent={<VerificationBadgeAccountTooltipContent verifiers={verifiers} />}
     >
       <RecordItem
-        icon={
+        icon={() => (
           <DynamicSocialIcon
             fill={socialData.color}
             name={socialData.icon as keyof typeof socialIconTypes}
           />
-        }
+        )}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`social-profile-button-${iconKey}`}

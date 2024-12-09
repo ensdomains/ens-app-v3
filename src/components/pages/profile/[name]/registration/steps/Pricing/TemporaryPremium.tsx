@@ -230,12 +230,12 @@ const InputContainer = styled.div(
   `,
 )
 
-const inputStyle = ({ theme }: { theme: DefaultTheme }) => css`
-  background-color: ${theme.colors.background};
-  border-radius: ${theme.radii.large};
-  border-color: ${theme.colors.background};
-  height: ${theme.space['11']};
-`
+// const inputStyle = ({ theme }: { theme: DefaultTheme }) => css`
+//   background-color: ${theme.colors.background};
+//   border-radius: ${theme.radii.large};
+//   border-color: ${theme.colors.background};
+//   height: ${theme.space['11']};
+// `
 
 const TimezoneText = styled(Typography)(
   ({ theme }) => css`
@@ -553,7 +553,6 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             prefix="$"
             size="medium"
             clearable={false}
-            parentStyles={inputStyle as any}
           />
           <Input
             size="medium"
@@ -565,7 +564,6 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             onChange={handleDateInput}
             clearable={false}
             type="datetime-local"
-            parentStyles={inputStyle as any}
           />
           <input ref={dateInputRef} style={{ display: 'none' }} type="date" />
         </InputContainer>
@@ -598,7 +596,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
               color: 'text',
             }))}
           >
-            <Button prefix={<CalendarIcon as={CalendarSVG} />}>
+            <Button prefix={() => <CalendarIcon as={CalendarSVG} />}>
               {t('action.remindMe', { ns: 'common' })}
             </Button>
           </Dropdown>

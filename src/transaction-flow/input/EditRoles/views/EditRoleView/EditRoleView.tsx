@@ -58,7 +58,7 @@ export const EditRoleView = ({ index, onBack }: Props) => {
           label="Role"
           size="medium"
           hideLabel
-          icon={MagnifyingGlassSimpleSVG}
+          icon={<MagnifyingGlassSimpleSVG />}
           clearable
           value={query}
           placeholder={t('input.sendName.views.search.placeholder')}

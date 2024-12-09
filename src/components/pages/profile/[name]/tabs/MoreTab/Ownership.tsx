@@ -317,7 +317,7 @@ const Ownership = ({
           {canSend && (
             <Button
               size="small"
-              prefix={<AeroplaneIcon as={AeroplaneSVG} />}
+              prefix={() => <AeroplaneIcon as={AeroplaneSVG} />}
               onClick={handleSend}
               data-testid="send-name-button"
             >
@@ -332,7 +332,7 @@ const Ownership = ({
                 buttonText: t('action.send', { ns: 'common' }),
                 mobileWidth: 150,
                 mobileButtonWidth: 'initial',
-                prefix: <AeroplaneIcon as={AeroplaneSVG} />,
+                prefix: () => <AeroplaneIcon as={AeroplaneSVG} />,
               }}
             />
           )}

@@ -528,7 +528,7 @@ export const TransactionStageModal = ({
       return (
         <Button
           disabled
-          suffix={<Spinner color="background" />}
+          suffix={() => <Spinner color="background" />}
           data-testid="transaction-modal-confirm-button"
         >
           {t('transaction.dialog.confirm.waitingForWallet')}

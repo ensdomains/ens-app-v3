@@ -490,7 +490,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
             <>
               {ResetBackButton}
               <MobileFullWidth>
-                <Button data-testid="wait-button" disabled suffix={<Spinner color="greyPrimary" />}>
+                <Button
+                  data-testid="wait-button"
+                  disabled
+                  suffix={() => <Spinner color="greyPrimary" />}
+                >
                   {t('steps.transactions.wait')}
                 </Button>
               </MobileFullWidth>

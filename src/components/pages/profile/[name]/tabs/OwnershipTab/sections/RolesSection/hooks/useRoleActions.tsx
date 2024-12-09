@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next'
 
 import {
   AeroplaneSVG,
+  AsProp,
   CounterClockwiseArrowSVG,
   HorizontalOutwardArrowsSVG,
   PersonSVG,
-  ReactNodeNoStrings,
 } from '@ensdomains/thorin'
 import { DropdownItemObject } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
@@ -23,7 +23,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 type Action = Omit<DropdownItemObject, 'onClick' | 'icon'> & {
   primary?: boolean
-  icon: ReactNodeNoStrings
+  icon: AsProp
   type: string
   error?: string
   onClick?: () => void
