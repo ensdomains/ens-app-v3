@@ -217,7 +217,12 @@ const Hamburger = () => {
   }, [])
 
   const button = (
-    <Button ref={btnRef} $active={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
+    <Button
+      data-testid="humburger-button"
+      ref={btnRef}
+      $active={isOpen}
+      onClick={() => setIsOpen((prev) => !prev)}
+    >
       {graphOutOfSync && <StyledSpinner color="accent" />}
       <MenuSVG />
     </Button>
@@ -249,7 +254,11 @@ const Hamburger = () => {
           isOpen={isOpen}
           anchorRef={btnRef}
           popover={
-            <DesktopDropdownCard ref={containerRef} style={{ height: height || undefined }}>
+            <DesktopDropdownCard
+              ref={containerRef}
+              data-testid="desktop-humburger-menu"
+              style={{ height: height || undefined }}
+            >
               {componentWithAnimation}
             </DesktopDropdownCard>
           }
@@ -266,7 +275,11 @@ const Hamburger = () => {
           onDismiss={() => setIsOpen(false)}
           alignTop
         >
-          <MobileCard ref={containerRef} style={{ height: height || undefined }}>
+          <MobileCard
+            ref={containerRef}
+            data-testid="mobile-humburger-menu"
+            style={{ height: height || undefined }}
+          >
             {componentWithAnimation}
           </MobileCard>
           <CloseButton onClick={() => setIsOpen(false)}>

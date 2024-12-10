@@ -63,7 +63,7 @@ export const TextWithTooltip = ({
       }
       background="indigoSurface"
     >
-      <Container>
+      <Container data-testid="tooltip">
         <Typography fontVariant="smallBold" color="indigo">
           {children}
         </Typography>
