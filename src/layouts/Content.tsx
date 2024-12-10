@@ -61,7 +61,7 @@ const ContentContainer = styled.div(
 )
 
 const ContentPlaceholder = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: none;
     height: 0;
     width: 0;
@@ -72,7 +72,7 @@ const ContentPlaceholder = styled.div(
 )
 
 const WarningWrapper = styled.div(
-  () => css`
+  ({ theme }) => css`
     width: 100%;
     grid-column: span 1;
     height: min-content;
@@ -98,7 +98,7 @@ const TitleContainer = styled.div(
 )
 
 const TitleWrapper = styled.div(
-  () => css`
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     align-items: center;

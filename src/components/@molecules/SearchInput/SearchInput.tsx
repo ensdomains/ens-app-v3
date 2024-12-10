@@ -53,7 +53,7 @@ import { getBoxNameStatus, SearchResult } from './SearchResult'
 import { HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
-  ({ $size }) => css`
+  ({ $size, theme }) => css`
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&

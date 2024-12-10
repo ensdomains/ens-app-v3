@@ -25,11 +25,13 @@ const LogoAndLanguage = styled.div(
   `,
 )
 
-const StyledLeadingHeading = styled(LeadingHeading)`
-  @media (min-width: ${theme.breakpoints.sm}px) {
-    display: none;
-  }
-`
+const StyledLeadingHeading = styled(LeadingHeading)(
+  ({ theme }) => css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      display: none;
+    }
+  `,
+)
 
 export default function Page() {
   const { t } = useTranslation()

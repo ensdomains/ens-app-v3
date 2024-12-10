@@ -20,17 +20,19 @@ import {
 // import DAOSVG from '../assets/DAO.svg'
 // import SocialX from '../assets/social/SocialX.svg'
 
-const Title = styled.h1`
-  font-weight: 830;
-  text-align: center;
+const Title = styled.h1(
+  ({ theme }) => css`
+    font-weight: 830;
+    text-align: center;
 
-  font-size: 36px;
-  line-height: 104%;
+    font-size: 36px;
+    line-height: 104%;
 
-  @media (min-width: ${theme.breakpoints.sm}px) {
-    font-size: 52px;
-  }
-`
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      font-size: 52px;
+    }
+  `,
+)
 
 const Header = styled.header(
   ({ theme }) => css`
