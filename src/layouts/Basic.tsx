@@ -4,8 +4,6 @@ import { useIntercom } from 'react-use-intercom'
 import styled, { css } from 'styled-components'
 import { useAccount, useSwitchChain } from 'wagmi'
 
-import { mq } from '@ensdomains/thorin'
-
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -29,11 +27,11 @@ const Container = styled.div(
       width: calc(100% - calc(var(--padding-size) * 2));
       box-sizing: content-box;
     }
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       --padding-size: ${theme.space['8']};
       gap: ${theme.space['6']};
       flex-gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -53,9 +51,9 @@ const ContentWrapper = styled.div(
 const BottomPlaceholder = styled.div(
   ({ theme }) => css`
     height: ${theme.space['14']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       height: ${theme.space['12']};
-    `)}
+    }
   `,
 )
 

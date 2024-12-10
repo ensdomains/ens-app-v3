@@ -3,8 +3,8 @@ import { fireEvent, render, renderHook, screen } from '@app/test-utils'
 import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
 
-import { NameConfirmationWarningView } from './NameConfirmationWarningView'
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
+import { NameConfirmationWarningView } from './NameConfirmationWarningView'
 
 makeMockIntersectionObserver()
 

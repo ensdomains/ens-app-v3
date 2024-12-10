@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { ChildFuseKeys, ChildFuseReferenceType } from '@ensdomains/ensjs/utils'
-import { Button, FlameSVG, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { CurrentChildFuses } from '@app/types'
@@ -13,15 +13,15 @@ export const childFuseObj = Object.fromEntries(
   ChildFuseKeys.map((key) => [key, false]),
 ) as CurrentChildFuses
 
-const FusesContainer = styled.div(({ theme }) => [
-  css`
+const FusesContainer = styled.div(
+  ({ theme }) => css`
     width: 100%;
     padding: ${theme.space['1.25']} ${theme.space['4']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      min-width: ${theme.space['112']};
+    }
   `,
-  mq.sm.min(css`
-    min-width: ${theme.space['112']};
-  `),
-])
+)
 
 const BurnButtonsContainer = styled.div(
   ({ theme }) => css`
@@ -81,6 +81,12 @@ const StyledButton = styled(Button)(
   `,
 )
 
+const SelectedBurnButton = (permission: string) => () => (
+  <FlameSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
+)
+
+const UnselectedBurnButton = () => <StyledFlameSVG width="24" height="24" />
+
 const BurnButton = ({
   permission,
   isBurned,
@@ -100,13 +106,7 @@ const BurnButton = ({
       disabled={isBurned}
       colorStyle={isSelected ? 'redSecondary' : 'greySecondary'}
       size="small"
-      suffix={
-        isSelected ? (
-          <FlameSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
-        ) : (
-          <StyledFlameSVG width="24" height="24" />
-        )
-      }
+      suffix={isSelected ? SelectedBurnButton(permission) : UnselectedBurnButton}
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
         <Typography>{t(`permissions.${permission}`)}</Typography>
@@ -218,7 +218,7 @@ const BurnFusesContent = ({
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
           <Spacer $height="1" />
-          <Helper type="info" style={{ textAlign: 'center' }}>
+          <Helper alert="info" style={{ textAlign: 'center' }}>
             <Typography>{t('fuses.info')}</Typography>
           </Helper>
         </>

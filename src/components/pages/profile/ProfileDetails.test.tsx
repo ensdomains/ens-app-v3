@@ -117,7 +117,14 @@ describe('ProfileDetails', () => {
         name="test.eth"
         expiryDate={undefined}
         accountRecords={[]}
-        otherRecords={[{ iconKey: 'contenthash', key: 'contenthash', value: 'ipfs://QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco', type: 'contenthash' }]}
+        otherRecords={[
+          {
+            iconKey: 'contenthash',
+            key: 'contenthash',
+            value: 'ipfs://QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco',
+            type: 'contenthash',
+          },
+        ]}
         addresses={[]}
         pccExpired={false}
         owners={[]}

@@ -20,76 +20,82 @@ const RECORD_ITEM_KEY_VALUES = [
 ]
 
 describe('makeAppendVerificationsProps', () => {
-  it.each(RECORD_ITEM_KEY_VALUES)('should return isVerified is true for key = %s and value = %s', (key, value) => {
-    const verifiedRecords: UseVerifiedRecordsReturnType = [
-      {
-        issuer: 'dentity',
-        key: 'com.twitter',
-        value: '@testETH',
-        verified: true,
-      },
-      {
-        issuer: 'dentity',
-        key: 'org.telegram',
-        value: 'testETH',
-        verified: true,
-      },
-      {
-        issuer: 'dentity',
-        key: 'com.discord',
-        value: 'testETH',
-        verified: true,
-      },
-      {
-        issuer: 'dentity',
-        key: 'com.github',
-        value: 'testETH',
-        verified: true,
-      }
-    ]
-    const appendVerificationProps = makeAppendVerificationProps(verifiedRecords)
-    const normalisedRecord = normaliseProfileAccountsRecord({ key, value })
+  it.each(RECORD_ITEM_KEY_VALUES)(
+    'should return isVerified is true for key = %s and value = %s',
+    (key, value) => {
+      const verifiedRecords: UseVerifiedRecordsReturnType = [
+        {
+          issuer: 'dentity',
+          key: 'com.twitter',
+          value: '@testETH',
+          verified: true,
+        },
+        {
+          issuer: 'dentity',
+          key: 'org.telegram',
+          value: 'testETH',
+          verified: true,
+        },
+        {
+          issuer: 'dentity',
+          key: 'com.discord',
+          value: 'testETH',
+          verified: true,
+        },
+        {
+          issuer: 'dentity',
+          key: 'com.github',
+          value: 'testETH',
+          verified: true,
+        },
+      ]
+      const appendVerificationProps = makeAppendVerificationProps(verifiedRecords)
+      const normalisedRecord = normaliseProfileAccountsRecord({ key, value })
 
-    expect(appendVerificationProps(normalisedRecord)).toEqual({
-      ...normalisedRecord,
-      isVerified: true,
-      verifiers: ['dentity'],
-    })
-  })
+      expect(appendVerificationProps(normalisedRecord)).toEqual({
+        ...normalisedRecord,
+        isVerified: true,
+        verifiers: ['dentity'],
+      })
+    },
+  )
 
-  it.each(RECORD_ITEM_KEY_VALUES)('should return isVerified is false for key = %s and value = %s if verified is false', (key, value) => {
-    const verifiedRecords: UseVerifiedRecordsReturnType = [
-      {
-        issuer: 'dentity',
-        key: 'com.twitter',
-        value: '@testETH',
-        verified: false,
-      },
-      {
-        issuer: 'dentity',
-        key: 'org.telegram',
-        value: 'testETH',
-        verified: false,
-      },
-      {
-        issuer: 'dentity',
-        key: 'com.discord',
-        value: 'testETH',
-        verified: false,
-      },
-      {
-        issuer: 'dentity',
-        key: 'com.github',
-        value: 'testETH',
-        verified: false,
-      }
-    ]
-    const appendVerificationProps = makeAppendVerificationProps(verifiedRecords)
-    const normalisedRecord = normaliseProfileAccountsRecord({ key, value })
+  it.each(RECORD_ITEM_KEY_VALUES)(
+    'should return isVerified is false for key = %s and value = %s if verified is false',
+    (key, value) => {
+      const verifiedRecords: UseVerifiedRecordsReturnType = [
+        {
+          issuer: 'dentity',
+          key: 'com.twitter',
+          value: '@testETH',
+          verified: false,
+        },
+        {
+          issuer: 'dentity',
+          key: 'org.telegram',
+          value: 'testETH',
+          verified: false,
+        },
+        {
+          issuer: 'dentity',
+          key: 'com.discord',
+          value: 'testETH',
+          verified: false,
+        },
+        {
+          issuer: 'dentity',
+          key: 'com.github',
+          value: 'testETH',
+          verified: false,
+        },
+      ]
+      const appendVerificationProps = makeAppendVerificationProps(verifiedRecords)
+      const normalisedRecord = normaliseProfileAccountsRecord({ key, value })
 
-    expect(appendVerificationProps(normalisedRecord)).toEqual({
-      ...normalisedRecord,
-      isVerified: false,
-    })
-  })
+      expect(appendVerificationProps(normalisedRecord)).toEqual({
+        ...normalisedRecord,
+        isVerified: false,
+      })
+    },
+  )
 })

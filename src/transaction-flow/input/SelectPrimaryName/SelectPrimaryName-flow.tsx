@@ -8,7 +8,7 @@ import { useClient } from 'wagmi'
 
 import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Heading, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Heading, Typography } from '@ensdomains/thorin'
 
 import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
 import { DialogHeadingWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogHeadinWithBorder'
@@ -83,20 +83,20 @@ const LoadingContainer = styled.div(
   `,
 )
 
-const NameTableHeaderWrapper = styled.div(({ theme }) => [
-  css`
+const NameTableHeaderWrapper = styled.div(
+  ({ theme }) => css`
     width: calc(100% + 2 * ${theme.space['4']});
     margin: 0 -${theme.space['4']} -${theme.space['4']};
     border-bottom: 1px solid ${theme.colors.border};
     > div {
       border-bottom: none;
     }
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      width: calc(100% + 2 * ${theme.space['6']});
+      margin: 0 -${theme.space['6']} -${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    width: calc(100% + 2 * ${theme.space['6']});
-    margin: 0 -${theme.space['6']} -${theme.space['6']};
-  `),
-])
+)
 
 const ErrorContainer = styled.div(
   ({ theme }) => css`

@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Banner, Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
+import { Banner, Button, Skeleton, Typography } from '@ensdomains/thorin'
 
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -35,10 +35,10 @@ const HeadingItems = styled.div(
     align-self: center;
     align-items: center;
     min-height: ${theme.space['12']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       min-height: ${theme.space['10']};
       grid-column: span 2;
-    `)}
+    }
   `,
 )
 
@@ -61,24 +61,24 @@ const ContentContainer = styled.div(
 )
 
 const ContentPlaceholder = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: none;
     height: 0;
     width: 0;
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       display: block;
-    `)}
+    }
   `,
 )
 
 const WarningWrapper = styled.div(
-  () => css`
+  ({ theme }) => css`
     width: 100%;
     grid-column: span 1;
     height: min-content;
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       grid-column: span 2;
-    `)}
+    }
   `,
 )
 
@@ -98,7 +98,7 @@ const TitleContainer = styled.div(
 )
 
 const TitleWrapper = styled.div(
-  () => css`
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     align-items: center;
@@ -109,7 +109,7 @@ const TitleWrapper = styled.div(
       align-items: flex-start;
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       justify-content: flex-start;
       width: max-content;
 
@@ -117,7 +117,7 @@ const TitleWrapper = styled.div(
         text-align: left;
         align-items: flex-start;
       }
-    `)}
+    }
   `,
 )
 
@@ -128,10 +128,10 @@ const Title = styled(Typography)(
     white-space: nowrap;
     text-overflow: ellipsis;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       font-size: ${theme.fontSizes.headingTwo};
       line-height: ${theme.lineHeights.headingTwo};
-    `)}
+    }
   `,
 )
 

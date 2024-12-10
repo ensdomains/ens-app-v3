@@ -136,7 +136,7 @@ const UploadComponent = ({
         <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
       </Dialog.Content>
       {error && (
-        <Helper data-testid="avatar-upload-error" type="error">
+        <Helper data-testid="avatar-upload-error" alert="error">
           {error.message}
         </Helper>
       )}

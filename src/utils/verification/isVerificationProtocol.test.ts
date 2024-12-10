@@ -1,5 +1,6 @@
-import { isVerificationProtocol } from "./isVerificationProtocol";
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from 'vitest'
+
+import { isVerificationProtocol } from './isVerificationProtocol'
 
 describe('isVerificationProtocol', () => {
   it.each(['dentity'])('should return true for protocol: %s', (protocol) => {

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { GetSubnamesParameters } from '@ensdomains/ensjs/subgraph'
-import { Button, mq, PlusSVG, Spinner, Typography } from '@ensdomains/thorin'
+import { Button, PlusSVG, Spinner, Typography } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import {
@@ -68,14 +68,13 @@ const AddSubnamesCard = styled(Card)(
     & > button {
       width: 100%;
     }
-
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       text-align: left;
       & > button {
         width: min-content;
       }
-    `)}
+    }
   `,
 )
 
@@ -217,7 +216,7 @@ export const SubnamesTab = ({
             <Button
               data-testid="add-subname-action"
               onClick={createSubname}
-              prefix={<PlusPrefix as={PlusSVG} />}
+              prefix={() => <PlusPrefix as={PlusSVG} />}
             >
               {t('details.tabs.subnames.addSubname.action')}
             </Button>
@@ -230,7 +229,7 @@ export const SubnamesTab = ({
                 buttonText: t('details.tabs.subnames.addSubname.action'),
                 mobileWidth: 200,
                 mobilePlacement: 'top',
-                prefix: <PlusPrefix as={PlusSVG} />,
+                prefix: () => <PlusPrefix as={PlusSVG} />,
               }}
             />
           )}

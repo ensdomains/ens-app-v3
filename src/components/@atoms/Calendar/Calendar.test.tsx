@@ -3,11 +3,11 @@ import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 import { InputHTMLAttributes, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { secondsToDate, secondsToDateInput } from '@app/utils/date'
 import { formatExpiry } from '@app/utils/utils'
 
 import { Calendar } from './Calendar'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 vi.mock('@app/utils/BreakpointProvider')
 
@@ -44,27 +44,26 @@ describe('Calendar', () => {
   it('should handle timezone offset correctly', async () => {
     const OnChange = vi.fn()
     // Render the Calendar component
-    const currentDate = new Date();
-    const currentDateSeconds = Math.floor(currentDate.getTime() / 1000);
-    render(<Calendar value={currentDateSeconds} onChange={OnChange}/>);
+    const currentDate = new Date()
+    const currentDateSeconds = Math.floor(currentDate.getTime() / 1000)
+    render(<Calendar value={currentDateSeconds} onChange={OnChange} />)
 
     // Find the input element
-    const calendarInput = screen.getByTestId('calendar');
+    const calendarInput = screen.getByTestId('calendar')
 
     // Prepare new date and format it
-    currentDate.setDate(currentDate.getDate() + 2); // Change to the next day
-    const newDateSeconds = Math.floor(currentDate.getTime() / 1000);
-    const newFormattedDate = secondsToDateInput(newDateSeconds);
+    currentDate.setDate(currentDate.getDate() + 2) // Change to the next day
+    const newDateSeconds = Math.floor(currentDate.getTime() / 1000)
+    const newFormattedDate = secondsToDateInput(newDateSeconds)
 
-    fireEvent.change(calendarInput, { target: { value: newFormattedDate }})
+    fireEvent.change(calendarInput, { target: { value: newFormattedDate } })
 
     // Assert the onChange handler was called
-    expect(OnChange).toHaveBeenCalledTimes(1);
+    expect(OnChange).toHaveBeenCalledTimes(1)
 
-    const receivedDate = OnChange.mock.calls[0][0].currentTarget.valueAsDate;
+    const receivedDate = OnChange.mock.calls[0][0].currentTarget.valueAsDate
     const receivedFormattedDate = receivedDate.toISOString().split('T')[0]
-  
-    expect(receivedFormattedDate).toEqual(newFormattedDate);
 
-  });
+    expect(receivedFormattedDate).toEqual(newFormattedDate)
+  })
 })

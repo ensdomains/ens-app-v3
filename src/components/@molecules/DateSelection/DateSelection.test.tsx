@@ -3,11 +3,11 @@ import { act, mockFunction, render, renderHook, screen, userEvent, waitFor } fro
 import { useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { secondsFromDateDiff } from '@app/utils/date'
 import { ONE_DAY, ONE_YEAR } from '@app/utils/time'
 
 import { DateSelection } from './DateSelection'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 vi.mock('@app/utils/BreakpointProvider')
 

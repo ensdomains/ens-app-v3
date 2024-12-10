@@ -22,7 +22,7 @@ import {
   GetPriceReturnType,
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
-import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
+import { BackdropSurface, Portal, Typography } from '@ensdomains/thorin'
 
 import { SupportedChain } from '@app/constants/chains'
 import {
@@ -53,14 +53,14 @@ import { getBoxNameStatus, SearchResult } from './SearchResult'
 import { HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
-  ({ $size }) => css`
+  ({ $size, theme }) => css`
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&
-    mq.sm.min(css`
-      padding-left: 48px;
+    ` @media (min-width: ${theme.breakpoints.sm}px) {
+       padding-left: 48px;
       padding-right: 48px;
-    `)}
+    }`}
   `,
 )
 

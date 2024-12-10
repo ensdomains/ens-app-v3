@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Heading, mq, Typography } from '@ensdomains/thorin'
+import { Button, Heading, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
@@ -18,10 +18,10 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -33,10 +33,10 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       align-items: stretch;
-    `)}
+    }
   `,
 )
 

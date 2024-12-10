@@ -1,9 +1,10 @@
+/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { GetNamesForAddressParameters } from '@ensdomains/ensjs/subgraph'
-import { Input, MagnifyingGlassSimpleSVG, mq, Select } from '@ensdomains/thorin'
+import { Input, MagnifyingGlassSimpleSVG, Select } from '@ensdomains/thorin'
 
 import DownDirectionSVG from '@app/assets/SortAscending.svg'
 import UpDirectionSVG from '@app/assets/SortDescending.svg'
@@ -20,12 +21,12 @@ const TableHeader = styled.div<{
     border-bottom: 1px solid ${theme.colors.border};
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       align-items: center;
       padding: ${theme.space['3']} ${theme.space['4.5']};
       gap: ${$desktopGap === 'medium' ? theme.space['6'] : theme.space['2']};
-    `)}
+    }
   `,
 )
 
@@ -46,12 +47,13 @@ const TableHeaderLeadingLeft = styled.div<{ $isFullWidth: boolean }>(
     align-items: center;
     color: ${theme.colors.text};
     ${$isFullWidth && `flex: 1;`}
-    ${mq.sm.min(css`
+
+    @media (min-width: ${theme.breakpoints.sm}px) {
       gap: ${theme.space['4']};
       flex-basis: auto;
       flex-grow: 0;
       flex-shrink: 0;
-    `)}
+    }
   `,
 )
 
@@ -80,10 +82,10 @@ const TableHeaderTrailing = styled.div<{
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex: ${$isDesktopFlexibleWidth ? '2' : `0 0 ${theme.space['32']}`};
       width: ${theme.space['32']};
-    `)}
+    }
   `,
 )
 
@@ -104,7 +106,7 @@ const DirectionButton = styled.button<{ $active: boolean }>(
       width: ${theme.space['3']};
       height: ${theme.space['3']};
       path {
-        fill: ${$active ? theme.colors.accent : theme.colors.textTertiary};
+        fill: ${$active ? theme.colors.accent : theme.colors.grey};
       }
     }
     &:hover {

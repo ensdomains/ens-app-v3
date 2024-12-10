@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { mq, Tag } from '@ensdomains/thorin'
+import { Tag } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import type { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
@@ -27,8 +27,8 @@ const TagText = styled.span(
   `,
 )
 
-const Container = styled.button(({ theme }) => [
-  css`
+const Container = styled.button(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     align-items: center;
@@ -48,11 +48,11 @@ const Container = styled.button(({ theme }) => [
         opacity: 0.5;
       }
     }
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      padding: ${theme.space[4]} ${theme.space[6]};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space[4]} ${theme.space[6]};
-  `),
-])
+)
 
 type Props = {
   name?: string
