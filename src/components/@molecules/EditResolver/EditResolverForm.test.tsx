@@ -2,18 +2,10 @@ import { fireEvent, render, screen, waitFor } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
+import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
 import EditResolverForm, { Props } from './EditResolverForm'
 
-// Mock IntersectionObserver
-class IntersectionObserver {
-  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-// @ts-ignore
-global.IntersectionObserver = IntersectionObserver
+makeMockIntersectionObserver()
 
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: vi.fn().mockReturnValue('mainnet'),
@@ -46,14 +38,14 @@ describe('EditResolverForm', () => {
   const defaultProps: Props = {
     lastestResolverAddress,
     isResolverAddressLatest: false,
-    register: mockRegister as Props['register'],
-    handleSubmit: mockHandleSubmit as Props['handleSubmit'],
-    reset: mockReset as Props['reset'],
-    trigger: mockTrigger as Props['trigger'],
-    watch: mockWatch as Props['watch'],
-    getFieldState: mockGetFieldState as Props['getFieldState'],
+    register: mockRegister,
+    handleSubmit: mockHandleSubmit,
+    reset: mockReset,
+    trigger: mockTrigger,
+    watch: mockWatch,
+    getFieldState: mockGetFieldState,
     resolverChoice: 'latest',
-    setValue: mockSetValue as Props['setValue'],
+    setValue: mockSetValue,
     customResolver: '',
     resolverWarnings: [],
     hasErrors: false,

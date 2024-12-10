@@ -26,7 +26,7 @@ vi.mock('@app/hooks/ensjs/public/usePrimaryName', () => ({
 
 const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
-const mockUsePrimary = vi.fn().mockImplementation(({}) => {
+const mockUsePrimary = vi.fn().mockImplementation(() => {
   return {
     data: { beautifiedName: 'test.eth', name: 'test.eth' },
     isLoading: false,

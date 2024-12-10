@@ -51,13 +51,13 @@ const msToDays = (ms: number) => Math.floor(ms / 1000 / 60 / 60 / 24)
 const chainEthTicker = (chainName: string) => `${chainName.slice(0, 2)}ETH`
 
 const useDialogState = () => {
-  const [isOpen, setOpen] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const closeDialog = () => setOpen(false)
   const openDialog = () => setOpen(true)
 
   return {
-    isOpen,
+    open,
     openDialog,
     closeDialog,
   }
@@ -77,7 +77,7 @@ const FaucetBanner = () => {
 
   const dialogStage = isSuccess ? 'success' : 'default'
 
-  const { isOpen: dialogOpen, closeDialog, openDialog } = useDialogState()
+  const { open: dialogOpen, closeDialog, openDialog } = useDialogState()
 
   const amount = useMemo(() => getAmountFromHex(data?.amount || '0x0'), [data?.amount])
 

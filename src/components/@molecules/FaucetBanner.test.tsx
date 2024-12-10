@@ -4,20 +4,12 @@ import { describe, expect, it, vi } from 'vitest'
 
 import useFaucet from '@app/hooks/useFaucet'
 
+import { makeMockIntersectionObserver } from '../../../test/mock/makeMockIntersectionObserver'
 import FaucetBanner from './FaucetBanner'
 
 const chainName = 'goerli'
 
-// Mock IntersectionObserver
-class IntersectionObserver {
-  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-// @ts-ignore
-global.IntersectionObserver = IntersectionObserver
+makeMockIntersectionObserver()
 
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
 
