@@ -10,7 +10,7 @@ const Container = styled.div(
     padding: ${theme.space[4]};
     width: 100%;
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: calc(80vw - 2 * ${theme.space['6']});
       max-width: ${theme.space['128']};
     }

@@ -103,7 +103,7 @@ const ContinueContainer = styled.div(({ theme }) => [
     button {
       padding: 0 ${theme.space['4']};
     }
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       button {
         padding: 0 ${theme.space['8']};
       }

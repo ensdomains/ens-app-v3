@@ -68,7 +68,7 @@ const AddSubnamesCard = styled(Card)(
     & > button {
       width: 100%;
     }
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       text-align: left;
       & > button {

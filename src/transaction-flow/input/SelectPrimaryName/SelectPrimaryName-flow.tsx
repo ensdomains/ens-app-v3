@@ -91,7 +91,7 @@ const NameTableHeaderWrapper = styled.div(
     > div {
       border-bottom: none;
     }
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: calc(100% + 2 * ${theme.space['6']});
       margin: 0 -${theme.space['6']} -${theme.space['6']};
     }

@@ -20,7 +20,7 @@ const InnerResponsiveContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space[2]};
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
     }
   `,
@@ -29,7 +29,7 @@ const InnerResponsiveContainer = styled.div(
 const LabelWrapper = styled.div(
   () => css`
     width: 100%;
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex: 0 0 25%;
     }
   `,
@@ -37,7 +37,7 @@ const LabelWrapper = styled.div(
 
 const ValueWrapper = styled.div`
   width: 100%;
-   @media (min-width: ${theme.breakpoints.sm}px) {
+  @media (min-width: ${theme.breakpoints.sm}px) {
     flex: 1;
   }
 `
@@ -51,7 +51,7 @@ const ButtonContainer = styled.div(
     justify-content: flex-start;
     padding-top: calc(${theme.space['8']} + ${theme.space['12']} + ${theme.space['2']});
     margin-top: -1px;
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding-top: ${theme.space['8']};
     }
   `,

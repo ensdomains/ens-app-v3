@@ -51,7 +51,7 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     }
@@ -70,7 +70,7 @@ const OutlinedContainer = styled.div(
     border-radius: ${theme.radii.large};
     background: ${theme.colors.backgroundSecondary};
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       grid-template-areas: 'title checkbox' 'description checkbox';
     }
   `,
@@ -143,7 +143,7 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       align-items: stretch;
     }

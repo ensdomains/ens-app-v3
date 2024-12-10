@@ -46,11 +46,11 @@ const mockUseCoinChain = mockFunction(useCoinChain)
 mockUseCoinChain.mockImplementation(({ coinName }) => {
   if (coinName !== 'eth') {
     return {
-      data:  null
+      data: null,
     }
   }
   return {
-    data:  {
+    data: {
       id: 1,
       name: 'Ethereum',
       blockExplorers: {
@@ -60,7 +60,7 @@ mockUseCoinChain.mockImplementation(({ coinName }) => {
           apiUrl: 'https://api.etherscan.io/api',
         },
       },
-    },  
+    },
   }
 })
 

@@ -23,7 +23,7 @@ const InputWrapper = styled.div(
     display: flex;
     flex-direction: column;
     margin-bottom: -${theme.space['4']};
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: -${theme.space['6']};
     }
   `,

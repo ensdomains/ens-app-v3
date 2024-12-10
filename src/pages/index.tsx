@@ -28,7 +28,7 @@ const GradientTitle = styled.h1(
     color: transparent;
     margin: 0;
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       font-size: ${theme.fontSizes.headingOne};
     }
   `,
@@ -82,7 +82,7 @@ const LogoAndLanguage = styled.div(
 )
 
 const StyledLeadingHeading = styled(LeadingHeading)`
-   @media (min-width: ${theme.breakpoints.sm}px) {
+  @media (min-width: ${theme.breakpoints.sm}px) {
     display: none;
   }
 `

@@ -155,21 +155,23 @@ describe('secondsFromDateDiff', () => {
 describe('calculateDateDiff', () => {
   it.each([
     ['2024-01-10', '2025-01-10', '1-0-0'],
-    ['2024-01-10', '2024-02-10', '0-1-0' ], 
-    ['2024-01-10', '2024-01-11', '0-0-1' ],
+    ['2024-01-10', '2024-02-10', '0-1-0'],
+    ['2024-01-10', '2024-01-11', '0-0-1'],
     ['2024-01-10', '2025-01-9', '0-11-30'],
     ['2024-03-10', '2025-03-9', '0-11-27'],
     ['2023-03-10', '2024-03-9', '0-11-28'], // leap year
     ['2024-04-10', '2025-04-9', '0-11-30'],
-    ['2024-04-10', '2025-04-10', '1-0-0' ],
-    ['2024-11-10', '2026-05-1', '1-5-21' ],
+    ['2024-04-10', '2025-04-10', '1-0-0'],
+    ['2024-11-10', '2026-05-1', '1-5-21'],
   ])(`should return correct diff from %s to %s`, (date1, date2, result) => {
     const startDate = new Date(date1)
     const endDate = new Date(date2)
 
-    const toUnit = (i: number) => i === 0 ? 'years' : i === 1 ? 'months' : 'days'
-    const dateDiff = Object.fromEntries(result.split('-').map((value, i) => [toUnit(i),parseInt(value)]))
+    const toUnit = (i: number) => (i === 0 ? 'years' : i === 1 ? 'months' : 'days')
+    const dateDiff = Object.fromEntries(
+      result.split('-').map((value, i) => [toUnit(i), parseInt(value)]),
+    )
 
-    expect(calculateDatesDiff(startDate, endDate)).toEqual({ diff: dateDiff, isNegative: false})
+    expect(calculateDatesDiff(startDate, endDate)).toEqual({ diff: dateDiff, isNegative: false })
   })
 })

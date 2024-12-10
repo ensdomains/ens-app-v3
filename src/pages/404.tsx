@@ -26,7 +26,7 @@ const LogoAndLanguage = styled.div(
 )
 
 const StyledLeadingHeading = styled(LeadingHeading)`
-   @media (min-width: ${theme.breakpoints.sm}px) {
+  @media (min-width: ${theme.breakpoints.sm}px) {
     display: none;
   }
 `

@@ -28,7 +28,7 @@ const Content = styled.div(
     gap: ${theme.space[6]};
     overflow: hidden;
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: 80vw;
       max-width: ${theme.space['128']};
     }

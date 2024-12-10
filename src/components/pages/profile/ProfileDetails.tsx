@@ -114,7 +114,7 @@ const RecordsStack = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
     }
   `,
@@ -127,7 +127,7 @@ const ActionsContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']};
     }
   `,
@@ -141,7 +141,7 @@ const Actions = styled.div(
     flex-flow: row wrap;
     gap: ${theme.space['2']};
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       & > .leading {
         flex-grow: 1;
         order: -1;
@@ -165,7 +165,7 @@ const ActionWrapper = styled.div<{
     css`
       width: 100%;
     `}
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: initial;
       ${leading &&
       css`

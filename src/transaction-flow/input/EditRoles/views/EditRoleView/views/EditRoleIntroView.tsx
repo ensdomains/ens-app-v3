@@ -30,7 +30,7 @@ const Row = styled.div(({ theme }) => [
     > *:last-child {
       flex: 0 0 ${theme.space['24']};
     }
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']};
     }
   `,

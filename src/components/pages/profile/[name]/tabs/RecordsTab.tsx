@@ -37,7 +37,7 @@ const AllRecords = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['3']};
     padding: ${theme.space['4.5']};
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
       gap: ${theme.space['6']};
     }
@@ -100,7 +100,7 @@ const Actions = styled.div(
     border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space['4']};
 
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']};
     }
   `,

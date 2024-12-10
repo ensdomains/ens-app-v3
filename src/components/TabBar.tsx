@@ -72,7 +72,7 @@ const TabWrapper = styled.div(
       ${theme.colors.backgroundSecondary} 60%
     );
     padding: ${theme.space['4']};
-     @media (min-width: ${theme.breakpoints.sm}px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       display: none;
     }
   `,
