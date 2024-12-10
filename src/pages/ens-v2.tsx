@@ -223,12 +223,8 @@ const AnnouncementContainer = styled.div(
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     gap: ${theme.space['4']};
-
-    @media (min-width: ${theme.breakpoints.sm}) {
-      flex-direction: row;
-    }
+    flex-flow: row wrap;
   `,
 )
 
