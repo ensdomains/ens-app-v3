@@ -14,21 +14,21 @@ type Props = {
   supportLink?: string
 }
 
-const Container = styled.div(
-  ({ theme }) => css`
+const Container = styled.div(({ theme }) => [
+  css`
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: ${theme.space[2]};
     border-bottom: 1px solid ${theme.colors.border};
     padding: ${theme.space['4']} 0;
-    @media (min-width: 1024px) {
+    @media (min-width: ${theme.breakpoints.lg}) {
       border-bottom: none;
       border-right: 1px solid ${theme.colors.border};
       padding: 0 ${theme.space['1']} 0 ${theme.space['4']};
     }
   `,
-)
+])
 
 const Header = styled.div(
   ({ theme }) => css`

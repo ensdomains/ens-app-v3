@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import { labelhash, namehash } from 'viem'
 
 import { Tag, Typography } from '@ensdomains/thorin'
@@ -36,7 +36,7 @@ const Container = styled(TabWrapper)(
       border-bottom: none;
     }
 
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       & > div {
         padding: ${theme.space['4']} ${theme.space['6']};
       }
@@ -69,7 +69,7 @@ const IdsContainer = styled.div(
     align-items: stretch;
     justify-content: center;
     gap: ${theme.space['4']};
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       gap: ${theme.space['2']};
     }
   `,
@@ -85,7 +85,7 @@ const ItemsContainer = styled(CacheableComponent)(
 
     overflow: hidden;
 
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
     }
   `,
@@ -96,7 +96,7 @@ const NftBox = styled(NFTWithPlaceholder)(
     max-width: 100%;
     aspect-ratio: 1;
 
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       max-width: ${theme.space['36']};
       max-height: ${theme.space['36']};
     }
@@ -118,6 +118,8 @@ const Token = ({ name, isWrapped }: Props) => {
   const contractAddress = isWrapped ? nameWrapperAddress : registrarAddress
 
   const hasToken = is2ldEth || isWrapped
+
+  const theme = useTheme()
 
   return (
     <Container>

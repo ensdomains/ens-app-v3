@@ -27,7 +27,7 @@ const Container = styled.div(
     border-radius: ${theme.space['2']};
     border: 1px solid #e8e8e8;
 
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       grid-template-columns: 1fr;
       column-gap: 0;
     }

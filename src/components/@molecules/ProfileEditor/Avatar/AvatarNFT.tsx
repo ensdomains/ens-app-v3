@@ -208,7 +208,7 @@ const SelectedNFTContainer = styled.div(({ theme }) => [
         font-size: ${theme.fontSizes.headingThree};
       }
     }
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: calc(80vw - 2 * ${theme.space['6']});
       max-width: ${theme.space['128']};
     }
@@ -239,14 +239,14 @@ const FilterContainer = styled.div(
     gap: ${theme.space['4']};
     margin-bottom: ${theme.space['4']};
 
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: ${theme.space['6']};
     }
 
     & > button {
       flex-basis: 100px;
       margin-bottom: -${theme.space['4']};
-      @media (min-width: ${theme.breakpoints.sm}) {
+      @media (min-width: ${theme.breakpoints.sm}px) {
         margin-bottom: -${theme.space['6']};
       }
     }
@@ -263,7 +263,7 @@ const LoadingContainer = styled.div(
     justify-content: center;
     flex-direction: column;
     gap: ${theme.space['4']};
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       gap: ${theme.space['6']};
     }
   `,

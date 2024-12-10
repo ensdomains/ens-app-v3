@@ -50,7 +50,7 @@ const ButtonContainer = styled.div(
     justify-content: center;
     gap: ${theme.space['2']};
 
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
     }
   `,
@@ -78,7 +78,7 @@ const InvoiceContainer = styled.div(
     flex-direction: column;
     gap: ${theme.space['4']};
 
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       gap: ${theme.space['6']};
       flex-direction: row;
     }

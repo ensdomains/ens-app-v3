@@ -17,7 +17,7 @@ const Header = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']};
     border-bottom: 1px solid ${theme.colors.border};
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
     }
   `,
@@ -55,7 +55,7 @@ const Footer = styled.div(
 const FooterWrapper = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']};
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']} ${theme.space['6']};
     }
   `,
@@ -66,7 +66,7 @@ const Container = styled.div(
     display: flex;
     flex-direction: column;
     margin: -${theme.space['4']};
-    @media (min-width: ${theme.breakpoints.sm}) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       margin: -${theme.space['6']};
     }
   `,

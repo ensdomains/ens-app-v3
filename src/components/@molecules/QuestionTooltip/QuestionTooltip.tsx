@@ -53,7 +53,7 @@ export const QuestionTooltip = ({ content, link, ...props }: Props) => {
   const { t } = useTranslation('common')
   const _content = (
     <Content>
-      <QuestionCircleSVG />
+      <QuestionCircleSVG height={16} width={16} />
       <CenteredTypography fontVariant="small"> {content}</CenteredTypography>
       {link && (
         <Link href={link} target="_blank" rel="noreferrer noopener">
