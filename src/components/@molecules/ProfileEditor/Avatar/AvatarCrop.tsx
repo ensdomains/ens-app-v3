@@ -91,7 +91,7 @@ const SliderContainer = styled.div(
       height: ${theme.space['6']};
       opacity: 0.15;
     }
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['2']} ${theme.space['8']};
     }
   `,

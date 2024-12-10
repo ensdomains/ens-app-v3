@@ -16,7 +16,7 @@ const Container = styled.div(
     padding: ${theme.space['4']};
     gap: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: column;
       padding: 0;
       gap: 0;
@@ -26,7 +26,7 @@ const Container = styled.div(
 
 const HeadingWrapper = styled.div(
   ({ theme }) => css`
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       border-bottom: 1px solid ${theme.colors.border};
     }
   `,
@@ -55,7 +55,7 @@ const Heading = styled.div(
       color: ${theme.colors.grey};
     }
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       justify-content: flex-start;
       padding: ${theme.space['4']} ${theme.space['6']};
       margin: ${theme.space['2']};
@@ -88,7 +88,7 @@ const LanguagesContainer = styled.div(
     align-items: stretch;
     justify-content: flex-start;
     gap: ${theme.space['2']};
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: column;
       padding: ${theme.space['2']};
       gap: 0;
@@ -125,7 +125,7 @@ const LanguageItem = styled.div(
         color: ${theme.colors.green};
       }
     }
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       border: none;
     }
   `,

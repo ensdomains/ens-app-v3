@@ -48,7 +48,7 @@ const ViewProfileContainer = styled.div(
       }
     }
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: 0;
       padding: 0;
     }
@@ -70,7 +70,7 @@ const StyledInnerDialog = styled(InnerDialog)(
     overflow: hidden;
     border-top-left-radius: ${theme.radii['3xLarge']};
     border-top-right-radius: ${theme.radii['3xLarge']};
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       height: 90vh;
       max-height: 720px;
       width: calc(80vw - 2 * ${theme.space['6']});

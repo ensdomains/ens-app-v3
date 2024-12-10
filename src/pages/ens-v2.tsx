@@ -27,7 +27,7 @@ const Title = styled.h1`
   font-size: 36px;
   line-height: 104%;
 
-  @media (min-width: 640px) {
+  @media (min-width: ${theme.breakpoints.sm}px) {
     font-size: 52px;
   }
 `
@@ -73,7 +73,7 @@ const Main = styled.main(
     & > a:hover {
       color: ${theme.colors.green};
     }
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       border-radius: ${theme.radii['3xLarge']};
     }
   `,
@@ -163,7 +163,7 @@ const GridOneToThree = styled.div(
     gap: ${theme.space['4']};
     text-align: center;
     grid-template-columns: 1fr;
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       grid-template-columns: repeat(3, 1fr);
     }
   `,

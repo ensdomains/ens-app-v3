@@ -22,7 +22,7 @@ const Card = styled.div(
     max-height: 75vh;
     overflow-y: auto;
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       width: initial;
       min-width: ${theme.space['128']};
     }

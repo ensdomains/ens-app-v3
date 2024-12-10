@@ -21,7 +21,7 @@ const TableHeader = styled.div<{
     border-bottom: 1px solid ${theme.colors.border};
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       align-items: center;
       padding: ${theme.space['3']} ${theme.space['4.5']};
@@ -48,7 +48,7 @@ const TableHeaderLeadingLeft = styled.div<{ $isFullWidth: boolean }>(
     color: ${theme.colors.text};
     ${$isFullWidth && `flex: 1;`}
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       gap: ${theme.space['4']};
       flex-basis: auto;
       flex-grow: 0;
@@ -82,7 +82,7 @@ const TableHeaderTrailing = styled.div<{
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex: ${$isDesktopFlexibleWidth ? '2' : `0 0 ${theme.space['32']}`};
       width: ${theme.space['32']};
     }

@@ -10,7 +10,7 @@ export const InnerDialog = styled.div(
     gap: ${theme.space['4']};
     max-height: 60vh;
     max-width: 100vw;
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       width: calc(80vw - 2 * ${theme.space['6']});
       max-width: ${theme.space['128']};
     }

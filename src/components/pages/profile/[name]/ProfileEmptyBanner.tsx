@@ -22,7 +22,7 @@ const Container = styled.div(
     border-radius: 16px;
     background: linear-gradient(#e7f4ef 100%, #fdf0dd 100%);
 
-    @media (max-width: ${theme.breakpoints.sm}) {
+    @media (max-width: ${theme.breakpoints.sm}px) {
       grid-template-columns: 1fr;
       text-align: center;
       gap: ${theme.space['4']};

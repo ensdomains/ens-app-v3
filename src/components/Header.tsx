@@ -22,7 +22,7 @@ const HeaderWrapper = styled.header(
   ({ theme }) => css`
     height: ${theme.space['12']};
 
-    @media (max-width: 640px) {
+    @media (max-width: ${theme.breakpoints.sm}px) {
       display: none;
     }
   `,
@@ -54,7 +54,7 @@ const NavContainer = styled.div(
     gap: ${theme.space['3']};
     height: ${theme.space['12']};
 
-    @media (min-width: 1024px) {
+    @media (min-width: ${theme.breakpoints.lg}px) {
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
     }
@@ -79,7 +79,7 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     transform: translateX(125%);
     opacity: 0;
 
-    @media (min-width: 1024px) {
+    @media (min-width: ${theme.breakpoints.lg}px) {
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
       position: relative;
@@ -105,7 +105,7 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
     max-width: ${theme.space['80']};
     & > div > div {
       max-width: ${theme.space.full};
-      @media (min-width: 1024px) {
+      @media (min-width: ${theme.breakpoints.lg}px) {
         max-width: ${theme.space['80']};
       }
     }
@@ -116,7 +116,7 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
     css`
       margin-right: 0;
     `}
-    @media (min-width: 1024px) {
+    @media (min-width: ${theme.breakpoints.lg}px) {
       margin-right: 0;
     }
   `,

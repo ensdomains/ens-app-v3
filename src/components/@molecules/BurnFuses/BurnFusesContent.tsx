@@ -17,7 +17,7 @@ const FusesContainer = styled.div(
   ({ theme }) => css`
     width: 100%;
     padding: ${theme.space['1.25']} ${theme.space['4']};
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       min-width: ${theme.space['112']};
     }
   `,

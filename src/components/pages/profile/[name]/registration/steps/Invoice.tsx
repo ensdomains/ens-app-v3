@@ -48,7 +48,7 @@ const LineItem = styled.div<{ $color?: Colors }>(
       border-bottom: 1px solid #e8e8e8;
     }
 
-    @media (max-width: ${theme.breakpoints.sm}) {
+    @media (max-width: ${theme.breakpoints.sm}px) {
       &:not(:last-of-type) {
         border-bottom: none;
         padding-bottom: 0;

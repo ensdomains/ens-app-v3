@@ -32,7 +32,7 @@ const PanelsContainer = styled.div(
     > *:last-child {
       border-bottom: none;
     }
-    @media (min-width: ${theme.breakpoints.lg}) {
+    @media (min-width: ${theme.breakpoints.lg}px) {
       flex-direction: row;
       margin: 0 -${theme.space['4']};
       > *:last-child {

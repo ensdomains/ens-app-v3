@@ -18,7 +18,7 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     }
@@ -33,7 +33,7 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       align-items: stretch;
     }

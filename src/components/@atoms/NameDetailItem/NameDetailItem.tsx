@@ -39,7 +39,7 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     &:last-of-type {
       border: none;
     }
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['3']} ${theme.space['4.5']};
       gap: ${theme.space['4']};
     }

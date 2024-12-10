@@ -35,7 +35,7 @@ const HeadingItems = styled.div(
     align-self: center;
     align-items: center;
     min-height: ${theme.space['12']};
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       min-height: ${theme.space['10']};
       grid-column: span 2;
     }
@@ -65,7 +65,7 @@ const ContentPlaceholder = styled.div(
     display: none;
     height: 0;
     width: 0;
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       display: block;
     }
   `,
@@ -76,7 +76,7 @@ const WarningWrapper = styled.div(
     width: 100%;
     grid-column: span 1;
     height: min-content;
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       grid-column: span 2;
     }
   `,
@@ -109,7 +109,7 @@ const TitleWrapper = styled.div(
       align-items: flex-start;
     }
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       justify-content: flex-start;
       width: max-content;
 
@@ -128,7 +128,7 @@ const Title = styled(Typography)(
     white-space: nowrap;
     text-overflow: ellipsis;
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       font-size: ${theme.fontSizes.headingTwo};
       line-height: ${theme.lineHeights.headingTwo};
     }

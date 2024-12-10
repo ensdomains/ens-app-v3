@@ -8,7 +8,7 @@ export const LeadingHeading = styled.div(
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: calc(100% - calc(${theme.radii['2xLarge']} * 2));
       margin-left: ${theme.radii['2xLarge']};
     }

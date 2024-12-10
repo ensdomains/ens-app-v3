@@ -45,7 +45,7 @@ const ButtonContainer = styled.div(
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
-    @media (min-width: ${theme.breakpoints.xs}) {
+    @media (min-width: ${theme.breakpoints.xs}px) {
       width: ${theme.space.max};
     }
   `,

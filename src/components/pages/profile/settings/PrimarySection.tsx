@@ -28,7 +28,7 @@ const NoNameContainer = styled.div(
       / 1fr 1fr;
     grid-row-gap: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       grid:
         'title button' auto
         'description description' auto
@@ -40,7 +40,7 @@ const NoNameContainer = styled.div(
 const NoNameTitle = styled(Typography)(
   ({ theme }) => css`
     grid-area: title;
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       line-height: ${theme.space['10']};
     }
   `,
@@ -49,7 +49,7 @@ const NoNameTitle = styled(Typography)(
 const NoNameButton = styled(Button)(
   () => css`
     grid-area: button;
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       width: fit-content;
       justify-self: end;
     }
@@ -59,7 +59,7 @@ const NoNameButton = styled(Button)(
 const NoNameDisabledButtonContainer = styled.div(
   () => css`
     grid-area: button;
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       width: fit-content;
       justify-self: end;
     }
@@ -78,7 +78,7 @@ const PrimaryNameContainer = styled.div(
     flex-direction: column;
     align-items: center;
     gap: ${theme.space['4']};
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       gap: ${theme.space['6']};
     }
@@ -98,7 +98,7 @@ const PrimaryNameInfo = styled.div(() => [
       width: 100%;
       text-align: center;
     }
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       align-items: flex-start;
       > div {
         text-align: left;
@@ -111,7 +111,7 @@ const AvatarContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space['26']};
     height: ${theme.space['26']};
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       order: -1;
     }
   `,
@@ -123,7 +123,7 @@ const ActionsContainer = styled.div(
     display: flex;
     flex-direction: row;
     gap: ${theme.space['2']};
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: column-reverse;
       width: ${theme.space['40']};
     }

@@ -25,7 +25,7 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     }

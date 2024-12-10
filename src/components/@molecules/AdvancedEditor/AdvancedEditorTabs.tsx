@@ -11,7 +11,7 @@ const TabButtonsContainer = styled.div(
     gap: ${theme.space['1.25']} ${theme.space['3']};
     padding: 0 ${theme.space['4']} 0 ${theme.space['2']};
     width: ${theme.space.full};
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: 0 ${theme.space['2']};
       margin: -${theme.space['1.5']} 0 -${theme.space['2']};
     }

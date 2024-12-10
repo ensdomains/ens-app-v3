@@ -9,7 +9,7 @@ import { convertFormSafeKey } from '../../../utils/editor'
 const AddRecordContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       margin-top: -${theme.space['2']};
     }
   `,

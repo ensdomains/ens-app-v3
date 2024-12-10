@@ -15,7 +15,7 @@ const Wrapper = styled.div<{ $fullWidth?: boolean }>(
       margin: -${theme.space['4']} -${theme.space['4']} 0 -${theme.space['4']};
       padding: ${theme.space['4']} ${theme.space['4']} 0 ${theme.space['4']};
 
-      @media (min-width: 640px) {
+      @media (min-width: ${theme.breakpoints.sm}px) {
         width: calc(100% + 2 * ${theme.space['6']});
         margin: -${theme.space['6']} -${theme.space['6']} 0 -${theme.space['6']};
         padding: ${theme.space['4']} ${theme.space['4']} 0 ${theme.space['4']};

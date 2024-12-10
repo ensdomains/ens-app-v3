@@ -57,7 +57,7 @@ const HeadingContainer = styled.div(
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.fontSizes.headingFour};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
     }
   `,
@@ -87,7 +87,7 @@ const OwnerContainer = styled.div(
       background-color: ${theme.colors.backgroundSecondary};
     }
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']};
     }
   `,
@@ -166,7 +166,7 @@ const DNSOwnerSectionContainer = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
     }
   `,

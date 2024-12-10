@@ -57,7 +57,7 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&
-    `@media (min-width: 640px) {
+    ` @media (min-width: ${theme.breakpoints.sm}px) {
        padding-left: 48px;
       padding-right: 48px;
     }`}

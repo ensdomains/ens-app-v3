@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { labelhash, namehash } from 'viem'
 
 import { Tag, Typography } from '@ensdomains/thorin'
@@ -118,8 +118,6 @@ const Token = ({ name, isWrapped }: Props) => {
   const contractAddress = isWrapped ? nameWrapperAddress : registrarAddress
 
   const hasToken = is2ldEth || isWrapped
-
-  const theme = useTheme()
 
   return (
     <Container>

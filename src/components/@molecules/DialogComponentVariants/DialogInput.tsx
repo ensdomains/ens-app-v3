@@ -7,7 +7,7 @@ const Wrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     margin-bottom: -${theme.space['4']};
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: -${theme.space['6']};
     }
   `,

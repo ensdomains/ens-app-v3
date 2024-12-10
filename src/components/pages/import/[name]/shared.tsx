@@ -15,7 +15,7 @@ export const DnsImportCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     }
@@ -47,7 +47,7 @@ export const DnsImportActionsContainer = styled.div(
     justify-content: stretch;
     width: 100%;
     gap: ${theme.space['2']};
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       justify-content: center;
     }
@@ -57,7 +57,7 @@ export const DnsImportActionsContainer = styled.div(
 export const DnsImportActionButton = styled(Button)(
   ({ theme }) => css`
     width: 100%;
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       width: ${theme.space['40']};
     }
   `,

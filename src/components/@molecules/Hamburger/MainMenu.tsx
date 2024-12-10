@@ -40,7 +40,7 @@ const Container = styled.div(
     padding: ${theme.space['4']};
     gap: ${theme.space['2']};
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: 0;
       gap: 0;
       & > div {
@@ -65,7 +65,7 @@ const SettingsSection = styled.div(
     margin-bottom: ${theme.space['2']};
     gap: ${theme.space['2']};
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['2']};
       margin: 0;
       gap: 0;
@@ -98,7 +98,7 @@ const SettingsItem = styled.div(
       }
     }
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       border: none;
     }
   `,
@@ -134,7 +134,7 @@ const miscSectionStyle = css(
     background-color: ${theme.colors.greySurface};
     border-radius: ${theme.radii.large};
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       background-color: transparent;
       border-radius: none;
     }
@@ -163,7 +163,7 @@ const RouteItem = styled.a(
       background-color: ${theme.colors.greySurface};
     }
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['2']} ${theme.space['4']};
     }
   `,
@@ -195,7 +195,7 @@ const NetworkSectionContainer = styled.div(
       text-transform: capitalize;
     }
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']};
     }
   `,

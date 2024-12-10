@@ -41,7 +41,7 @@ const StyledCard = styled.form(({ theme }) => [
     justify-content: center;
     gap: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
       gap: ${theme.space['6']};
     }

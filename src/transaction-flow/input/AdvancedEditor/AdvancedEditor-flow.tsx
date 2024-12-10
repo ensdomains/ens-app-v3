@@ -34,7 +34,7 @@ const NameContainer = styled.div(
     text-overflow: ellipsis;
     overflow: hidden;
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       text-align: left;
     }
   `,
@@ -47,7 +47,7 @@ const FooterContainer = styled.div(
     width: 100%;
     margin: 0 auto;
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       margin-top: -${theme.space['2']};
     }
   `,

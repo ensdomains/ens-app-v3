@@ -27,7 +27,7 @@ const Container = styled(TabWrapper)(
 
     padding: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
     }
   `,

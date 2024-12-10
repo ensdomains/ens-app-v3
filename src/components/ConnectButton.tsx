@@ -36,7 +36,7 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
             height: ${theme.space['10']};
             border-radius: ${theme.radii.full};
             font-size: ${theme.fontSizes.body};
-            @media (min-width: 360px) {
+            @media (min-width: ${theme.breakpoints.xs}px) {
               padding: 0 ${theme.space['8']};
             }
           }

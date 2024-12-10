@@ -27,7 +27,7 @@ const Container = styled.div(
       width: calc(100% - calc(var(--padding-size) * 2));
       box-sizing: content-box;
     }
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       --padding-size: ${theme.space['8']};
       gap: ${theme.space['6']};
       flex-gap: ${theme.space['6']};
@@ -51,7 +51,7 @@ const ContentWrapper = styled.div(
 const BottomPlaceholder = styled.div(
   ({ theme }) => css`
     height: ${theme.space['14']};
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       height: ${theme.space['12']};
     }
   `,

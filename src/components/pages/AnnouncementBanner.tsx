@@ -24,7 +24,7 @@ const Container = styled.div(
       }
     }
 
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
     }
   `,

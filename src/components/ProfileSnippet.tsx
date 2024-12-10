@@ -33,7 +33,7 @@ const Container = styled.div<{ $banner?: string }>(
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
 
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
       padding-top: ${theme.space['12']};
     }
