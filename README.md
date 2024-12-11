@@ -107,7 +107,7 @@ The App is hosted on cloudflare and IPFS
 
 #### [Ens.js](https://github.com/ensdomains/ensjs-v3)
 
-Much of the logic around interacting with the ENS contracts has been extraced into this
+Much of the logic around interacting with the ENS contracts has been extracted into this
 library. This is mostly so that we can help to make the experience of interacting with
 ENS as simple as possible for other developers.
 
