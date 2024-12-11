@@ -4,43 +4,71 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { resolve } from 'path'
-import { namehash } from 'viem'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, deployments } = hre
   const allNamedAccts = await getNamedAccounts()
+  const { owner, deployer} = allNamedAccts
 
-  const registry = await ethers.getContract('ENSRegistry')
+  const registry = await ethers.getContract('ENSRegistry', owner)
+  const nameWrapper = await ethers.getContract('NameWrapper', owner)
+  const ethController = await ethers.getContract('ETHRegistrarController', owner)
+  const reverseRegistrar = await ethers.getContract('ReverseRegistrar', owner)
 
-  await deployments.deploy('NoMulticallResolver', {
-    from: allNamedAccts.deployer,
+  await deployments.deploy('LegacyResolverV1', {
+    from: deployer,
     contract: JSON.parse(
-      await fs.readFile(resolve(__dirname, './.contracts/NoMulticallResolver.json'), {
+      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV1.json'), {
         encoding: 'utf8',
       }),
     ),
     args: [registry.address],
   })
 
-  await deployments.deploy('OldResolver', {
-    from: allNamedAccts.deployer,
+  await deployments.deploy('LegacyResolverV2', {
+    from: deployer,
     contract: JSON.parse(
-      await fs.readFile(resolve(__dirname, './.contracts/OldResolver.json'), {
+      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV2.json'), {
         encoding: 'utf8',
       }),
     ),
     args: [registry.address],
   })
 
-  await deployments.deploy('NoTextResolver', {
-    from: allNamedAccts.deployer,
+  await deployments.deploy('LegacyResolverV3', {
+    from: deployer,
     contract: JSON.parse(
-      await fs.readFile(resolve(__dirname, './.contracts/NoTextResolver.json'), {
+      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV3.json'), {
         encoding: 'utf8',
       }),
     ),
     args: [registry.address],
   })
+
+  await deployments.deploy('LegacyResolverV4', {
+    from: deployer,
+    contract: JSON.parse(
+      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV4.json'), {
+        encoding: 'utf8',
+      }),
+    ),
+    args: [registry.address],
+  })
+
+  // console.log('Deploying CustomResolver...')
+  // console.log('>>', registry.address, nameWrapper.address, ethController.address, reverseRegistrar.address)
+  // await deployments.deploy('CustomResolver', {
+  //   from: allNamedAccts.deployer,
+  //   contract: JSON.parse(
+  //     await fs.readFile(resolve(__dirname, './.contracts/CustomResolver1.json'), {
+  //       encoding: 'utf8',
+  //     }),
+  //   ),
+  //   args: [registry.address, nameWrapper.address, ethController.address, reverseRegistrar.address],
+  //   gas: 5000000,
+  // })
+
+  console.log('Finished deploying legacy resolvers')
   // const resolver = await ethers.getContract('NoMulticallResolver')
 
   // for (const { namedOwner, name, addr } of names) {

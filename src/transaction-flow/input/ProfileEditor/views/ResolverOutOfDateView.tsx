@@ -28,12 +28,6 @@ export const ResolverOutOfDateView = ({ onConfirm, onCancel, onSkip }: Props) =>
         <Outlink href={getSupportLink('resolver')}>
           {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
         </Outlink>
-        <SkipButton
-          data-testid="warning-overlay-skip-button"
-          description={t('input.profileEditor.warningOverlay.action.ignoreUpdate')}
-          actionLabel={t('action.skip', { ns: 'common' })}
-          onClick={onSkip}
-        />
       </Dialog.Content>
       <Dialog.Footer
         leading={

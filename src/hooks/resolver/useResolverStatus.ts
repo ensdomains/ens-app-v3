@@ -45,6 +45,8 @@ export const useResolverStatus = ({
     enabled: enabled && !internalProfile.isLoading,
   })
 
+  console.log('resolverType', resolverType)
+
   const resolverIsAuthorised = useResolverIsAuthorised({
     name,
     enabled: enabled && !resolverType.isLoading && resolverType.data?.type !== 'latest',
@@ -82,6 +84,7 @@ export const useResolverStatus = ({
       hasLatestResolver: false,
       hasValidResolver: false,
       isKnownResolver: false,
+      isOutdatedResolver: false,
       isAuthorized: false,
       isNameWrapperAware: false,
       hasProfile: false,
@@ -95,6 +98,7 @@ export const useResolverStatus = ({
       hasResolver: !!profileResolverAddress && profileResolverAddress !== emptyAddress,
       hasLatestResolver: resolverType.data?.type === 'latest',
       isKnownResolver: resolverType.data?.type !== 'custom',
+      isOutdatedResolver: resolverType.data?.type === 'outdated',
       isNameWrapperAware: profileResolverAddress
         ? getResolverWrapperAwareness({ resolverAddress: profileResolverAddress, chainId }) ||
           resolverIsAuthorised.data?.isAuthorised

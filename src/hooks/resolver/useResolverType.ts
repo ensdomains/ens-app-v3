@@ -58,6 +58,7 @@ export const useResolverType = ({ name, enabled: enabled_ = true }: UseResolverT
 
   const data = useMemo(() => {
     if (!enabled || isLoading) return
+    console.log('>>>>>', chainId, resolverAddress)
     const knownResolverData = getKnownResolverData({ chainId, resolverAddress })
     if (!knownResolverData) {
       return { type: 'custom', isWildcard, tone: 'greySecondary' } as const

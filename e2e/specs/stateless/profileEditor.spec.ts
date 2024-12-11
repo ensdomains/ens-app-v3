@@ -16,6 +16,8 @@ dotenv.config({ path: '.env.local' })
 
 const oldResolver = testClient.chain.contracts.legacyPublicResolver.address
 const newResolver = testClient.chain.contracts.publicResolver.address
+
+const contractAddresses = JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')
 const ownedResolverAddress =
   JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.OwnedResolver || ''
 const invalidResolverAddress =
@@ -24,8 +26,12 @@ const noMulticallResolverAddress =
   JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.NoMulticallResolverAddress || ''
 const oldestResolverAddress =
   JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.OldesResolver || ''
-const noTextResolverAddress =
-  JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.NoTextResolver || ''
+const customResolver =
+  JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')?.CustomResolver || ''
+
+const resolverV4Address = contractAddresses.LegacyResolverV4 || ''
+const resolverV5Address = contractAddresses.LegacyResolverV5 || ''
+const outdatedResolverAddress = contractAddresses.LegacyResolverV4 || ''
 
 const dummyABI = {
   test: 'test',
@@ -137,6 +143,107 @@ test.describe('profile', () => {
     await expect(profilePage.record('address', 'etcLegacy')).toHaveText('etcLegacy0x3C4...293BC')
     await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
     await expect(profilePage.contentHash()).toContainText('ipfs://bafybeic...')
+  })
+})
+
+test.describe('legacy resolvers', () => {
+  test('should force a name with an outdated resolver to upgrade', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'outdated-resolver',
+      type: 'legacy',
+      owner: 'user',
+      resolver: outdatedResolverAddress,
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const morePage = makePageObject('MorePage')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    await profilePage.editProfileButton.click()
+    await page.pause()
+    await expect(profilePage.profileEditor.locator('text=No resolver set')).toBeVisible()
+
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+
+    await morePage.resolver.click()
+    await expect(morePage.resolver.getByText(newResolver)).toBeVisible()
+  })
+
+  test('should be able to update records with resolver v4', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    test.slow()
+    const name = await makeName({
+      label: 'unwrapped',
+      type: 'legacy',
+      resolver: resolverV4Address,
+      records: await makeRecords(),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
+    const recordsPage = makePageObject('RecordsPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    await page.pause()
+    await expect(morePage.resolver.getByText(resolverV4Address)).toBeVisible()
+
+    await profilePage.goto(name)
+    await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
+    await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
+    await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
+    await expect(profilePage.record('address', 'btc')).toHaveText('bc1qj...pwa6n')
+    await expect(profilePage.record('address', 'etcLegacy')).toHaveText('etcLegacy0x3C4...293BC')
+    await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
+
+    await profilePage.editProfileButton.click()
+
+    await profilePage.profileEditor.getByTestId('warning-overlay-skip-button').click()
+
+    // Update records
+    await profilePage.profileEditorInput('eth').fill(createAccounts().getAddress('user2'))
+    await profilePage.profileEditorInput('description').fill('new name')
+
+    // Add records
+    await profilePage.profileEditorAddInputs(['location', 'bnb'])
+    await profilePage.profileEditorInput('location').fill('L1 chain')
+    await profilePage.profileEditorInput('bnb').fill('bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl')
+
+    await profilePage.profileEditor.getByTestId('profile-submit-button').click()
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver).toHaveText(oldResolver)
+
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordValue('text', 'location')).toHaveText('L1 chain')
+    await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('new name')
+    await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
+    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+      createAccounts().getAddress('user2'),
+    )
+    await expect(recordsPage.getRecordValue('address', 'bnb')).toHaveText(
+      'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
+    )
+    await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
   })
 })
 
@@ -650,7 +757,7 @@ test.describe('migrations', () => {
       label: 'unwrapped',
       type: 'legacy',
       owner: 'user',
-      resolver: noTextResolverAddress,
+      resolver: customResolver,
       records: await makeRecords(),
     })
 

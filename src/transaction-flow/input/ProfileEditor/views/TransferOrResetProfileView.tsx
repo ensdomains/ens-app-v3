@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button, Dialog } from '@ensdomains/thorin'
@@ -7,18 +8,13 @@ import { DetailedSwitch } from '../components/DetailedSwitch'
 import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 type Props = {
-  selected: SelectedProfile
-  onChangeSelected: (selected: SelectedProfile) => void
-  onNext: () => void
+  onNext: (profile: SelectedProfile) => void
   onBack: () => void
 }
-export const TransferOrResetProfileView = ({
-  selected,
-  onChangeSelected,
-  onNext,
-  onBack,
-}: Props) => {
+export const TransferOrResetProfileView = ({ onNext, onBack }: Props) => {
   const { t } = useTranslation('transactionFlow')
+
+  const [selected, setSelected] = useState<SelectedProfile>('latest')
 
   return (
     <>
@@ -35,7 +31,7 @@ export const TransferOrResetProfileView = ({
             'input.profileEditor.warningOverlay.transferOrResetProfile.toggle.subtitle',
           )}
           checked={selected !== 'reset'}
-          onChange={(e) => onChangeSelected(e.currentTarget.checked ? 'latest' : 'reset')}
+          onChange={(e) => setSelected(e.currentTarget.checked ? 'latest' : 'reset')}
         />
       </Dialog.Content>
       <Dialog.Footer
@@ -49,7 +45,7 @@ export const TransferOrResetProfileView = ({
           </Button>
         }
         trailing={
-          <Button onClick={onNext} data-testid="warning-overlay-next-button">
+          <Button onClick={() => onNext(selected)} data-testid="warning-overlay-next-button">
             {t('action.next', { ns: 'common' })}
           </Button>
         }

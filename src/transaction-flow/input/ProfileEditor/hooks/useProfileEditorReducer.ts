@@ -1,10 +1,10 @@
 import { useReducer } from 'react'
-import { match, P } from 'ts-pattern'
+import { match } from 'ts-pattern'
 
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import type { useProfile } from '@app/hooks/useProfile'
 
-type View =
+export type View =
   | 'loading'
   | 'migrateRegistry'
   | 'noResolver'
@@ -13,10 +13,16 @@ type View =
   | 'upload'
   | 'nft'
   | 'addRecord'
+  | 'resolverOutOfDate'
+  | 'transferOrResetProfile'
+  | 'invalidResolver'
 
 type State = {
-  flow: View[]
-  currentIndex: number
+  stack: View[]
+}
+
+type Dependencies = {
+  onDismiss?: () => void
 }
 
 type InitialData = {
@@ -30,8 +36,7 @@ const initializer =
   (deps: any) =>
   ({ profile, resolverStatus, isWrapped, isLoading }: InitialData): State => {
     const defaultState: State = {
-      flow: ['loading'],
-      currentIndex: 0,
+      stack: ['loading'] as const,
     }
 
     console.log('initializer', profile, resolverStatus, isLoading)
@@ -47,15 +52,19 @@ const initializer =
         {
           profile: { isMigrated: false },
         },
-        () => ({ ...defaultState, flow: ['migrateRegistry'] }),
+        () => ({ ...defaultState, stack: ['migrateRegistry'] as View[] }),
       )
+      .with({ resolverStatus: { isOutdatedResolver: true } }, () => ({
+        ...defaultState,
+        stack: ['resolverOutOfDate'] as View[],
+      }))
       .with({ resolverStatus: { hasResolver: false } }, () => ({
         ...defaultState,
-        flow: ['noResolver'],
+        stack: ['noResolver'] as View[],
       }))
       .with({ resolverStatus: { isNameWrapperAware: false }, isWrapped: true }, () => ({
         ...defaultState,
-        flow: ['resolverNotNameWrapperAware'],
+        stack: ['resolverNotNameWrapperAware'] as View[],
       }))
       .with(
         { resolverStatus: { hasValidResolver: false } },
@@ -64,45 +73,44 @@ const initializer =
         },
         () => ({
           ...defaultState,
-          flow: ['invalidResolver'],
+          stack: ['invalidResolver'] as View[],
         }),
       )
       .otherwise(() => ({
         ...defaultState,
-        flow: ['editor'],
+        stack: ['editor'] as View[],
       }))
   }
 
 type BaseAction = {
-  type: 'init' | 'increment' | 'decrement' | 'appendViews'
+  type: 'init' | 'increment' | 'decrement' | 'pushView' | 'popView'
   payload?: unknown
 }
 
 type InitAction = BaseAction & { type: 'init'; payload: InitialData }
-type IncrementAction = BaseAction & { type: 'increment'; payload: never }
-type DecrementAction = BaseAction & { type: 'decrement'; payload: never }
-type AppendViewsAction = BaseAction & { type: 'appendViews'; payload: View[] }
+type IncrementAction = BaseAction & { type: 'pushView'; payload: View }
+type DecrementAction = BaseAction & { type: 'popView'; payload?: never }
 
-type Action = InitAction | IncrementAction | DecrementAction | AppendViewsAction
+type Action = InitAction | IncrementAction | DecrementAction
 
-const reducer = (deps: any) => (state: any, action: Action) => {
+const reducer = (deps: Dependencies) => (state: any, action: Action) => {
   const { type, payload } = action
   switch (type) {
     case 'init':
       return initializer(deps)(payload)
-    case 'increment':
-      if (state.currentIndex >= state.flow.length - 1) return state
-      return { ...state, currentIndex: state.currentIndex + 1 }
-    case 'decrement':
-      if (state.currentIndex <= 0) return state
-      return { ...state, currentIndex: state.currentIndex - 1 }
-    case 'appendViews':
-      return { ...state, flow: [...state.flow, ...(payload as View[])] }
+    case 'pushView':
+      return { ...state, stack: [...state.stack, payload] }
+    case 'popView': {
+      const poopedStack = state.stack.slice(0, -1)
+      if (poopedStack.length > 0) return { ...state, stack: poopedStack }
+      deps.onDismiss?.()
+      return state
+    }
     default:
       return state
   }
 }
 
-export const useProfileEditorReducer = (initialState: InitialData, deps: {}) => {
+export const useProfileEditorReducer = (initialState: InitialData, deps: Dependencies) => {
   return useReducer(reducer(deps), initialState, initializer(deps))
 }
