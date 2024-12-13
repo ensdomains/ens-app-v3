@@ -1,5 +1,6 @@
 import type { TFunction } from 'react-i18next'
 import { toBytes, type Address } from 'viem'
+import { Connection } from 'wagmi'
 
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
 import { GetPriceReturnType } from '@ensdomains/ensjs/public'
@@ -219,4 +220,8 @@ export const hslToHex = (hsl: string) => {
       .padStart(2, '0') // convert to Hex and prefix "0" if needed
   }
   return `#${f(0)}${f(8)}${f(4)}`
+}
+
+export const hasCapsuleConnection = (connections: Connection[]) => {
+  return connections.some((connection) => connection?.connector?.id === 'capsule-integrated')
 }

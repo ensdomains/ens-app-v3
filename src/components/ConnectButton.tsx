@@ -26,7 +26,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { shortenAddress } from '@app/utils/utils'
+import { hasCapsuleConnection, shortenAddress } from '@app/utils/utils'
 
 import BaseLink from './@atoms/BaseLink'
 
@@ -147,9 +147,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const hasPendingTransactions = useHasPendingTransactions()
 
   const connections = useConnections()
-  const isCapsuleConnected = connections.some(
-    (connection) => connection?.connector?.id === 'capsule-integrated',
-  )
+  const isCapsuleConnected = hasCapsuleConnection(connections)
 
   return (
     <Profile
@@ -198,9 +196,15 @@ const HeaderProfile = ({ address }: { address: Address }) => {
                   color: 'text',
                   icon: <WalletSVG />,
                   wrapper: (children: ReactNode, key: Key) => (
-                    <BaseLink href="https://connect.usecapsule.com/" key={key}>
+                    <a
+                      href="https://connect.usecapsule.com/"
+                      key={key}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ width: '100%' }}
+                    >
                       {children}
-                    </BaseLink>
+                    </a>
                   ),
                 },
               ]

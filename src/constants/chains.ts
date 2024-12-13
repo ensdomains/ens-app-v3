@@ -48,13 +48,14 @@ export type SupportedChain =
   | typeof localhostWithEns
 
 export const getChainsFromUrl = () => {
-  if (typeof window === 'undefined')
+  if (typeof window === 'undefined') {
     return [
       ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
       sepoliaWithEns,
       mainnetWithEns,
       holeskyWithEns,
     ]
+  }
 
   const { hostname, search } = window.location
   const params = new URLSearchParams(search)
@@ -62,12 +63,12 @@ export const getChainsFromUrl = () => {
   const segments = hostname.split('.')
 
   if (segments.length === 4 && segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-    if (chainParam === 'sepolia') return sepoliaWithEns
-    if (chainParam === 'holesky') return holeskyWithEns
+    if (chainParam === 'sepolia') return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
+    if (chainParam === 'holesky') return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
   }
 
-  if (!hostname.includes('app.ens.domains')) return mainnetWithEns
-  if (segments.length !== 4) return mainnetWithEns
+  if (!hostname.includes('app.ens.domains')) return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
+  if (segments.length !== 4) return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
 
   return match(segments[0])
     .with('sepolia', () => [

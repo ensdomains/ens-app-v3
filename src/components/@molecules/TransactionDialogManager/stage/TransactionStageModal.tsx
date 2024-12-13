@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { BaseError } from 'viem'
-import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
+import { useClient, useConnections, useConnectorClient, useSendTransaction } from 'wagmi'
 
 import {
   Button,
@@ -395,9 +395,11 @@ export const TransactionStageModal = ({
     queryFn: createTransactionRequestQueryFn,
   })
 
+  const connections = useConnections()
+
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
-    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp }),
+    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp, connections }),
   })
 
   const transactionRequestQuery = useQuery({
