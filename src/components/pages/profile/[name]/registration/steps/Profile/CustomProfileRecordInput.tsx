@@ -27,7 +27,7 @@ const InnerResponsiveContainer = styled.div(
 )
 
 const LabelWrapper = styled.div(
-  () => css`
+  ({ theme }) => css`
     width: 100%;
     @media (min-width: ${theme.breakpoints.sm}px) {
       flex: 0 0 25%;
@@ -35,12 +35,14 @@ const LabelWrapper = styled.div(
   `,
 )
 
-const ValueWrapper = styled.div`
-  width: 100%;
-  @media (min-width: ${theme.breakpoints.sm}px) {
-    flex: 1;
-  }
-`
+const ValueWrapper = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      flex: 1;
+    }
+  `,
+)
 
 const ButtonContainer = styled.div(
   ({ theme }) => css`
