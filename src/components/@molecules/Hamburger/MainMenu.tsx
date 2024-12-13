@@ -7,7 +7,9 @@ import {
   LanguageSVG,
   RightChevronSVG,
   Spinner,
+  ThemeToggle,
   Typography,
+  useTheme,
   WalletSVG,
 } from '@ensdomains/thorin'
 
@@ -213,6 +215,16 @@ const NetworkSectionRow = styled.div(
   `,
 )
 
+const DarkModeItem = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['2']};
+  `,
+)
+
 const NetworkSection = () => {
   const { t } = useTranslation('common')
   const graphOutOfSync = useGraphOutOfSync()
@@ -253,20 +265,21 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
   const { t, i18n } = useTranslation('common')
   const language = i18n.resolvedLanguage || 'en'
   const { userConfig, setCurrency } = useUserConfig()
+  const { setMode, mode } = useTheme()
 
   return (
     <Container>
       <SettingsSection>
         <HoverableSettingsItem onClick={() => setCurrentView('language')}>
           <div>
-            <LanguageSVG />
+            <LanguageSVG height={16} width={16} />
             <Typography weight="bold">{t('navigation.language')}</Typography>
           </div>
           <div>
             <Typography>
               {ISO6391.getNativeName(language)} ({language.toLocaleUpperCase()})
             </Typography>
-            <RightChevronSVG />
+            <RightChevronSVG height={16} width={16} />
           </div>
         </HoverableSettingsItem>
         <SettingsItem>
@@ -283,6 +296,18 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
             />
           </div>
         </SettingsItem>
+        <DarkModeItem>
+          NEW!
+          <ThemeToggle
+            size="extraSmall"
+            onChange={(e) => {
+              const newValue = e.target.checked ? 'light' : 'dark'
+              if (newValue !== mode) {
+                setMode(newValue)
+              }
+            }}
+          />
+        </DarkModeItem>
       </SettingsSection>
       <RoutesSection>
         {disconnectedRoutes.map((route) => (

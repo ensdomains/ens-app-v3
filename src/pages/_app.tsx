@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
 import '@rainbow-me/rainbowkit/styles.css'
@@ -12,6 +13,7 @@ import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
 import {
+  Mode,
   lightTheme as thorinLightTheme,
   ThemeProvider as ThorinThemeProvider,
 } from '@ensdomains/thorin'
@@ -143,6 +145,14 @@ type AppPropsWithLayout = AppProps & {
 
 setupAnalytics()
 
+declare global {
+  interface Window {
+    __theme: Mode
+    __setPreferredTheme: (theme: Mode) => void
+    __onThemeChange: (theme: Mode) => void
+  }
+}
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
 
@@ -153,7 +163,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <TransactionStoreProvider>
             <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
-                <ThorinThemeProvider defaultMode="light">
+                <ThorinThemeProvider
+                  onThemeChange={(mode) => window.__setPreferredTheme(mode)}
+                  defaultMode={typeof window !== 'undefined' ? window.__theme : 'light'}
+                >
                   <IntercomProvider appId={INTERCOM_ID}>
                     <GlobalStyle />
                     <SyncProvider>
