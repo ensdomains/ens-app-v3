@@ -47,7 +47,7 @@ const NoNameTitle = styled(Typography)(
 )
 
 const NoNameButton = styled(Button)(
-  () => css`
+  ({ theme }) => css`
     grid-area: button;
     @media (min-width: ${theme.breakpoints.sm}px) {
       width: fit-content;
@@ -57,7 +57,7 @@ const NoNameButton = styled(Button)(
 )
 
 const NoNameDisabledButtonContainer = styled.div(
-  () => css`
+  ({ theme }) => css`
     grid-area: button;
     @media (min-width: ${theme.breakpoints.sm}px) {
       width: fit-content;
@@ -85,8 +85,8 @@ const PrimaryNameContainer = styled.div(
   `,
 )
 
-const PrimaryNameInfo = styled.div(() => [
-  css`
+const PrimaryNameInfo = styled.div(
+  ({ theme }) => css`
     display: flex;
     width: 100%;
     position: relative;
@@ -105,7 +105,7 @@ const PrimaryNameInfo = styled.div(() => [
       }
     }
   `,
-])
+)
 
 const AvatarContainer = styled.div(
   ({ theme }) => css`

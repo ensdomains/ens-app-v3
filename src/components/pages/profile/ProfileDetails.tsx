@@ -160,7 +160,7 @@ const ActionWrapper = styled.div<{
   leading?: boolean
   fullMobileWidth?: boolean
 }>(
-  ({ leading, fullMobileWidth }) => css`
+  ({ leading, fullMobileWidth, theme }) => css`
     ${fullMobileWidth &&
     css`
       width: 100%;

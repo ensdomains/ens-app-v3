@@ -161,19 +161,21 @@ export const NameWrapper = ({
             <Record data-testid="namewrapper-status">
               {t('tabs.more.token.status.wrapped')}
               {status === 'locked' ? (
-                <LockSVG data-testid="namewrapper-lock-icon" />
+                <LockSVG height="16" width="16" data-testid="namewrapper-lock-icon" />
               ) : (
-                <CheckSVG data-testid="namewrapper-check-icon" />
+                <CheckSVG height="16" width="16" data-testid="namewrapper-check-icon" />
               )}
             </Record>
             <ParentControlRecord data-testid="pcc-status" $isPCC={isPCC}>
               {isPCC ? (
                 <>
-                  {t('tabs.more.token.pcc.not-controllable')} <CheckSVG data-testid="npc-icon" />
+                  {t('tabs.more.token.pcc.not-controllable')}{' '}
+                  <CheckSVG height="16" width="16" data-testid="npc-icon" />
                 </>
               ) : (
                 <>
-                  {t('tabs.more.token.pcc.controllable')} <AlertSVG data-testid="pcc-icon" />
+                  {t('tabs.more.token.pcc.controllable')}{' '}
+                  <AlertSVG height="16" width="16" data-testid="pcc-icon" />
                 </>
               )}
             </ParentControlRecord>
