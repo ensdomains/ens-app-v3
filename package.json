@@ -84,6 +84,7 @@
     "markdown-to-jsx": "^7.1.7",
     "next": "13.5.6",
     "node-fetch": "^3.3.2",
+    "posthog-js": "^1.199.0",
     "react": "*",
     "react-confetti": "^6.1.0",
     "react-dom": "*",

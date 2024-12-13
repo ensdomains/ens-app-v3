@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -228,6 +229,18 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 
   const chainName = useChainName()
+
+  // posthog.featureFlags.override({ 'ab-test-1': 'test' })s
+  const key = useFeatureFlagVariantKey('ab-test-1')
+  // or user posthog.getFeatureFlag('ab-test-1') import from posthog-js
+
+  if (key === 'test') {
+    console.log(`feature flag: ${key}`)
+    // Do something differently for this user
+  } else {
+    // It's a good idea to let control variant always be the default behaviour,
+    // so if something goes wrong with flag evaluation, you don't break your app.
+  }
 
   return (
     <>
