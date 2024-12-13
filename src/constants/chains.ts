@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import { holesky } from 'viem/chains'
 import { localhost, mainnet, sepolia } from 'wagmi/chains'
 
@@ -5,6 +6,8 @@ import { addEnsContracts } from '@ensdomains/ensjs'
 
 import type { Register } from '@app/local-contracts'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
+
+const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 
 export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
@@ -43,3 +46,46 @@ export type SupportedChain =
   | typeof sepoliaWithEns
   | typeof holeskyWithEns
   | typeof localhostWithEns
+
+export const getChainsFromUrl = () => {
+  if (typeof window === 'undefined')
+    return [
+      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
+      sepoliaWithEns,
+      mainnetWithEns,
+      holeskyWithEns,
+    ]
+
+  const { hostname, search } = window.location
+  const params = new URLSearchParams(search)
+  const chainParam = params.get('chain')
+  const segments = hostname.split('.')
+
+  if (segments.length === 4 && segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
+    if (chainParam === 'sepolia') return sepoliaWithEns
+    if (chainParam === 'holesky') return holeskyWithEns
+  }
+
+  if (!hostname.includes('app.ens.domains')) return mainnetWithEns
+  if (segments.length !== 4) return mainnetWithEns
+
+  return match(segments[0])
+    .with('sepolia', () => [
+      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
+      sepoliaWithEns,
+      mainnetWithEns,
+      holeskyWithEns,
+    ])
+    .with('holesky', () => [
+      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
+      holeskyWithEns,
+      sepoliaWithEns,
+      mainnetWithEns,
+    ])
+    .otherwise(() => [
+      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
+      mainnetWithEns,
+      holeskyWithEns,
+      sepoliaWithEns,
+    ])
+}

@@ -2,15 +2,21 @@ import '@splidejs/react-splide/css'
 
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-import { ReactElement, ReactNode } from 'react'
+import { ReactElement, ReactNode, useState } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
-import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
+import {
+  Button,
+  ThorinGlobalStyles,
+  lightTheme as thorinLightTheme,
+  Toast,
+} from '@ensdomains/thorin'
 
-import { Notifications } from '@app/components/Notifications'
+import { NetworkNotifications } from '@app/components/NetworkNotifications'
 import { TestnetWarning } from '@app/components/TestnetWarning'
+import { TransactionNotifications } from '@app/components/TransactionNotifications'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
@@ -145,7 +151,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <SyncProvider>
                     <TransactionFlowProvider>
                       <SyncDroppedTransaction>
-                        <Notifications />
+                        <NetworkNotifications />
+                        <TransactionNotifications />
                         <TestnetWarning />
                         <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                       </SyncDroppedTransaction>

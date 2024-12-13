@@ -1,12 +1,10 @@
 import type { TFunction } from 'react-i18next'
-import { match } from 'ts-pattern'
 import { toBytes, type Address } from 'viem'
 
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
 import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
-import { holeskyWithEns, mainnetWithEns, sepoliaWithEns } from '@app/constants/chains'
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
@@ -221,26 +219,4 @@ export const hslToHex = (hsl: string) => {
       .padStart(2, '0') // convert to Hex and prefix "0" if needed
   }
   return `#${f(0)}${f(8)}${f(4)}`
-}
-
-export const getChainFromUrl = () => {
-  if (typeof window === 'undefined') return mainnetWithEns
-
-  const { hostname, search } = window.location
-  const params = new URLSearchParams(search)
-  const chainParam = params.get('chain')
-  const segments = hostname.split('.')
-
-  if (segments.length === 4 && segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-    if (chainParam === 'sepolia') return sepoliaWithEns
-    if (chainParam === 'holesky') return holeskyWithEns
-  }
-
-  if (!hostname.includes('app.ens.domains')) return mainnetWithEns
-  if (segments.length !== 4) return mainnetWithEns
-
-  return match(segments[0])
-    .with('sepolia', () => sepoliaWithEns)
-    .with('holesky', () => holeskyWithEns)
-    .otherwise(() => mainnetWithEns)
 }
