@@ -28,7 +28,7 @@ const ButtonContainer = styled.div(
   `,
 )
 
-export const Notifications = () => {
+export const TransactionNotifications = () => {
   const { t } = useTranslation()
   const breakpoints = useBreakpoint()
 

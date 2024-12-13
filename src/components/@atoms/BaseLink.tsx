@@ -26,7 +26,16 @@ export const BaseLinkWithHistory = ({
     return getDestination({ pathname: href, query: initialQuery }) as UrlObject
   }, [href, router.asPath])
 
-  return <Link {...rest} legacyBehavior href={newHref} as={newHref.pathname!} />
+  return (
+    <Link
+      {...rest}
+      target="_blank"
+      rel="noreferrer"
+      legacyBehavior
+      href={newHref}
+      as={newHref.pathname!}
+    />
+  )
 }
 
 export default BaseLink

@@ -1,5 +1,5 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { CallParameters, SendTransactionReturnType } from '@wagmi/core'
+import { CallParameters, getFeeHistory, SendTransactionReturnType } from '@wagmi/core'
 import { Dispatch } from 'react'
 import {
   Address,
@@ -32,7 +32,9 @@ import {
   CreateQueryKey,
 } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
+import { wagmiConfig } from '@app/utils/query/wagmi'
 import { CheckIsSafeAppReturnType } from '@app/utils/safe'
+import { hasCapsuleConnection } from '@app/utils/utils'
 
 type AccessListResponse = {
   accessList: {
@@ -161,7 +163,20 @@ export const calculateGasLimit = async ({
   }
 }
 
-type CreateTransactionRequestQueryKey = CreateQueryKey<
+const getLargestMedianGasFee = async () => {
+  const feeHistory = await getFeeHistory(wagmiConfig, {
+    blockCount: 5,
+    rewardPercentiles: [50],
+  })
+
+  const maxPriorityFeePerGas = feeHistory.reward
+    .map((block) => block[0])
+    .reduce((max, fee) => (fee > max ? fee : max), BigInt(0))
+
+  return maxPriorityFeePerGas
+}
+
+export type CreateTransactionRequestQueryKey = CreateQueryKey<
   UniqueTransaction,
   'createTransactionRequest',
   'standard'
@@ -175,12 +190,13 @@ type CreateTransactionRequestUnsafeParameters = {
   chainId: SupportedChain['id']
 }
 
-const createTransactionRequestUnsafe = async ({
+export const createTransactionRequestUnsafe = async ({
   client,
   connectorClient,
   isSafeApp,
   params,
   chainId,
+  connections,
 }: CreateTransactionRequestUnsafeParameters) => {
   const transactionRequest = await createTransactionRequest({
     name: params.name,
@@ -203,6 +219,10 @@ const createTransactionRequestUnsafe = async ({
     transactionName: params.name,
   })
 
+  const isCapsuleConnected = hasCapsuleConnection(connections)
+
+  const largestMedianGasFee = await getLargestMedianGasFee()
+
   const request = await prepareTransactionRequest(client, {
     to: transactionRequest.to,
     accessList,
@@ -211,6 +231,7 @@ const createTransactionRequestUnsafe = async ({
     gas: gasLimit,
     parameters: ['fees', 'nonce', 'type'],
     ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
+    ...(isCapsuleConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
 
   return {
@@ -227,9 +248,11 @@ export const createTransactionRequestQueryFn =
   ({
     connectorClient,
     isSafeApp,
+    connections,
   }: {
     connectorClient: ConnectorClientWithEns | undefined
     isSafeApp: CheckIsSafeAppReturnType | undefined
+    connections: any
   }) =>
   async ({
     queryKey: [params, chainId, address],
@@ -248,6 +271,7 @@ export const createTransactionRequestQueryFn =
           isSafeApp,
           params,
           chainId,
+          connections,
         }),
         error: null,
       }

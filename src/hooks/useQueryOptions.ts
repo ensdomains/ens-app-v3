@@ -154,6 +154,8 @@ export function useQueryOptions<
   const { address } = useAccount()
   const config = useConfig()
 
+  // console.log('chainId: ', chainId)
+
   if (queryDependencyType === 'independent')
     return {
       queryKey: createQueryKey({ params, scopeKey, functionName, queryDependencyType }),

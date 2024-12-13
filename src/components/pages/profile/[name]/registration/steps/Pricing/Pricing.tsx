@@ -541,7 +541,9 @@ const Pricing = ({
   const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
 
   const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
-    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : PaymentMethod.ethereum,
+    hasPendingMoonpayTransaction || balance?.value === 0n
+      ? PaymentMethod.moonpay
+      : PaymentMethod.ethereum,
   )
 
   // Keep radio button choice up to date

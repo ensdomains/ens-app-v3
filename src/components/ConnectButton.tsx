@@ -1,9 +1,9 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@usecapsule/rainbowkit'
 import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
-import { useDisconnect, useEnsAvatar } from 'wagmi'
+import { useConnections, useDisconnect, useEnsAvatar } from 'wagmi'
 
 import {
   Button,
@@ -14,6 +14,7 @@ import {
   mq,
   PersonSVG,
   Profile,
+  WalletSVG,
 } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
@@ -25,7 +26,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { shortenAddress } from '@app/utils/utils'
+import { hasCapsuleConnection, shortenAddress } from '@app/utils/utils'
 
 import BaseLink from './@atoms/BaseLink'
 
@@ -145,6 +146,9 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const { copy, copied } = useCopied(300)
   const hasPendingTransactions = useHasPendingTransactions()
 
+  const connections = useConnections()
+  const isCapsuleConnected = hasCapsuleConnection(connections)
+
   return (
     <Profile
       address={address}
@@ -185,6 +189,26 @@ const HeaderProfile = ({ address }: { address: Address }) => {
             onClick: () => copy(address),
             icon: copied ? <CheckSVG /> : <CopySVG />,
           },
+          ...(isCapsuleConnected
+            ? [
+                {
+                  label: t('wallet.myWallet'),
+                  color: 'text',
+                  icon: <WalletSVG />,
+                  wrapper: (children: ReactNode, key: Key) => (
+                    <a
+                      href="https://connect.usecapsule.com/"
+                      key={key}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ width: '100%' }}
+                    >
+                      {children}
+                    </a>
+                  ),
+                },
+              ]
+            : []),
           {
             label: t('wallet.disconnect'),
             color: 'red',
