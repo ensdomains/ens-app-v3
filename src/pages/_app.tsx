@@ -13,6 +13,7 @@ import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
 import { Notifications } from '@app/components/Notifications'
+import { Posthog } from '@app/components/posthog'
 import { TestnetWarning } from '@app/components/TestnetWarning'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
@@ -157,7 +158,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                       <SyncDroppedTransaction>
                         <Notifications />
                         <TestnetWarning />
-                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                        <Posthog>
+                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                        </Posthog>
                       </SyncDroppedTransaction>
                     </TransactionFlowProvider>
                   </SyncProvider>
