@@ -37,7 +37,7 @@ const Container = styled.div(
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    background-color: ${theme.colors.background};
+    background-color: ${theme.colors.backgroundPrimary};
 
     padding: ${theme.space['4']};
     gap: ${theme.space['2']};
@@ -220,8 +220,10 @@ const DarkModeItem = styled.div(
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: ${theme.space['2']};
+
+    padding: ${theme.space['4']} ${theme.space['6']};
   `,
 )
 
@@ -297,8 +299,9 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
           </div>
         </SettingsItem>
         <DarkModeItem>
-          NEW!
+          <Typography fontWeight="bold">Theme</Typography>
           <ThemeToggle
+            checked={mode === 'light'}
             size="extraSmall"
             onChange={(e) => {
               const newValue = e.target.checked ? 'light' : 'dark'

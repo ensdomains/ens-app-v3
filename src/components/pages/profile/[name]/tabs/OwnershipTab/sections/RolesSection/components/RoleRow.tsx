@@ -146,7 +146,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
               colorStyle="accentSecondary"
               size="small"
             >
-              <VerticalDotsSVG />
+              <VerticalDotsSVG width={12} height={12} />
             </Button>
           </Dropdown>
         </div>

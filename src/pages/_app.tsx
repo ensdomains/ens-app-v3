@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
+import { darkTheme, lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 
 import '@rainbow-me/rainbowkit/styles.css'
 import '@ensdomains/thorin/dist/style.css'
@@ -14,8 +14,10 @@ import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
 import {
   Mode,
+  darkTheme as thorinDarkTheme,
   lightTheme as thorinLightTheme,
   ThemeProvider as ThorinThemeProvider,
+  useTheme,
 } from '@ensdomains/thorin'
 
 import { Notifications } from '@app/components/Notifications'
@@ -34,16 +36,6 @@ import i18n from '../i18n'
 import '../styles.css'
 
 const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
-
-const rainbowKitTheme: Theme = {
-  ...lightTheme({
-    accentColor: thorinLightTheme.colors.accent,
-    borderRadius: 'medium',
-  }),
-  fonts: {
-    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
-  },
-}
 
 const anim = keyframes`
   0% {
@@ -95,6 +87,10 @@ const GlobalStyle = createGlobalStyle`
       /* stylelint-disable-next-line value-no-vendor-prefix */
       min-height: -webkit-fill-available;
     }
+  }
+
+  [data-theme="dark"] body {
+    background: rgb(20, 20, 22);
   }
 
   a {
@@ -153,37 +149,58 @@ declare global {
   }
 }
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'router'>) => {
   const getLayout = Component.getLayout ?? ((page) => page)
+  const theme = useTheme()
+
+  const baseRainbowKitTheme = theme.mode === 'dark' ? darkTheme : lightTheme
+
+  const rainbowKitTheme: Theme = {
+    ...baseRainbowKitTheme({
+      accentColor: thorinLightTheme.colors.accent,
+      borderRadius: 'medium',
+    }),
+    fonts: {
+      body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
+    },
+  }
+
+  return (
+    <RainbowKitProvider theme={rainbowKitTheme}>
+      <TransactionStoreProvider>
+        <ThemeProvider theme={theme.mode === 'dark' ? thorinDarkTheme : thorinLightTheme}>
+          <BreakpointProvider queries={breakpoints}>
+            <IntercomProvider appId={INTERCOM_ID}>
+              <GlobalStyle />
+              <SyncProvider>
+                <TransactionFlowProvider>
+                  <SyncDroppedTransaction>
+                    <Notifications />
+                    <TestnetWarning />
+                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                  </SyncDroppedTransaction>
+                </TransactionFlowProvider>
+              </SyncProvider>
+            </IntercomProvider>
+          </BreakpointProvider>
+        </ThemeProvider>
+      </TransactionStoreProvider>
+    </RainbowKitProvider>
+  )
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const defaultMode = typeof window !== 'undefined' ? window.__theme : 'light'
 
   return (
     <I18nextProvider i18n={i18n}>
       <QueryProviders>
-        <RainbowKitProvider theme={rainbowKitTheme}>
-          <TransactionStoreProvider>
-            <ThemeProvider theme={thorinLightTheme}>
-              <BreakpointProvider queries={breakpoints}>
-                <ThorinThemeProvider
-                  onThemeChange={(mode) => window.__setPreferredTheme(mode)}
-                  defaultMode={typeof window !== 'undefined' ? window.__theme : 'light'}
-                >
-                  <IntercomProvider appId={INTERCOM_ID}>
-                    <GlobalStyle />
-                    <SyncProvider>
-                      <TransactionFlowProvider>
-                        <SyncDroppedTransaction>
-                          <Notifications />
-                          <TestnetWarning />
-                          <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                        </SyncDroppedTransaction>
-                      </TransactionFlowProvider>
-                    </SyncProvider>
-                  </IntercomProvider>
-                </ThorinThemeProvider>
-              </BreakpointProvider>
-            </ThemeProvider>
-          </TransactionStoreProvider>
-        </RainbowKitProvider>
+        <ThorinThemeProvider
+          onThemeChange={(mode) => window.__setPreferredTheme(mode)}
+          defaultMode={defaultMode}
+        >
+          <AppWithThorin {...{ Component, pageProps }} />
+        </ThorinThemeProvider>
       </QueryProviders>
     </I18nextProvider>
   )
