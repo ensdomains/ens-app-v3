@@ -59,6 +59,7 @@ const Record = styled.div(
     background: ${theme.colors.greenSurface};
     border-radius: ${theme.radii.input};
     width: ${theme.space.full};
+    color: ${theme.colors.text};
     font-weight: ${theme.fontWeights.bold};
     display: flex;
     flex-direction: row;

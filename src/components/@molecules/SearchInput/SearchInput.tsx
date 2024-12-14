@@ -73,7 +73,7 @@ const SearchResultsContainer = styled.div<{
     height: min-content;
     top: calc(100% + ${theme.space['3']});
 
-    background-color: #f7f7f7;
+    background-color: ${theme.colors.background};
     box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};

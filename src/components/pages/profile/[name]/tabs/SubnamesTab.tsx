@@ -55,6 +55,7 @@ const NoMoreResultsContainer = styled.div(
     align-items: center;
     justify-content: center;
     height: ${theme.space['15']};
+    color: ${theme.colors.text};
   `,
 )
 
