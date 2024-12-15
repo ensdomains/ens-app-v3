@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
@@ -13,6 +12,26 @@ const appLinks = {
   holesky: 'holesky.app.ens.domains',
 }
 
+export const shouldOpenModal = (
+  connectedChainName: string | undefined,
+  connectedChainId: number | undefined,
+  setOpen: (open: boolean) => void,
+) => {
+  if (!connectedChainName) return
+  if (!getSupportedChainById(connectedChainId)) return
+
+  const currentChain = getChainsFromUrl()?.[0]
+  if (!currentChain?.id) return
+
+  if (currentChain?.id === connectedChainId) {
+    setOpen(false)
+    return
+  }
+  if (currentChain?.id !== connectedChainId) {
+    setOpen(true)
+  }
+}
+
 export const NetworkNotifications = () => {
   const { t } = useTranslation()
   const account = useAccount()
@@ -21,17 +40,11 @@ export const NetworkNotifications = () => {
   const connectedChainName = account?.chain?.name
   const connectedChainId = account?.chain?.id
 
-  console.log('connectedChainName: ', connectedChainName)
-
   useEffect(() => {
-    if (!connectedChainName) return
-    if (!getSupportedChainById(connectedChainId)) return
-
-    const currentChain = getChainsFromUrl()?.[0]
-    if (currentChain?.id !== connectedChainId) {
-      setOpen(true)
-    }
+    shouldOpenModal(connectedChainName, connectedChainId, setOpen)
   }, [connectedChainName, connectedChainId])
+
+  console.log('open', open)
 
   return (
     <Toast
@@ -43,9 +56,8 @@ export const NetworkNotifications = () => {
     >
       <Button
         size="small"
-        onClick={() =>
-          (window.location.href = `https://${appLinks[connectedChainName?.toLocaleLowerCase()]}`)
-        }
+        as="a"
+        href={`https://${appLinks[connectedChainName?.toLocaleLowerCase()]}`}
       >
         {t(`networkNotifications.${connectedChainName}.action`)}
       </Button>
