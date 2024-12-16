@@ -15,16 +15,14 @@ const appLinks = {
 export const NetworkNotifications = () => {
   const { t } = useTranslation()
   const account = useAccount()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState<boolean | undefined>(undefined)
 
   const connectedChainName = account?.chain?.name
   const connectedChainId = account?.chain?.id
 
   useEffect(() => {
-    shouldOpenModal(connectedChainName, connectedChainId, setOpen)
+    setOpen(shouldOpenModal(connectedChainName, connectedChainId))
   }, [connectedChainName, connectedChainId])
-
-  console.log('open', open)
 
   return (
     <Toast
