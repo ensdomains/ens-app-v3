@@ -22,7 +22,7 @@ import {
   GetPriceReturnType,
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
-import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
+import { BackdropSurface, Portal, Typography } from '@ensdomains/thorin'
 
 import { SupportedChain } from '@app/constants/chains'
 import {
@@ -53,14 +53,14 @@ import { getBoxNameStatus, SearchResult } from './SearchResult'
 import { HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
-  ({ $size }) => css`
+  ({ $size, theme }) => css`
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&
-    mq.sm.min(css`
-      padding-left: 48px;
+    ` @media (min-width: ${theme.breakpoints.sm}px) {
+       padding-left: 48px;
       padding-right: 48px;
-    `)}
+    }`}
   `,
 )
 
@@ -73,7 +73,7 @@ const SearchResultsContainer = styled.div<{
     height: min-content;
     top: calc(100% + ${theme.space['3']});
 
-    background-color: #f7f7f7;
+    background-color: ${theme.colors.background};
     box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};

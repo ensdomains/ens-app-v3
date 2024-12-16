@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card } from '@ensdomains/thorin'
+import { Button, Card, CardDivider } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { PseudoActionButton } from '@app/components/@atoms/PseudoActionButton/PseudoActionButton'
@@ -39,7 +39,7 @@ export const RolesSection = ({ name, roles, details }: Props) => {
   return (
     <StyledCard $isCached={isCached}>
       <Header count={roles?.filter(({ address }) => !!address).length || 0} />
-      <Card.Divider />
+      <CardDivider />
       {roles?.map((role) => (
         <RoleRow
           key={role.address || 'noaddress'}

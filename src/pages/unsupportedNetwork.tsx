@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useSwitchChain } from 'wagmi'
 
-import { Button, Helper, mq } from '@ensdomains/thorin'
+import { Button, Helper } from '@ensdomains/thorin'
 
 import { getSupportedChainById } from '@app/constants/chains'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -22,10 +22,10 @@ const Card = styled.div(
     max-height: 75vh;
     overflow-y: auto;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: initial;
       min-width: ${theme.space['128']};
-    `)}
+    }
   `,
 )
 
@@ -57,7 +57,7 @@ export default function Page() {
   return (
     <Container>
       <Card>
-        <Helper type="error">{t('unsupportedNetwork')}</Helper>
+        <Helper alert="error">{t('unsupportedNetwork')}</Helper>
         <Button onClick={handleChangeNetwork}>{t('action.changeNetwork')}</Button>
       </Card>
     </Container>

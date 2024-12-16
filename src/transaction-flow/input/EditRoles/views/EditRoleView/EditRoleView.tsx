@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Input, MagnifyingGlassSimpleSVG } from '@ensdomains/thorin'
 
 import { DialogFooterWithBorder } from '@app/components/@molecules/DialogComponentVariants/DialogFooterWithBorder'
 import { SearchViewErrorView } from '@app/transaction-flow/input/SendName/views/SearchView/views/SearchViewErrorView'
@@ -16,18 +16,18 @@ import { useSimpleSearch } from '../../hooks/useSimpleSearch'
 import { EditRoleIntroView } from './views/EditRoleIntroView'
 import { EditRoleResultsView } from './views/EditRoleResultsView'
 
-const InputWrapper = styled.div(({ theme }) => [
-  css`
+const InputWrapper = styled.div(
+  ({ theme }) => css`
     flex: 0;
     width: 100%;
     display: flex;
     flex-direction: column;
     margin-bottom: -${theme.space['4']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      margin-bottom: -${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    margin-bottom: -${theme.space['6']};
-  `),
-])
+)
 
 type Props = {
   index: number

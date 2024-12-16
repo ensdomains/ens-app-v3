@@ -14,7 +14,7 @@ afterAll(() => {
 
 describe('PseudoActionButton', () => {
   it('should show loading state when clicked and reset after timeout has been run', async () => {
-    const testIcon = <div data-testid="icon" />
+    const testIcon = () => <div data-testid="icon" />
     render(
       <PseudoActionButton prefix={testIcon} timeout={500}>
         Test
@@ -35,7 +35,7 @@ describe('PseudoActionButton', () => {
   })
 
   it('should maintain loading state if loading is set to true', async () => {
-    const testIcon = <div data-testid="icon" />
+    const testIcon = () => <div data-testid="icon" />
     render(
       <PseudoActionButton loading prefix={testIcon} timeout={500}>
         Test

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, mq, Spinner, Typography } from '@ensdomains/thorin'
+import { Button, Spinner, Typography } from '@ensdomains/thorin'
 
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
@@ -44,7 +44,7 @@ const RecentTransactionsMessage = styled(Typography)(
   ({ theme }) => css`
     display: flex;
     justify-content: center;
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
     padding: ${theme.space['4']};
   `,
 )
@@ -103,12 +103,12 @@ const ContinueContainer = styled.div(({ theme }) => [
     button {
       padding: 0 ${theme.space['4']};
     }
-  `,
-  mq.sm.min(css`
-    button {
-      padding: 0 ${theme.space['8']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      button {
+        padding: 0 ${theme.space['8']};
+      }
     }
-  `),
+  `,
 ])
 
 const ViewMoreInner = styled(Typography)(

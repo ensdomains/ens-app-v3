@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
-import { Button, Dialog, mq, PlusSVG, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
@@ -40,11 +40,12 @@ const StyledCard = styled.form(({ theme }) => [
     align-items: center;
     justify-content: center;
     gap: ${theme.space['4']};
+
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      padding: ${theme.space['6']};
+      gap: ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['6']};
-    gap: ${theme.space['6']};
-  `),
 ])
 
 const CenterAlignedTypography = styled(Typography)(
@@ -64,10 +65,10 @@ const Divider = styled.div(
 const ButtonWrapper = styled.div(({ theme }) => [
   css`
     width: ${theme.space.full};
+    @media (min-width: 360px) {
+      width: initial;
+    }
   `,
-  mq.xs.min(css`
-    width: initial;
-  `),
 ])
 
 const SubmitButton = ({
@@ -320,7 +321,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
             size="medium"
             onClick={handleShowAddRecordModal}
             data-testid="show-add-profile-records-modal-button"
-            prefix={<PlusSVG />}
+            prefix={PlusSVG}
           >
             {t('steps.profile.addMore')}
           </Button>

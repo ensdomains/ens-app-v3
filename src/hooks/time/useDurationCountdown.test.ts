@@ -1,5 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
-import { calculateTimeDiff, displayCountdown } from "./useDurationCountdown";
+import { describe, expect, it, vi } from 'vitest'
+
+import { calculateTimeDiff, displayCountdown } from './useDurationCountdown'
 
 const makeDiff = (str: string) => {
   const [years, months, days, hours, minutes] = str.split('-').map(Number)
@@ -45,9 +46,11 @@ describe('displayCountdown', () => {
     ['1 unit.years', '1-1-1-1-1'],
   ])('should return %s for diff interval %s', (result, diffInterval) => {
     const diff = makeDiff(diffInterval)
-    expect(displayCountdown({
-      diff,
-      t: ((x: string, opts: any) => `${opts.count} ${x}`) as any
-    })).toEqual(result)
+    expect(
+      displayCountdown({
+        diff,
+        t: ((x: string, opts: any) => `${opts.count} ${x}`) as any,
+      }),
+    ).toEqual(result)
   })
 })

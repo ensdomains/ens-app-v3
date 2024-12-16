@@ -110,6 +110,7 @@ const SectionListContainer = styled.div(
     li {
       font-size: ${theme.fontSizes.small};
       font-weight: ${theme.fontWeights.normal};
+      color: ${theme.colors.text};
     }
 
     li::before {

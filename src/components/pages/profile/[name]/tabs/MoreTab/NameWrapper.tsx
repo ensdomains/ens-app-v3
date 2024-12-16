@@ -4,7 +4,7 @@ import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
-import { AlertSVG, CheckSVG, LockSVG, mq, Typography } from '@ensdomains/thorin'
+import { AlertSVG, CheckSVG, LockSVG, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -38,9 +38,9 @@ const Container = styled(TabWrapper)(
 
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -59,6 +59,7 @@ const Record = styled.div(
     background: ${theme.colors.greenSurface};
     border-radius: ${theme.radii.input};
     width: ${theme.space.full};
+    color: ${theme.colors.text};
     font-weight: ${theme.fontWeights.bold};
     display: flex;
     flex-direction: row;
@@ -161,19 +162,21 @@ export const NameWrapper = ({
             <Record data-testid="namewrapper-status">
               {t('tabs.more.token.status.wrapped')}
               {status === 'locked' ? (
-                <LockSVG data-testid="namewrapper-lock-icon" />
+                <LockSVG height="16" width="16" data-testid="namewrapper-lock-icon" />
               ) : (
-                <CheckSVG data-testid="namewrapper-check-icon" />
+                <CheckSVG height="16" width="16" data-testid="namewrapper-check-icon" />
               )}
             </Record>
             <ParentControlRecord data-testid="pcc-status" $isPCC={isPCC}>
               {isPCC ? (
                 <>
-                  {t('tabs.more.token.pcc.not-controllable')} <CheckSVG data-testid="npc-icon" />
+                  {t('tabs.more.token.pcc.not-controllable')}{' '}
+                  <CheckSVG height="16" width="16" data-testid="npc-icon" />
                 </>
               ) : (
                 <>
-                  {t('tabs.more.token.pcc.controllable')} <AlertSVG data-testid="pcc-icon" />
+                  {t('tabs.more.token.pcc.controllable')}{' '}
+                  <AlertSVG height="16" width="16" data-testid="pcc-icon" />
                 </>
               )}
             </ParentControlRecord>

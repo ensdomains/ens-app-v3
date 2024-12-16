@@ -3,7 +3,7 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, MagnifyingGlassSimpleSVG, mq, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
@@ -28,10 +28,10 @@ const Content = styled.div(
     gap: ${theme.space[6]};
     overflow: hidden;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: 80vw;
       max-width: ${theme.space['128']};
-    `)}
+    }
   `,
 )
 

@@ -101,7 +101,7 @@ export const VerifyOffchainOwnership = ({
     <DnsImportCard>
       <DnsImportHeading>{t('title')}</DnsImportHeading>
       {(() => {
-        if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
+        if (!isConnected) return <Helper alert="info">{t('status.disconnected')}</Helper>
         if (dnsOffchainStatus?.address?.status === 'matching')
           return (
             <SuccessHelper>
@@ -148,7 +148,7 @@ export const VerifyOffchainOwnership = ({
               }
               statusHelperElement={
                 dnsOffchainStatus?.address?.status === 'mismatching' && (
-                  <Helper type="error">{t('status.mismatching.error.offchain')}</Helper>
+                  <Helper alert="error">{t('status.mismatching.error.offchain')}</Helper>
                 )
               }
             />

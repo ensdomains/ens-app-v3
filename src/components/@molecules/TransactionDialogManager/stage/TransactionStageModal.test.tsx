@@ -16,10 +16,10 @@ import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkIsSafeApp } from '@app/utils/safe'
 
+import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 import { useMockedUseQueryOptions } from '../../../../../test/mock/useMockedUseQueryOptions'
 import { calculateGasLimit, transactionSuccessHandler } from './query'
 import { handleBackToInput, TransactionStageModal } from './TransactionStageModal'
-import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/chain/useChainName')
@@ -308,7 +308,7 @@ describe('TransactionStageModal', () => {
         )
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',
-          payload: { hash: '0x123', key: 'test'},
+          payload: { hash: '0x123', key: 'test' },
         })
       })
       it('should add to recent transactions and run dispatch from success callback when isSafeTx', async () => {
@@ -331,7 +331,7 @@ describe('TransactionStageModal', () => {
         )
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',
-          payload: { hash: '0x123', key: 'test'},
+          payload: { hash: '0x123', key: 'test' },
         })
       })
     })
@@ -449,7 +449,10 @@ describe('transactionSuccessHandler', () => {
 
     await waitFor(() =>
       expect(mockDispatch).toBeCalledWith(
-        expect.objectContaining({ name: 'setTransactionHash', payload: { hash: '0xhash', key: 'txKey'} }),
+        expect.objectContaining({
+          name: 'setTransactionHash',
+          payload: { hash: '0xhash', key: 'txKey' },
+        }),
       ),
     )
   })

@@ -93,7 +93,7 @@ const NamesListItemSubtitle = styled.div(
     font-weight: ${theme.fontWeights.normal};
     font-size: ${theme.space['3.5']};
     line-height: 1.43;
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
   `,
 )
 
@@ -385,7 +385,7 @@ const ExtendNames = ({
                   (!!estimatedGasLimit &&
                     !!balance?.value &&
                     balance.value < estimatedGasLimit)) && (
-                  <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+                  <Helper alert="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
               </GasEstimationCacheableComponent>
             </>

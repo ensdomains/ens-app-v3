@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card, CrossSVG, mq, PersonPlusSVG, Skeleton, Typography } from '@ensdomains/thorin'
+import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography } from '@ensdomains/thorin'
 
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -18,8 +18,8 @@ const SkeletonFiller = styled.div(
   `,
 )
 
-const NoNameContainer = styled.div(({ theme }) => [
-  css`
+const NoNameContainer = styled.div(
+  ({ theme }) => css`
     display: grid;
     grid:
       'title title' auto
@@ -27,43 +27,44 @@ const NoNameContainer = styled.div(({ theme }) => [
       'button button' auto
       / 1fr 1fr;
     grid-row-gap: ${theme.space['4']};
-  `,
-  mq.sm.min(css`
-    grid:
-      'title button' auto
-      'description description' auto
-      / 1fr 1fr;
-  `),
-])
 
-const NoNameTitle = styled(Typography)(({ theme }) => [
-  css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      grid:
+        'title button' auto
+        'description description' auto
+        / 1fr 1fr;
+    }
+  `,
+)
+
+const NoNameTitle = styled(Typography)(
+  ({ theme }) => css`
     grid-area: title;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      line-height: ${theme.space['10']};
+    }
   `,
-  mq.sm.min(css`
-    line-height: ${theme.space['10']};
-  `),
-])
+)
 
-const NoNameButton = styled(Button)(() => [
-  css`
+const NoNameButton = styled(Button)(
+  ({ theme }) => css`
     grid-area: button;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      width: fit-content;
+      justify-self: end;
+    }
   `,
-  mq.sm.min(css`
-    width: fit-content;
-    justify-self: end;
-  `),
-])
+)
 
-const NoNameDisabledButtonContainer = styled.div(() => [
-  css`
+const NoNameDisabledButtonContainer = styled.div(
+  ({ theme }) => css`
     grid-area: button;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      width: fit-content;
+      justify-self: end;
+    }
   `,
-  mq.sm.min(css`
-    width: fit-content;
-    justify-self: end;
-  `),
-])
+)
 
 const NoNameDescription = styled(Typography)(
   () => css`
@@ -71,21 +72,21 @@ const NoNameDescription = styled(Typography)(
   `,
 )
 
-const PrimaryNameContainer = styled.div(({ theme }) => [
-  css`
+const PrimaryNameContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: ${theme.space['4']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      flex-direction: row;
+      gap: ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    flex-direction: row;
-    gap: ${theme.space['6']};
-  `),
-])
+)
 
-const PrimaryNameInfo = styled.div(() => [
-  css`
+const PrimaryNameInfo = styled.div(
+  ({ theme }) => css`
     display: flex;
     width: 100%;
     position: relative;
@@ -97,37 +98,37 @@ const PrimaryNameInfo = styled.div(() => [
       width: 100%;
       text-align: center;
     }
-  `,
-  mq.sm.min(css`
-    align-items: flex-start;
-    > div {
-      text-align: left;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      align-items: flex-start;
+      > div {
+        text-align: left;
+      }
     }
-  `),
-])
+  `,
+)
 
-const AvatarContainer = styled.div(({ theme }) => [
-  css`
+const AvatarContainer = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['26']};
     height: ${theme.space['26']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      order: -1;
+    }
   `,
-  mq.sm.min(css`
-    order: -1;
-  `),
-])
+)
 
-const ActionsContainer = styled.div(({ theme }) => [
-  css`
+const ActionsContainer = styled.div(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
     gap: ${theme.space['2']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      flex-direction: column-reverse;
+      width: ${theme.space['40']};
+    }
   `,
-  mq.sm.min(css`
-    flex-direction: column-reverse;
-    width: ${theme.space['40']};
-  `),
-])
+)
 
 export const PrimarySection = () => {
   const { t } = useTranslation('settings')
@@ -185,7 +186,7 @@ export const PrimarySection = () => {
                     buttonId="disabled-reset-primary-name-button"
                     buttonText={t('action.remove', { ns: 'common' })}
                     content={t('errors.networkError.blurb', { ns: 'common' })}
-                    prefix={<CrossSVG />}
+                    prefix={CrossSVG}
                     size="medium"
                     mobilePlacement="top"
                     loading={hasGraphErrorLoading}
@@ -194,7 +195,7 @@ export const PrimarySection = () => {
                     buttonId="disabled-change-primary-name-button"
                     buttonText={t('action.change', { ns: 'common' })}
                     content={t('errors.networkError.blurb', { ns: 'common' })}
-                    prefix={<PersonPlusSVG />}
+                    prefix={PersonPlusSVG}
                     size="medium"
                     mobilePlacement="top"
                     loading={hasGraphErrorLoading}
@@ -204,7 +205,7 @@ export const PrimarySection = () => {
                 <>
                   <Button
                     data-testid="reset-primary-name-button"
-                    prefix={<CrossSVG />}
+                    prefix={CrossSVG}
                     colorStyle="redSecondary"
                     disabled={hasGraphErrorLoading}
                     loading={hasGraphErrorLoading}
@@ -214,7 +215,7 @@ export const PrimarySection = () => {
                   </Button>
                   <Button
                     data-testid="change-primary-name-button"
-                    prefix={<PersonPlusSVG />}
+                    prefix={PersonPlusSVG}
                     disabled={hasGraphErrorLoading}
                     loading={hasGraphErrorLoading}
                     onClick={changePrimary}
@@ -235,7 +236,7 @@ export const PrimarySection = () => {
                   buttonText={t('section.primary.choosePrimaryName')}
                   size="small"
                   content={t('errors.networkError.blurb', { ns: 'common' })}
-                  prefix={<PersonPlusSVG />}
+                  prefix={PersonPlusSVG}
                   mobilePlacement="top"
                   loading={hasGraphErrorLoading}
                 />
@@ -245,7 +246,7 @@ export const PrimarySection = () => {
                 <NoNameButton
                   data-testid="set-primary-name-button"
                   size="small"
-                  prefix={<PersonPlusSVG />}
+                  prefix={PersonPlusSVG}
                   loading={hasGraphErrorLoading}
                   disabled={hasGraphErrorLoading}
                   onClick={changePrimary}
