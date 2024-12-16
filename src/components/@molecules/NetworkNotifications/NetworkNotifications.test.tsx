@@ -3,19 +3,19 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
-import { NetworkNotifications, shouldOpenModal } from './NetworkNotifications'
+import { NetworkNotifications } from './NetworkNotifications'
+import { shouldOpenModal } from './utils'
 
 vi.mock('wagmi')
 const mockUseAccount = mockFunction(useAccount)
 
-vi.mock('./NetworkNotifications', async (importOriginal) => {
+// const mockShouldOpenModal = vi.fn()
+
+vi.mock('./utils', async (importOriginal) => {
   const actual = await importOriginal()
   return {
     ...actual,
-    shouldOpenModal: (connectedChainName, connectedChainId, setOpen) => {
-      console.log('sdfsd')
-      setOpen(false)
-    },
+    shouldOpenModal: vi.fn(),
   }
 })
 
@@ -24,20 +24,15 @@ describe('NetworkNotifications', () => {
     vi.clearAllMocks()
   })
 
-  it.only('should show notification if shouldOpenModal sets true', () => {
-    mockUseAccount.mockReturnValue({
-      chain: {
-        name: 'sepolia',
-        id: 11155111,
-      },
+  it('should show notification if shouldOpenModal sets true', () => {
+    vi.mocked(shouldOpenModal).mockImplementation((_, __, setOpen) => {
+      setOpen(true)
     })
-
-    const { rerender } = render(<NetworkNotifications />)
-    rerender(<NetworkNotifications />)
+    render(<NetworkNotifications />)
     expect(screen.getByTestId('toast-desktop')).toBeInTheDocument()
   })
 
-  it('should not show notification if on correct chain', () => {
+  it.only('should not show notification if shouldOpenModal sets false', () => {
     mockUseAccount.mockReturnValue({
       chain: {
         name: 'ethereum',

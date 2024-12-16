@@ -4,32 +4,12 @@ import { useAccount } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
-import { getChainsFromUrl, getSupportedChainById } from '@app/constants/chains'
+import { shouldOpenModal } from './utils'
 
 const appLinks = {
   ethereum: 'app.ens.domains',
   sepolia: 'sepolia.app.ens.domains',
   holesky: 'holesky.app.ens.domains',
-}
-
-export const shouldOpenModal = (
-  connectedChainName: string | undefined,
-  connectedChainId: number | undefined,
-  setOpen: (open: boolean) => void,
-) => {
-  if (!connectedChainName) return
-  if (!getSupportedChainById(connectedChainId)) return
-
-  const currentChain = getChainsFromUrl()?.[0]
-  if (!currentChain?.id) return
-
-  if (currentChain?.id === connectedChainId) {
-    setOpen(false)
-    return
-  }
-  if (currentChain?.id !== connectedChainId) {
-    setOpen(true)
-  }
 }
 
 export const NetworkNotifications = () => {
