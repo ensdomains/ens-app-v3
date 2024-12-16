@@ -3,6 +3,8 @@ import { AppPropsType, AppType } from 'next/dist/shared/lib/utils'
 import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document'
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 
+import { cspWithoutFrameAncestors } from '@app/utils/createCsp'
+
 const ipfsPathScript = `
   (function () {
     const { pathname } = window.location
@@ -14,6 +16,7 @@ const ipfsPathScript = `
   })();
 `
 
+// sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=
 const hiddenCheckScript = `
   if (document.prerendering) {
     document.addEventListener('prerenderingchange', () => {
@@ -32,6 +35,36 @@ const hiddenCheckScript = `
       once: true,
     })
   }
+`
+
+// sha256-84jekTLuMPFFzbBxEFpoUhJbu81z5uBinvhIKKkAPxg=
+const themeSwitcherScript = `
+  (function () {
+    function setTheme(newTheme) {
+        document.documentElement.setAttribute('data-theme', newTheme);
+        window.__theme = newTheme;
+        window.__onThemeChange(newTheme);
+    }
+    window.__onThemeChange = function () {};
+    window.__setPreferredTheme = function (newTheme) {
+        setTheme(newTheme);
+        try {
+            localStorage.setItem("theme", JSON.stringify(window.__theme));
+        } catch (err) {}
+    };
+
+    const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    darkQuery.addListener(function (event) {
+        window.__setPreferredTheme(event.matches ? "dark" : "light");
+    });
+
+    let preferredTheme;
+    try {
+        preferredTheme = JSON.parse(localStorage.getItem("theme"));
+    } catch (err) {}
+    
+    setTheme(preferredTheme || (darkQuery.matches ? "dark" : "light"));
+  })();
 `
 
 const makeIPFSURL = (url: string) => {
@@ -76,41 +109,12 @@ export default class MyDocument extends Document {
       <Html data-theme="light">
         <Head>
           {process.env.NODE_ENV === 'production' && (
-            <meta
-              httpEquiv="Content-Security-Policy"
-              content="worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval';"
-            />
+            <meta httpEquiv="Content-Security-Policy" content={cspWithoutFrameAncestors} />
           )}
           <script dangerouslySetInnerHTML={{ __html: hiddenCheckScript }} />
           <script
             dangerouslySetInnerHTML={{
-              __html: `(function () {
-    function setTheme(newTheme) {
-        document.documentElement.setAttribute('data-theme', newTheme);
-        window.__theme = newTheme;
-        window.__onThemeChange(newTheme);
-    }
-    window.__onThemeChange = function () {};
-    window.__setPreferredTheme = function (newTheme) {
-        setTheme(newTheme);
-        try {
-            localStorage.setItem("theme", JSON.stringify(window.__theme));
-        } catch (err) {}
-    };
-
-    const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    darkQuery.addListener(function (event) {
-        window.__setPreferredTheme(event.matches ? "dark" : "light");
-    });
-
-    let preferredTheme;
-    try {
-        preferredTheme = JSON.parse(localStorage.getItem("theme"));
-    } catch (err) {}
-    
-    setTheme(preferredTheme || (darkQuery.matches ? "dark" : "light"));
-})();
-            `,
+              __html: themeSwitcherScript,
             }}
           />
           {process.env.NEXT_PUBLIC_IPFS && (
