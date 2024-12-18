@@ -378,6 +378,10 @@ test('should be able to extend a name by a month', async ({
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
     const transactionModal = makePageObject('TransactionModal')
+
+    // Verify duration and new expiry display in transaction modal
+    await expect(page.getByText('1 month')).toBeVisible()
+
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
@@ -442,6 +446,10 @@ test('should be able to extend a name by a day', async ({
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
     const transactionModal = makePageObject('TransactionModal')
+
+    // Verify duration and new expiry display in transaction modal
+    await expect(page.getByText('1 day')).toBeVisible()
+
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
@@ -516,6 +524,10 @@ test('should be able to extend a name in grace period by a month', async ({
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
     const transactionModal = makePageObject('TransactionModal')
+
+    // Verify duration and new expiry display in transaction modal
+    await expect(page.getByText('1 month')).toBeVisible()
+
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
@@ -592,6 +604,10 @@ test('should be able to extend a name in grace period by 1 day', async ({
   await test.step('should extend', async () => {
     await extendNamesModal.getExtendButton.click()
     const transactionModal = makePageObject('TransactionModal')
+
+    // Verify duration and new expiry display in transaction modal
+    await expect(page.getByText('1 day')).toBeVisible()
+
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()

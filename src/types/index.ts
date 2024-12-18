@@ -36,10 +36,18 @@ interface TransactionDisplayItemBase {
   useRawLabel?: boolean
 }
 
-export interface TransactionDisplayItemSingle extends TransactionDisplayItemBase {
-  type?: 'name' | 'subname' | 'address' | 'duration' | undefined
-  value: string
-}
+export type TransactionDisplayItemSingle =
+  | (TransactionDisplayItemBase & {
+      type?: 'name' | 'subname' | 'address' | undefined
+      value: string
+    })
+  | (TransactionDisplayItemBase & {
+      type: 'duration'
+      value: {
+        duration: string
+        newExpiry?: string
+      }
+    })
 
 export interface TransactionDisplayItemList extends TransactionDisplayItemBase {
   type: 'list'

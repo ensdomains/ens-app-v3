@@ -9,7 +9,7 @@ import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { TransactionDisplayItem } from '@app/types'
-import { formatExpiry, shortenAddress } from '@app/utils/utils'
+import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -231,29 +231,22 @@ const RecordsValue = ({ value }: { value: [string, string | undefined][] }) => {
   )
 }
 
-const DurationValue = ({ value }: { value: string | undefined }) => {
+const DurationValue = ({
+  value,
+}: {
+  value: { duration: string; newExpiry?: string | undefined }
+}) => {
   const { t } = useTranslation('transactionFlow')
 
   if (!value) return null
 
-  const regex = /(\d+)\s*years?\s*(?:,?\s*(\d+)?\s*months?)?/
-  const matches = value.match(regex) ?? []
-
-  const years = parseInt(matches.at(1) ?? '0')
-  const months = parseInt(matches.at(2) ?? '0')
-
-  const date = new Date()
-
-  if (years > 0) date.setFullYear(date.getFullYear() + years)
-  if (months > 0) date.setMonth(date.getMonth() + months)
-
   return (
     <DurationContainer>
       <Typography ellipsis>
-        <strong>{value}</strong>
+        <strong>{value.duration}</strong>
       </Typography>
       <Typography color="textTertiary" fontVariant="small">
-        {t('transaction.extendNames.newExpiry', { date: formatExpiry(date) })}
+        {t('transaction.extendNames.newExpiry', { date: value.newExpiry })}
       </Typography>
     </DurationContainer>
   )
@@ -261,6 +254,10 @@ const DurationValue = ({ value }: { value: string | undefined }) => {
 
 const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   const { value, type } = props as TransactionDisplayItem
+  if (type === 'duration') {
+    return <DurationValue value={value} />
+  }
+
   if (type === 'address') {
     return <AddressValue value={value} />
   }
@@ -275,9 +272,6 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   }
   if (type === 'records') {
     return <RecordsValue value={value} />
-  }
-  if (type === 'duration') {
-    return <DurationValue value={value} />
   }
   return <ValueTypography fontVariant="bodyBold">{value}</ValueTypography>
 }
