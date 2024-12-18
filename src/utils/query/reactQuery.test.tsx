@@ -1,12 +1,12 @@
 import { render, waitFor } from '@app/test-utils'
 
 import { QueryClientProvider } from '@tanstack/react-query'
-import { useQuery } from './useQuery'
 import { PropsWithChildren, ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { WagmiProvider } from 'wagmi'
 
 import { queryClient } from './reactQuery'
+import { useQuery } from './useQuery'
 import { wagmiConfig } from './wagmi'
 
 const mockFetchData = vi.fn().mockResolvedValue('Test data')
@@ -64,7 +64,7 @@ describe('reactQuery', () => {
   it('should not refetch query on rerender', async () => {
     const { getByTestId, rerender } = render(
       <TestComponentWrapper>
-        <TestComponentWithHook data-testid="test"/>
+        <TestComponentWithHook data-testid="test" />
       </TestComponentWrapper>,
     )
 
@@ -75,7 +75,7 @@ describe('reactQuery', () => {
 
     rerender(
       <TestComponentWrapper>
-        <TestComponentWithHook data-testid="test"/>
+        <TestComponentWithHook data-testid="test" />
       </TestComponentWrapper>,
     )
 
@@ -88,7 +88,7 @@ describe('reactQuery', () => {
   it('should refetch query on mount', async () => {
     const { getByTestId, unmount } = render(
       <TestComponentWrapper>
-        <TestComponentWithHook data-testid="test"/>
+        <TestComponentWithHook data-testid="test" />
       </TestComponentWrapper>,
     )
 
@@ -100,7 +100,7 @@ describe('reactQuery', () => {
     unmount()
     const { getByTestId: getByTestId2 } = render(
       <TestComponentWrapper>
-        <TestComponentWithHook data-testid="test"/>
+        <TestComponentWithHook data-testid="test" />
       </TestComponentWrapper>,
     )
 
@@ -114,7 +114,7 @@ describe('reactQuery', () => {
     const { getByTestId, unmount } = render(
       <TestComponentWrapper>
         <TestComponentWithHook data-testid="test">
-          <TestComponentWithHook data-testid="nested"/>
+          <TestComponentWithHook data-testid="nested" />
         </TestComponentWithHook>
       </TestComponentWrapper>,
     )
@@ -129,7 +129,7 @@ describe('reactQuery', () => {
     const { getByTestId: getByTestId2 } = render(
       <TestComponentWrapper>
         <TestComponentWithHook data-testid="test">
-          <TestComponentWithHook data-testid="nested"/>
+          <TestComponentWithHook data-testid="nested" />
         </TestComponentWithHook>
       </TestComponentWrapper>,
     )
