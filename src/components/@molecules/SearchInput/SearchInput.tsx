@@ -182,12 +182,7 @@ const MobileSearchInput = ({
       />
       {state !== 'unmounted' && (
         <Portal>
-          <BackdropSurface
-            $empty={false}
-            onClick={() => toggle(false)}
-            $state={state}
-            data-testid="search-input-backdrop"
-          />
+          <BackdropSurface $empty={false} onClick={() => toggle(false)} $state={state} />
           <FloatingSearchContainer $state={state}>
             <InputAndCancel>
               {SearchInputElement}
