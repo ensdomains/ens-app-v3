@@ -1,15 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import {
-  Abi,
-  AbiFunction,
-  Address,
-  bytesToHex,
-  hexToBytes,
-  labelhash,
-  namehash,
-  toFunctionHash,
-} from 'viem'
+import { Abi, AbiFunction, bytesToHex, hexToBytes, labelhash, namehash, toFunctionHash } from 'viem'
 
 import { getContract, getNamedClients } from './utils/viem-hardhat'
 
@@ -32,7 +24,6 @@ const createInterfaceId = <I extends Abi>(iface: I) => {
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, network, viem } = hre
-  const { deploy } = deployments
 
   if (!network.tags.use_root) {
     return true
@@ -56,31 +47,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await root.write.setSubnodeOwner([labelhash('eth')], owner)
 
   console.log('Set default resolver for eth tld to public resolver')
-  await registry.write.setResolver([namehash('eth'), resolver.address])
+  await registry.write.setResolver([namehash('eth'), resolver.address], owner)
 
   console.log('Set interface implementor of eth tld for bulk renewal')
-  await resolver.write.setInterface([
-    namehash('eth'),
-    createInterfaceId(bulkRenewal.abi),
-    bulkRenewal.address,
-  ])
+  await resolver.write.setInterface(
+    [namehash('eth'), createInterfaceId(bulkRenewal.abi), bulkRenewal.address],
+    owner,
+  )
 
   console.log('Set interface implementor of eth tld for registrar controller')
-  await resolver.write.setInterface([
-    namehash('eth'),
-    createInterfaceId(controllerArtifact.abi),
-    controller.address,
-  ])
+  await resolver.write.setInterface(
+    [namehash('eth'), createInterfaceId(controllerArtifact.abi), controller.address],
+    owner,
+  )
 
   console.log('Set interface implementor of eth tld for name wrapper')
-  await resolver.write.setInterface([
-    namehash('eth'),
-    createInterfaceId(wrapper.interface),
-    wrapper.address,
-  ])
+  await resolver.write.setInterface(
+    [namehash('eth'), createInterfaceId(wrapper.abi), wrapper.address],
+    owner,
+  )
 
   console.log('Set owner of eth tld back to registrar')
-  await root.write.setSubnodeOwner([labelhash('eth')], registrar.address)
+  await root.write.setSubnodeOwner([labelhash('eth'), registrar.address], owner)
 
   return true
 }
