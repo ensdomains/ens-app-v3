@@ -44,31 +44,37 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   })
 
   console.log('Temporarily setting owner of eth tld to owner ')
-  await root.write.setSubnodeOwner([labelhash('eth')], owner)
+  await root.write.setSubnodeOwner([labelhash('eth')], { chain: undefined, account: owner.account })
 
   console.log('Set default resolver for eth tld to public resolver')
-  await registry.write.setResolver([namehash('eth'), resolver.address], owner)
+  await registry.write.setResolver([namehash('eth'), resolver.address], {
+    chain: undefined,
+    account: owner.account,
+  })
 
   console.log('Set interface implementor of eth tld for bulk renewal')
   await resolver.write.setInterface(
     [namehash('eth'), createInterfaceId(bulkRenewal.abi), bulkRenewal.address],
-    owner,
+    { chain: undefined, account: owner.account },
   )
 
   console.log('Set interface implementor of eth tld for registrar controller')
   await resolver.write.setInterface(
     [namehash('eth'), createInterfaceId(controllerArtifact.abi), controller.address],
-    owner,
+    { chain: undefined, account: owner.account },
   )
 
   console.log('Set interface implementor of eth tld for name wrapper')
   await resolver.write.setInterface(
     [namehash('eth'), createInterfaceId(wrapper.abi), wrapper.address],
-    owner,
+    { chain: undefined, account: owner.account },
   )
 
   console.log('Set owner of eth tld back to registrar')
-  await root.write.setSubnodeOwner([labelhash('eth'), registrar.address], owner)
+  await root.write.setSubnodeOwner([labelhash('eth'), registrar.address], {
+    chain: undefined,
+    account: owner.account,
+  })
 
   return true
 }

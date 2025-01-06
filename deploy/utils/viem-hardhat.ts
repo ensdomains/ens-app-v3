@@ -6,7 +6,6 @@ import {
   Account,
   Address,
   getAddress,
-  GetContractReturnType,
   getContract as getViemContract,
   PublicClient,
   WalletClient,
