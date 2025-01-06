@@ -8,8 +8,8 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
+import { HeaderConnect } from './@molecules/ConnectButton/ConnectButton'
 import Hamburger from './@molecules/Hamburger/Hamburger'
-import { HeaderConnect } from './ConnectButton'
 import { Header } from './Header'
 
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))

@@ -14,7 +14,7 @@ import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 import { DisconnectButton, RouteItem } from './@atoms/RouteItem/RouteItem'
-import { ConnectButton } from './ConnectButton'
+import { ConnectButton } from './@molecules/ConnectButton/ConnectButton'
 
 const ExtraNavWrapper = styled.div<{ $isOpen: boolean }>(
   ({ theme, $isOpen }) => css`

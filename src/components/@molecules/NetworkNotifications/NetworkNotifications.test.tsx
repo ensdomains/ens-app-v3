@@ -9,8 +9,6 @@ import { shouldOpenModal } from './utils'
 vi.mock('wagmi')
 const mockUseAccount = mockFunction(useAccount)
 
-// const mockShouldOpenModal = vi.fn()
-
 vi.mock('./utils', async (importOriginal) => {
   const actual = await importOriginal()
   return {

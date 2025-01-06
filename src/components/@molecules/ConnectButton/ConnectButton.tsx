@@ -1,22 +1,10 @@
 import { useConnectModal } from '@usecapsule/rainbowkit'
-import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 import { useConnections, useDisconnect, useEnsAvatar } from 'wagmi'
 
-import {
-  Button,
-  CheckSVG,
-  CogSVG,
-  CopySVG,
-  ExitSVG,
-  mq,
-  PersonSVG,
-  Profile,
-  WalletSVG,
-} from '@ensdomains/thorin'
-import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
+import { Button, mq, PersonSVG, Profile } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
@@ -26,9 +14,9 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { hasCapsuleConnection, shortenAddress } from '@app/utils/utils'
+import { hasCapsuleConnection } from '@app/utils/utils'
 
-import BaseLink from './@atoms/BaseLink'
+import { getDropdownItems } from './utils'
 
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }>(
   ({ theme, $isTabBar, $large }) => [
@@ -65,14 +53,6 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
           `}
         `,
   ],
-)
-
-const SectionDivider = styled.div(
-  ({ theme }) => css`
-    width: calc(100% + ${theme.space['4']});
-    height: 1px;
-    background-color: ${theme.colors.border};
-  `,
 )
 
 const PersonOverlay = styled.div(
@@ -153,70 +133,16 @@ const HeaderProfile = ({ address }: { address: Address }) => {
     <Profile
       address={address}
       ensName={primary?.beautifiedName}
-      dropdownItems={
-        [
-          ...(primary?.name
-            ? [
-                {
-                  label: t('wallet.myProfile'),
-                  wrapper: (children: ReactNode, key: Key) => (
-                    <BaseLink href="/my/profile" key={key}>
-                      {children}
-                    </BaseLink>
-                  ),
-                  as: 'a' as 'a',
-                  color: 'text',
-                  icon: <PersonSVG />,
-                },
-              ]
-            : []),
-          {
-            label: t('navigation.settings'),
-            color: 'text',
-            wrapper: (children: ReactNode, key: Key) => (
-              <BaseLink href="/my/settings" key={key}>
-                {children}
-              </BaseLink>
-            ),
-            as: 'a',
-            icon: <CogSVG />,
-            showIndicator: hasPendingTransactions,
-          },
-          <SectionDivider key="divider" />,
-          {
-            label: shortenAddress(address),
-            color: 'text',
-            onClick: () => copy(address),
-            icon: copied ? <CheckSVG /> : <CopySVG />,
-          },
-          ...(isCapsuleConnected
-            ? [
-                {
-                  label: t('wallet.myWallet'),
-                  color: 'text',
-                  icon: <WalletSVG />,
-                  wrapper: (children: ReactNode, key: Key) => (
-                    <a
-                      href="https://connect.usecapsule.com/"
-                      key={key}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ width: '100%' }}
-                    >
-                      {children}
-                    </a>
-                  ),
-                },
-              ]
-            : []),
-          {
-            label: t('wallet.disconnect'),
-            color: 'red',
-            onClick: () => disconnect(),
-            icon: <ExitSVG />,
-          },
-        ] as DropdownItem[]
-      }
+      dropdownItems={getDropdownItems({
+        primary,
+        disconnect,
+        copy,
+        copied,
+        hasPendingTransactions,
+        isCapsuleConnected,
+        t,
+        address,
+      })}
       avatar={{
         src: avatar || zorb,
         decoding: 'sync',

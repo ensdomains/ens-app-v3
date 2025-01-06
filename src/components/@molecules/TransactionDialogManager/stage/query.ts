@@ -163,7 +163,7 @@ export const calculateGasLimit = async ({
   }
 }
 
-const getLargestMedianGasFee = async () => {
+export const getLargestMedianGasFee = async () => {
   const feeHistory = await getFeeHistory(wagmiConfig, {
     blockCount: 5,
     rewardPercentiles: [50],
