@@ -92,11 +92,16 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const breakpoints = useBreakpoint()
   const { openConnectModal } = useConnectModal()
 
+  console.log('openConnectModal*', openConnectModal)
+
   return (
     <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
       <Button
         data-testid={calculateTestId(isTabBar, inHeader)}
-        onClick={() => openConnectModal?.()}
+        onClick={() => {
+          openConnectModal?.()
+          console.log('hi there ', openConnectModal.mock.calls.length)
+        }}
         size={breakpoints.sm || large ? 'medium' : 'small'}
         width={inHeader ? '45' : undefined}
         shape="rounded"
