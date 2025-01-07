@@ -277,7 +277,7 @@ export default function ENSv2() {
         <Typography fontVariant="body">{t('learn-more.caption')}</Typography>
         <Button
           as="a"
-          href="https://t.me/+TJ_M02FbKwcyNjgx"
+          href="https://t.me/+cx5my3EQWH8wODYx"
           width="max"
           colorStyle="greenPrimary"
           target="_blank"
