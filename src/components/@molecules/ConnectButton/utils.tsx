@@ -1,5 +1,6 @@
 import { Key, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
+import { Address } from 'viem'
 
 import { CheckSVG, CogSVG, CopySVG, ExitSVG, PersonSVG, WalletSVG } from '@ensdomains/thorin'
 import type { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
@@ -16,15 +17,25 @@ const SectionDivider = styled.div(
   `,
 )
 
-export const getDropdownItems = (
-  primary: any,
-  disconnect: any,
-  copy: any,
-  copied: any,
-  hasPendingTransactions: any,
-  isCapsuleConnected: boolean,
-  t: any,
-): DropdownItem[] =>
+export const getDropdownItems = ({
+  primary,
+  disconnect,
+  copy,
+  copied,
+  hasPendingTransactions,
+  isCapsuleConnected,
+  t,
+  address,
+}: {
+  primary: any
+  disconnect: any
+  copy: any
+  copied: any
+  hasPendingTransactions: any
+  isCapsuleConnected: boolean
+  t: any
+  address: Address
+}): DropdownItem[] =>
   [
     ...(primary?.name
       ? [
