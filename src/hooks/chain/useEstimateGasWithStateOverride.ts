@@ -76,14 +76,14 @@ type StateOverride<Quantity256 = bigint, Quantity = number> = {
   }
 }
 
-type TransactionItem = {
+export type TransactionItem = {
   [TName in TransactionName]: Omit<TransactionParameters<TName>, 'client' | 'connectorClient'> & {
     name: TName
     stateOverride?: UserStateOverrides
   }
 }[TransactionName]
 
-type UseEstimateGasWithStateOverrideParameters<
+export type UseEstimateGasWithStateOverrideParameters<
   TransactionItems extends TransactionItem[] | readonly TransactionItem[],
 > = {
   transactions: TransactionItems
