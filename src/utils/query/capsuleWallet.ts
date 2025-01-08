@@ -10,6 +10,7 @@ import {
 } from '@usecapsule/rainbowkit-wallet'
 
 import { ENS_LINKS } from '../constants'
+import { transports } from './wagmi'
 
 const prodCapsuleApiKey = process.env.NEXT_PUBLIC_CAPSULE_API_KEY_PROD
 
@@ -52,6 +53,7 @@ const capsuleWalletItegratedOpts: GetCapsuleIntegratedOpts = {
   capsule: capsuleClient,
   nameOverride: 'Sign in with Capsule',
   iconBackgroundOverride: '#ffffff',
+  transports,
 }
 
 export const capsuleWallet = getCapsuleWalletIntegrated(capsuleWalletItegratedOpts)

@@ -100,7 +100,6 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
         data-testid={calculateTestId(isTabBar, inHeader)}
         onClick={() => {
           openConnectModal?.()
-          console.log('hi there ', openConnectModal.mock.calls.length)
         }}
         size={breakpoints.sm || large ? 'medium' : 'small'}
         width={inHeader ? '45' : undefined}

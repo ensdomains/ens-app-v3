@@ -72,7 +72,7 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
   }
 }
 
-const transports = {
+export const transports = {
   ...(isLocalProvider
     ? ({
         [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
