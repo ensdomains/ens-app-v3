@@ -295,9 +295,10 @@ export const useEstimateGasWithStateOverride = <
 
   const data = useMemo(() => {
     if (!gasPrice || !query.data) {
+      const transactions = params.transactions ?? []
       return {
         gasEstimate: 0n,
-        gasEstimateArray: params.transactions.map(() => 0n) as GasEstimateArray<TransactionItems>,
+        gasEstimateArray: transactions.map(() => 0n) as GasEstimateArray<TransactionItems>,
         gasCost: 0n,
         gasCostEth: '0',
       }

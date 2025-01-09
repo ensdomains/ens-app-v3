@@ -60,6 +60,8 @@ test.describe.serial('normal registration', () => {
     await homePage.goto()
     await login.connect()
 
+    await page.pause()
+
     await test.step('should redirect to registration page', async () => {
       await homePage.searchInput.fill(name)
       await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
@@ -233,8 +235,11 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByText(`You are now the owner of ${name}`)).toBeVisible()
 
       // calculate date one year from now
-      const date = new Date()
-      date.setFullYear(date.getFullYear() + 1)
+      const date = await page.evaluate(() => {
+        const _date = new Date()
+        _date.setFullYear(_date.getFullYear() + 1)
+        return _date
+      })
       const formattedDate = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -254,6 +259,10 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
         accounts.getAddress('user', 5),
       )
+    })
+
+    await test.step('confirm name is wrapped', async () => {
+      await expect(page.getByTestId('permissions-tab')).toBeVisible()
     })
   })
 
@@ -326,6 +335,11 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       new RegExp(accounts.getAddress('user', 5)),
     )
+
+    await test.step('confirm name is unwrapped', async () => {
+      await page.pause()
+      await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+    })
   })
 })
 
@@ -370,6 +384,10 @@ test('should allow registering a premium name', async ({
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
   )
+
+  await test.step('confirm name is unwrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
 })
 
 test('should allow registering a name and resuming from the commit toast', async ({
@@ -458,9 +476,9 @@ test('should allow registering with a specific date', async ({ page, login, make
   await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
   await expect(registrationPage.primaryNameToggle).not.toBeChecked()
 
-  await test.step('should show correct price data (for 2.5 years)', async () => {
-    await expect(registrationPage.yearMarker(0)).toHaveText(/11% gas/)
-    await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
+  await test.step('should show correct price marker data for unwrapped registration (for 2.5 years)', async () => {
+    await expect(registrationPage.yearMarker(0)).toHaveText(/9% gas/)
+    await expect(registrationPage.yearMarker(1)).toHaveText(/5% gas/)
     await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
   })
 })
@@ -533,6 +551,11 @@ test('should allow registering a premium name with a specific date', async ({
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
   )
+
+  await test.step('confirm name is unwrapped', async () => {
+    await page.pause()
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
 })
 
 test('should allow registering a premium name for two months', async ({
@@ -601,6 +624,11 @@ test('should allow registering a premium name for two months', async ({
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
   )
+
+  await test.step('confirm name is unwrapped', async () => {
+    await page.pause()
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
 })
 
 test('should not allow registering a premium name for less than 28 days', async ({
@@ -680,6 +708,11 @@ test('should not allow registering a premium name for less than 28 days', async 
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
   )
+
+  await test.step('confirm name is unwrapped', async () => {
+    await page.pause()
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
 })
 
 test('should allow normal registration for a month', async ({
@@ -800,6 +833,11 @@ test('should allow normal registration for a month', async ({
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     accounts.getAddress('user', 5),
   )
+
+  await test.step('confirm name is wrapped', async () => {
+    await page.pause()
+    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  })
 })
 
 test('should not allow normal registration less than 28 days', async ({
@@ -931,6 +969,11 @@ test('should not allow normal registration less than 28 days', async ({
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     accounts.getAddress('user', 5),
   )
+
+  await test.step('confirm name is unwrapped', async () => {
+    await page.pause()
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
 })
 
 test('should be able to detect an existing commit created on a private mempool', async ({
@@ -1031,6 +1074,11 @@ test('should be able to detect an existing commit created on a private mempool',
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
       accounts.getAddress('user', 5),
     )
+
+    await test.step('confirm name is unwrapped', async () => {
+      await page.pause()
+      await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+    })
   })
 })
 
