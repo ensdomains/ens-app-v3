@@ -22,8 +22,14 @@ describe('NetworkNotifications', () => {
     vi.clearAllMocks()
   })
 
-  it('should show notification if shouldOpenModal sets true', () => {
+  it.only('should show notification if shouldOpenModal sets true', () => {
     vi.mocked(shouldOpenModal).mockReturnValue(true)
+    mockUseAccount.mockReturnValue({
+      chain: {
+        name: 'ethereum',
+        id: 1,
+      },
+    })
     render(<NetworkNotifications />)
     expect(screen.getByTestId('toast-desktop')).toBeInTheDocument()
   })

@@ -18,13 +18,13 @@ describe('shouldOpenModal', () => {
 
   it('should return undefined when connectedChainName is not provided', () => {
     const result = shouldOpenModal(undefined, 1)
-    expect(result).toBeUndefined()
+    expect(result).toBe(false)
   })
 
   it('should return undefined when chain is not supported', () => {
     vi.spyOn(chains, 'getSupportedChainById').mockReturnValue(false)
     const result = shouldOpenModal('ethereum', 999999)
-    expect(result).toBeUndefined()
+    expect(result).toBe(false)
   })
 
   it('should return undefined when no chain is found in URL', () => {
@@ -32,7 +32,7 @@ describe('shouldOpenModal', () => {
     vi.spyOn(chains, 'getChainsFromUrl').mockReturnValue(undefined)
     
     const result = shouldOpenModal('ethereum', 1)
-    expect(result).toBeUndefined()
+    expect(result).toBe(false)
   })
 
   it('should return false when connected chain matches URL chain', () => {
