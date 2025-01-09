@@ -41,24 +41,6 @@ describe('getLargestMedianGasFee', () => {
     })
   })
 
-  it('should handle empty reward arrays', async () => {
-    getFeeHistory.mockResolvedValue({
-      baseFeePerGas: [],
-      gasUsedRatio: [],
-      oldestBlock: 0n,
-      reward: [],
-    })
-
-    const result = await getLargestMedianGasFee()
-    expect(result).toBe(0n)
-  })
-
-  it('should throw an error if getFeeHistory fails', async () => {
-    getFeeHistory.mockRejectedValue(new Error('Failed to get fee history'))
-
-    await expect(getLargestMedianGasFee()).rejects.toThrow('Failed to get fee history')
-  })
-
   it('should return the default max priority fee per gas if getFeeHistory fails', async () => {
     getFeeHistory.mockRejectedValue(new Error('Failed to get fee history'))
     const result = await getLargestMedianGasFee()

@@ -92,8 +92,6 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const breakpoints = useBreakpoint()
   const { openConnectModal } = useConnectModal()
 
-  console.log('openConnectModal*', openConnectModal)
-
   return (
     <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
       <Button

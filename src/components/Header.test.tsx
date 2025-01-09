@@ -8,7 +8,6 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-import { HeaderConnect } from './@molecules/ConnectButton/ConnectButton'
 import Hamburger from './@molecules/Hamburger/Hamburger'
 import { Header } from './Header'
 
@@ -27,7 +26,6 @@ const mockUseAccount = mockFunction(useAccount)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseInitial = mockFunction(useInitial)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
-const mockHeaderConnect = mockFunction(HeaderConnect)
 const mockHamburger = mockFunction(Hamburger)
 
 const baseBreakpoints: ReturnType<typeof useBreakpoint> = {
@@ -58,7 +56,6 @@ describe('Header', () => {
   mockUseRecentTransactions.mockReturnValue([])
   mockUseInitial.mockReturnValue(false)
   mockUseBreakpoint.mockReturnValue(baseBreakpoints)
-  mockHeaderConnect.mockImplementation(() => <div>Connect</div>)
   mockHamburger.mockImplementation(() => <div>burger</div>)
 
   describe('search', () => {

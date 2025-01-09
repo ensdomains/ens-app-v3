@@ -176,7 +176,7 @@ export const getLargestMedianGasFee = async () => {
     return defaultMaxPriorityFeePerGas
   }
 
-  if (!feeHistory.reward) return defaultMaxPriorityFeePerGas
+  if (!feeHistory.reward || feeHistory.reward.length === 0) return defaultMaxPriorityFeePerGas
 
   const maxPriorityFeePerGas = feeHistory.reward
     .map((block) => block[0])
