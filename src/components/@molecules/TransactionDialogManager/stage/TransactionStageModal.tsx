@@ -417,10 +417,6 @@ export const TransactionStageModal = ({
   const requestError = request_?.error || requestError_
   const isTransactionRequestCachedData = getIsCachedData(transactionRequestQuery)
 
-  console.log('transaction: ', transaction)
-  console.log('transactionRequestQuery: ', transactionRequestQuery)
-  console.log('request: ', request)
-
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest && process.env.NEXT_PUBLIC_ETH_NODE !== 'anvil',
     queryKey: preparedOptions.queryKey,
@@ -558,7 +554,6 @@ export const TransactionStageModal = ({
       )
     }
     if (transactionLoading) {
-      console.log('hi there')
       return (
         <Button
           disabled
@@ -572,15 +567,6 @@ export const TransactionStageModal = ({
 
     if (preTransactionError?.type === 'insufficientFunds')
       return <Button disabled>{t('transaction.dialog.confirm.insufficientFunds')}</Button>
-
-    console.log('enabled*: ', {
-      canEnableTransactionRequest,
-      requestLoading,
-      request,
-      requestError,
-      isTransactionRequestCachedData,
-      transactionLoading,
-    })
 
     return (
       <Button

@@ -243,8 +243,6 @@ export const createTransactionRequestUnsafe = async ({
     ...(isCapsuleConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
 
-  console.log('request inside: ', request)
-
   return {
     ...request,
     chain: request.chain!,
