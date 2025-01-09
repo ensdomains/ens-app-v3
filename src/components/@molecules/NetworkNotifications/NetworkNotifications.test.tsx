@@ -22,7 +22,7 @@ describe('NetworkNotifications', () => {
     vi.clearAllMocks()
   })
 
-  it.only('should show notification if shouldOpenModal sets true', () => {
+  it('should show notification if shouldOpenModal sets true', () => {
     vi.mocked(shouldOpenModal).mockReturnValue(true)
     mockUseAccount.mockReturnValue({
       chain: {
