@@ -4,7 +4,7 @@ import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
-import { getChainsFromUrl } from '@app/constants/chains'
+import { getChainsFromUrl, SupportedChain } from '@app/constants/chains'
 
 import { rainbowKitConnectors } from './wallets'
 
@@ -86,13 +86,15 @@ export const transports = {
   [holesky.id]: initialiseTransports('holesky', [drpcUrl, tenderlyUrl]),
 } as const
 
+const chains = getChainsFromUrl() as unknown as readonly [SupportedChain, ...SupportedChain[]]
+
 const wagmiConfig_ = createConfig({
   syncConnectedChain: false,
   connectors: rainbowKitConnectors,
   ssr: true,
   multiInjectedProviderDiscovery: true,
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
-  chains: [...getChainsFromUrl()],
+  chains,
   client: ({ chain }) => {
     const chainId = chain.id
 

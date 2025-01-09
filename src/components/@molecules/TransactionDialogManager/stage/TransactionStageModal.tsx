@@ -533,7 +533,7 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          onClick={() => handleSendTransaction(request, actionName, trackEvent, sendTransaction)}
+          onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
           disabled={!canEnableTransactionRequest || requestLoading || !request}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
@@ -577,7 +577,7 @@ export const TransactionStageModal = ({
           !!requestError ||
           isTransactionRequestCachedData
         }
-        onClick={() => handleSendTransaction(request, actionName, trackEvent, sendTransaction)}
+        onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
         data-testid="transaction-modal-confirm-button"
       >
         {t('transaction.dialog.confirm.openWallet')}

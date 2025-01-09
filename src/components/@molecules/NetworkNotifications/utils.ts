@@ -3,12 +3,12 @@ import { getChainsFromUrl, getSupportedChainById } from '@app/constants/chains'
 export const shouldOpenModal = (
   connectedChainName: string | undefined,
   connectedChainId: number | undefined,
-) => {
-  if (!connectedChainName) return
-  if (!getSupportedChainById(connectedChainId)) return
+): boolean => {
+  if (!connectedChainName) return false
+  if (!getSupportedChainById(connectedChainId)) return false
 
   const currentChain = getChainsFromUrl()?.[0]
-  if (!currentChain?.id) return
+  if (!currentChain?.id) return false
 
   if (currentChain?.id === connectedChainId) {
     return false
@@ -16,4 +16,6 @@ export const shouldOpenModal = (
   if (currentChain?.id !== connectedChainId) {
     return true
   }
+
+  return false
 }

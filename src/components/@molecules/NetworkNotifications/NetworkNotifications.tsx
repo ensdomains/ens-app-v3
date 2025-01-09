@@ -7,15 +7,16 @@ import { Button, Toast } from '@ensdomains/thorin'
 import { shouldOpenModal } from './utils'
 
 const appLinks = {
-  ethereum: 'app.ens.domains',
-  sepolia: 'sepolia.app.ens.domains',
-  holesky: 'holesky.app.ens.domains',
+  Ethereum: 'app.ens.domains',
+  Sepolia: 'sepolia.app.ens.domains',
+  Holesky: 'holesky.app.ens.domains',
+  Localhost: '',
 }
 
 export const NetworkNotifications = () => {
   const { t } = useTranslation()
   const account = useAccount()
-  const [open, setOpen] = useState<boolean | undefined>(undefined)
+  const [open, setOpen] = useState<boolean>(false)
 
   const connectedChainName = account?.chain?.name
   const connectedChainId = account?.chain?.id
@@ -23,6 +24,8 @@ export const NetworkNotifications = () => {
   useEffect(() => {
     setOpen(shouldOpenModal(connectedChainName, connectedChainId))
   }, [connectedChainName, connectedChainId])
+
+  if (!connectedChainName) return null
 
   return (
     <Toast
@@ -32,11 +35,7 @@ export const NetworkNotifications = () => {
       variant="desktop"
       onClose={() => setOpen(false)}
     >
-      <Button
-        size="small"
-        as="a"
-        href={`https://${appLinks[connectedChainName?.toLocaleLowerCase()]}`}
-      >
+      <Button size="small" as="a" href={`https://${appLinks[connectedChainName]}`}>
         {t(`networkNotifications.${connectedChainName}.action`)}
       </Button>
     </Toast>

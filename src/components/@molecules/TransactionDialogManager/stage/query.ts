@@ -12,6 +12,7 @@ import {
   TransactionRequest,
 } from 'viem'
 import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'viem/actions'
+import { useConnections } from 'wagmi'
 
 import { SupportedChain } from '@app/constants/chains'
 import { TransactionStatus } from '@app/hooks/transactions/transactionStore'
@@ -197,6 +198,7 @@ type CreateTransactionRequestUnsafeParameters = {
   isSafeApp: CheckIsSafeAppReturnType | undefined
   params: UniqueTransaction
   chainId: SupportedChain['id']
+  connections: any
 }
 
 export const createTransactionRequestUnsafe = async ({
@@ -261,7 +263,7 @@ export const createTransactionRequestQueryFn =
   }: {
     connectorClient: ConnectorClientWithEns | undefined
     isSafeApp: CheckIsSafeAppReturnType | undefined
-    connections: any
+    connections: ReturnType<typeof useConnections>
   }) =>
   async ({
     queryKey: [params, chainId, address],
