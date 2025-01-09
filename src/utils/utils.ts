@@ -223,5 +223,5 @@ export const hslToHex = (hsl: string) => {
 }
 
 export const hasCapsuleConnection = (connections: Connection[]) => {
-  return connections.some((connection) => connection?.connector?.id === 'capsule-integrated')
+  return connections?.some((connection) => connection?.connector?.id === 'capsule-integrated')
 }

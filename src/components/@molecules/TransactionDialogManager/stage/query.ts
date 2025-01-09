@@ -163,11 +163,20 @@ export const calculateGasLimit = async ({
   }
 }
 
+const defaultMaxPriorityFeePerGas = 5000000000n
 export const getLargestMedianGasFee = async () => {
-  const feeHistory = await getFeeHistory(wagmiConfig, {
-    blockCount: 5,
-    rewardPercentiles: [50],
-  })
+  let feeHistory
+  try {
+    feeHistory = await getFeeHistory(wagmiConfig, {
+      blockCount: 5,
+      rewardPercentiles: [50],
+    })
+  } catch (e) {
+    console.error('Failed to get fee history')
+    return defaultMaxPriorityFeePerGas
+  }
+
+  if (!feeHistory.reward) return defaultMaxPriorityFeePerGas
 
   const maxPriorityFeePerGas = feeHistory.reward
     .map((block) => block[0])
@@ -233,6 +242,8 @@ export const createTransactionRequestUnsafe = async ({
     ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
     ...(isCapsuleConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
+
+  console.log('request inside: ', request)
 
   return {
     ...request,
