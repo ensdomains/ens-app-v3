@@ -1,6 +1,9 @@
 import { Address } from 'viem'
 
-import { LegacyRegistrationParameters, RegistrationParameters } from '@ensdomains/ensjs/utils'
+import {
+  LegacyRegistrationWithConfigParameters,
+  RegistrationParameters,
+} from '@ensdomains/ensjs/utils'
 
 import { isEthCoin } from '../coin'
 import { emptyAddress } from '../constants'
@@ -12,15 +15,7 @@ export const makeLegacyRegistrationParams = ({
   duration,
   secret,
   resolverAddress = emptyAddress,
-}: RegistrationParameters): LegacyRegistrationParameters => {
-  if (resolverAddress === emptyAddress)
-    return {
-      name,
-      owner,
-      duration,
-      secret,
-    }
-
+}: RegistrationParameters): LegacyRegistrationWithConfigParameters => {
   const address = (records?.coins?.find(({ coin }) => isEthCoin(coin))?.value as Address) || owner
 
   return {
@@ -30,5 +25,5 @@ export const makeLegacyRegistrationParams = ({
     secret,
     resolverAddress,
     address,
-  }
+  } as LegacyRegistrationWithConfigParameters
 }

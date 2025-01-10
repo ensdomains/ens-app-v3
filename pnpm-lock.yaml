@@ -125,8 +125,8 @@ importers:
         specifier: 1.2.0-beta.0
         version: 1.2.0-beta.0
       '@ensdomains/ensjs':
-        specifier: 4.0.3-alpha.0
-        version: 4.0.3-alpha.0(encoding@0.1.13)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: 4.0.3-alpha.11
+        version: 4.0.3-alpha.11(encoding@0.1.13)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       '@ensdomains/thorin':
         specifier: 0.6.50
         version: 0.6.50(react-dom@18.3.1(react@18.3.1))(react-transition-state@1.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.6)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1))
@@ -1672,8 +1672,8 @@ packages:
   '@ensdomains/ensjs@2.1.0':
     resolution: {integrity: sha512-GRbGPT8Z/OJMDuxs75U/jUNEC0tbL0aj7/L/QQznGYKm/tiasp+ndLOaoULy9kKJFC0TBByqfFliEHDgoLhyog==}
 
-  '@ensdomains/ensjs@4.0.3-alpha.0':
-    resolution: {integrity: sha512-BSGzy86XnNxNhP3zEdo5Nbb1dufsarTD4WO4G/I87Ux9v5CAwiIJZ8n0cNHpJwh3SZDDLZotZFVf1LIMQgcNuA==}
+  '@ensdomains/ensjs@4.0.3-alpha.11':
+    resolution: {integrity: sha512-+cp9TLY04n1jvO6ZpmH3/IJjdunmbMiUg4H6r2pYRC/NU9WzYsAhvOCl93KPMXJL/73btnuwG1I/aoZjtcagqA==}
     peerDependencies:
       viem: ^2.9.2
 
@@ -11603,7 +11603,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ensdomains/ensjs@4.0.3-alpha.0(encoding@0.1.13)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
+  '@ensdomains/ensjs@4.0.3-alpha.11(encoding@0.1.13)(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
       '@ensdomains/address-encoder': 1.1.1

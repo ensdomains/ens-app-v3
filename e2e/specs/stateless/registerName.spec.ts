@@ -689,6 +689,7 @@ test('should not allow registering a premium name for less than 28 days', async 
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
 
+  await page.pause()
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
@@ -1172,6 +1173,7 @@ test.describe('Error handling', () => {
     })
 
     await test.step('transaction: commit', async () => {
+      await page.pause()
       await expect(page.getByText('Open Wallet')).toBeVisible()
       await transactionModal.confirm()
       await expect(page.getByText(`Your "Start timer" transaction was successful`)).toBeVisible()
