@@ -1,5 +1,4 @@
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
-import debounce from 'lodash/debounce'
 import {
   Dispatch,
   RefObject,
@@ -621,6 +620,19 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
       ),
     [inputIsAddress, name, isETH, isValid, history, t],
   )
+}
+
+const debounce = (func: (...args: any[]) => void, delay?: number) => {
+  let timerId: NodeJS.Timeout
+  let shouldInvoke: boolean
+
+  return (...args: any[]) => {
+    shouldInvoke = true
+
+    clearTimeout(timerId)
+
+    timerId = setTimeout(() => shouldInvoke && func(...args), delay)
+  }
 }
 
 const debouncer = debounce((setFunc: () => void) => setFunc(), 250)

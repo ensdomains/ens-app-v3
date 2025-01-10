@@ -1,4 +1,4 @@
-import isEqual from 'lodash/isEqual'
+import { dequal as isEqual } from 'dequal'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
