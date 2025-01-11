@@ -1,6 +1,5 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import * as _ from 'lodash'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 // import { writeFileSync} from 'fs'
@@ -21,6 +20,7 @@ import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
 import { useParentBasicName } from '../useParentBasicName'
 import { useAbilities } from './useAbilities'
+import { dequal } from 'dequal'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/useBasicName')
@@ -128,7 +128,7 @@ describe('useAbilities', () => {
 
       const { result } = renderHook(() => useAbilities({ name }))
 
-      let index = group.findIndex(([, item]) => _.isEqual(item, result.current.data))
+      let index = group.findIndex(([, item]) => dequal(item, result.current.data))
       if (index == -1) group.push([[type], result.current.data])
       else group[index][0].push(type)
 
