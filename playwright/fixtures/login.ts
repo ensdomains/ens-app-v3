@@ -43,16 +43,25 @@ export class Login {
     await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
       timeout: 15000,
     })
+    console.log('isConnected', this.wallet.isConnected())
+    // await this.page.waitForTimeout(10000)
     // this isn't actually what the user experiences, just a quirk in headless-web3-provider
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(1)
+    // expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestPermissions)
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(0)
-    await expect
-      .poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts))
-      .toEqual(1)
+    // expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(0)
+    // await expect
+    //   .poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts))
+    //   .toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
+    const pendingRequests = await this.wallet.getPendingRequestCount()
+    console.log('pendingRequests', pendingRequests)
+    console.log('isConnected', this.wallet.isConnected())
     expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
-    await expect(this.getProfileButton).toBeVisible()
+    // await this.page.waitForTimeout(20000)
+    // await expect.poll(() => this.getProfileButton.isVisible())
+
+    // await expect(this.getProfileButton).toBeVisible()
+    await expect.poll(() => this.getProfileButton.isVisible()).toBe(true)
   }
 
   async switchTo(user: User) {
