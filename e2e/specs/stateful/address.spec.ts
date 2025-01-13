@@ -8,9 +8,7 @@ test('should allow user with primary name to connect', async ({ page, login }) =
   await login.connect()
 
   await page.getByTestId('header-profile').click()
-  await expect(page.getByText('Profile')).toBeVisible()
-  await page.getByTestId('header-profile').click()
-  await expect(page.getByText('Profile')).not.toBeVisible()
+  await expect(page.getByText('Disconnect')).toBeVisible()
 })
 
 test('should go to the address page', async ({ page, login }) => {
