@@ -78,6 +78,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     background: radial-gradient(50% 50% at 50% 50%, rgba(82, 152, 255, 0.062) 0%, rgba(255, 255, 255, 0) 100%), #F7F7F7;
+    color: var(--thrn-color-textPrimary);
   }
 
   body, .min-safe {

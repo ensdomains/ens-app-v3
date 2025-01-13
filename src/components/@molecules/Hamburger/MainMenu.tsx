@@ -286,7 +286,7 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         </HoverableSettingsItem>
         <SettingsItem>
           <div>
-            <WalletSVG />
+            <WalletSVG height={16} width={16} />
             <Typography weight="bold">{t('navigation.currency')}</Typography>
           </div>
           <div>
