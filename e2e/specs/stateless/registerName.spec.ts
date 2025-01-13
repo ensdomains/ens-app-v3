@@ -536,6 +536,8 @@ test('should allow registering a premium name with a specific date', async ({
   })
 
   await page.getByTestId('payment-choice-ethereum').click()
+  await page.getByTestId('primary-name-toggle').check()
+
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
@@ -555,9 +557,8 @@ test('should allow registering a premium name with a specific date', async ({
     new RegExp(accounts.getAddress('user', 5)),
   )
 
-  await test.step('confirm name is unwrapped', async () => {
-    await page.pause()
-    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  await test.step('confirm name is wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).toBeVisible()
   })
 })
 
