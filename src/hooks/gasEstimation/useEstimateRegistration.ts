@@ -40,9 +40,6 @@ export const useEstimateFullRegistration = ({
     contract: 'legacyEthRegistrarController',
   })
 
-  console.log('ethRegistrarControllerAddress', ethRegistrarControllerAddress)
-  console.log('legacyEthRegistrarControllerAddress', legacyEthRegistrarControllerAddress)
-
   const { data: blockTimestamp } = useBlockTimestamp()
   // default to use block timestamp as reference
   // if no block timestamp, use local time as fallback

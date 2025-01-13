@@ -176,8 +176,6 @@ const getExistingWrappedCommitmentQueryFn =
     if (commitmentAge > maxCommitmentAge)
       return { status: 'commitmentExpired', timestamp: commitmentTimestampNumber } as const
 
-    console.log('date', new Date(commitmentTimestampNumber))
-
     const blockMetadata = await getBlockMetadataByTimestamp(client, {
       timestamp: commitmentTimestamp,
     })
@@ -259,7 +257,6 @@ const getExistingLegacyCommitmentQueryFn =
   async <TParams extends UseExistingCommitmentParameters>({
     queryKey: [{ commitment, commitKey }, chainId, address],
   }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseExistingCommitmentReturnType> => {
-    console.log('getExistingLegacyCommitmentQueryFn', commitment, commitKey, chainId, address)
     if (!commitment) throw new Error('commitment is required')
     if (!commitKey) throw new Error('commitKey is required')
     if (!address) throw new Error('address is required')
@@ -292,13 +289,10 @@ const getExistingLegacyCommitmentQueryFn =
         functionName: 'getCurrentBlockTimestamp',
       }),
     ])
-    console.log('>>>>>>>>>>>>>>>', commitmentTimestamp, maxCommitmentAge, blockTimestamp)
     if (!commitmentTimestamp || commitmentTimestamp === 0n) return null
 
     const commitmentAge = blockTimestamp - commitmentTimestamp
     const commitmentTimestampNumber = Number(commitmentTimestamp)
-
-    console.log('date', new Date(commitmentTimestampNumber * 1000))
 
     const existsFailure = () =>
       ({ status: 'commitmentExists', timestamp: commitmentTimestampNumber }) as const
@@ -315,7 +309,6 @@ const getExistingLegacyCommitmentQueryFn =
       blockHash: blockMetadata.data.hash,
       includeTransactions: true,
     }).catch(() => null)
-    console.log('>>>>>>>>>>>>>>> blockData <<<<<<<<<<<<<', blockData)
     if (!blockData) return existsFailure()
 
     const inputData = encodeFunctionData({
@@ -354,7 +347,6 @@ const getExistingLegacyCommitmentQueryFn =
       return foundTransaction
     })()
 
-    console.log('>>>>>>>>>>>>>>> transaction <<<<<<<<<<<<<', transaction)
     if (!transaction) return existsFailure()
 
     const transactionReceipt = await getTransactionReceipt(client, {

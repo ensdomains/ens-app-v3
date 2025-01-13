@@ -1,28 +1,18 @@
 import { decodeEventLog } from 'viem'
 
+import {
+  ethRegistrarControllerNameRegisteredEventSnippet,
+  legacyEthRegistrarControllerNameRegisteredEventSnippet,
+} from '@ensdomains/ensjs/contracts'
+
 import { MinedData } from '@app/types'
 import { useQuery } from '@app/utils/query/useQuery'
-
-const legacyNameRegisteredEventSnippet = [
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'string', name: 'name', type: 'string' },
-      { indexed: true, internalType: 'bytes32', name: 'label', type: 'bytes32' },
-      { indexed: true, internalType: 'address', name: 'owner', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'cost', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'expires', type: 'uint256' },
-    ],
-    name: 'NameRegistered',
-    type: 'event',
-  },
-] as const
 
 const decodeLegacyNameRegisteredEventLog = (log: MinedData['logs'][number]): Promise<bigint> =>
   new Promise((resolve, reject) => {
     try {
       const t = decodeEventLog({
-        abi: legacyNameRegisteredEventSnippet,
+        abi: legacyEthRegistrarControllerNameRegisteredEventSnippet,
         topics: log.topics,
         data: log.data,
         eventName: 'NameRegistered',
@@ -34,52 +24,11 @@ const decodeLegacyNameRegisteredEventLog = (log: MinedData['logs'][number]): Pro
     }
   })
 
-const nameRegisteredEventSnippet = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        name: 'name',
-        type: 'string',
-      },
-      {
-        indexed: true,
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        name: 'baseCost',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        name: 'premium',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        name: 'expires',
-        type: 'uint256',
-      },
-    ],
-    name: 'NameRegistered',
-    type: 'event',
-  },
-] as const
-
 const decodeWrappedNameRegisteredEventLog = (log: MinedData['logs'][number]): Promise<bigint> =>
   new Promise((resolve, reject) => {
     try {
       const t = decodeEventLog({
-        abi: nameRegisteredEventSnippet,
+        abi: ethRegistrarControllerNameRegisteredEventSnippet,
         topics: log.topics,
         data: log.data,
         eventName: 'NameRegistered',
