@@ -5,7 +5,13 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { BaseError } from 'viem'
-import { useClient, useConnections, useConnectorClient, useSendTransaction } from 'wagmi'
+import {
+  useChainId,
+  useClient,
+  useConnections,
+  useConnectorClient,
+  useSendTransaction,
+} from 'wagmi'
 
 import {
   Button,
@@ -21,6 +27,7 @@ import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { Outlink } from '@app/components/Outlink'
+import { SupportedChain } from '@app/constants/chains'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
@@ -313,13 +320,15 @@ export const handleSendTransaction = async (
   actionName: string,
   trackEvent: ReturnType<typeof useEventTracker>['trackEvent'],
   sendTransaction: ReturnType<typeof useSendTransaction>['sendTransaction'],
+  chainId: SupportedChain['id'],
 ) => {
   if (!request) {
     throw Error('No request object')
   }
-  if (request?.chainId) {
+  if (request?.chainId !== chainId) {
     await switchChain(wagmiConfig, { chainId: request?.chainId })
   }
+
   sendTransaction(request)
 
   const eventName = match(actionName)
@@ -347,6 +356,7 @@ export const TransactionStageModal = ({
 }: ManagedDialogProps) => {
   const { t } = useTranslation()
   const chainName = useChainName()
+  const chainId = useChainId()
   const { trackEvent } = useEventTracker()
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
   const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
@@ -533,7 +543,9 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
+          onClick={() =>
+            handleSendTransaction(request!, actionName, trackEvent, sendTransaction, chainId)
+          }
           disabled={!canEnableTransactionRequest || requestLoading || !request}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
@@ -577,7 +589,9 @@ export const TransactionStageModal = ({
           !!requestError ||
           isTransactionRequestCachedData
         }
-        onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
+        onClick={() =>
+          handleSendTransaction(request!, actionName, trackEvent, sendTransaction, chainId)
+        }
         data-testid="transaction-modal-confirm-button"
       >
         {t('transaction.dialog.confirm.openWallet')}
