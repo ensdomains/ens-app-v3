@@ -63,8 +63,15 @@ export const getChainsFromUrl = () => {
   const segments = hostname.split('.')
 
   if (segments.length === 4 && segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-    if (chainParam === 'sepolia') return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
-    if (chainParam === 'holesky') return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
+    if (chainParam === 'mainnet') return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
+    return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
+  }
+
+  if (segments.length === 5 && segments.slice(2).join('.') === 'ens-app-v3.pages.dev') {
+    const chainSubname = segments[0]
+    if (chainSubname === 'mainnet') return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
+    if (chainSubname === 'sepolia') return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
+    return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
   }
 
   if ((hostname === 'localhost' || hostname === '127.0.0.1') && chainParam) {
