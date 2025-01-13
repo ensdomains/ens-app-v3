@@ -13,6 +13,8 @@ import {
   ethRegistrarControllerCommitmentsSnippet,
   ethRegistrarControllerCommitSnippet,
   getChainContractAddress,
+  legacyEthRegistrarControllerCommitmentsSnippet,
+  legacyEthRegistrarControllerCommitSnippet,
 } from '@ensdomains/ensjs/contracts'
 
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -29,6 +31,7 @@ import { getBlockMetadataByTimestamp } from './utils/getBlockMetadataByTimestamp
 type UseExistingCommitmentParameters = {
   commitment?: Hex
   commitKey?: string
+  isLegacyCommit?: boolean
 }
 
 type UseExistingCommitmentInternalParameters = {
@@ -121,7 +124,7 @@ const execTransactionSnippet = [
   },
 ] as const
 
-const getExistingCommitmentQueryFn =
+const getExistingWrappedCommitmentQueryFn =
   (config: ConfigWithEns) =>
   ({
     addRecentTransaction,
@@ -172,6 +175,8 @@ const getExistingCommitmentQueryFn =
 
     if (commitmentAge > maxCommitmentAge)
       return { status: 'commitmentExpired', timestamp: commitmentTimestampNumber } as const
+
+    console.log('date', new Date(commitmentTimestampNumber))
 
     const blockMetadata = await getBlockMetadataByTimestamp(client, {
       timestamp: commitmentTimestamp,
@@ -242,6 +247,168 @@ const getExistingCommitmentQueryFn =
       status: 'transactionExists',
       timestamp: commitmentTimestampNumber,
     } as const
+  }
+
+const getExistingLegacyCommitmentQueryFn =
+  (config: ConfigWithEns) =>
+  ({
+    addRecentTransaction,
+    setTransactionHashFromUpdate,
+    isSafeTx,
+  }: UseExistingCommitmentInternalParameters) =>
+  async <TParams extends UseExistingCommitmentParameters>({
+    queryKey: [{ commitment, commitKey }, chainId, address],
+  }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseExistingCommitmentReturnType> => {
+    console.log('getExistingLegacyCommitmentQueryFn', commitment, commitKey, chainId, address)
+    if (!commitment) throw new Error('commitment is required')
+    if (!commitKey) throw new Error('commitKey is required')
+    if (!address) throw new Error('address is required')
+
+    const client = config.getClient({ chainId })
+    const legacyEthRegistrarControllerAddress = getChainContractAddress({
+      client,
+      contract: 'legacyEthRegistrarController',
+    })
+    const multicall3Address = getChainContractAddress({
+      client,
+      contract: 'multicall3',
+    })
+
+    const [commitmentTimestamp, maxCommitmentAge, blockTimestamp] = await Promise.all([
+      readContract(client, {
+        abi: legacyEthRegistrarControllerCommitmentsSnippet,
+        address: legacyEthRegistrarControllerAddress,
+        functionName: 'commitments',
+        args: [commitment],
+      }),
+      readContract(client, {
+        abi: maxCommitmentAgeSnippet,
+        address: legacyEthRegistrarControllerAddress,
+        functionName: 'maxCommitmentAge',
+      }),
+      readContract(client, {
+        abi: getCurrentBlockTimestampSnippet,
+        address: multicall3Address,
+        functionName: 'getCurrentBlockTimestamp',
+      }),
+    ])
+    console.log('>>>>>>>>>>>>>>>', commitmentTimestamp, maxCommitmentAge, blockTimestamp)
+    if (!commitmentTimestamp || commitmentTimestamp === 0n) return null
+
+    const commitmentAge = blockTimestamp - commitmentTimestamp
+    const commitmentTimestampNumber = Number(commitmentTimestamp)
+
+    console.log('date', new Date(commitmentTimestampNumber * 1000))
+
+    const existsFailure = () =>
+      ({ status: 'commitmentExists', timestamp: commitmentTimestampNumber }) as const
+
+    if (commitmentAge > maxCommitmentAge)
+      return { status: 'commitmentExpired', timestamp: commitmentTimestampNumber } as const
+
+    const blockMetadata = await getBlockMetadataByTimestamp(client, {
+      timestamp: commitmentTimestamp,
+    })
+    if (!blockMetadata.ok) return existsFailure()
+
+    const blockData = await getBlock(client, {
+      blockHash: blockMetadata.data.hash,
+      includeTransactions: true,
+    }).catch(() => null)
+    console.log('>>>>>>>>>>>>>>> blockData <<<<<<<<<<<<<', blockData)
+    if (!blockData) return existsFailure()
+
+    const inputData = encodeFunctionData({
+      abi: legacyEthRegistrarControllerCommitSnippet,
+      args: [commitment],
+      functionName: 'commit',
+    })
+
+    const transaction = (() => {
+      const checksummedAddress = getAddress(address)
+      const checksummedEthRegistrarControllerAddress = getAddress(
+        legacyEthRegistrarControllerAddress,
+      )
+      if (isSafeTx) {
+        const execTransactionFunctionSelector = toFunctionSelector(execTransactionSnippet[0])
+        const foundTransaction = blockData.transactions.find((t) => {
+          // safe transaction gets sent to the safe contract itself
+          if (!t.to || getAddress(t.to) !== checksummedAddress) return false
+          if (!t.input.startsWith(execTransactionFunctionSelector)) return false
+          const { args: safeTxData } = decodeFunctionData({
+            abi: execTransactionSnippet,
+            data: t.input,
+          })
+          if (getAddress(safeTxData[0]) !== checksummedEthRegistrarControllerAddress) return false
+          if (getAddress(safeTxData[2]) !== inputData) return false
+          return true
+        })
+        return foundTransaction
+      }
+      const foundTransaction = blockData.transactions.find((t) => {
+        if (getAddress(t.from) !== checksummedAddress) return false
+        if (!t.to || getAddress(t.to) !== checksummedEthRegistrarControllerAddress) return false
+        if (t.input !== inputData) return false
+        return true
+      })
+      return foundTransaction
+    })()
+
+    console.log('>>>>>>>>>>>>>>> transaction <<<<<<<<<<<<<', transaction)
+    if (!transaction) return existsFailure()
+
+    const transactionReceipt = await getTransactionReceipt(client, {
+      hash: transaction.hash,
+    })
+
+    if (transactionReceipt.status !== 'success') return existsFailure()
+
+    setTransactionHashFromUpdate(commitKey, transaction.hash)
+    addRecentTransaction({
+      ...transaction,
+      hash: transaction.hash,
+      action: 'commitName',
+      key: commitKey,
+      input: inputData,
+      timestamp: commitmentTimestampNumber,
+      isSafeTx,
+      searchRetries: 0,
+    })
+
+    return {
+      status: 'transactionExists',
+      timestamp: commitmentTimestampNumber,
+    } as const
+  }
+
+const getExistingCommitmentQueryFn =
+  (config: ConfigWithEns) =>
+  ({
+    addRecentTransaction,
+    setTransactionHashFromUpdate,
+    isSafeTx,
+  }: UseExistingCommitmentInternalParameters) =>
+  async <TParams extends UseExistingCommitmentParameters>(
+    context: QueryFunctionContext<QueryKey<TParams>>,
+  ): Promise<UseExistingCommitmentReturnType> => {
+    const {
+      queryKey: [{ commitment, commitKey, isLegacyCommit }, , address],
+    } = context
+    if (!commitment) throw new Error('commitment is required')
+    if (!commitKey) throw new Error('commitKey is required')
+    if (!address) throw new Error('address is required')
+
+    if (isLegacyCommit)
+      return getExistingLegacyCommitmentQueryFn(config)({
+        addRecentTransaction,
+        setTransactionHashFromUpdate,
+        isSafeTx,
+      })(context)
+    return getExistingWrappedCommitmentQueryFn(config)({
+      addRecentTransaction,
+      setTransactionHashFromUpdate,
+      isSafeTx,
+    })(context)
   }
 
 export const useExistingCommitment = <TParams extends UseExistingCommitmentParameters>({

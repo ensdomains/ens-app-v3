@@ -20,10 +20,10 @@ const hasRecords = ({ records }: RegistrationParameters) => {
 }
 
 export const isLegacyRegistration = (params: RegistrationParameters) => {
-  console.log('isLegacyRegistration', params)
-  console.log('hasRecord', hasRecords(params))
-  console.log('hasFuses', hasFuses(params))
-  console.log('reverseRecord', params.reverseRecord)
+  // console.log('isLegacyRegistration', params)
+  // console.log('hasRecord', hasRecords(params))
+  // console.log('hasFuses', hasFuses(params))
+  // console.log('reverseRecord', params.reverseRecord)
   const test = !hasRecords(params) && !hasFuses(params) && !params.reverseRecord
   return test
 }

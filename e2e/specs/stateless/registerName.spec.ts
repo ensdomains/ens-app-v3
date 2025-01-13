@@ -1,7 +1,10 @@
 import { expect } from '@playwright/test'
-import { Hash, isHash } from 'viem'
+import { Hash } from 'viem'
 
-import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
+import {
+  ethRegistrarControllerCommitSnippet,
+  legacyEthRegistrarControllerCommitSnippet,
+} from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 import { Web3RequestKind } from '@ensdomains/headless-web3-provider'
 
@@ -971,18 +974,19 @@ test('should not allow normal registration less than 28 days', async ({
     accounts.getAddress('user', 5),
   )
 
-  await test.step('confirm name is unwrapped', async () => {
+  await test.step('confirm name is wrapped (set primary name)', async () => {
     await page.pause()
-    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+    await expect(page.getByTestId('permissions-tab')).toBeVisible()
   })
 })
 
-test('should be able to detect an existing commit created on a private mempool', async ({
+test('should be able to detect an existing commit created on a private mempool for a wrapped registration', async ({
   page,
   login,
   accounts,
   time,
   wallet,
+  consoleListener,
   makePageObject,
 }) => {
   test.slow()
@@ -991,6 +995,9 @@ test('should be able to detect an existing commit created on a private mempool',
   const homePage = makePageObject('HomePage')
   const registrationPage = makePageObject('RegistrationPage')
   const transactionModal = makePageObject('TransactionModal')
+  await consoleListener.initialize({
+    regex: /commit is:/,
+  })
 
   await time.sync(500)
 
@@ -1002,28 +1009,23 @@ test('should be able to detect an existing commit created on a private mempool',
   await homePage.searchInput.press('Enter')
   await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 
-  await registrationPage.primaryNameToggle.uncheck()
+  await registrationPage.primaryNameToggle.check()
 
   // should go to profile editor step
   await page.getByTestId('next-button').click()
+
+  await page.getByTestId('profile-submit-button').click()
 
   await test.step('should be able to find an existing commit', async () => {
     await page.getByTestId('next-button').click()
 
     await transactionModal.closeButton.click()
 
-    let commitHash: Hash | undefined
-    let attempts = 0
-    while (!commitHash && attempts < 4) {
-      // eslint-disable-next-line no-await-in-loop
-      const message = await page.waitForEvent('console')
-      // eslint-disable-next-line no-await-in-loop
-      const txt = await message.text()
-      const hash = txt.split(':')[1]?.trim() as Hash
-      if (isHash(hash)) commitHash = hash
-      attempts += 1
-    }
-    expect(commitHash!).toBeDefined()
+    await page.pause()
+
+    await expect(consoleListener.getMessages().length).toBeGreaterThan(0)
+    const commitHash = consoleListener.getMessages()[0].split(':')[1]?.trim() as Hash
+    console.log('>>>>>', commitHash)
 
     const approveTx = await walletClient.writeContract({
       abi: ethRegistrarControllerCommitSnippet,
@@ -1078,11 +1080,115 @@ test('should be able to detect an existing commit created on a private mempool',
 
     await test.step('confirm name is unwrapped', async () => {
       await page.pause()
-      await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+      await expect(page.getByTestId('permissions-tab')).toBeVisible()
     })
   })
 })
 
+test('should be able to detect an existing commit created on a private mempool for a legacy registration', async ({
+  page,
+  login,
+  accounts,
+  time,
+  wallet,
+  consoleListener,
+  makePageObject,
+}) => {
+  test.slow()
+
+  const name = `registration-normal-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+  const registrationPage = makePageObject('RegistrationPage')
+  const transactionModal = makePageObject('TransactionModal')
+  await consoleListener.initialize({
+    regex: /commit is:/,
+  })
+
+  await time.sync(500)
+
+  await homePage.goto()
+  await login.connect()
+
+  // should redirect to registration page
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+  await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+
+  await registrationPage.primaryNameToggle.uncheck()
+
+  // should go to profile editor step
+  await page.getByTestId('next-button').click()
+
+  // await page.getByTestId('profile-submit-button').click()
+
+  await test.step('should be able to find an existing commit', async () => {
+    await page.getByTestId('next-button').click()
+
+    await transactionModal.closeButton.click()
+
+    await expect(consoleListener.getMessages().length).toBeGreaterThan(0)
+    const commitHash = consoleListener.getMessages()[0].split(':')[1]?.trim() as Hash
+    console.log('>>>>>', commitHash)
+
+    const approveTx = await walletClient.writeContract({
+      abi: legacyEthRegistrarControllerCommitSnippet,
+      address: testClient.chain.contracts.legacyEthRegistrarController.address,
+      args: [commitHash!],
+      functionName: 'commit',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(approveTx)
+
+    await page.route('https://api.findblock.xyz/**/*', async (route) => {
+      await route.fulfill({
+        json: {
+          ok: true,
+          data: {
+            hash: approveTx,
+          },
+        },
+      })
+    })
+
+    // should show countdown
+    await expect(page.getByTestId('countdown-circle')).toBeVisible()
+    await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
+    await testClient.increaseTime({ seconds: 60 })
+
+    await page.pause()
+    await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
+  })
+
+  await test.step('should be able to complete registration when modal is closed', async () => {
+    await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+    // should save the registration state and the transaction status
+    await page.reload()
+    await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+    // should allow finalising registration and automatically go to the complete step
+    await page.getByTestId('finish-button').click()
+    await expect(page.getByText('Open Wallet')).toBeVisible()
+    await transactionModal.confirmButton.click()
+
+    await transactionModal.closeButton.click()
+
+    await expect(transactionModal.transactionModal).toHaveCount(0)
+
+    await wallet.authorize(Web3RequestKind.SendTransaction)
+    // await transactionModal.confirm()
+
+    await page.getByTestId('view-name').click()
+    await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+      accounts.getAddress('user', 5),
+    )
+
+    await test.step('confirm name is unwrapped', async () => {
+      await page.pause()
+      await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+    })
+  })
+})
 test.describe('Error handling', () => {
   test('should be able to detect an existing commit created on a private mempool', async ({
     page,
