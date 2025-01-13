@@ -237,8 +237,8 @@ test.describe('Profile', () => {
   test('should decode an unknown label', async ({ page, login }) => {
     await page.goto('/?chain=holesky')
     await login.connect()
-    // eslint-disable-next-line no-restricted-syntax
     await page.goto(
+      // eslint-disable-next-line no-restricted-syntax
       '/[8df9cfc425ad5e1853259e1cef0a8d1d44591fbec8e3feb6f930d9dfacd5eff2].eth?chain=holesky',
     )
     await expect(page.getByTestId('profile-snippet')).toContainText('wrapmebaby.eth', {
