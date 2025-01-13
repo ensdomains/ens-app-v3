@@ -48,7 +48,6 @@ export type SupportedChain =
   | typeof localhostWithEns
 
 export const getChainsFromUrl = () => {
-  console.log('getChainsFromUrl')
   if (typeof window === 'undefined') {
     return [
       ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
