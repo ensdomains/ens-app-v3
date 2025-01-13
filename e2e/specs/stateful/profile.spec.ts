@@ -107,9 +107,7 @@ test.describe('Profile', () => {
 
     await page.getByPlaceholder('Search for a name').fill('❤️❤️❤️❤️❤️❤️.eth')
     await page.getByPlaceholder('Search for a name').press('Enter')
-    await expect(page).toHaveURL(
-      '/%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4.eth?chain=holesky',
-    )
+    await expect(page).toHaveURL('/%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4%E2%9D%A4.eth')
     // This await is needed so that a headless provider can make it's function calls before the page closes.
     await page.waitForTimeout(5000)
   })
@@ -121,7 +119,7 @@ test.describe('Profile', () => {
 
       await page.getByPlaceholder('Search for a name').fill(profile.name)
       await page.getByPlaceholder('Search for a name').press('Enter')
-      await expect(page).toHaveURL(`/${profile.name}?chain=holesky`)
+      await expect(page).toHaveURL(`/${profile.name}`)
       // should show the name in the profile snippet
       await expect(page.getByTestId('profile-snippet')).toContainText(profile.name, {
         timeout: 25000,
