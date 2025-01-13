@@ -30,7 +30,7 @@ export const NetworkNotifications = () => {
   return (
     <Toast
       description={t(`networkNotifications.${connectedChainName}.description`)}
-      open={false}
+      open={open}
       title={t(`networkNotifications.${connectedChainName}.title`)}
       variant="desktop"
       onClose={() => setOpen(false)}
