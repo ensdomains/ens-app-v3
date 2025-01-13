@@ -108,7 +108,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'feedback',
-    href: 'https://ens.canny.io/',
+    href: 'https://docs.google.com/forms/d/e/1FAIpQLSfDzIszteoaqiayxUCpFLK1AgigoASHIPcsxFg8PZoS6R6Uzw/viewform?usp=sf_link',
     label: 'navigation.feedback',
     disabled: false,
     connected: false,

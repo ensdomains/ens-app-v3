@@ -1,7 +1,7 @@
 import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 
 import { act, waitFor } from '@testing-library/react'
-import { describe, expect, it, Mock, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -25,12 +25,19 @@ mockSearchResult.mockImplementation(({ searchItem }) => (
 window.scroll = vi.fn() as () => void
 
 describe('SearchInput', () => {
-  mockUseLocalStorage.mockReturnValue([[]])
-  window.ResizeObserver = vi.fn()
-  ;(window.ResizeObserver as Mock).mockImplementation(() => ({
-    observe: vi.fn(),
-    disconnect: vi.fn(),
-  }))
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseLocalStorage.mockReturnValue([[]])
+    window.ResizeObserver = vi.fn()
+    ;(window.ResizeObserver as Mock).mockImplementation(() => ({
+      observe: vi.fn(),
+      disconnect: vi.fn(),
+    }))
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('should render on desktop layouts', () => {
     mockUseBreakpoint.mockReturnValue({
@@ -257,5 +264,164 @@ describe('SearchInput', () => {
     })
     await userEvent.type(screen.getByTestId('search-input-box'), '.')
     await waitFor(() => expect(screen.queryByText(`Invalid name`)).toBeInTheDocument())
+  })
+  it('should debounce search input changes', async () => {
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+
+    render(<SearchInput />)
+    const input = screen.getByTestId('search-input-box')
+
+    await userEvent.click(input)
+
+    await waitFor(() => {
+      screen.getByTestId('search-input-results')
+    })
+
+    await userEvent.clear(input)
+    await userEvent.type(input, 'test')
+
+    await waitFor(
+      () => {
+        const results = screen.getByTestId('search-input-results')
+        expect(results).toBeInTheDocument()
+        expect(results).toHaveTextContent('test.eth')
+      },
+      {
+        timeout: 300,
+      },
+    )
+  })
+
+  it('should cancel pending debounced search on rapid typing', async () => {
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+
+    render(<SearchInput />)
+    const input = screen.getByTestId('search-input-box')
+
+    await userEvent.click(input)
+
+    await waitFor(() => {
+      screen.getByTestId('search-input-results')
+    })
+
+    await userEvent.clear(input)
+
+    await userEvent.type(input, 'te')
+    await userEvent.type(input, 'st')
+
+    await waitFor(
+      () => {
+        const results = screen.getByTestId('search-input-results')
+        expect(results).toBeInTheDocument()
+        expect(results).toHaveTextContent('test.eth')
+      },
+      {
+        timeout: 300,
+      },
+    )
+  })
+
+  it('should debounce placeholder state when typing', async () => {
+    mockSearchResult.mockClear()
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+
+    render(<SearchInput />)
+    const input = screen.getByTestId('search-input-box')
+
+    await userEvent.click(input)
+    await userEvent.clear(input)
+    await userEvent.type(input, 'test')
+
+    // Check that SearchResult is called with usingPlaceholder=true initially
+    expect(mockSearchResult).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        usingPlaceholder: true,
+      }),
+      expect.anything(),
+    )
+
+    // Wait for debounce to complete
+    await waitFor(
+      () => {
+        // Check that SearchResult is called with usingPlaceholder=false after debounce
+        expect(mockSearchResult).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            usingPlaceholder: false,
+          }),
+          expect.anything(),
+        )
+      },
+      {
+        timeout: 300,
+      },
+    )
+  })
+
+  it('should reset placeholder state on rapid typing', async () => {
+    mockSearchResult.mockClear()
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+
+    render(<SearchInput />)
+    const input = screen.getByTestId('search-input-box')
+
+    await userEvent.click(input)
+    await userEvent.clear(input)
+
+    // Type first part
+    await userEvent.type(input, 'te')
+    expect(mockSearchResult).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        usingPlaceholder: true,
+      }),
+      expect.objectContaining({}),
+    )
+
+    // Type second part immediately
+    await userEvent.type(input, 'st')
+    expect(mockSearchResult).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        usingPlaceholder: true,
+      }),
+      expect.objectContaining({}),
+    )
+
+    // Wait for debounce to complete
+    await waitFor(
+      () => {
+        expect(mockSearchResult).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            usingPlaceholder: false,
+          }),
+          expect.anything(),
+        )
+      },
+      {
+        timeout: 350,
+      },
+    )
   })
 })
