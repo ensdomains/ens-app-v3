@@ -68,6 +68,8 @@ export const SocialProfileButton = ({
       <RecordItem
         icon={() => (
           <DynamicSocialIcon
+            height={20}
+            width={20}
             fill={socialData.color}
             name={socialData.icon as keyof typeof socialIconTypes}
           />
