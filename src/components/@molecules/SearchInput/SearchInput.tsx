@@ -1,5 +1,4 @@
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
-import debounce from 'lodash/debounce'
 import {
   Dispatch,
   RefObject,
@@ -13,6 +12,7 @@ import {
 import { TFunction, useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 import { Address, isAddress } from 'viem'
 import { useAccount, useChainId } from 'wagmi'
 
@@ -343,17 +343,12 @@ const createSearchHandler =
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
 
-    if (path === `/register/${text}`) {
-      trackEvent({
-        eventName: 'search_selected_eth',
-        customProperties: { name: text },
-      })
-    } else if (path === `/dotbox/${text}`) {
-      trackEvent({
-        eventName: 'search_selected_box',
-        customProperties: { name: text },
-      })
-    }
+    const eventName = match(path)
+      .with(`/register/${text}`, () => 'search_selected_eth' as const)
+      .with(`/dotbox/${text}`, () => 'search_selected_box' as const)
+      .with(`/import/${text}`, () => 'search_selected_dns' as const)
+      .otherwise(() => undefined)
+    if (eventName) trackEvent({ eventName, customProperties: { name: text } })
 
     setInputVal('')
     searchInputRef.current?.blur()
@@ -630,6 +625,19 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
       ),
     [inputIsAddress, name, isETH, isValid, history, t],
   )
+}
+
+const debounce = (func: (...args: any[]) => void, delay?: number) => {
+  let timerId: NodeJS.Timeout
+  let shouldInvoke: boolean
+
+  return (...args: any[]) => {
+    shouldInvoke = true
+
+    clearTimeout(timerId)
+
+    timerId = setTimeout(() => shouldInvoke && func(...args), delay)
+  }
 }
 
 const debouncer = debounce((setFunc: () => void) => setFunc(), 250)

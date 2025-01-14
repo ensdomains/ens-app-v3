@@ -204,11 +204,10 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should be able to start registration step', async () => {
-      await expect(
-        page.getByText(
-          'Your name is not registered until you’ve completed the second transaction. You have 23 hours remaining to complete it.',
-        ),
-      ).toBeVisible()
+      await expect(page.getByTestId('transactions-subheading')).toBeVisible()
+      await expect(page.getByTestId('transactions-subheading')).toHaveText(
+        /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+      )
       await page.getByTestId('finish-button').click()
     })
 
@@ -388,7 +387,6 @@ test('should allow registering a name and resuming from the commit toast', async
   await page.goto(`/${name}/register`)
   await login.connect()
 
-  await page.pause()
   await page.getByTestId('payment-choice-ethereum').click()
   await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('next-button').click()
@@ -449,7 +447,6 @@ test('should allow registering with a specific date', async ({ page, login, make
 
     await calendar.fill(dateToDateInput(twoYearsAndHalfLater))
 
-    await page.pause()
     await expect(page.getByTestId('calendar-date')).toHaveValue(
       dateToDateInput(twoYearsAndHalfLater),
     )

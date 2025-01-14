@@ -1,11 +1,10 @@
 import { createClient, type FallbackTransport, type HttpTransport, type Transport } from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
-import { goerli, holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
+import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
 import {
-  goerliWithEns,
   holeskyWithEns,
   localhostWithEns,
   mainnetWithEns,
@@ -24,12 +23,16 @@ const connectors = getDefaultWallets({
 
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
+const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY || 'AnmpasF2C0JBqeAEzxVO8aRuvzLTrWcR75hmDonbV6cR'
 
 export const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
-const cloudflareUrl = (chainName: string) => `https://web3.ens.domains/v1/${chainName}`
 const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
+const drpcUrl = (chainName: string) =>
+  `https://lb.drpc.org/ogrpc?network=${
+    chainName === 'mainnet' ? 'ethereum' : chainName
+  }&dkey=${drpcKey}`
 
-type SupportedUrlFunc = typeof infuraUrl | typeof cloudflareUrl | typeof tenderlyUrl
+type SupportedUrlFunc = typeof infuraUrl | typeof drpcUrl | typeof tenderlyUrl
 
 const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   chainName: string,
@@ -83,7 +86,6 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
 const chains = [
   ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
   mainnetWithEns,
-  goerliWithEns,
   sepoliaWithEns,
   holeskyWithEns,
 ] as const
@@ -97,10 +99,9 @@ const transports = {
         // this is a hack to make the types happy, dont remove pls
         [localhost.id]: HttpTransport
       })),
-  [mainnet.id]: initialiseTransports('mainnet', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-  [sepolia.id]: initialiseTransports('sepolia', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-  [goerli.id]: initialiseTransports('goerli', [infuraUrl, cloudflareUrl, tenderlyUrl]),
-  [holesky.id]: initialiseTransports('holesky', [tenderlyUrl]),
+  [mainnet.id]: initialiseTransports('mainnet', [drpcUrl, infuraUrl, tenderlyUrl]),
+  [sepolia.id]: initialiseTransports('sepolia', [drpcUrl, infuraUrl, tenderlyUrl]),
+  [holesky.id]: initialiseTransports('holesky', [drpcUrl, tenderlyUrl]),
 } as const
 
 const wagmiConfig_ = createConfig({
