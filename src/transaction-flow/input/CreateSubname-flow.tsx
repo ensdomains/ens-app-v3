@@ -139,7 +139,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
     {
       key: 'eth',
       value: '',
-      type: 'text',
+      type: 'addr',
       group: 'address',
     },
   ])
