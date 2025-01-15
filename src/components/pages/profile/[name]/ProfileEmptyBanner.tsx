@@ -20,7 +20,7 @@ const Container = styled.div(
     width: 100%;
     border: 4px solid #fff;
     border-radius: 16px;
-    background: linear-gradient(#e7f4ef 100%, #fdf0dd 100%);
+    background: linear-gradient(${theme.colors.greenLight} 100%, ${theme.colors.greenSurface} 100%);
 
     @media (max-width: ${theme.breakpoints.sm}px) {
       grid-template-columns: 1fr;
@@ -54,10 +54,10 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
         <StarsSVG />
       </div>
       <div>
-        <Typography fontVariant="large" weight="bold" color="textPrimary">
+        <Typography fontVariant="large" weight="bold" color="text">
           {t('banner.empty.title')}
         </Typography>
-        <Typography color="textPrimary" fontVariant="body">
+        <Typography color="text" fontVariant="body">
           {t('banner.empty.description')}
         </Typography>
       </div>
