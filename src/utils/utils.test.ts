@@ -131,7 +131,7 @@ describe('formatDurationOfDates', () => {
       formatDurationOfDates({
         startDate: new Date(),
         endDate: new Date(Date.now() + 123 * 1000),
-        t: (x, options: any) =>  x + options?.count,
+        t: (x, options: any) => x + options?.count,
       }),
     ).toEqual('unit.days0')
   })
