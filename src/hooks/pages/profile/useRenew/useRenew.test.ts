@@ -19,12 +19,6 @@ import { calculateRenewState, removeRenewParam, useRenew } from './useRenew'
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
 vi.mock('@app/hooks/useBasicName')
 vi.mock('@app/hooks/abilities/useAbilities')
-// vi.mock('@usecapsule/rainbowkit', () => ({
-//   useConnectModal: vi.fn().mockReturnValue({
-//     openConnectModal: vi.fn(),
-//     connectModalOpen: false,
-//   }),
-// }))
 vi.mock('wagmi')
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 vi.mock('next/navigation')
