@@ -55,10 +55,9 @@ const Text = styled.text(
 )
 
 const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
-  const { getSegmentLength, loading } = useGetSegmentLength()
+  const { getSegmentLength } = useGetSegmentLength()
 
   const elementData = useMemo(() => {
-    if (loading) return {}
     const labels = name.split('.')
     const isSubdomain = labels.length > 2
 
@@ -95,7 +94,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
       domainFontSize *= 2
     }
     return { domainFontSize, subdomainText, isSubdomain, domain }
-  }, [name, getSegmentLength, loading])
+  }, [name, getSegmentLength])
   const { domainFontSize, subdomainText, isSubdomain, domain } = elementData
 
   let background: ReactNode
@@ -125,7 +124,6 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
     background = <rect fill="url(#paint1_linear)" {...bgProps} />
   }
 
-  if (loading) return null
   return (
     <svg viewBox="0 0 270 270" display="block" fill="none" xmlns="http://www.w3.org/2000/svg">
       {background}
