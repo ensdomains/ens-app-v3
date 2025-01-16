@@ -7,17 +7,15 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { namehash } from 'viem'
 
-import { getContract } from './utils/viem-hardhat'
-
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (!hre.network.tags.generate) {
     return true
   }
-  const { getUnnamedAccounts, network } = hre
+  const { getUnnamedAccounts, network ,viem} = hre
   const allUnnamedAccts = await getUnnamedAccounts()
 
-  const controller = (await getContract(hre)('ETHRegistrarController'))!
-  const publicResolver = (await getContract(hre)('PublicResolver'))!
+  const controller = await viem.getContract('ETHRegistrarController')
+  const publicResolver = await viem.getContract('PublicResolver')
 
   let i = 0
   let errored = false

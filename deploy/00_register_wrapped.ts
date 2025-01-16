@@ -14,7 +14,6 @@ import {
 } from '@ensdomains/ensjs/utils'
 
 import { nonceManager } from './.utils/nonceManager'
-import { getContract } from './utils/viem-hardhat'
 
 type Name = {
   name: string
@@ -145,12 +144,12 @@ type ProcessedNameData = RegistrationParameters & {
 }
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network } = hre
+  const { getNamedAccounts, network, viem } = hre
   const allNamedAccts = (await getNamedAccounts()) as Record<string, Address>
 
-  const controller = (await getContract(hre)('ETHRegistrarController'))!
-  const publicResolver = (await getContract(hre)('PublicResolver'))!
-  const nameWrapper = (await getContract(hre)('NameWrapper'))!
+  const controller = await viem.getContract('ETHRegistrarController')
+  const publicResolver = await viem.getContract('PublicResolver')
+  const nameWrapper = await viem.getContract('NameWrapper')
 
   const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
     const resolverAddress = publicResolver.address

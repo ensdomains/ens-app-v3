@@ -3,8 +3,6 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { Abi, AbiFunction, bytesToHex, hexToBytes, labelhash, namehash, toFunctionHash } from 'viem'
 
-import { getContract, getNamedClients } from './utils/viem-hardhat'
-
 const createInterfaceId = <I extends Abi>(iface: I) => {
   const bytesId = iface
     .filter((item): item is AbiFunction => item.type === 'function')
@@ -29,14 +27,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     return true
   }
 
-  const { owner, deployer } = await getNamedClients(hre)()
+  const { owner, deployer } = await viem.getNamedClients()
 
-  const root = (await getContract(hre)('Root', owner))!
-  const registry = (await getContract(hre)('ENSRegistry', owner))!
-  const resolver = (await getContract(hre)('PublicResolver', owner))!
-  const registrar = (await getContract(hre)('BaseRegistrarImplementation'))!
-  const controller = (await getContract(hre)('ETHRegistrarController'))!
-  const wrapper = (await getContract(hre)('NameWrapper'))!
+  const root = await viem.getContract('Root', owner)
+  const registry = await viem.getContract('ENSRegistry', owner)
+  const resolver = await viem.getContract('PublicResolver', owner)
+  const registrar = await viem.getContract('BaseRegistrarImplementation')
+  const controller = await viem.getContract('ETHRegistrarController')
+  const wrapper = await viem.getContract('NameWrapper')
   const controllerArtifact = (await deployments.getArtifact('IETHRegistrarController'))!
 
   const bulkRenewal = await viem.deployContract('BulkRenewal', [registry.address], {

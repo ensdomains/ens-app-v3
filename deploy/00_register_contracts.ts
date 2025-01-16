@@ -5,7 +5,6 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { Address, namehash } from 'viem'
 
-import { getContract } from './utils/viem-hardhat'
 
 const names = [
   {
@@ -25,11 +24,11 @@ const names = [
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network } = hre
+  const { getNamedAccounts, network, viem } = hre
   const allNamedAccts = await getNamedAccounts()
 
-  const controller = (await getContract(hre)('ETHRegistrarController'))!
-  const publicResolver = (await getContract(hre)('PublicResolver'))!
+  const controller = await viem.getContract('ETHRegistrarController')
+  const publicResolver = await viem.getContract('PublicResolver')
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
@@ -70,7 +69,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     if (subnames) {
       console.log(`Setting subnames for ${label}.eth...`)
-      const nameWrapper = await ethers.getContract('NameWrapper')
+      const nameWrapper = await viem.getContract('NameWrapper')
       for (const {
         label: subnameLabel,
         namedOwner: namedSubnameOwner,
@@ -78,7 +77,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       } of subnames) {
         const subnameOwner = allNamedAccts[namedSubnameOwner]
         const _nameWrapper = nameWrapper.connect(await ethers.getSigner(owner))
-        const setSubnameTx = await _nameWrapper.setSubnodeRecord(
+        const setSubnameTx = await _nameWrapper.write.setSubnodeRecord(
           namehash(`${label}.eth`),
           subnameLabel,
           subnameOwner,

@@ -3,16 +3,16 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { labelhash, namehash } from 'viem'
 
-import { getContract, getNamedClients } from './utils/viem-hardhat'
 
 const ZERO_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 const names = ['legacy']
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { owner } = await getNamedClients(hre)()
+  const { viem } = hre
+  const { owner,vi } = await viem.getNamedClients()
 
-  const registry = (await getContract(hre)('LegacyENSRegistry', owner))!
+  const registry = await viem.getContract('LegacyENSRegistry', owner)
 
   const tldTx = await registry.write.setSubnodeOwner(
     [ZERO_HASH, labelhash('test'), owner.address],
@@ -37,9 +37,10 @@ func.id = 'legacy-registry-names'
 func.tags = ['legacy-registry-names']
 func.dependencies = ['ENSRegistry']
 func.skip = async function (hre: HardhatRuntimeEnvironment) {
-  const { owner } = await getNamedClients(hre)()
+  const { viem } = hre
+  const { owner } = await viem.getNamedClients() 
 
-  const registry = (await getContract(hre)('LegacyENSRegistry', owner))!
+  const registry = await viem.getContract('LegacyENSRegistry', owner)
 
   const ownerOfTestTld = await registry.read.owner([namehash('test')])
   if (ownerOfTestTld !== owner.address) {

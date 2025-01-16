@@ -2,12 +2,12 @@
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-import { getContract, getNamedClients } from './utils/viem-hardhat'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployer } = await getNamedClients(hre)()
+  const { viem } = hre
+  const { deployer } = await viem.getNamedClients() 
 
-  const dummyOracale = (await getContract(hre)('DummyOracle', deployer))!
+  const dummyOracale = await viem.getContract('DummyOracle', deployer)
 
   const txHash = await dummyOracale.write['set(int256)'](['156058000000'], {
     account: deployer.account,

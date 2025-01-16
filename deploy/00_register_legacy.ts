@@ -7,7 +7,6 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import pako from 'pako'
 import { labelhash, namehash, stringToBytes } from 'viem'
 
-import { getContract } from './utils/viem-hardhat'
 
 const dummyABI = [
   {
@@ -368,12 +367,12 @@ const names: Name[] = [
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network } = hre
+  const { getNamedAccounts, network, viem } = hre
   const allNamedAccts = await getNamedAccounts()
 
-  const registry = await getContract(hre)('ENSRegistry')
-  const controller = (await getContract(hre)('LegacyETHRegistrarController'))!
-  const publicResolver = await getContract(hre)('LegacyPublicResolver')
+  const registry = await viem.getContract('ENSRegistry')
+  const controller = await viem.getContract('LegacyETHRegistrarController')
+  const publicResolver = await viem.getContract('LegacyPublicResolver')
 
   const makeData = ({
     namedOwner,
