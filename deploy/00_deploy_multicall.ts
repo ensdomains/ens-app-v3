@@ -1,9 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { existsSync, mkdirSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
+import { resolve } from 'path'
+
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { resolve } from 'path'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts } = hre

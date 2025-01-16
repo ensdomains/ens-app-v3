@@ -2,21 +2,20 @@
 
 /* eslint-disable no-await-in-loop */
 import fs from 'fs/promises'
-import { ethers } from 'hardhat'
+
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-
 import { namehash } from 'viem'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (!hre.network.tags.generate) {
     return true
   }
-  const { getUnnamedAccounts, network } = hre
+  const { getUnnamedAccounts, network ,viem} = hre
   const allUnnamedAccts = await getUnnamedAccounts()
 
-  const controller = await ethers.getContract('ETHRegistrarController')
-  const publicResolver = await ethers.getContract('PublicResolver')
+  const controller = await viem.getContract('ETHRegistrarController')
+  const publicResolver = await viem.getContract('PublicResolver')
 
   let i = 0
   let errored = false
@@ -80,7 +79,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       }: ReturnType<ReturnType<typeof makeData>>,
       index: number,
     ) => {
-      const commitment = await controller.makeCommitment(
+      const commitment = await controller.write.makeCommitment([
         label,
         owner,
         duration,
@@ -90,7 +89,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         reverseRecord,
         fuses,
         wrapperExpiry,
-      )
+      ])
 
       const _controller = controller.connect(await ethers.getSigner(owner))
       const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
@@ -115,7 +114,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       index: number,
     ) => {
       try {
-        const [price] = await controller.rentPrice(label, duration)
+        const [price] = await controller.read.rentPrice([label, duration])
 
         const _controller = controller.connect(await ethers.getSigner(owner))
         const estimatedTx = await _controller.estimateGas.register(
@@ -180,12 +179,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const makeUniques = () =>
     gasValues
-      .reduce((prev, curr, inx) => {
-        if (prev.find((p) => p[1] === curr)) {
-          return prev
-        }
-        return [...prev, [inx, curr] as [number, number]]
-      }, [] as [number, number][])
+      .reduce(
+        (prev, curr, inx) => {
+          if (prev.find((p) => p[1] === curr)) {
+            return prev
+          }
+          return [...prev, [inx, curr] as [number, number]]
+        },
+        [] as [number, number][],
+      )
       .reverse()
 
   await fs.writeFile('./textRecordGasCosts-1.json', JSON.stringify(makeUniques()))
