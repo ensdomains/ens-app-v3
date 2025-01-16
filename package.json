@@ -204,6 +204,7 @@
       "arraybuffer.prototype.slice": "npm:@socketregistry/arraybuffer.prototype.slice@^1",
       "available-typed-arrays": "npm:@socketregistry/available-typed-arrays@^1",
       "bn.js": "npm:bn.js@^5.2.0",
+      "chai": "npm:chai@^4",
       "deep-equal": "npm:@socketregistry/deep-equal@^1",
       "define-properties": "npm:@socketregistry/define-properties@^1",
       "es-define-property": "npm:@socketregistry/es-define-property@^1",
