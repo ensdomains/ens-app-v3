@@ -1,6 +1,6 @@
 import { mockFunction, render } from '@app/test-utils'
 
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { getTransaction, getTransactionCount } from 'viem/actions'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -27,18 +27,10 @@ vi.mock('@app/hooks/transactions/TransactionStoreContext')
 const ADDRESS = '0x1234567890abcdef'
 
 export const handlers = [
-  rest.get(getAccountHistoryEndpoint(ADDRESS, 1), (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          hash: '0xabc123',
-          input: 'input',
-          timeStamp: '1',
-          nonce: 0,
-        },
-      ]),
-    )
+  http.get(getAccountHistoryEndpoint(ADDRESS, 1), () => {
+    return HttpResponse.json([{ hash: '0xabc123', input: 'input', timeStamp: '1', nonce: 0 }], {
+      status: 200,
+    })
   }),
 ]
 
@@ -177,10 +169,9 @@ describe('findDroppedTransactions', () => {
     })
     it('should error if there is more than one transaction that could be a replacement', async () => {
       server.use(
-        rest.get(getAccountHistoryEndpoint(ADDRESS, 1), (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json([
+        http.get(getAccountHistoryEndpoint(ADDRESS, 1), () => {
+          return HttpResponse.json(
+            [
               {
                 hash: '0xabc123',
                 input: 'input',
@@ -191,7 +182,8 @@ describe('findDroppedTransactions', () => {
                 input: 'input',
                 timeStamp: '1',
               },
-            ]),
+            ],
+            { status: 200 },
           )
         }),
       )

@@ -111,6 +111,7 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   })
 
   const subnamesPage = makePageObject('SubnamesPage')
+  const recordsPage = makePageObject('RecordsPage')
 
   await subnamesPage.goto(name)
   await login.connect()
@@ -120,17 +121,30 @@ test('should allow creating a subname', async ({ page, makeName, login, makePage
   await subnamesPage.getSubmitSubnameButton.click()
   await subnamesPage.addMoreToProfileButton.click()
   await page.getByTestId('profile-record-option-name').click()
+  await page.getByTestId('profile-record-option-description').click()
   await page.getByTestId('add-profile-records-button').click()
+  await page
+    .getByTestId('profile-record-input-input-eth')
+    .fill('0x42D63ae25990889E35F215bC95884039Ba354115')
   await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+  await page
+    .getByTestId('profile-record-input-description')
+    .getByRole('textbox')
+    .fill('New profile')
+
   await subnamesPage.getSubmitSubnameProfileButton.click()
 
   const transactionModal = makePageObject('TransactionModal')
   await transactionModal.autoComplete()
 
   const subname = `test.${name}`
-  await subnamesPage.goto(subname)
+  await recordsPage.goto(subname)
 
-  await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
+  await expect(recordsPage.getRecordValue('text', 'name')).toHaveText('Test Name')
+  await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('New profile')
+  await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+    '0x42D63ae25990889E35F215bC95884039Ba354115',
+  )
 })
 
 test('should allow creating a subnames if the user is the wrapped owner', async ({
@@ -146,7 +160,7 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
     type: 'wrapped',
   })
   const subnamesPage = makePageObject('SubnamesPage')
-
+  const recordsPage = makePageObject('RecordsPage')
   await page.goto(`/${name}`)
   await login.connect()
 
@@ -156,6 +170,19 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
   await subnamesPage.getAddSubnameButton.click()
   await subnamesPage.getAddSubnameInput.fill('test')
   await subnamesPage.getSubmitSubnameButton.click()
+
+  await subnamesPage.addMoreToProfileButton.click()
+  await page.getByTestId('profile-record-option-name').click()
+  await page.getByTestId('profile-record-option-description').click()
+  await page.getByTestId('add-profile-records-button').click()
+  await page
+    .getByTestId('profile-record-input-input-eth')
+    .fill('0x42D63ae25990889E35F215bC95884039Ba354115')
+  await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+  await page
+    .getByTestId('profile-record-input-description')
+    .getByRole('textbox')
+    .fill('New profile')
   await subnamesPage.getSubmitSubnameProfileButton.click()
 
   const transactionModal = makePageObject('TransactionModal')
@@ -163,7 +190,12 @@ test('should allow creating a subnames if the user is the wrapped owner', async 
 
   const subname = `test.${name}`
 
-  await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
+  await recordsPage.goto(subname)
+  await expect(recordsPage.getRecordValue('text', 'name')).toHaveText('Test Name')
+  await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('New profile')
+  await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+    '0x42D63ae25990889E35F215bC95884039Ba354115',
+  )
 })
 
 test('should not allow adding a subname that already exists', async ({
