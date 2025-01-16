@@ -128,7 +128,7 @@ jobs:
 
       - name: Run tests
         run: |
-          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb
+          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci --no-build
 
       - uses: actions/upload-artifact@v3
         if: always()
