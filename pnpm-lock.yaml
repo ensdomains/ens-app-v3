@@ -271,8 +271,8 @@ importers:
         specifier: 0.5.0-beta.2
         version: 0.5.0-beta.2
       '@ensdomains/hardhat-toolbox-viem-extended':
-        specifier: ^0.0.3
-        version: 0.0.3(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)
+        specifier: ^0.0.4
+        version: 0.0.4(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
         version: 1.0.8(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))
@@ -1641,8 +1641,8 @@ packages:
     peerDependencies:
       viem: ^2.9.2
 
-  '@ensdomains/hardhat-toolbox-viem-extended@0.0.3':
-    resolution: {integrity: sha512-p24GUYRpHKqqo0UHAPtuiwbsFZBxqIZi75XyAU4zWcVbhGIDBiIkJe2BfvRRrrDelAx8PyVeoKRAzzMUxS3YUw==}
+  '@ensdomains/hardhat-toolbox-viem-extended@0.0.4':
+    resolution: {integrity: sha512-raAdDF56OCaPVvWr2UeXdK1/0fBkqAbNP+NqPBCosjGCOT/zVFjKUBKn+JeVfla6x1Gh6Ff0fiAt5hWIMSEC0w==}
     peerDependencies:
       '@nomicfoundation/hardhat-viem': ^2.0.3
       hardhat: ^2.22.9
@@ -10991,7 +10991,7 @@ snapshots:
       - typescript
       - zod
 
-  '@ensdomains/hardhat-toolbox-viem-extended@0.0.3(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)':
+  '@ensdomains/hardhat-toolbox-viem-extended@0.0.4(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)':
     dependencies:
       '@nomicfoundation/hardhat-viem': 2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       hardhat: 2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3)
