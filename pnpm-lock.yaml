@@ -102,6 +102,9 @@ overrides:
   wrtc: https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz
 
 patchedDependencies:
+  hardhat-deploy@0.12.4:
+    hash: n64qkpsa2rkenuni3ww4ngvaeq
+    path: patches/hardhat-deploy@0.12.4.patch
   next-dev-https@0.1.2:
     hash: q5l3x5627ujg3rak6l6v24c2cq
     path: patches/next-dev-https@0.1.2.patch
@@ -269,7 +272,7 @@ importers:
         version: 0.5.0-beta.2
       '@ensdomains/hardhat-toolbox-viem-extended':
         specifier: ^0.0.3
-        version: 0.0.3(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)
+        version: 0.0.3(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
         version: 1.0.8(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))
@@ -404,7 +407,7 @@ importers:
         version: 1.1.4(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))
       hardhat-deploy:
         specifier: ^0.12.4
-        version: 0.12.4(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+        version: 0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3)
       husky:
         specifier: ^7.0.4
         version: 7.0.4
@@ -4504,10 +4507,6 @@ packages:
 
   call-bind-apply-helpers@1.0.1:
     resolution: {integrity: sha512-BhYE+WDaywFg2TBWYNXAE+8B1ATnThNBqXHP5nQu0jWJdVvY2hvkpyB3qOmtmDePiS5/BDQ8wASEWGMWRG148g==}
-    engines: {node: '>= 0.4'}
-
-  call-bind@1.0.7:
-    resolution: {integrity: sha512-GHTSNSYICQ7scH7sZ+M2rFopRoLh8t2bLSW6BbgrtLsahOIB5iyAVJf9GjWK3cYTDaMj4XdBpM1cA6pIS0Kv2w==}
     engines: {node: '>= 0.4'}
 
   call-bind@1.0.8:
@@ -11000,11 +10999,11 @@ snapshots:
       - typescript
       - zod
 
-  '@ensdomains/hardhat-toolbox-viem-extended@0.0.3(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)':
+  '@ensdomains/hardhat-toolbox-viem-extended@0.0.3(@nomicfoundation/hardhat-viem@2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8))(hardhat-deploy@0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)':
     dependencies:
       '@nomicfoundation/hardhat-viem': 2.0.6(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3))(typescript@5.4.5)(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))(zod@3.23.8)
       hardhat: 2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3)
-      hardhat-deploy: 0.12.4(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+      hardhat-deploy: 0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3)
       typescript: 5.4.5
 
   '@ensdomains/headless-web3-provider@1.0.8(viem@2.19.4(bufferutil@4.0.7)(typescript@5.4.5)(utf-8-validate@6.0.3)(zod@3.23.8))':
@@ -14649,14 +14648,6 @@ snapshots:
       es-errors: 1.3.0
       function-bind: '@socketregistry/function-bind@1.0.5'
 
-  call-bind@1.0.7:
-    dependencies:
-      es-define-property: '@socketregistry/es-define-property@1.0.5'
-      es-errors: 1.3.0
-      function-bind: '@socketregistry/function-bind@1.0.5'
-      get-intrinsic: 1.2.4
-      set-function-length: '@socketregistry/set-function-length@1.0.5'
-
   call-bind@1.0.8:
     dependencies:
       call-bind-apply-helpers: 1.0.1
@@ -15187,9 +15178,9 @@ snapshots:
   deep-equal@2.2.3:
     dependencies:
       array-buffer-byte-length: '@socketregistry/array-buffer-byte-length@1.0.5'
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-get-iterator: '@socketregistry/es-get-iterator@1.0.5'
-      get-intrinsic: 1.2.4
+      get-intrinsic: 1.2.7
       is-arguments: '@socketregistry/is-arguments@1.0.5'
       is-array-buffer: '@socketregistry/is-array-buffer@1.0.5'
       is-date-object: '@socketregistry/is-date-object@1.0.5'
@@ -16440,7 +16431,7 @@ snapshots:
     dependencies:
       hardhat: 2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@6.0.3)
 
-  hardhat-deploy@0.12.4(bufferutil@4.0.7)(utf-8-validate@6.0.3):
+  hardhat-deploy@0.12.4(patch_hash=n64qkpsa2rkenuni3ww4ngvaeq)(bufferutil@4.0.7)(utf-8-validate@6.0.3):
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0

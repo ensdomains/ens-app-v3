@@ -285,7 +285,8 @@
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
+      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
+      "hardhat-deploy@0.12.4": "patches/hardhat-deploy@0.12.4.patch"
     }
   },
   "packageManager": "pnpm@9.3.0"
