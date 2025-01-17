@@ -48,13 +48,14 @@
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
     "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES",
     "knip": "knip",
-    "knip:fix": "knip --fix --allow-remove-files"
+    "knip:fix": "knip --fix --allow-remove-files",
+    "hh": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only' hardhat"
   },
   "dependencies": {
     "@adraffy/ens-normalize": "1.10.1",
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
-    "@ensdomains/ens-contracts": "1.2.3",
+    "@ensdomains/ens-contracts": "1.2.4",
     "@ensdomains/ensjs": "4.0.2",
     "@ensdomains/thorin": "0.6.50",
     "@metamask/post-message-stream": "^6.1.2",

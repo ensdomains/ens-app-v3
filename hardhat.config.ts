@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
+import '@ensdomains/hardhat-toolbox-viem-extended'
+import '@nomicfoundation/hardhat-toolbox-viem'
 import 'dotenv/config'
 import 'hardhat-deploy'
-import '@nomicfoundation/hardhat-toolbox-viem'
-import '@ensdomains/hardhat-toolbox-viem-extended'
 
 import { resolve } from 'node:path'
 
@@ -75,6 +75,9 @@ const config: HardhatUserConfig = {
         deploy: resolve(ensContractsPath, './build/deploy'),
       },
     ],
+  },
+  paths: {
+    artifacts: resolve(ensContractsPath, 'artifacts'),
   },
 }
 
