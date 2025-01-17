@@ -3,8 +3,9 @@
 import 'dotenv/config'
 import 'hardhat-deploy'
 import '@nomicfoundation/hardhat-toolbox-viem'
-import "@ensdomains/hardhat-toolbox-viem-extended"
-import { resolve } from 'path'
+import '@ensdomains/hardhat-toolbox-viem-extended'
+
+import { resolve } from 'node:path'
 
 import { HardhatUserConfig } from 'hardhat/config'
 
@@ -77,9 +78,9 @@ const config: HardhatUserConfig = {
   },
 }
 
-declare module "@nomicfoundation/hardhat-viem/types.js" {
+declare module '@nomicfoundation/hardhat-viem/types.js' {
   interface Register {
-    config: typeof config;
+    config: typeof config
   }
 }
 

@@ -3,14 +3,13 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { labelhash, namehash } from 'viem'
 
-
 const ZERO_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 const names = ['legacy']
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { viem } = hre
-  const { owner,vi } = await viem.getNamedClients()
+  const { owner, vi } = await viem.getNamedClients()
 
   const registry = await viem.getContract('LegacyENSRegistry', owner)
 
@@ -38,7 +37,7 @@ func.tags = ['legacy-registry-names']
 func.dependencies = ['ENSRegistry']
 func.skip = async function (hre: HardhatRuntimeEnvironment) {
   const { viem } = hre
-  const { owner } = await viem.getNamedClients() 
+  const { owner } = await viem.getNamedClients()
 
   const registry = await viem.getContract('LegacyENSRegistry', owner)
 

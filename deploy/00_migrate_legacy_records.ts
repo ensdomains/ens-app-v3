@@ -5,7 +5,6 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { namehash } from 'viem'
 
-
 const names = [
   {
     label: 'migrated-resolver-to-be-updated',

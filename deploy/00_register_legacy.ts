@@ -7,7 +7,6 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import pako from 'pako'
 import { labelhash, namehash, stringToBytes } from 'viem'
 
-
 const dummyABI = [
   {
     type: 'event',

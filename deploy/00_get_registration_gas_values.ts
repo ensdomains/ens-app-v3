@@ -11,7 +11,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (!hre.network.tags.generate) {
     return true
   }
-  const { getUnnamedAccounts, network ,viem} = hre
+  const { getUnnamedAccounts, network, viem } = hre
   const allUnnamedAccts = await getUnnamedAccounts()
 
   const controller = await viem.getContract('ETHRegistrarController')
