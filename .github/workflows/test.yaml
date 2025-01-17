@@ -57,7 +57,7 @@ jobs:
         run: tar -cvf stateless-build.tar out
 
       - name: Upload stateless
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: stateless-build
           path: stateless-build.tar
@@ -85,7 +85,7 @@ jobs:
         run: tar -cvf stateful-build.tar out
 
       - name: Upload stateful
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: stateful-build
           path: stateful-build.tar
@@ -130,7 +130,7 @@ jobs:
         run: |
           PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: stateless-report
@@ -184,7 +184,7 @@ jobs:
           # NEXT_PUBLIC_GRAPH_URI: https://api.studio.thegraph.com/query/49574/ensholesky/version/latest
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: stateful-report
