@@ -124,7 +124,7 @@ jobs:
         run: tar -xvf stateless-build.tar
 
       - name: Install playwright
-        run: npx playwright install chromium
+        run: pnpm playwright install chromium
 
       - name: Run tests
         run: |
@@ -173,13 +173,13 @@ jobs:
         run: tar -xvf stateful-build.tar
 
       - name: Install playwright
-        run: npx playwright install chromium
+        run: pnpm playwright install chromium
 
       - name: Run tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
+          "pnpm wait-on http://127.0.0.1:8788 && pnpm playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           # NEXT_PUBLIC_GRAPH_URI: https://api.studio.thegraph.com/query/49574/ensholesky/version/latest
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}

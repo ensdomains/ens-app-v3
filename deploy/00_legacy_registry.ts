@@ -9,7 +9,7 @@ const names = ['legacy']
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { viem } = hre
-  const { owner, vi } = await viem.getNamedClients()
+  const { owner } = await viem.getNamedClients()
 
   const registry = await viem.getContract('LegacyENSRegistry', owner)
 

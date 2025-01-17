@@ -28,7 +28,7 @@ module.exports = {
     },
     {
       command: `pnpm wait-on http://localhost:8788 && ${
-        process.env.CI ? `npx playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}` : 'npx playwright'
+        process.env.CI ? `pnpm playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}` : 'pnpm playwright'
       }`,
       name: 'playwright',
       prefixColor: 'yellow.bold',
