@@ -24,9 +24,9 @@ import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { ConnectButton } from '@app/components/@molecules/ConnectButton/ConnectButton'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { Card } from '@app/components/Card'
-import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
@@ -541,7 +541,9 @@ const Pricing = ({
   const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
 
   const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
-    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : PaymentMethod.ethereum,
+    hasPendingMoonpayTransaction || balance?.value === 0n
+      ? PaymentMethod.moonpay
+      : PaymentMethod.ethereum,
   )
 
   // Keep radio button choice up to date

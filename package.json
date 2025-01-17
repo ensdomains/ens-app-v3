@@ -3,10 +3,10 @@
   "version": "0.1.123",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
-    "dev:https": "next-dev-https --https --qr --port 3000",
+    "dev:https": "next dev --experimental-https --port 443",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
-    "dev:glocal": "rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_ETH_NODE=anvil pnpm dev:nlocal",
+    "dev:glocal": "SWC_CACHE=false rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_ETH_NODE=anvil pnpm dev:nlocal",
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.studio.thegraph.com/query/49574/ensholesky/version/latest pnpm dev",
     "build": "next build",
     "build:preview": "NEXT_PUBLIC_ENSJS_DEBUG=true next build --profile",
@@ -59,8 +59,7 @@
     "@metamask/post-message-stream": "^6.1.2",
     "@metamask/providers": "^14.0.2",
     "@noble/hashes": "^1.3.2",
-    "@rainbow-me/rainbowkit": "2.1.2",
-    "@sentry/nextjs": "7.43.x",
+    "@sentry/nextjs": "^7.43.0",
     "@splidejs/react-splide": "^0.7.12",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/query-persist-client-core": "5.22.2",
@@ -68,10 +67,14 @@
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-devtools": "^5.59.0",
     "@tanstack/react-query-persist-client": "5.22.2",
+    "@usecapsule/rainbowkit": "3.6.0",
+    "@usecapsule/rainbowkit-wallet": "1.6.0",
     "@wagmi/core": "2.13.3",
     "calendar-link": "^2.2.0",
     "dequal": "2.0.3",
     "dns-packet": "^5.4.0",
+    "form-data": "^4.0.0",
+    "glob": "^8.0.3",
     "graphql-request": "5.1.0",
     "i18next": "^21.9.1",
     "i18next-browser-languagedetector": "^6.1.5",
@@ -81,6 +84,7 @@
     "iso-639-1": "^2.1.15",
     "markdown-to-jsx": "^7.1.7",
     "next": "13.5.6",
+    "node-forge": "1.3.1",
     "node-fetch": "^3.3.2",
     "react": "*",
     "react-confetti": "^6.1.0",
@@ -276,7 +280,8 @@
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
+      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
+      "node-forge@1.3.1": "patches/node-forge@1.3.1.patch"
     }
   },
   "packageManager": "pnpm@9.3.0"

@@ -1,10 +1,11 @@
 import { queryOptions } from '@tanstack/react-query'
+import { switchChain } from '@wagmi/core'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { BaseError } from 'viem'
-import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
+import { useClient, useConnections, useConnectorClient, useSendTransaction } from 'wagmi'
 
 import {
   Button,
@@ -36,11 +37,13 @@ import { ConfigWithEns, TransactionDisplayItem } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
+import { wagmiConfig } from '@app/utils/query/wagmi'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
 import {
   createTransactionRequestQueryFn,
+  createTransactionRequestUnsafe,
   getTransactionErrorQueryFn,
   getUniqueTransaction,
   transactionSuccessHandler,
@@ -305,6 +308,34 @@ const getPreTransactionError = ({
     })
 }
 
+const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
+export const handleSendTransaction = async (
+  request: Awaited<ReturnType<typeof createTransactionRequestUnsafe>>,
+  actionName: string,
+  trackEvent: ReturnType<typeof useEventTracker>['trackEvent'],
+  sendTransaction: ReturnType<typeof useSendTransaction>['sendTransaction'],
+) => {
+  if (!request) {
+    throw Error('No request object')
+  }
+  // Basically for headless-web3-wallet
+  if (!isLocalProvider) {
+    await switchChain(wagmiConfig, { chainId: request?.chainId })
+  }
+
+  sendTransaction(request)
+
+  const eventName = match(actionName)
+    .with('commitName', () => 'commit_wallet_opened' as const)
+    .with('registerName', () => 'register_wallet_opened' as const)
+    .with('approveDnsRegistrar', () => 'dns_approve_registrar_wallet_opened' as const)
+    .with('importDnsName', () => 'dns_import_wallet_opened' as const)
+    .with('claimDnsName', () => 'dns_claim_wallet_opened' as const)
+    .otherwise(() => undefined)
+
+  if (eventName) trackEvent({ eventName })
+}
+
 export const TransactionStageModal = ({
   actionName,
   currentStep,
@@ -323,7 +354,6 @@ export const TransactionStageModal = ({
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
   const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
   const client = useClient()
-
   const addRecentTransaction = useAddRecentTransaction()
 
   const stage = transaction.stage || 'confirm'
@@ -368,9 +398,11 @@ export const TransactionStageModal = ({
     queryFn: createTransactionRequestQueryFn,
   })
 
+  const connections = useConnections()
+
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
-    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp }),
+    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp, connections }),
   })
 
   const transactionRequestQuery = useQuery({
@@ -504,7 +536,7 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          onClick={() => sendTransaction(request!)}
+          onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
           disabled={!canEnableTransactionRequest || requestLoading || !request}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
@@ -548,18 +580,7 @@ export const TransactionStageModal = ({
           !!requestError ||
           isTransactionRequestCachedData
         }
-        onClick={() => {
-          sendTransaction(request!)
-
-          const eventName = match(actionName)
-            .with('commitName', () => 'commit_wallet_opened' as const)
-            .with('registerName', () => 'register_wallet_opened' as const)
-            .with('approveDnsRegistrar', () => 'dns_approve_registrar_wallet_opened' as const)
-            .with('importDnsName', () => 'dns_import_wallet_opened' as const)
-            .with('claimDnsName', () => 'dns_claim_wallet_opened' as const)
-            .otherwise(() => undefined)
-          if (eventName) trackEvent({ eventName })
-        }}
+        onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
         data-testid="transaction-modal-confirm-button"
       >
         {t('transaction.dialog.confirm.openWallet')}

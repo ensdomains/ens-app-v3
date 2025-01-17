@@ -16,10 +16,10 @@ import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { checkIsSafeApp } from '@app/utils/safe'
 
+import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 import { useMockedUseQueryOptions } from '../../../../../test/mock/useMockedUseQueryOptions'
 import { calculateGasLimit, transactionSuccessHandler } from './query'
 import { handleBackToInput, TransactionStageModal } from './TransactionStageModal'
-import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/chain/useChainName')
@@ -28,6 +28,18 @@ vi.mock('@app/hooks/transactions/useAddRecentTransaction')
 vi.mock('@app/hooks/transactions/useRecentTransactions')
 vi.mock('@app/hooks/chain/useInvalidateOnBlock')
 vi.mock('@app/utils/safe')
+vi.mock('@wagmi/core', async () => {
+  const actual = await vi.importActual('@wagmi/core')
+  return {
+    ...actual,
+    getFeeHistory: vi.fn().mockResolvedValue({
+      baseFeePerGas: [],
+      gasUsedRatio: [],
+      oldestBlock: 0n,
+      reward: [],
+    }),
+  }
+})
 
 vi.mock('wagmi')
 vi.mock('viem/actions')
@@ -194,6 +206,7 @@ describe('TransactionStageModal', () => {
           expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
         )
       })
+
       it('should disable confirm button and re-estimate gas if a unique identifier is changed', async () => {
         mockEstimateGas.mockResolvedValue(1n)
         mockUseIsSafeApp.mockReturnValue({ data: false })
@@ -215,12 +228,13 @@ describe('TransactionStageModal', () => {
             key="component-default"
           />,
         )
-        expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled()
-        await waitFor(() =>
-          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
-        )
+        expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
+          await waitFor(() =>
+            expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
+          )
         expect(mockEstimateGas).toHaveBeenCalledTimes(1)
       })
+
       it('should only show confirm button as enabled if gas is estimated and sendTransaction func is defined', async () => {
         mockEstimateGas.mockResolvedValue(1n)
         mockUseSendTransaction.mockReturnValue({
@@ -308,7 +322,7 @@ describe('TransactionStageModal', () => {
         )
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',
-          payload: { hash: '0x123', key: 'test'},
+          payload: { hash: '0x123', key: 'test' },
         })
       })
       it('should add to recent transactions and run dispatch from success callback when isSafeTx', async () => {
@@ -331,7 +345,7 @@ describe('TransactionStageModal', () => {
         )
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',
-          payload: { hash: '0x123', key: 'test'},
+          payload: { hash: '0x123', key: 'test' },
         })
       })
     })
@@ -449,7 +463,10 @@ describe('transactionSuccessHandler', () => {
 
     await waitFor(() =>
       expect(mockDispatch).toBeCalledWith(
-        expect.objectContaining({ name: 'setTransactionHash', payload: { hash: '0xhash', key: 'txKey'} }),
+        expect.objectContaining({
+          name: 'setTransactionHash',
+          payload: { hash: '0xhash', key: 'txKey' },
+        }),
       ),
     )
   })
