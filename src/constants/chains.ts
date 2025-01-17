@@ -74,9 +74,17 @@ export const getChainsFromUrl = () => {
     return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
   }
 
-  if ((hostname === 'localhost' || hostname === '127.0.0.1') && chainParam) {
-    if (chainParam === 'sepolia') return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
-    if (chainParam === 'holesky') return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    if (chainParam) {
+      if (chainParam === 'holesky') return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
+      if (chainParam === 'sepolia') return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
+    }
+    return [
+      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
+      holeskyWithEns,
+      mainnetWithEns,
+      sepoliaWithEns,
+    ]
   }
 
   if (!hostname.includes('app.ens.domains'))

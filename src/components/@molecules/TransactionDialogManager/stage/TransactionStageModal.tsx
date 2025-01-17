@@ -315,17 +315,18 @@ const getPreTransactionError = ({
     })
 }
 
+const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 export const handleSendTransaction = async (
   request: Awaited<ReturnType<typeof createTransactionRequestUnsafe>>,
   actionName: string,
   trackEvent: ReturnType<typeof useEventTracker>['trackEvent'],
   sendTransaction: ReturnType<typeof useSendTransaction>['sendTransaction'],
-  chainId: SupportedChain['id'],
 ) => {
   if (!request) {
     throw Error('No request object')
   }
-  if (request?.chainId !== chainId) {
+  // Basically for headless-web3-wallet
+  if (!isLocalProvider) {
     await switchChain(wagmiConfig, { chainId: request?.chainId })
   }
 
