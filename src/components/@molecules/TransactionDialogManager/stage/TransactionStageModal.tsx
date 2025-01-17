@@ -5,13 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { BaseError } from 'viem'
-import {
-  useChainId,
-  useClient,
-  useConnections,
-  useConnectorClient,
-  useSendTransaction,
-} from 'wagmi'
+import { useClient, useConnections, useConnectorClient, useSendTransaction } from 'wagmi'
 
 import {
   Button,
@@ -27,7 +21,6 @@ import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { Outlink } from '@app/components/Outlink'
-import { SupportedChain } from '@app/constants/chains'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
@@ -357,7 +350,6 @@ export const TransactionStageModal = ({
 }: ManagedDialogProps) => {
   const { t } = useTranslation()
   const chainName = useChainName()
-  const chainId = useChainId()
   const { trackEvent } = useEventTracker()
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
   const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
@@ -544,9 +536,7 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          onClick={() =>
-            handleSendTransaction(request!, actionName, trackEvent, sendTransaction, chainId)
-          }
+          onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
           disabled={!canEnableTransactionRequest || requestLoading || !request}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
@@ -590,9 +580,7 @@ export const TransactionStageModal = ({
           !!requestError ||
           isTransactionRequestCachedData
         }
-        onClick={() =>
-          handleSendTransaction(request!, actionName, trackEvent, sendTransaction, chainId)
-        }
+        onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
         data-testid="transaction-modal-confirm-button"
       >
         {t('transaction.dialog.confirm.openWallet')}
