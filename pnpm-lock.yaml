@@ -112,9 +112,6 @@ importers:
 
   .:
     dependencies:
-      '@adraffy/ens-normalize':
-        specifier: 1.10.1
-        version: 1.10.1
       '@ensdomains/address-encoder':
         specifier: 1.1.1
         version: 1.1.1
@@ -199,9 +196,6 @@ importers:
       immer:
         specifier: ^9.0.15
         version: 9.0.21
-      intl-segmenter-polyfill:
-        specifier: ^0.4.4
-        version: 0.4.4
       iso-639-1:
         specifier: ^2.1.15
         version: 2.1.15
@@ -299,9 +293,6 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.5.2
         version: 14.5.2(@testing-library/dom@9.3.4)
-      '@types/lodash':
-        specifier: ^4.14.184
-        version: 4.17.4
       '@types/node':
         specifier: ^18.7.13
         version: 18.19.33
@@ -407,18 +398,9 @@ importers:
       knip:
         specifier: ^5.27.2
         version: 5.27.4(@types/node@18.19.33)(typescript@5.4.5)
-      lokijs:
-        specifier: ^1.5.12
-        version: 1.5.12
       msw:
         specifier: ^2.6.8
         version: 2.6.8(@types/node@18.19.33)(typescript@5.4.5)
-      multiformats:
-        specifier: ^12.0.1
-        version: 12.1.3
-      next-compose-plugins:
-        specifier: ^2.2.1
-        version: 2.2.1
       next-dev-https:
         specifier: ^0.1.2
         version: 0.1.2(patch_hash=q5l3x5627ujg3rak6l6v24c2cq)(next@13.5.6(@babel/core@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -3628,9 +3610,6 @@ packages:
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
 
-  '@types/lodash@4.17.4':
-    resolution: {integrity: sha512-wYCP26ZLxaT3R39kiN2+HcJ4kTd3U1waI/cY7ivWYqFP6pW3ZNpvi6Wd6PHZx7T/t8z0vlkXMg3QYLa7DZ/IJQ==}
-
   '@types/lru-cache@5.1.1':
     resolution: {integrity: sha512-ssE3Vlrys7sdIzs5LOxCzTVMsU7i9oa/IaW92wF32JFb3CVczqOkru2xspuKczHEbG3nvmPY7IFqVmGGHdNbYw==}
 
@@ -5727,9 +5706,6 @@ packages:
   fast-shallow-equal@1.0.0:
     resolution: {integrity: sha512-HPtaa38cPgWvaCFmRNhlc6NG7pv6NUHqjPgVAkWGoB9mQMwYB27/K0CvOM5Czy+qpT3e8XJ6Q4aPAnzpNpzNaw==}
 
-  fast-text-encoding@1.0.6:
-    resolution: {integrity: sha512-VhXlQgj9ioXCqGstD37E/HBeqEGV/qOD/kmbVG8h5xKBYvM1L3lR1Zn4555cQ8GkYbJa8aJSipLPndE1k6zK2w==}
-
   fast-xml-parser@4.4.1:
     resolution: {integrity: sha512-xkjOecfnKGkSsOwtZ5Pz7Us/T6mrbPQrq0nh+aCO5V9nk5NLWmasAHumTKjiPJPWANe+kAZ84Jc8ooJkzZ88Sw==}
     hasBin: true
@@ -6333,9 +6309,6 @@ packages:
   inline-style-prefixer@7.0.0:
     resolution: {integrity: sha512-I7GEdScunP1dQ6IM2mQWh6v0mOYdYmH3Bp31UecKdrcUgcURTcctSe1IECdUznSHKSmsHtjrT3CwCPI1pyxfUQ==}
 
-  intl-segmenter-polyfill@0.4.4:
-    resolution: {integrity: sha512-dIOcmvH+Q1WYGkjMqxPfaCgHEwOegH5UPcd/LLeaeY8aguHadC46MzGb40q8C1LrsuyJxJGKeKqoVtIh9ADRXQ==}
-
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
 
@@ -6839,9 +6812,6 @@ packages:
     resolution: {integrity: sha512-/3ER20CTTbahrCrpYfPn7Xavv9diBROZpoXGVZDWMw4b/X4uuUwAC0ki85tgsdMRONURyIJbcOvS94QsUBYPbQ==}
     hasBin: true
 
-  lokijs@1.5.12:
-    resolution: {integrity: sha512-Q5ALD6JiS6xAUWCwX3taQmgwxyveCtIIuL08+ml0nHwT3k0S/GIFJN+Hd38b1qYIMaE5X++iqsqWVksz7SYW+Q==}
-
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
@@ -7313,9 +7283,6 @@ packages:
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
-
-  next-compose-plugins@2.2.1:
-    resolution: {integrity: sha512-OjJ+fV15FXO2uQXQagLD4C0abYErBjyjE0I0FHpOEIB8upw0hg1ldFP6cqHTJBH1cZqy96OeR3u1dJ+Ez2D4Bg==}
 
   next-dev-https@0.1.2:
     resolution: {integrity: sha512-W4jtVzDWbRdsh0EhYsjzyY3Rr0bknWmy0fcKZnGCIZwzgkRJQUDSNaumkKEmq82gK633fz1cuso1UmMEXokIBA==}
@@ -14003,8 +13970,6 @@ snapshots:
     dependencies:
       '@types/node': 18.19.44
 
-  '@types/lodash@4.17.4': {}
-
   '@types/lru-cache@5.1.1': {}
 
   '@types/minimist@1.2.5': {}
@@ -16829,8 +16794,6 @@ snapshots:
 
   fast-shallow-equal@1.0.0: {}
 
-  fast-text-encoding@1.0.6: {}
-
   fast-xml-parser@4.4.1:
     dependencies:
       strnum: 1.0.5
@@ -17583,10 +17546,6 @@ snapshots:
       css-in-js-utils: 3.1.0
       fast-loops: 1.1.3
 
-  intl-segmenter-polyfill@0.4.4:
-    dependencies:
-      fast-text-encoding: 1.0.6
-
   invariant@2.2.4:
     dependencies:
       loose-envify: 1.4.0
@@ -18162,8 +18121,6 @@ snapshots:
       ansi-fragments: 0.2.1
       dayjs: 1.11.12
       yargs: 15.4.1
-
-  lokijs@1.5.12: {}
 
   loose-envify@1.4.0:
     dependencies:
@@ -18774,8 +18731,6 @@ snapshots:
   negotiator@0.6.3: {}
 
   neo-async@2.6.2: {}
-
-  next-compose-plugins@2.2.1: {}
 
   next-dev-https@0.1.2(patch_hash=q5l3x5627ujg3rak6l6v24c2cq)(next@13.5.6(@babel/core@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
     dependencies:
