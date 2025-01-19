@@ -26,7 +26,7 @@ import {
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
 
-  test('should allow normal registration', async ({
+  test('should allow normal registration, if primary name is set, name is wrapped', async ({
     page,
     login,
     accounts,
@@ -297,7 +297,7 @@ test.describe.serial('normal registration', () => {
     )
   })
 
-  test('should allow registering a non-primary name', async ({
+  test('registering a non-primary name should not be wrapped', async ({
     page,
     accounts,
     time,
@@ -346,7 +346,7 @@ test.describe.serial('normal registration', () => {
   })
 })
 
-test('should allow registering a premium name', async ({
+test('registering a premium name with no records should not be wrapped', async ({
   page,
   login,
   accounts,
@@ -391,6 +391,328 @@ test('should allow registering a premium name', async ({
   await test.step('confirm name is unwrapped', async () => {
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(premiumName)
+
+  await expect(morePage.wrapButton).toBeVisible()
+})
+
+test('registering a premium name with primary name not set should not be wrapped', async ({
+  page,
+  login,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  await setPrimaryName(walletClient, {
+    name: 'premium',
+    account: createAccounts().getAddress('user2') as `0x${string}`,
+  })
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+  await login.connect()
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await testClient.increaseTime({ seconds: 120 })
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+
+  await test.step('confirm name is wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(premiumName)
+  await expect(morePage.wrapButton).toBeVisible()
+
+  const recordsPage = makePageObject('RecordsPage')
+  await recordsPage.goto(premiumName)
+
+  await expect(recordsPage.getRecordValue('address', 'ETH')).toHaveText(
+    createAccounts().getAddress('user') as `0x${string}`,
+  )
+})
+
+test('registering a premium name with primary name set should be wrapped', async ({
+  page,
+  login,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  await setPrimaryName(walletClient, {
+    name: 'premium',
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+  await login.connect()
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await testClient.increaseTime({ seconds: 120 })
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+
+  await test.step('confirm name is wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(premiumName)
+  await expect(morePage.wrapButton).toHaveCount(0)
+
+  const recordsPage = makePageObject('RecordsPage')
+  await recordsPage.goto(premiumName)
+
+  await expect(recordsPage.getRecordValue('address', 'ETH')).toHaveText(
+    createAccounts().getAddress('user') as `0x${string}`,
+  )
+})
+
+test('registering a premium name with existing records should not be wrapped', async ({
+  page,
+  login,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      records: {
+        coins: [
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+          {
+            coin: 'ETH',
+            value: createAccounts().getAddress('user') as `0x${string}`,
+          },
+        ],
+      },
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+  await login.connect()
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await testClient.increaseTime({ seconds: 120 })
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+
+  const recordsPage = makePageObject('RecordsPage')
+  await recordsPage.goto(premiumName)
+
+  await expect(recordsPage.getRecordValue('address', 'ETH')).toHaveText(
+    createAccounts().getAddress('user') as `0x${string}`,
+  )
+})
+
+test('registering a wrapped premium name with no records should not be wrapped', async ({
+  page,
+  login,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'wrapped',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+  await login.connect()
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await testClient.increaseTime({ seconds: 120 })
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+
+  await test.step('confirm name is unwrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(premiumName)
+
+  await expect(morePage.wrapButton).toBeVisible()
+
+  const recordsPage = makePageObject('RecordsPage')
+  await recordsPage.goto(premiumName)
+
+  await expect(recordsPage.getRecordValue('address', 'ETH')).toHaveText(
+    createAccounts().getAddress('user') as `0x${string}`,
+  )
+})
+
+test('registering a wrapped premium name with records set should be wrapped', async ({
+  page,
+  login,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user',
+      type: 'wrapped',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+      records: {
+        coins: [
+          {
+            coin: 'ETH',
+            value: createAccounts().getAddress('user') as `0x${string}`,
+          },
+          {
+            coin: 'etcLegacy',
+            value: '0x42D63ae25990889E35F215bC95884039Ba354115',
+          },
+        ],
+      },
+    },
+    { timeOffset: 500 },
+  )
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+  await login.connect()
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await testClient.increaseTime({ seconds: 120 })
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+
+  await test.step('confirm name is wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(premiumName)
+  await expect(morePage.wrapButton).toHaveCount(0)
+
+  const recordsPage = makePageObject('RecordsPage')
+  await recordsPage.goto(premiumName)
+
+  await expect(recordsPage.getRecordValue('address', 'ETH')).toHaveText(
+    createAccounts().getAddress('user') as `0x${string}`,
+  )
 })
 
 test('should allow registering a name and resuming from the commit toast', async ({
