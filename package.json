@@ -54,6 +54,7 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
+    "@ensdomains/ens-test-env": "0.5.0-beta.2",
     "@ensdomains/ensjs": "4.0.2",
     "@ensdomains/thorin": "1.0.0-beta.20",
     "@metamask/post-message-stream": "^6.1.2",
@@ -72,7 +73,6 @@
     "calendar-link": "^2.2.0",
     "dequal": "2.0.3",
     "dns-packet": "^5.4.0",
-    "graphql-request": "5.1.0",
     "i18next": "^21.9.1",
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
@@ -96,8 +96,7 @@
     "ts-pattern": "^4.2.2",
     "use-immer": "^0.7.0",
     "viem": "2.19.4",
-    "wagmi": "2.12.4",
-    "@ensdomains/ens-test-env": "0.5.0-beta.2"
+    "wagmi": "2.12.4"
   },
   "peerDependencies": {
     "react": "*",
