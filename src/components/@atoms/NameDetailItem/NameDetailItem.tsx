@@ -74,8 +74,6 @@ const NameItemContent = styled.div(
     position: relative;
     flex-direction: column;
     overflow: hidden;
-    min-width: 0;
-    width: 0;
   `,
 )
 
