@@ -1,25 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
 export const useGetSegmentLength = () => {
-  const [loading, setLoading] = useState(true)
   const { Segmenter } = window.Intl
-  useEffect(() => {
-    if (!Segmenter) {
-      // Firefox Intl.Segmenter polyfill. Safely remove, when couple of minor release after the feature lands,
-      // track the status here: https://bugzilla.mozilla.org/show_bug.cgi?id=1423593
-      console.warn('Intl.Segmenter is not supported, loading polyfill')
-      ;(async () => {
-        const { createIntlSegmenterPolyfill } = await import('intl-segmenter-polyfill')
-        ;(window.Intl.Segmenter as (typeof Intl)['Segmenter']) = (await createIntlSegmenterPolyfill(
-          fetch('/wasm/break_iterator.wasm'),
-        )) as any
-        setLoading(false)
-      })()
-    } else {
-      setLoading(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const getSegmentLength = useCallback(
     (name: string) => {
@@ -29,5 +11,5 @@ export const useGetSegmentLength = () => {
     [Segmenter],
   )
 
-  return { getSegmentLength, loading }
+  return { getSegmentLength }
 }
