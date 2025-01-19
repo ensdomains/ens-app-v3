@@ -22,7 +22,7 @@ const Container = styled.button<{ $selected?: boolean }>(
     border-style: solid;
     border-radius: ${theme.radii.medium};
     border-color: ${theme.colors.border};
-    background-color: white;
+    background-color: ${theme.colors.background};
     padding: ${theme.space[4]} ${theme.space[2]};
     cursor: pointer;
 

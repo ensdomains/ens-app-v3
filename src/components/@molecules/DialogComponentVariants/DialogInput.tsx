@@ -6,6 +6,7 @@ import { Input } from '@ensdomains/thorin'
 const Wrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
+    z-index: 1;
     margin-bottom: -${theme.space['4']};
     @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: -${theme.space['6']};

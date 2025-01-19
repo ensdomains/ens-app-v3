@@ -6,8 +6,10 @@ import { Dialog } from '@ensdomains/thorin'
 const Wrapper = styled.div<{ $fullWidth?: boolean }>(
   ({ theme, $fullWidth }) => css`
     border-top: 1px solid ${theme.colors.border};
-    width: 100%;
+    width: ${theme.space.full};
     padding-top: ${theme.space['4']};
+    background-color: ${theme.colors.background};
+    z-index: 1;
 
     ${$fullWidth &&
     css`

@@ -136,7 +136,7 @@ const AvatarButton = ({
         [
           {
             label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-            color: 'black',
+            color: 'text',
             onClick: handleSelectOption('nft'),
           },
           ...(disabledUpload
@@ -144,7 +144,7 @@ const AvatarButton = ({
             : [
                 {
                   label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-                  color: 'black',
+                  color: 'text',
                   onClick: handleSelectOption('upload'),
                 },
               ]),
