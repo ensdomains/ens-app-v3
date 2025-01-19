@@ -377,9 +377,6 @@ importers:
       ethers:
         specifier: ^5.7.2
         version: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      graphql-request:
-        specifier: 6.1.0
-        version: 6.1.0(encoding@0.1.13)(graphql@16.8.1)
       hardhat:
         specifier: ^2.10.2
         version: 2.22.4(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@5.0.10)
