@@ -678,12 +678,21 @@ test('registering a wrapped premium name with records set should be wrapped', as
   await page.goto(`/${premiumName}/register`)
   await login.connect()
 
+  await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
-  if (await page.getByTestId('profile-submit-button').isVisible()) {
+
+  await page.getByTestId('setup-profile-button').click()
+
+  await test.step('add a text record', async () => {
+    await page.getByTestId('show-add-profile-records-modal-button').click()
+    await page.getByTestId('confirmation-dialog-confirm-button').click()
+    await page.getByTestId('profile-record-option-name').click()
+    await page.getByTestId('add-profile-records-button').click()
+    await page.getByTestId('profile-record-input-input-name').fill('Test Name')
     await page.getByTestId('profile-submit-button').click()
-  }
+  })
 
   await page.getByTestId('next-button').click()
   await transactionModal.confirm()
@@ -694,6 +703,7 @@ test('registering a wrapped premium name with records set should be wrapped', as
   await transactionModal.confirm()
 
   await page.getByTestId('view-name').click()
+
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
   )
@@ -709,6 +719,7 @@ test('registering a wrapped premium name with records set should be wrapped', as
   const recordsPage = makePageObject('RecordsPage')
   await recordsPage.goto(premiumName)
 
+  await expect(recordsPage.getRecordValue('text', 'name')).toHaveText('Test Name')
   await expect(recordsPage.getRecordValue('address', 'ETH')).toHaveText(
     createAccounts().getAddress('user') as `0x${string}`,
   )
