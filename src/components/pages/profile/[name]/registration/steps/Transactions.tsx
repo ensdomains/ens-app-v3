@@ -19,10 +19,10 @@ import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
 import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
 import { ONE_DAY } from '@app/utils/time'
 
-import { isLegacyRegistration } from '../../../../../../utils/registration/isLegacyRegistration'
 import { RegistrationReducerDataItem } from '../types'
 
 const PATTERNS = {

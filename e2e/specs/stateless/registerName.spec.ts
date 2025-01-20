@@ -63,8 +63,6 @@ test.describe.serial('normal registration', () => {
     await homePage.goto()
     await login.connect()
 
-    await page.pause()
-
     await test.step('should redirect to registration page', async () => {
       await homePage.searchInput.fill(name)
       await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
@@ -340,7 +338,6 @@ test.describe.serial('normal registration', () => {
     )
 
     await test.step('confirm name is unwrapped', async () => {
-      await page.pause()
       await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
     })
   })
@@ -368,6 +365,7 @@ test('registering a premium name with no records should not be wrapped', async (
   await page.goto(`/${premiumName}/register`)
   await login.connect()
 
+  await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
@@ -608,6 +606,7 @@ test('registering a wrapped premium name with no records should not be wrapped',
   await page.goto(`/${premiumName}/register`)
   await login.connect()
 
+  await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
@@ -952,7 +951,6 @@ test('should allow registering a premium name for two months', async ({
   )
 
   await test.step('confirm name is unwrapped', async () => {
-    await page.pause()
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
@@ -1015,7 +1013,6 @@ test('should not allow registering a premium name for less than 28 days', async 
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
 
-  await page.pause()
   await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
@@ -1037,7 +1034,6 @@ test('should not allow registering a premium name for less than 28 days', async 
   )
 
   await test.step('confirm name is unwrapped', async () => {
-    await page.pause()
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
@@ -1162,7 +1158,6 @@ test('should allow normal registration for a month', async ({
   )
 
   await test.step('confirm name is wrapped', async () => {
-    await page.pause()
     await expect(page.getByTestId('permissions-tab')).toBeVisible()
   })
 })
@@ -1298,7 +1293,6 @@ test('should not allow normal registration less than 28 days', async ({
   )
 
   await test.step('confirm name is wrapped (set primary name)', async () => {
-    await page.pause()
     await expect(page.getByTestId('permissions-tab')).toBeVisible()
   })
 })
@@ -1344,11 +1338,8 @@ test('should be able to detect an existing commit created on a private mempool f
 
     await transactionModal.closeButton.click()
 
-    await page.pause()
-
     await expect(consoleListener.getMessages().length).toBeGreaterThan(0)
     const commitHash = consoleListener.getMessages()[0].split(':')[1]?.trim() as Hash
-    console.log('>>>>>', commitHash)
 
     const approveTx = await walletClient.writeContract({
       abi: ethRegistrarControllerCommitSnippet,
@@ -1394,7 +1385,6 @@ test('should be able to detect an existing commit created on a private mempool f
     await expect(transactionModal.transactionModal).toHaveCount(0)
 
     await wallet.authorize(Web3RequestKind.SendTransaction)
-    // await transactionModal.confirm()
 
     await page.getByTestId('view-name').click()
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
@@ -1402,7 +1392,6 @@ test('should be able to detect an existing commit created on a private mempool f
     )
 
     await test.step('confirm name is unwrapped', async () => {
-      await page.pause()
       await expect(page.getByTestId('permissions-tab')).toBeVisible()
     })
   })
@@ -1442,8 +1431,6 @@ test('should be able to detect an existing commit created on a private mempool f
   // should go to profile editor step
   await page.getByTestId('next-button').click()
 
-  // await page.getByTestId('profile-submit-button').click()
-
   await test.step('should be able to find an existing commit', async () => {
     await page.getByTestId('next-button').click()
 
@@ -1451,7 +1438,6 @@ test('should be able to detect an existing commit created on a private mempool f
 
     await expect(consoleListener.getMessages().length).toBeGreaterThan(0)
     const commitHash = consoleListener.getMessages()[0].split(':')[1]?.trim() as Hash
-    console.log('>>>>>', commitHash)
 
     const approveTx = await walletClient.writeContract({
       abi: legacyEthRegistrarControllerCommitSnippet,
@@ -1478,7 +1464,6 @@ test('should be able to detect an existing commit created on a private mempool f
     await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
     await testClient.increaseTime({ seconds: 60 })
 
-    await page.pause()
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
   })
 
@@ -1499,7 +1484,6 @@ test('should be able to detect an existing commit created on a private mempool f
     await expect(transactionModal.transactionModal).toHaveCount(0)
 
     await wallet.authorize(Web3RequestKind.SendTransaction)
-    // await transactionModal.confirm()
 
     await page.getByTestId('view-name').click()
     await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
@@ -1507,7 +1491,6 @@ test('should be able to detect an existing commit created on a private mempool f
     )
 
     await test.step('confirm name is unwrapped', async () => {
-      await page.pause()
       await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
     })
   })
@@ -1602,7 +1585,6 @@ test.describe('Error handling', () => {
     })
 
     await test.step('transaction: commit', async () => {
-      await page.pause()
       await expect(page.getByText('Open Wallet')).toBeVisible()
       await transactionModal.confirm()
       await expect(page.getByText(`Your "Start timer" transaction was successful`)).toBeVisible()
