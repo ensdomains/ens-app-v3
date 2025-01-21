@@ -469,17 +469,10 @@ Cloudflare will automatically build and deploy a test site when pushed to a new 
 
 ## External Package Local Development
 
-1. Install yalc globally:
+2. Link a local package:
 
 ```bash
-npm i -g yalc
-```
-
-2. Run relevant update script within external repo, for example:
-
-```bash
-# Example publish script for ENSjs, be aware this may have changed.
-pnpm publish:local:ensjs
+pnpm link ../ensjs
 ```
 
 3. Run pnpm install within this repo:
@@ -488,7 +481,6 @@ pnpm publish:local:ensjs
 pnpm install
 ```
 
-If updating an existing yalc installation, you can add the `--force` flag.
 
 ## Coding guidelines
 
