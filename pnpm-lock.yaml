@@ -410,9 +410,6 @@ importers:
       lokijs:
         specifier: ^1.5.12
         version: 1.5.12
-      mini-wait-on:
-        specifier: ^1.1.1
-        version: 1.1.1
       msw:
         specifier: ^2.6.8
         version: 2.6.8(@types/node@18.19.33)(typescript@5.4.5)
@@ -7133,10 +7130,6 @@ packages:
   min-indent@1.0.1:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
     engines: {node: '>=4'}
-
-  mini-wait-on@1.1.1:
-    resolution: {integrity: sha512-svEks3tuexHqMz7WFoIeNsz39adIzANWaJQ2xyGYnqM9hBy4vux/IcCXVKOXzjSmCcAG2F2kZ+261saaNk7lng==}
-    hasBin: true
 
   miniflare@3.20240512.0:
     resolution: {integrity: sha512-X0PlKR0AROKpxFoJNmRtCMIuJxj+ngEcyTOlEokj2rAQ0TBwUhB4/1uiPvdI6ofW5NugPOD1uomAv+gLjwsLDQ==}
@@ -18571,8 +18564,6 @@ snapshots:
       dom-walk: 0.1.2
 
   min-indent@1.0.1: {}
-
-  mini-wait-on@1.1.1: {}
 
   miniflare@3.20240512.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
