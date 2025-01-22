@@ -25,7 +25,7 @@ jobs:
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start --no-graph --no-scripts --no-build" \
-          "pnpm mini-wait-on ./.env.local"'
+          "pnpm mini-wait-on file://./.env.local"'
 
       - run: pnpm test:coverage
 
@@ -48,7 +48,7 @@ jobs:
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start --no-graph --no-scripts --no-build" \
-          "pnpm mini-wait-on ./.env.local"'
+          "pnpm mini-wait-on file://./.env.local"'
 
       - name: Build stateless and export
         run: pnpm build:glocal && pnpm export
