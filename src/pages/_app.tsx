@@ -14,7 +14,7 @@ import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
 import {
   Mode,
-  darkTheme as thorinDarkTheme,
+  modeVars,
   lightTheme as thorinLightTheme,
   ThemeProvider as ThorinThemeProvider,
   useTheme,
@@ -166,10 +166,22 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
     },
   }
 
+  const themeWithCSSVars = {
+    ...thorinLightTheme,
+    colors: modeVars.color,
+    boxShadows: {
+      '0': '0 0 0 0 var(--thrn-color-backgroundPrimary)',
+      '0.02': '0 2px 8px var(--thrn-color-backgroundPrimary)',
+      '0.5': '0 0 0 0.125rem var(--thrn-color-backgroundPrimary)',
+      '0.25': '0 2px 12px var(--thrn-color-backgroundPrimary)',
+      '1': '0 0 0 0.25rem var(--thrn-color-backgroundPrimary)',
+    },
+  }
+
   return (
     <RainbowKitProvider theme={rainbowKitTheme}>
       <TransactionStoreProvider>
-        <ThemeProvider theme={theme.mode === 'dark' ? thorinDarkTheme : thorinLightTheme}>
+        <ThemeProvider theme={themeWithCSSVars}>
           <BreakpointProvider queries={breakpoints}>
             <IntercomProvider appId={INTERCOM_ID}>
               <GlobalStyle />
