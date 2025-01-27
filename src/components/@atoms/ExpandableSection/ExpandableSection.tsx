@@ -26,6 +26,8 @@ const IconWrapper = styled.div<{ $open: boolean }>(
   ({ theme, $open }) => css`
     display: flex;
     color: ${theme.colors.grey};
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
     transition:
       transform 0.3s ease-in-out,
       color 0.3s ease-in-out;

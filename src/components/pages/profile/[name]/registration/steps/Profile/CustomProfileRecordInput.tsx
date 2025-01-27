@@ -84,6 +84,8 @@ const InnerButtonWrapper = styled.div(
 
     svg {
       color: ${theme.colors.greyPrimary};
+      width: ${theme.space[4]};
+      height: ${theme.space[4]};
     }
 
     &:hover {
