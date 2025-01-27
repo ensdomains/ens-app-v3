@@ -18,7 +18,7 @@ const Container = styled.div(
     gap: ${theme.space['6']};
     padding: ${theme.space['6']};
     width: 100%;
-    border: 4px solid #fff;
+    border: 4px solid ${theme.colors.background};
     border-radius: 16px;
     background: linear-gradient(${theme.colors.greenLight} 100%, ${theme.colors.greenSurface} 100%);
 
