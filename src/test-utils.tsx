@@ -10,6 +10,7 @@ import type { Register } from 'wagmi'
 import { hashFn } from 'wagmi/query'
 
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+import { BreakpointProvider } from './utils/BreakpointProvider'
 
 import { mainnetWithEns } from '@app/constants/chains'
 
@@ -81,13 +82,23 @@ vi.mock('@app/utils/query/wagmi', () => ({
   infuraUrl: () => 'http://infura.io',
 }))
 
+const defaultQueries = {
+  xs: '(min-width: 360px)',
+  sm: '(min-width: 640px)',
+  md: '(min-width: 768px)',
+  lg: '(min-width: 1024px)',
+  xl: '(min-width: 1280px)',
+}
+
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
-          {children}
+          <BreakpointProvider queries={defaultQueries}>
+            {children}
+          </BreakpointProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
