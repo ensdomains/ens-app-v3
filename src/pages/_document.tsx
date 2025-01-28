@@ -75,10 +75,17 @@ export default class MyDocument extends Document {
       <Html>
         <Head>
           {process.env.NODE_ENV === 'production' && (
-            <meta
-              httpEquiv="Content-Security-Policy"
-              content="worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval';"
-            />
+            <>
+              <meta
+                httpEquiv="Content-Security-Policy"
+                content="default-src 'self'; worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none';"
+              />
+              <meta httpEquiv="X-Frame-Options" content="DENY" />
+              <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+              <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+              <meta httpEquiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload" />
+              <meta httpEquiv="Permissions-Policy" content="accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()" />
+            </>
           )}
           {/* eslint-disable-next-line react/no-danger */}
           <script dangerouslySetInnerHTML={{ __html: hiddenCheckScript }} />
