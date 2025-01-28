@@ -66,6 +66,7 @@ describe('SocialIcon', () => {
     
     expect(defaultIcon).toHaveStyle({ 
       position: 'absolute',
+      height: '100%',
       transition: '0.15s all ease-in-out',
       fill: 'var(--color-greyPrimary)'
     })
@@ -105,7 +106,14 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
     
-    expect(link).toHaveStyle({ color: 'var(--color-greyPrimary)' })
+    expect(link).toHaveStyle({ 
+      color: 'var(--color-greyPrimary)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      cursor: 'pointer'
+    })
     await userEvent.hover(link)
     expect(link).toHaveStyle({ color: customColor })
   })
@@ -177,9 +185,13 @@ describe('SocialIcon', () => {
     )
     const icon = screen.getByTestId('mock-icon')
     
-    expect(icon).toHaveStyle({ transition: '0.15s all ease-in-out' })
-    expect(icon).toHaveStyle({ fill: 'var(--color-greyPrimary)' })
+    expect(icon).toHaveStyle({ 
+      position: 'absolute',
+      height: '100%',
+      transition: '0.15s all ease-in-out',
+      fill: 'var(--color-greyPrimary)'
+    })
     await userEvent.hover(screen.getByRole('link'))
-    expect(icon).toHaveStyle({ fill: '#ff0000' })
+    expect(icon).toHaveStyle({ fill: customColor })
   })
 })
