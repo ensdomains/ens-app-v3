@@ -38,7 +38,12 @@ describe('SocialIcon', () => {
     expect(defaultIcon).toBeInTheDocument()
     expect(coloredIcon).toBeInTheDocument()
     const coloredIconWrapper = coloredIcon.parentElement?.parentElement
-    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
+    expect(coloredIconWrapper).toHaveStyle({ 
+      opacity: '0',
+      height: '100%',
+      position: 'absolute',
+      transition: '0.15s all ease-in-out'
+    })
   })
 
   it('should handle hover states correctly', async () => {
@@ -61,7 +66,9 @@ describe('SocialIcon', () => {
       alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      width: 'var(--space-6)',
+      minHeight: 'var(--space-6)'
     })
     
     expect(defaultIcon).toHaveStyle({ 
