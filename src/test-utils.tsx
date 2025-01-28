@@ -10,9 +10,8 @@ import type { Register } from 'wagmi'
 import { hashFn } from 'wagmi/query'
 
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
-import { BreakpointProvider } from './utils/BreakpointProvider'
-
 import { mainnetWithEns } from '@app/constants/chains'
+import { BreakpointProvider } from './utils/BreakpointProvider'
 
 import { DeepPartial } from './types'
 
@@ -91,6 +90,21 @@ const defaultQueries = {
 }
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
+  const content = (
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={lightTheme}>
+          <ThorinGlobalStyles />
+          {children}
+        </ThemeProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  )
+
+  if (typeof window === 'undefined') {
+    return content
+  }
+
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
