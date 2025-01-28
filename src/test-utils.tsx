@@ -107,11 +107,11 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   // 2. BreakpointProvider is not being mocked
   // 3. We're not testing BreakpointProvider itself
   const isTestingBreakpointProvider = React.isValidElement(children) && children.type === BreakpointProvider
-  const shouldUseBreakpointProvider = 
-    typeof window !== 'undefined' && 
-    !vi.isMockFunction(useBreakpoint) && 
+  const shouldUseBreakpointProvider =
+    typeof window !== 'undefined' &&
+    !vi.isMockFunction(useBreakpoint) &&
     !isTestingBreakpointProvider
-  
+
   return shouldUseBreakpointProvider ? (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
@@ -121,7 +121,9 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
-  ) : content
+  ) : (
+    content
+  )
 }
 
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) =>
