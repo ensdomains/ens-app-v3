@@ -124,6 +124,48 @@ describe('SocialIcon', () => {
       />,
     )
     const link = screen.getByRole('link')
+    const icon = screen.getByTestId('mock-icon')
     expect(link).toHaveStyle({ transition: 'all 0.15s ease-in-out' })
+    expect(icon).toHaveStyle({ transition: '0.15s all ease-in-out' })
+  })
+
+  it('should have correct default styles', () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        href="https://example.com"
+      />,
+    )
+    const link = screen.getByRole('link')
+    const icon = screen.getByTestId('mock-icon')
+    
+    expect(link).toHaveStyle({
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      cursor: 'pointer'
+    })
+    expect(icon).toHaveStyle({
+      position: 'absolute',
+      height: '100%',
+      fill: 'var(--color-greyPrimary)'
+    })
+  })
+
+  it('should apply custom color on hover', async () => {
+    const customColor = '#ff0000'
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        color={customColor}
+        href="https://example.com"
+      />,
+    )
+    const icon = screen.getByTestId('mock-icon')
+    
+    expect(icon).toHaveStyle({ fill: 'var(--color-greyPrimary)' })
+    await userEvent.hover(screen.getByRole('link'))
+    expect(icon).toHaveStyle({ fill: customColor })
   })
 })
