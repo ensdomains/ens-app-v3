@@ -268,4 +268,46 @@ describe('SocialIcon', () => {
     expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
     expect(defaultIcon).toHaveStyle('transition: 0.15s all ease-in-out')
   })
+
+  it('should verify theme-based spacing for width and height', () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        href="https://example.com"
+      />,
+    )
+    const link = screen.getByRole('link')
+    expect(link).toHaveStyle('width: 1.5rem')
+    expect(link).toHaveStyle('min-height: 1.5rem')
+  })
+
+  it('should verify transition timing for all styled components', () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        ColoredIcon={mockColoredIcon}
+        href="https://example.com"
+      />,
+    )
+    const defaultIcon = screen.getByTestId('mock-icon')
+    const coloredIcon = screen.getByTestId('mock-colored-icon')
+    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
+
+    expect(defaultIcon).toHaveStyle('transition: 0.15s all ease-in-out')
+    expect(coloredIconWrapper).toHaveStyle('transition: 0.15s all ease-in-out')
+  })
+
+  it('should handle required props correctly', () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        href="https://example.com"
+      />,
+    )
+    const link = screen.getByRole('link')
+    const icon = screen.getByTestId('mock-icon')
+
+    expect(link).toHaveAttribute('href', 'https://example.com')
+    expect(icon).toBeInTheDocument()
+  })
 })
