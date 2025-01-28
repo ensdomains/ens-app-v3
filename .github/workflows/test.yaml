@@ -187,6 +187,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: stateful-report
+          name: stateful-report-${{matrix.shard}}
           path: playwright-report/
           retention-days: 30
