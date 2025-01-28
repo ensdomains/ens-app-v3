@@ -39,13 +39,9 @@ const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   chainName: string,
   urlFuncArray: UrlFuncArray,
 ) => {
-  const transportArray: HttpTransport[] = []
-
-  for (const urlFunc of urlFuncArray) {
-    // eslint-disable-next-line no-continue
-    if (urlFunc === infuraUrl && process.env.NEXT_PUBLIC_IPFS) continue
-    transportArray.push(http(urlFunc(chainName)))
-  }
+  const transportArray = urlFuncArray
+    .filter((urlFunc) => !(urlFunc === infuraUrl && process.env.NEXT_PUBLIC_IPFS))
+    .map((urlFunc) => http(urlFunc(chainName)))
 
   return fallback(transportArray)
 }
@@ -112,9 +108,14 @@ const wagmiConfig_ = createConfig({
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
   client: ({ chain }) => {
-    const chainId = chain.id
+    type SupportedChainId = 1 | 1337 | 17000 | 11155111
+    const chainId = chain.id as SupportedChainId
 
-    return createClient<Transport, typeof chain>({
+    if (!validateChainId(chainId)) {
+      throw new Error(`Unsupported chain ID: ${chainId}`)
+    }
+
+    return createClient({
       chain,
       batch: {
         multicall: {
@@ -123,7 +124,7 @@ const wagmiConfig_ = createConfig({
         },
       },
       transport: (params) => {
-        const transport = transports[chainId as keyof typeof transports]
+        const transport = transports[chainId]
         if (!transport) throw new Error(`No transport configured for chain ${chainId}`)
         return transport({ ...params })
       },
