@@ -16,16 +16,10 @@ import { mainnetWithEns } from '@app/constants/chains'
 import { DeepPartial } from './types'
 import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
 
-vi.mock('./utils/BreakpointProvider', async (importOriginal) => {
-  const actual = (await importOriginal()) as {
-    BreakpointProvider: React.FC<{ children: React.ReactNode }>
-  }
-  return {
-    ...actual,
-    BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
-    useBreakpoint: () => ({ sm: true, md: true, lg: true }),
-  }
-})
+vi.mock('./utils/BreakpointProvider', () => ({
+  BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
+  useBreakpoint: () => ({ sm: true, md: true, lg: true }),
+}))
 
 const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
 const { privateKeyToAccount } =

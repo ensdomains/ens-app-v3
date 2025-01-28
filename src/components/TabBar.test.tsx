@@ -12,16 +12,10 @@ import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 
 import { TabBar } from './TabBar'
 
-vi.mock('@app/utils/BreakpointProvider', async (importOriginal) => {
-  const actual = (await importOriginal()) as {
-    BreakpointProvider: React.FC<{ children: React.ReactNode }>
-  }
-  return {
-    ...actual,
-    BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
-    useBreakpoint: () => ({ sm: true, md: true, lg: true }),
-  }
-})
+vi.mock('@app/utils/BreakpointProvider', () => ({
+  BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
+  useBreakpoint: () => ({ sm: true, md: true, lg: true }),
+}))
 
 vi.mock('next/router', () => ({
   useRouter: vi.fn(() => ({
