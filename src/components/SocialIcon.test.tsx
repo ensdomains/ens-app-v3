@@ -20,7 +20,7 @@ describe('SocialIcon', () => {
     expect(icon).toBeInTheDocument()
     expect(link).toHaveAttribute('href', 'https://example.com')
     expect(link).toHaveAttribute('target', '_blank')
-    expect(icon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
+    expect(link).toHaveStyle({ color: 'var(--color-greyPrimary)' })
   })
 
   it('should render and handle colored icon correctly', () => {
@@ -33,10 +33,12 @@ describe('SocialIcon', () => {
     )
     const defaultIcon = screen.getByTestId('mock-icon')
     const coloredIcon = screen.getByTestId('mock-colored-icon')
+    const link = screen.getByRole('link')
     
     expect(defaultIcon).toBeInTheDocument()
     expect(coloredIcon).toBeInTheDocument()
-    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '0' })
+    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
   })
 
   it('should handle hover states correctly', async () => {
@@ -52,19 +54,20 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const defaultIcon = screen.getByTestId('mock-icon')
     const coloredIcon = screen.getByTestId('mock-colored-icon')
+    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
 
-    expect(defaultIcon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
-    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '0' })
+    expect(link).toHaveStyle({ color: 'var(--color-greyPrimary)' })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
 
     await userEvent.hover(link)
     
-    expect(defaultIcon.parentElement).toHaveStyle({ fill: customColor })
-    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '1' })
+    expect(link).toHaveStyle({ color: customColor })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '1' })
 
     await userEvent.unhover(link)
     
-    expect(defaultIcon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
-    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '0' })
+    expect(link).toHaveStyle({ color: 'var(--color-greyPrimary)' })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
   })
 
   it('should show colored icon on hover when ColoredIcon is provided', async () => {
@@ -77,10 +80,11 @@ describe('SocialIcon', () => {
     )
     const link = screen.getByRole('link')
     const coloredIcon = screen.getByTestId('mock-colored-icon')
+    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
     
-    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '0' })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
     await userEvent.hover(link)
-    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '1' })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '1' })
   })
 
   it('should change icon color on hover when color prop is provided', async () => {
@@ -95,9 +99,9 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
     
-    expect(icon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
+    expect(link).toHaveStyle({ color: 'var(--color-greyPrimary)' })
     await userEvent.hover(link)
-    expect(icon.parentElement).toHaveStyle({ fill: customColor })
+    expect(link).toHaveStyle({ color: customColor })
   })
 
   it('should render without ColoredIcon prop', () => {
@@ -119,7 +123,7 @@ describe('SocialIcon', () => {
         href="https://example.com"
       />,
     )
-    const icon = screen.getByTestId('mock-icon')
-    expect(icon.parentElement).toHaveStyle({ transition: '0.15s all ease-in-out' })
+    const link = screen.getByRole('link')
+    expect(link).toHaveStyle({ transition: 'all 0.15s ease-in-out' })
   })
 })
