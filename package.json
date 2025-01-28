@@ -48,7 +48,8 @@
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml",
     "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES",
     "knip": "knip",
-    "knip:fix": "knip --fix --allow-remove-files"
+    "knip:fix": "knip --fix --allow-remove-files",
+    "check:unused-translations": "node ./scripts/checkUnusedTranslations.mjs"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "1.1.1",
