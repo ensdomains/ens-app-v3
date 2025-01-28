@@ -10,10 +10,10 @@ import { useZorb } from '@app/hooks/useZorb'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 
 vi.mock('@app/utils/BreakpointProvider', async (importOriginal) => {
-  const actual = await importOriginal()
+  const actual = await importOriginal() as { BreakpointProvider: React.FC<{ children: React.ReactNode }> }
   return {
     ...actual,
-    BreakpointProvider: ({ children }) => children,
+    BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
     useBreakpoint: () => ({ sm: true, md: true, lg: true }),
   }
 })
