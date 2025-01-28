@@ -25,7 +25,7 @@ export const useTransactionValidation = () => {
 
       return true
     },
-    [chain],
+    [chainId],
   )
 
   return {
