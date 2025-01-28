@@ -119,9 +119,7 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
-          <BreakpointProvider queries={defaultQueries}>
-            {children}
-          </BreakpointProvider>
+          <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
