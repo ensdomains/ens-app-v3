@@ -127,16 +127,27 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     [state.items],
   )
 
+  const { validateTransaction } = useTransactionValidation()
+
   const updateCallback = useCallback<UpdateCallback>(
     (transaction) => {
       if (transaction.status !== 'pending' && transaction.key) {
-        dispatch({
-          name: 'setTransactionStageFromUpdate',
-          payload: transaction,
-        })
+        try {
+          validateTransaction(transaction)
+          dispatch({
+            name: 'setTransactionStageFromUpdate',
+            payload: transaction,
+          })
+        } catch (error) {
+          console.error('Transaction validation failed:', error)
+          dispatch({
+            name: 'setTransactionStageFromUpdate',
+            payload: { ...transaction, status: 'failed', error },
+          })
+        }
       }
     },
-    [dispatch],
+    [dispatch, validateTransaction],
   )
 
   useCallbackOnTransaction(updateCallback)
