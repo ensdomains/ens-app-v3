@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -54,7 +55,7 @@ export const AnnouncementBanner = () => {
     <Link href="/ens-v2" legacyBehavior passHref>
       <Container>
         <TextContainer>
-          <img src="/migrate/confetti.png" alt="" height={33} width={33} />
+          <Image src="/migrate/confetti.png" alt="" height={33} width={33} priority />
           <Text>
             <Typography fontVariant="largeBold">{t('banner.title')}</Typography>
             <Typography fontVariant="small" color="grey">

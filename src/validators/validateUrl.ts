@@ -1,8 +1,8 @@
-import { validateUrl as validateUrlUtil, sanitizeInput } from '../utils/validation'
+import { sanitizeInput, validateUrl as validateUrlUtil } from '../utils/validation'
 
 export const validateUrl = (url?: string): string | boolean => {
   if (!url) return true
-  
+
   const sanitizedUrl = sanitizeInput(url)
   if (!validateUrlUtil(sanitizedUrl)) {
     return 'Invalid URL format. Must be a valid HTTP/HTTPS URL'

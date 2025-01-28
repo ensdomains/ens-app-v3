@@ -7,12 +7,12 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { useTransactionValidation } from '@app/hooks/useTransactionValidation'
 import { Hash } from 'viem'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { useTransactionValidation } from '@app/hooks/useTransactionValidation'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
@@ -143,7 +143,11 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
           console.error('Transaction validation failed:', error)
           dispatch({
             name: 'setTransactionStageFromUpdate',
-            payload: { ...transaction, status: 'failed', error: error instanceof Error ? error.message : 'Transaction validation failed' },
+            payload: {
+              ...transaction,
+              status: 'failed',
+              error: error instanceof Error ? error.message : 'Transaction validation failed',
+            },
           })
         }
       }

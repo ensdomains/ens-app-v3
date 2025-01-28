@@ -13,6 +13,7 @@ import {
 
 import { WC_PROJECT_ID } from '../constants'
 import { getDefaultWallets } from '../getDefaultWallets'
+import { validateChainId } from '../security/web3'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 
@@ -83,14 +84,12 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
   }
 }
 
-import { validateChainId } from '../../utils/security/web3'
-
 const chains = [
   ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
   mainnetWithEns,
   sepoliaWithEns,
   holeskyWithEns,
-].filter(chain => validateChainId(chain.id)) as const
+].filter((chain) => validateChainId(chain.id))
 
 const transports = {
   ...(isLocalProvider
@@ -123,7 +122,11 @@ const wagmiConfig_ = createConfig({
           wait: 50,
         },
       },
-      transport: (params) => transports[chainId]({ ...params }),
+      transport: (params) => {
+        const transport = transports[chainId as keyof typeof transports]
+        if (!transport) throw new Error(`No transport configured for chain ${chainId}`)
+        return transport({ ...params })
+      },
       ccipRead: {
         request: ccipRequest(chain),
       },

@@ -1,7 +1,12 @@
 import { useCallback } from 'react'
 import { Hash } from 'viem'
-import { useNetwork } from 'wagmi'
-import { validateChainId, validateTransactionData, isHighRiskTransaction } from '@/utils/security/web3'
+import { useNetwork } from 'wagmi/react'
+
+import {
+  isHighRiskTransaction,
+  validateChainId,
+  validateTransactionData,
+} from '../utils/security/web3.js'
 
 export const useTransactionValidation = () => {
   const { chain } = useNetwork()
@@ -15,17 +20,12 @@ export const useTransactionValidation = () => {
       validateTransactionData(transaction)
 
       if (isHighRiskTransaction(transaction)) {
-        const confirmed = window.confirm(
-          'This transaction involves a large amount of ETH. Please confirm you want to proceed.'
-        )
-        if (!confirmed) {
-          throw new Error('User rejected high-risk transaction')
-        }
+        throw new Error('High-risk transaction detected')
       }
 
       return true
     },
-    [chain]
+    [chain],
   )
 
   return {

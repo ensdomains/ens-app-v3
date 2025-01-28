@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { useAccount, useNetwork, useDisconnect } from 'wagmi'
-import { validateChainId } from '@/utils/security/web3'
+import { useAccount, useDisconnect, useNetwork } from 'wagmi/react'
+
+import { validateChainId } from '../utils/security/web3.js'
 
 export const useWalletValidation = () => {
   const { chain } = useNetwork()
@@ -10,14 +11,14 @@ export const useWalletValidation = () => {
   useEffect(() => {
     if (chain && !validateChainId(chain.id)) {
       disconnect()
-      window.alert('Please connect to a supported network (Mainnet, Sepolia, or Holesky)')
+      console.warn('Unsupported network detected - disconnecting wallet')
     }
   }, [chain, disconnect])
 
   useEffect(() => {
     if (address && !/^0x[0-9a-fA-F]{40}$/.test(address)) {
       disconnect()
-      window.alert('Invalid wallet address detected')
+      console.warn('Invalid wallet address detected - disconnecting wallet')
     }
   }, [address, disconnect])
 }

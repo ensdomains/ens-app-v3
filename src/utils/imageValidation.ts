@@ -1,4 +1,4 @@
-import { validateUrl, sanitizeInput } from './validation'
+import { sanitizeInput, validateUrl } from './validation'
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']
@@ -13,7 +13,10 @@ export function validateImageFile(file: File): { isValid: boolean; error?: strin
   }
 
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    return { isValid: false, error: 'Invalid file type. Only JPEG, PNG, GIF, and SVG files are allowed' }
+    return {
+      isValid: false,
+      error: 'Invalid file type. Only JPEG, PNG, GIF, and SVG files are allowed',
+    }
   }
 
   return { isValid: true }

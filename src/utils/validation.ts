@@ -1,7 +1,8 @@
 import { isAddress } from 'viem'
 
 const ENS_NAME_REGEX = /^[a-zA-Z0-9-]+\.eth$/
-const CONTENT_HASH_REGEX = /^(ipfs|ipns|bzz|onion|onion3|sia|arweave|ar|swarm):\/\/[a-zA-Z0-9-._~:/?#\[\]@!$&'()*+,;=]+$/
+const CONTENT_HASH_REGEX =
+  /^(ipfs|ipns|bzz|onion|onion3|sia|arweave|ar|swarm):\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/
 
 export function validateEnsName(name: string): boolean {
   if (!name || typeof name !== 'string') return false
@@ -19,17 +20,22 @@ export function validateEthereumAddress(address: string): boolean {
 }
 
 export function sanitizeInput(input: string): string {
-  return input
-    .replace(/[<>"'&]/g, (char) => {
-      switch (char) {
-        case '<': return '&lt;'
-        case '>': return '&gt;'
-        case '"': return '&quot;'
-        case "'": return '&#39;'
-        case '&': return '&amp;'
-        default: return char
-      }
-    })
+  return input.replace(/[<>"'&]/g, (char) => {
+    switch (char) {
+      case '<':
+        return '&lt;'
+      case '>':
+        return '&gt;'
+      case '"':
+        return '&quot;'
+      case "'":
+        return '&#39;'
+      case '&':
+        return '&amp;'
+      default:
+        return char
+    }
+  })
 }
 
 export function validateUrl(url: string): boolean {

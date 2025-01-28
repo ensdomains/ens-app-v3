@@ -1,5 +1,4 @@
 import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
-import { validateImageFile } from '../../../../utils/imageValidation'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -8,6 +7,8 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 
 import CameraIcon from '@app/assets/Camera.svg'
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
+
+import { validateImageFile } from '../../../../utils/imageValidation'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
   ({ theme, $validated, $dirty, $error }) => css`
@@ -179,9 +180,9 @@ const AvatarButton = ({
           onChange={(e) => {
             const file = e.target.files?.[0]
             if (file) {
-              const { isValid, error } = validateImageFile(file)
-              if (!isValid) {
-                window.alert(error)
+              const validationResult = validateImageFile(file)
+              if (!validationResult.isValid) {
+                console.error('Image validation failed:', validationResult.error)
                 return
               }
               onSelectOption?.('upload')

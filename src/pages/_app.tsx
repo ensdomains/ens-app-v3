@@ -14,9 +14,9 @@ import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/
 
 import { Notifications } from '@app/components/Notifications'
 import { TestnetWarning } from '@app/components/TestnetWarning'
+import { WalletValidationWrapper } from '@app/components/WalletValidationWrapper'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
-import { WalletValidationWrapper } from '@app/components/WalletValidationWrapper'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'

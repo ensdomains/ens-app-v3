@@ -2,7 +2,6 @@
 import { sha256 } from '@noble/hashes/sha256'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { validateDataUrl, validateImageFile } from '../../../../utils/imageValidation'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
@@ -12,6 +11,7 @@ import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 
+import { validateDataUrl } from '../../../../utils/imageValidation'
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
 const CroppedImagePreview = styled.img(

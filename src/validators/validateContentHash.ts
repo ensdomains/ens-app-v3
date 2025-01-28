@@ -3,6 +3,8 @@ import { encodeContentHash, getProtocolType } from '@ensdomains/ensjs/utils'
 
 import { ContentHashProvider } from '@app/utils/contenthash'
 
+import { sanitizeInput, validateContentHash as validateContentHashUtil } from '../utils/validation'
+
 export type ContentHashProviderOrAll = ContentHashProvider | 'all'
 
 const contentHashToProtocols = {
@@ -12,8 +14,6 @@ const contentHashToProtocols = {
   skynet: ['sia'],
   arweave: ['arweave', 'ar'],
 }
-
-import { validateContentHash as validateContentHashUtil, sanitizeInput } from '../utils/validation'
 
 export const validateContentHash =
   (provider: ContentHashProviderOrAll) =>

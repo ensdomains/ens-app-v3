@@ -1,5 +1,6 @@
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
 import { hashFn } from 'wagmi/query'
+
 import { createGraphQLQueryClient } from './graphqlClient'
 
 const baseOptions: DefaultOptions<Error> = {
