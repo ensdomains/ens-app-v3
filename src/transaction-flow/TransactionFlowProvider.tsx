@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { useTransactionValidation } from '@app/hooks/useTransactionValidation'
 import { Hash } from 'viem'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -142,7 +143,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
           console.error('Transaction validation failed:', error)
           dispatch({
             name: 'setTransactionStageFromUpdate',
-            payload: { ...transaction, status: 'failed', error },
+            payload: { ...transaction, status: 'failed', error: error instanceof Error ? error.message : 'Transaction validation failed' },
           })
         }
       }

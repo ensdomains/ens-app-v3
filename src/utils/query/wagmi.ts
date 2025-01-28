@@ -83,12 +83,14 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
   }
 }
 
+import { validateChainId } from '../../utils/security/web3'
+
 const chains = [
   ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
   mainnetWithEns,
   sepoliaWithEns,
   holeskyWithEns,
-] as const
+].filter(chain => validateChainId(chain.id)) as const
 
 const transports = {
   ...(isLocalProvider

@@ -1,10 +1,10 @@
 import { Hash } from 'viem'
 import { mainnet, sepolia, holesky } from 'wagmi/chains'
 
-const SUPPORTED_CHAINS = [mainnet.id, sepolia.id, holesky.id]
+const SUPPORTED_CHAINS = [mainnet.id, sepolia.id, holesky.id] as const
 
-export const validateChainId = (chainId: number): boolean => {
-  return SUPPORTED_CHAINS.includes(chainId)
+export const validateChainId = (chainId: number): chainId is typeof SUPPORTED_CHAINS[number] => {
+  return SUPPORTED_CHAINS.includes(chainId as typeof SUPPORTED_CHAINS[number])
 }
 
 export const validateTransactionData = (data: { to: string; value?: bigint; data?: string }) => {

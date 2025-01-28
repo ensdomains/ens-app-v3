@@ -1,4 +1,5 @@
 import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
+import { validateImageFile } from '../../../../utils/imageValidation'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -176,9 +177,15 @@ const AvatarButton = ({
           accept="image/*"
           ref={fileInputRef}
           onChange={(e) => {
-            if (e.target.files?.[0]) {
+            const file = e.target.files?.[0]
+            if (file) {
+              const { isValid, error } = validateImageFile(file)
+              if (!isValid) {
+                window.alert(error)
+                return
+              }
               onSelectOption?.('upload')
-              onAvatarFileChange?.(e.target.files[0])
+              onAvatarFileChange?.(file)
             }
           }}
         />

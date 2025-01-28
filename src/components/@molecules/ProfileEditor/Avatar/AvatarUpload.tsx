@@ -2,6 +2,7 @@
 import { sha256 } from '@noble/hashes/sha256'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { validateDataUrl, validateImageFile } from '../../../../utils/imageValidation'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { bytesToHex } from 'viem'
@@ -91,6 +92,11 @@ const UploadComponent = ({
           hash: urlHash,
         },
       })
+      const { isValid: isDataUrlValid, error: dataUrlError } = validateDataUrl(dataURL)
+      if (!isDataUrlValid) {
+        throw new Error(dataUrlError || 'Invalid data URL')
+      }
+
       const fetched = (await fetch(endpoint, {
         method: 'PUT',
         headers: {

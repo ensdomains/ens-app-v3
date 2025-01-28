@@ -1,3 +1,5 @@
+import { validateEthereumAddress } from '../utils/validation'
+
 /*  twitter:
  *  - 1-15 chars
  *    - technically 4-15 for new users but existing usernames can be shorter
@@ -33,6 +35,9 @@ const telegramRegex = /^[A-Za-z0-9_]{5,32}$/
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export const validateAccount = ({ key, value }: { key: string; value: string }): boolean => {
+  if (key === 'address') {
+    return validateEthereumAddress(value)
+  }
   switch (key) {
     case 'com.twitter':
       return twitterRegex.test(value)

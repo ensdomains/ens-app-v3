@@ -13,12 +13,19 @@ const contentHashToProtocols = {
   arweave: ['arweave', 'ar'],
 }
 
+import { validateContentHash as validateContentHashUtil, sanitizeInput } from '../utils/validation'
+
 export const validateContentHash =
   (provider: ContentHashProviderOrAll) =>
   (value?: string): string | boolean => {
     if (!value) return true
 
-    const output = getProtocolType(value)
+    const sanitizedValue = sanitizeInput(value)
+    if (!validateContentHashUtil(sanitizedValue)) {
+      return 'Invalid content hash format'
+    }
+
+    const output = getProtocolType(sanitizedValue)
     if (!output) return 'Invalid protocol type'
     const { protocolType, decoded } = output
     if (provider !== 'all' && !contentHashToProtocols[provider]?.includes(protocolType))
@@ -34,7 +41,7 @@ export const validateContentHash =
       return 'Invalid content id'
 
     try {
-      encodeContentHash(value)
+      encodeContentHash(sanitizedValue)
       return true
     } catch (e: unknown) {
       if (e instanceof BaseError) return e.message

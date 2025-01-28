@@ -1,7 +1,17 @@
+import { validateUrl as validateUrlUtil, sanitizeInput } from '../utils/validation'
+
 export const validateUrl = (url?: string): string | boolean => {
   if (!url) return true
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return true
+  
+  const sanitizedUrl = sanitizeInput(url)
+  if (!validateUrlUtil(sanitizedUrl)) {
+    return 'Invalid URL format. Must be a valid HTTP/HTTPS URL'
   }
-  return "URL must start with 'http://' or 'https://'"
+
+  // Block javascript: URLs and other potentially dangerous protocols
+  if (/^(javascript|data|vbscript|file):/i.test(sanitizedUrl)) {
+    return 'URL contains potentially unsafe protocol'
+  }
+
+  return true
 }
