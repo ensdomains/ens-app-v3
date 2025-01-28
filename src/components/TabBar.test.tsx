@@ -50,7 +50,7 @@ describe('TabBar', () => {
   const mockAvatarUrl = 'https://example.com/avatar.png'
   const mockZorbUrl = 'https://example.com/zorb.png'
   const mockRouterEvents = {
-    on: vi.fn(),
+    on: vi.fn((event, handler) => handler),
     off: vi.fn(),
   }
   const mockBack = vi.fn()
@@ -60,10 +60,7 @@ describe('TabBar', () => {
 
     mockUseRouter.mockReturnValue({
       query: {},
-      events: {
-        on: vi.fn(),
-        off: vi.fn(),
-      },
+      events: mockRouterEvents,
       back: mockBack,
       asPath: '/',
     })
@@ -149,5 +146,35 @@ describe('TabBar', () => {
       .getAllByRole('link')
       .find((el) => el.getAttribute('href') === '/my/settings')
     expect(settingsLink).toHaveClass('indicator-container')
+  })
+
+  it('should close profile section on route change', async () => {
+    mockUseAccountSafely.mockReturnValue({ address: mockAddress })
+    mockUsePrimaryName.mockReturnValue({ data: { name: mockName }, isLoading: false })
+    mockUseEnsAvatar.mockReturnValue({ data: mockAvatarUrl, isLoading: false })
+    render(<TabBar />)
+
+    const avatar = screen.getByAltText('avatar')
+    await userEvent.click(avatar)
+
+    const routeChangeHandler = mockRouterEvents.on.mock.calls[0][1]
+    routeChangeHandler()
+
+    const profileLinks = screen.queryAllByRole('link').filter(link => 
+      link.getAttribute('href')?.includes('/profile/')
+    )
+    expect(profileLinks.length).toBe(0)
+  })
+
+  it('should show legacy favourites route when localStorage has ensFavourites', () => {
+    mockUseAccountSafely.mockReturnValue({ address: mockAddress })
+    mockUsePrimaryName.mockReturnValue({ data: { name: mockName }, isLoading: false })
+    mockUseEnsAvatar.mockReturnValue({ data: mockAvatarUrl, isLoading: false })
+    globalThis.localStorage.setItem('ensFavourites', '["test.eth"]')
+    render(<TabBar />)
+
+    const links = screen.getAllByRole('link')
+    const hasFavouritesLink = links.some((el) => el.getAttribute('href')?.includes('favourites'))
+    expect(hasFavouritesLink).toBe(true)
   })
 })
