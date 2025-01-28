@@ -7,19 +7,23 @@ describe('SocialIcon', () => {
   const mockIcon = () => <svg data-testid="mock-icon" />
   const mockColoredIcon = () => <svg data-testid="mock-colored-icon" />
 
-  it('should render icon and external link', () => {
+  it('should render icon and external link with correct attributes', () => {
     render(
       <SocialIcon
         Icon={mockIcon}
         href="https://example.com"
       />,
     )
-    expect(screen.getByTestId('mock-icon')).toBeInTheDocument()
-    expect(screen.getByRole('link')).toHaveAttribute('href', 'https://example.com')
-    expect(screen.getByRole('link')).toHaveAttribute('target', '_blank')
+    const link = screen.getByRole('link')
+    const icon = screen.getByTestId('mock-icon')
+
+    expect(icon).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', 'https://example.com')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(icon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
   })
 
-  it('should render colored icon when provided', () => {
+  it('should render and handle colored icon correctly', () => {
     render(
       <SocialIcon
         Icon={mockIcon}
@@ -27,20 +31,40 @@ describe('SocialIcon', () => {
         href="https://example.com"
       />,
     )
-    expect(screen.getByTestId('mock-icon')).toBeInTheDocument()
-    expect(screen.getByTestId('mock-colored-icon')).toBeInTheDocument()
+    const defaultIcon = screen.getByTestId('mock-icon')
+    const coloredIcon = screen.getByTestId('mock-colored-icon')
+    
+    expect(defaultIcon).toBeInTheDocument()
+    expect(coloredIcon).toBeInTheDocument()
+    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '0' })
   })
 
-  it('should apply custom color when provided', () => {
+  it('should handle hover states correctly', async () => {
+    const customColor = '#ff0000'
     render(
       <SocialIcon
         Icon={mockIcon}
-        color="#ff0000"
+        ColoredIcon={mockColoredIcon}
+        color={customColor}
         href="https://example.com"
       />,
     )
-    const iconWrapper = screen.getByTestId('mock-icon').parentElement
-    expect(iconWrapper).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
+    const link = screen.getByRole('link')
+    const defaultIcon = screen.getByTestId('mock-icon')
+    const coloredIcon = screen.getByTestId('mock-colored-icon')
+
+    expect(defaultIcon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
+    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '0' })
+
+    await userEvent.hover(link)
+    
+    expect(defaultIcon.parentElement).toHaveStyle({ fill: customColor })
+    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '1' })
+
+    await userEvent.unhover(link)
+    
+    expect(defaultIcon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
+    expect(coloredIcon.parentElement).toHaveStyle({ opacity: '0' })
   })
 
   it('should show colored icon on hover when ColoredIcon is provided', async () => {
