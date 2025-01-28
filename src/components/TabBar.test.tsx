@@ -1,4 +1,4 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 import { useRouter } from 'next/router'
 import { vi } from 'vitest'
 import { useEnsAvatar } from 'wagmi'
