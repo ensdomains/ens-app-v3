@@ -41,6 +41,10 @@ const ImageContainer = styled.div(
     max-width: ${theme.space['96']};
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
+
+    svg {
+      fill: none;
+    }
   `,
 )
 
