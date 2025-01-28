@@ -52,9 +52,6 @@ export const DogFood = ({
   const chainId = useChainId()
   const { address } = useAccount()
 
-  type SupportedChainId = 1 | 1337 | 17000 | 11155111
-  const supportedChainId = chainId as SupportedChainId
-
   const { data: addressRecordData } = useAddressRecord({
     enabled: !!ethNameInput?.includes('.'),
     name: ethNameInput,
@@ -96,7 +93,7 @@ export const DogFood = ({
                 try {
                   const result = await queryClient.getQueryData(
                     createQueryKey({
-                      chainId: supportedChainId,
+                      chainId: chainId as 1 | 1337 | 17000 | 11155111,
                       address,
                       queryDependencyType: 'standard',
                       functionName: 'getAddressRecord',
