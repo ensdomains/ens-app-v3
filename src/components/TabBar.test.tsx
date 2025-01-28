@@ -1,16 +1,21 @@
 import { mockFunction, render, screen, userEvent } from '@app/test-utils'
+
 import { useRouter } from 'next/router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useDisconnect, useEnsAvatar } from 'wagmi'
-import { TabBar } from './TabBar'
+
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useZorb } from '@app/hooks/useZorb'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 
+import { TabBar } from './TabBar'
+
 vi.mock('@app/utils/BreakpointProvider', async (importOriginal) => {
-  const actual = await importOriginal() as { BreakpointProvider: React.FC<{ children: React.ReactNode }> }
+  const actual = (await importOriginal()) as {
+    BreakpointProvider: React.FC<{ children: React.ReactNode }>
+  }
   return {
     ...actual,
     BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -58,7 +63,7 @@ describe('TabBar', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     mockUseRouter.mockReturnValue({
       query: {},
       events: {
@@ -94,7 +99,7 @@ describe('TabBar', () => {
   it('should display avatar and route items when connected', () => {
     renderWithAddress()
     expect(screen.getByAltText('avatar')).toHaveAttribute('src', mockAvatarUrl)
-    
+
     const routeIcons = screen.getAllByTestId('route-item-icon')
     expect(routeIcons.length).toBeGreaterThanOrEqual(2)
     expect(routeIcons[0].closest('a')).toBeVisible()
@@ -108,21 +113,23 @@ describe('TabBar', () => {
       asPath: '/',
     })
     render(<TabBar />)
-    
+
     const backButton = screen.getByTestId('tabbar-back-button')
     expect(backButton).toBeVisible()
-    
+
     await userEvent.click(backButton)
     expect(mockBack).toHaveBeenCalled()
   })
 
   it('should expand profile section when avatar is clicked', async () => {
     renderWithAddress()
-    
+
     const avatar = screen.getByAltText('avatar')
     await userEvent.click(avatar)
-    
-    const profileWrapper = screen.getAllByRole('link').find(el => el.getAttribute('href') === '/my/profile')
+
+    const profileWrapper = screen
+      .getAllByRole('link')
+      .find((el) => el.getAttribute('href') === '/my/profile')
     expect(profileWrapper?.closest('div')).toHaveClass('sc-lnPyaJ')
   })
 
@@ -130,7 +137,7 @@ describe('TabBar', () => {
     mockUseAccountSafely.mockReturnValue({ address: mockAddress })
     mockUseEnsAvatar.mockReturnValue({ data: undefined, isLoading: false })
     render(<TabBar />)
-    
+
     expect(screen.getByAltText('zorb')).toHaveAttribute('src', mockZorbUrl)
   })
 
@@ -140,11 +147,13 @@ describe('TabBar', () => {
     mockUsePrimaryName.mockReturnValue({ data: { name: mockName }, isLoading: false })
     mockUseEnsAvatar.mockReturnValue({ data: mockAvatarUrl, isLoading: false })
     render(<TabBar />)
-    
+
     const avatar = screen.getByAltText('avatar')
     await userEvent.click(avatar)
-    
-    const settingsLink = screen.getAllByRole('link').find(el => el.getAttribute('href') === '/my/settings')
+
+    const settingsLink = screen
+      .getAllByRole('link')
+      .find((el) => el.getAttribute('href') === '/my/settings')
     expect(settingsLink).toHaveClass('indicator-container')
   })
 })

@@ -17,7 +17,9 @@ import { DeepPartial } from './types'
 import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
 
 vi.mock('./utils/BreakpointProvider', async (importOriginal) => {
-  const actual = await importOriginal() as { BreakpointProvider: React.FC<{ children: React.ReactNode }> }
+  const actual = (await importOriginal()) as {
+    BreakpointProvider: React.FC<{ children: React.ReactNode }>
+  }
   return {
     ...actual,
     BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
