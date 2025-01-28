@@ -1,19 +1,19 @@
 import { useCallback } from 'react'
 import { Hash } from 'viem'
-import { useNetwork } from 'wagmi/react'
+import { useChainId } from 'wagmi'
 
 import {
   isHighRiskTransaction,
   validateChainId,
   validateTransactionData,
-} from '../utils/security/web3.js'
+} from '../utils/security/web3'
 
 export const useTransactionValidation = () => {
-  const { chain } = useNetwork()
+  const chainId = useChainId()
 
   const validateTransaction = useCallback(
     (transaction: { to: string; value?: bigint; data?: string; hash?: Hash }) => {
-      if (!chain?.id || !validateChainId(chain.id)) {
+      if (!chainId || !validateChainId(chainId)) {
         throw new Error('Unsupported network')
       }
 

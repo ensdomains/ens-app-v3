@@ -1,19 +1,19 @@
 import { useEffect } from 'react'
-import { useAccount, useDisconnect, useNetwork } from 'wagmi/react'
+import { useAccount, useDisconnect, useChainId } from 'wagmi'
 
-import { validateChainId } from '../utils/security/web3.js'
+import { validateChainId } from '../utils/security/web3'
 
 export const useWalletValidation = () => {
-  const { chain } = useNetwork()
+  const chainId = useChainId()
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
 
   useEffect(() => {
-    if (chain && !validateChainId(chain.id)) {
+    if (chainId && !validateChainId(chainId)) {
       disconnect()
       console.warn('Unsupported network detected - disconnecting wallet')
     }
-  }, [chain, disconnect])
+  }, [chainId, disconnect])
 
   useEffect(() => {
     if (address && !/^0x[0-9a-fA-F]{40}$/.test(address)) {

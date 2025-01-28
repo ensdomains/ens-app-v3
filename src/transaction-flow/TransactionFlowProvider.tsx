@@ -8,11 +8,12 @@ import React, {
   useState,
 } from 'react'
 import { Hash } from 'viem'
+import { useChainId } from 'wagmi'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { useTransactionValidation } from '@app/hooks/useTransactionValidation'
+import { useTransactionValidation } from '../hooks/useTransactionValidation'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
@@ -130,11 +131,18 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const { validateTransaction } = useTransactionValidation()
 
+  const chainId = useChainId()
+
   const updateCallback = useCallback<UpdateCallback>(
     (transaction) => {
-      if (transaction.status !== 'pending' && transaction.key) {
+      if (transaction.status !== 'pending' && transaction.key && transaction.to) {
         try {
-          validateTransaction(transaction)
+          validateTransaction({
+            to: transaction.to,
+            value: transaction.value,
+            data: transaction.data,
+            hash: transaction.hash,
+          })
           dispatch({
             name: 'setTransactionStageFromUpdate',
             payload: transaction,
