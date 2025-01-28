@@ -106,7 +106,9 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   // 1. We're in a browser environment
   // 2. BreakpointProvider is not being mocked
   // 3. We're not testing BreakpointProvider itself
-  const isTestingBreakpointProvider = React.isValidElement(children) && children.type === BreakpointProvider
+  const isTestingBreakpointProvider =
+    React.isValidElement(children) && children.type === BreakpointProvider
+
   const shouldUseBreakpointProvider =
     typeof window !== 'undefined' &&
     !vi.isMockFunction(useBreakpoint) &&
@@ -117,7 +119,9 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
-          <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
+          <BreakpointProvider queries={defaultQueries}>
+            {children}
+          </BreakpointProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
