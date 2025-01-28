@@ -111,4 +111,15 @@ describe('SocialIcon', () => {
     expect(defaultIcon).toBeInTheDocument()
     expect(screen.queryByTestId('mock-colored-icon')).not.toBeInTheDocument()
   })
+
+  it('should have correct transition styles', () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        href="https://example.com"
+      />,
+    )
+    const icon = screen.getByTestId('mock-icon')
+    expect(icon.parentElement).toHaveStyle({ transition: '0.15s all ease-in-out' })
+  })
 })
