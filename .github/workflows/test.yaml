@@ -119,6 +119,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: stateless-build
+          merge-multiple: true
 
       - name: Untar files
         run: tar -xvf stateless-build.tar
@@ -136,6 +137,7 @@ jobs:
           name: stateless-report-${{matrix.shard}}
           path: playwright-report/
           retention-days: 30
+          overwrite: true
 
   stateful:
     name: stateful (${{matrix.shard}})
