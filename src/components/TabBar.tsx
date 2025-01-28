@@ -243,12 +243,12 @@ export const TabBar = () => {
     <>
       <TabWrapper id="tabbar">
         {hasBack && (
-          <BackButton onClick={() => router.back()}>
+          <BackButton data-testid="tabbar-back-button" onClick={() => router.back()}>
             <LeftChevronSVG />
           </BackButton>
         )}
         <TabContainer $shrink={!!(address && ((isOpen && !hasPrimary) || !isOpen))}>
-          <TabItems $isConnected={!!address}>
+          <TabItems $isConnected={!!address} role="navigation">
             <RouteItem route={getRoute('search')} />
             {address && (
               <>
