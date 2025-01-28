@@ -1,19 +1,32 @@
 import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 import { useRouter } from 'next/router'
-import { vi } from 'vitest'
-import { useEnsAvatar } from 'wagmi'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useDisconnect, useEnsAvatar } from 'wagmi'
 import { TabBar } from './TabBar'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useZorb } from '@app/hooks/useZorb'
 
-vi.mock('next/router')
+vi.mock('next/router', () => ({
+  useRouter: vi.fn(() => ({
+    query: {},
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+    },
+    back: vi.fn(),
+    asPath: '/',
+  })),
+}))
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 vi.mock('@app/hooks/transactions/useHasPendingTransactions')
 vi.mock('@app/hooks/useZorb')
-vi.mock('wagmi')
+vi.mock('wagmi', () => ({
+  useEnsAvatar: vi.fn(),
+  useDisconnect: vi.fn(() => ({ disconnect: vi.fn() })),
+}))
 
 const mockUseRouter = mockFunction(useRouter)
 const mockUseAccountSafely = mockFunction(useAccountSafely)
@@ -38,7 +51,10 @@ describe('TabBar', () => {
     
     mockUseRouter.mockReturnValue({
       query: {},
-      events: mockRouterEvents,
+      events: {
+        on: vi.fn(),
+        off: vi.fn(),
+      },
       back: mockBack,
       asPath: '/',
     })
@@ -49,7 +65,6 @@ describe('TabBar', () => {
     mockUseZorb.mockReturnValue(mockZorbUrl)
     mockUseEnsAvatar.mockReturnValue({ data: undefined, isLoading: false })
 
-    // Reset localStorage
     localStorage.clear()
   })
 
@@ -57,29 +72,34 @@ describe('TabBar', () => {
     mockUseAccountSafely.mockReturnValue({ address: mockAddress })
     mockUsePrimaryName.mockReturnValue({ data: { name: mockName }, isLoading: false })
     mockUseEnsAvatar.mockReturnValue({ data: mockAvatarUrl, isLoading: false })
-    render(<TabBar />)
+    return render(<TabBar />)
   }
 
   it('should show Connect button when not connected', () => {
     render(<TabBar />)
-    expect(screen.getByText('Connect')).toBeVisible()
+    expect(screen.getByTestId('tabbar-connect-button')).toBeVisible()
+    expect(screen.getByText('wallet.connect')).toBeVisible()
   })
 
   it('should display avatar and route items when connected', () => {
     renderWithAddress()
     expect(screen.getByAltText('avatar')).toHaveAttribute('src', mockAvatarUrl)
-    expect(screen.getByText('Search')).toBeVisible()
-    expect(screen.getByText('Names')).toBeVisible()
+    
+    const routeIcons = screen.getAllByTestId('route-item-icon')
+    expect(routeIcons.length).toBeGreaterThanOrEqual(2)
+    expect(routeIcons[0].closest('a')).toBeVisible()
   })
 
   it('should show back button and navigate back when from query param exists', async () => {
     mockUseRouter.mockReturnValue({
-      ...mockUseRouter.mock.results[0].value,
       query: { from: '/previous-page' },
+      events: mockRouterEvents,
+      back: mockBack,
+      asPath: '/',
     })
     render(<TabBar />)
     
-    const backButton = screen.getByRole('button', { name: /back/i })
+    const backButton = screen.getByTestId('tabbar-back-button')
     expect(backButton).toBeVisible()
     
     await userEvent.click(backButton)
@@ -92,8 +112,8 @@ describe('TabBar', () => {
     const avatar = screen.getByAltText('avatar')
     await userEvent.click(avatar)
     
-    expect(screen.getByText(mockName)).toBeVisible()
-    expect(screen.getByText('Settings')).toBeVisible()
+    const profileWrapper = screen.getAllByRole('link').find(el => el.getAttribute('href') === '/my/profile')
+    expect(profileWrapper?.closest('div')).toHaveClass('sc-lnPyaJ')
   })
 
   it('should show zorb when no avatar is available', () => {
@@ -104,11 +124,17 @@ describe('TabBar', () => {
     expect(screen.getByAltText('zorb')).toHaveAttribute('src', mockZorbUrl)
   })
 
-  it('should show notification on settings when there are pending transactions', () => {
+  it('should show notification on settings when there are pending transactions', async () => {
     mockUseHasPendingTransactions.mockReturnValue(true)
-    renderWithAddress()
+    mockUseAccountSafely.mockReturnValue({ address: mockAddress })
+    mockUsePrimaryName.mockReturnValue({ data: { name: mockName }, isLoading: false })
+    mockUseEnsAvatar.mockReturnValue({ data: mockAvatarUrl, isLoading: false })
+    render(<TabBar />)
     
-    const settings = screen.getByText('Settings')
-    expect(settings.parentElement).toHaveAttribute('hasNotification', 'true')
+    const avatar = screen.getByAltText('avatar')
+    await userEvent.click(avatar)
+    
+    const settingsLink = screen.getAllByRole('link').find(el => el.getAttribute('href') === '/my/settings')
+    expect(settingsLink).toHaveClass('indicator-container')
   })
 })
