@@ -1,16 +1,17 @@
 import { DefaultOptions, QueryClient } from '@tanstack/react-query'
 import { hashFn } from 'wagmi/query'
+import { createGraphQLQueryClient } from './graphqlClient'
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnMount: true,
-      staleTime: 0,
-      gcTime: 1_000 * 60 * 60 * 24,
-      queryKeyHashFn: hashFn,
-    },
+const baseOptions: DefaultOptions<Error> = {
+  queries: {
+    refetchOnMount: true,
+    staleTime: 0,
+    gcTime: 1_000 * 60 * 60 * 24,
+    queryKeyHashFn: hashFn,
   },
-})
+}
+
+export const queryClient = createGraphQLQueryClient(baseOptions)
 
 export const refetchOptions: DefaultOptions<Error> = {
   queries: {
