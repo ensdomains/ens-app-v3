@@ -223,4 +223,23 @@ describe('SocialIcon', () => {
     expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
     expect(coloredIconWrapper).toHaveStyle('opacity: 0')
   })
+
+  it('should maintain default fill color on hover when no custom color is provided', async () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        href="https://example.com"
+      />,
+    )
+    const defaultIcon = screen.getByTestId('mock-icon')
+    const link = screen.getByRole('link')
+
+    expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
+    
+    await userEvent.hover(link)
+    expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
+    
+    await userEvent.unhover(link)
+    expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
+  })
 })
