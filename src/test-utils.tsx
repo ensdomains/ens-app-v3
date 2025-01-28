@@ -14,7 +14,7 @@ import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 import { mainnetWithEns } from '@app/constants/chains'
 
 import { DeepPartial } from './types'
-import { BreakpointProvider } from './utils/BreakpointProvider'
+import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
 
 const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
 const { privateKeyToAccount } =
@@ -102,11 +102,17 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
     </WagmiProvider>
   )
 
-  if (typeof window === 'undefined') {
-    return content
-  }
-
-  return (
+  // Only wrap with BreakpointProvider if:
+  // 1. We're in a browser environment
+  // 2. BreakpointProvider is not being mocked
+  // 3. We're not testing BreakpointProvider itself
+  const isTestingBreakpointProvider = React.isValidElement(children) && children.type === BreakpointProvider
+  const shouldUseBreakpointProvider = 
+    typeof window !== 'undefined' && 
+    !vi.isMockFunction(useBreakpoint) && 
+    !isTestingBreakpointProvider
+  
+  return shouldUseBreakpointProvider ? (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
@@ -115,7 +121,7 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
-  )
+  ) : content
 }
 
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) =>
