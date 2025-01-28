@@ -7,6 +7,16 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useZorb } from '@app/hooks/useZorb'
+import { BreakpointProvider } from '@app/utils/BreakpointProvider'
+
+vi.mock('@app/utils/BreakpointProvider', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    BreakpointProvider: ({ children }) => children,
+    useBreakpoint: () => ({ sm: true, md: true, lg: true }),
+  }
+})
 
 vi.mock('next/router', () => ({
   useRouter: vi.fn(() => ({
