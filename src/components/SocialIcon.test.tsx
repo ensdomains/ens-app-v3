@@ -160,6 +160,7 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
     
+    // Test SocialIconWrapper styles
     expect(link).toHaveStyle('display: flex')
     expect(link).toHaveStyle('align-items: center')
     expect(link).toHaveStyle('justify-content: center')
@@ -167,7 +168,10 @@ describe('SocialIcon', () => {
     expect(link).toHaveStyle('cursor: pointer')
     expect(link).toHaveStyle('width: 1.5rem')
     expect(link).toHaveStyle('min-height: 1.5rem')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('href', 'https://example.com')
     
+    // Test StyledIcon styles
     expect(icon).toHaveStyle('position: absolute')
     expect(icon).toHaveStyle('height: 100%')
     expect(icon).toHaveStyle('fill: rgb(161, 161, 161)')
@@ -175,6 +179,23 @@ describe('SocialIcon', () => {
     
     // Check that key prop is set correctly
     expect(icon.parentElement).toHaveAttribute('key', 'https://example.com')
+  })
+
+  it('should have correct styles for StyledColoredIcon', () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        ColoredIcon={mockColoredIcon}
+        href="https://example.com"
+      />,
+    )
+    const coloredIcon = screen.getByTestId('mock-colored-icon')
+    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
+    
+    expect(coloredIconWrapper).toHaveStyle('height: 100%')
+    expect(coloredIconWrapper).toHaveStyle('position: absolute')
+    expect(coloredIconWrapper).toHaveStyle('transition: 0.15s all ease-in-out')
+    expect(coloredIconWrapper).toHaveStyle('opacity: 0')
   })
 
   it('should apply custom color on hover', async () => {
@@ -235,11 +256,16 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
 
     expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
+    expect(defaultIcon).toHaveStyle('transition: 0.15s all ease-in-out')
+    expect(defaultIcon).toHaveStyle('position: absolute')
+    expect(defaultIcon).toHaveStyle('height: 100%')
     
     await userEvent.hover(link)
     expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
+    expect(defaultIcon).toHaveStyle('transition: 0.15s all ease-in-out')
     
     await userEvent.unhover(link)
     expect(defaultIcon).toHaveStyle('fill: rgb(161, 161, 161)')
+    expect(defaultIcon).toHaveStyle('transition: 0.15s all ease-in-out')
   })
 })
