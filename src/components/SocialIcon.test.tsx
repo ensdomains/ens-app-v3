@@ -143,7 +143,7 @@ describe('SocialIcon', () => {
     expect(link).toHaveStyle('display: flex')
     expect(link).toHaveStyle('align-items: center')
     expect(link).toHaveStyle('justify-content: center')
-    expect(icon).toHaveStyle({ transition: '0.15s all ease-in-out' })
+    expect(icon).toHaveStyle('transition: 0.15s all ease-in-out')
   })
 
   it('should have correct default styles', () => {
@@ -156,21 +156,18 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
     
-    expect(link).toHaveStyle({
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      cursor: 'pointer',
-      width: 'var(--space-6)',
-      minHeight: 'var(--space-6)'
-    })
-    expect(icon).toHaveStyle({
-      position: 'absolute',
-      height: '100%',
-      fill: 'var(--color-greyPrimary)',
-      transition: '0.15s all ease-in-out'
-    })
+    expect(link).toHaveStyle('display: flex')
+    expect(link).toHaveStyle('align-items: center')
+    expect(link).toHaveStyle('justify-content: center')
+    expect(link).toHaveStyle('position: relative')
+    expect(link).toHaveStyle('cursor: pointer')
+    expect(link).toHaveStyle('width: 1.5rem')
+    expect(link).toHaveStyle('min-height: 1.5rem')
+    
+    expect(icon).toHaveStyle('position: absolute')
+    expect(icon).toHaveStyle('height: 100%')
+    expect(icon).toHaveStyle('fill: rgb(161, 161, 161)')
+    expect(icon).toHaveStyle('transition: 0.15s all ease-in-out')
   })
 
   it('should apply custom color on hover', async () => {
