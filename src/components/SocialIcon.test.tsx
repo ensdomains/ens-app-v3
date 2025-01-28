@@ -98,4 +98,5 @@ describe('SocialIcon', () => {
     expect(icon.parentElement).toHaveStyle({ fill: expect.stringContaining('greyPrimary') })
     await userEvent.hover(link)
     expect(icon.parentElement).toHaveStyle({ fill: customColor })
+  })
 })
