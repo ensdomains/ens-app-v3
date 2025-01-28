@@ -99,4 +99,16 @@ describe('SocialIcon', () => {
     await userEvent.hover(link)
     expect(icon.parentElement).toHaveStyle({ fill: customColor })
   })
+
+  it('should render without ColoredIcon prop', () => {
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        href="https://example.com"
+      />,
+    )
+    const defaultIcon = screen.getByTestId('mock-icon')
+    expect(defaultIcon).toBeInTheDocument()
+    expect(screen.queryByTestId('mock-colored-icon')).not.toBeInTheDocument()
+  })
 })
