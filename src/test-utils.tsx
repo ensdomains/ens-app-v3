@@ -10,10 +10,11 @@ import type { Register } from 'wagmi'
 import { hashFn } from 'wagmi/query'
 
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+
 import { mainnetWithEns } from '@app/constants/chains'
-import { BreakpointProvider } from './utils/BreakpointProvider'
 
 import { DeepPartial } from './types'
+import { BreakpointProvider } from './utils/BreakpointProvider'
 
 const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
 const { privateKeyToAccount } =
@@ -110,9 +111,7 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
-          <BreakpointProvider queries={defaultQueries}>
-            {children}
-          </BreakpointProvider>
+          <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
