@@ -171,7 +171,9 @@ describe('SocialIcon', () => {
       alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      width: 'var(--space-6)',
+      minHeight: 'var(--space-6)'
     })
     expect(icon).toHaveStyle({
       position: 'absolute',
@@ -191,6 +193,7 @@ describe('SocialIcon', () => {
       />,
     )
     const icon = screen.getByTestId('mock-icon')
+    const link = screen.getByRole('link')
     
     expect(icon).toHaveStyle({ 
       position: 'absolute',
@@ -198,7 +201,34 @@ describe('SocialIcon', () => {
       transition: '0.15s all ease-in-out',
       fill: 'var(--color-greyPrimary)'
     })
-    await userEvent.hover(screen.getByRole('link'))
+    await userEvent.hover(link)
     expect(icon).toHaveStyle({ fill: customColor })
+  })
+
+  it('should handle hover state transitions for both icons', async () => {
+    const customColor = '#ff0000'
+    render(
+      <SocialIcon
+        Icon={mockIcon}
+        ColoredIcon={mockColoredIcon}
+        color={customColor}
+        href="https://example.com"
+      />,
+    )
+    const defaultIcon = screen.getByTestId('mock-icon')
+    const coloredIcon = screen.getByTestId('mock-colored-icon')
+    const link = screen.getByRole('link')
+    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
+
+    expect(defaultIcon).toHaveStyle({ fill: 'var(--color-greyPrimary)' })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
+
+    await userEvent.hover(link)
+    expect(defaultIcon).toHaveStyle({ fill: customColor })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '1' })
+
+    await userEvent.unhover(link)
+    expect(defaultIcon).toHaveStyle({ fill: 'var(--color-greyPrimary)' })
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
   })
 })
