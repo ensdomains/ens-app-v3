@@ -2,6 +2,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Address } from 'viem'
 import { useDisconnect, useEnsAvatar } from 'wagmi'
+import { shortenAddress } from '@app/utils/utils'
 
 import { render, screen } from '@app/test-utils'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -67,10 +68,59 @@ describe('ConnectButton', () => {
   beforeEach(() => {
     vi.mocked(useConnectModal).mockReturnValue({ openConnectModal: mockOpenConnectModal, connectModalOpen: false })
     vi.mocked(useBreakpoint).mockReturnValue(mockBreakpoint)
-    vi.mocked(useDisconnect).mockReturnValue({ disconnect: vi.fn(), disconnectAsync: vi.fn() })
-    vi.mocked(useEnsAvatar).mockReturnValue({ data: null, isLoading: false })
-    vi.mocked(useAccountSafely).mockReturnValue({ address: undefined, chainId: 1 })
-    vi.mocked(usePrimaryName).mockReturnValue(mockPrimaryName)
+    vi.mocked(useDisconnect).mockReturnValue({
+      disconnect: vi.fn(),
+      disconnectAsync: vi.fn(),
+      error: null,
+      isError: false,
+      isIdle: true,
+      isLoading: false,
+      isSuccess: false,
+      reset: vi.fn(),
+      status: 'idle',
+    })
+    vi.mocked(useEnsAvatar).mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+      isError: false,
+      isIdle: true,
+      isSuccess: false,
+      status: 'idle',
+      refetch: vi.fn(),
+      isRefetching: false,
+      isFetching: false,
+      dataUpdatedAt: 0,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      fetchStatus: 'idle',
+      isPlaceholderData: false,
+      isPending: false,
+      isPaused: false,
+      isLoadingError: false,
+      isRefetchError: false,
+    })
+    vi.mocked(useAccountSafely).mockReturnValue({
+      address: undefined,
+      chainId: 1,
+      chain: { id: 1, name: 'Mainnet' },
+      connector: undefined,
+      isConnected: false,
+      isConnecting: false,
+      isDisconnected: true,
+      isReconnecting: false,
+      status: 'disconnected',
+    })
+    vi.mocked(usePrimaryName).mockReturnValue({
+      ...mockPrimaryName,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isFetching: false,
+      isPlaceholderData: false,
+      isPaused: false,
+    })
     vi.mocked(useRouterWithHistory).mockReturnValue({ push: vi.fn() } as any)
     vi.mocked(useZorb).mockReturnValue('zorb-url')
     vi.mocked(useHasPendingTransactions).mockReturnValue(false)
@@ -82,7 +132,7 @@ describe('ConnectButton', () => {
 
   it('should render with default props', () => {
     render(<ConnectButton />)
-    const button = screen.getByTestId('connect-button')
+    const button = screen.getByTestId('body-connect-button')
     expect(button).toBeInTheDocument()
     expect(button).toHaveTextContent('wallet.connect')
   })
@@ -103,7 +153,7 @@ describe('ConnectButton', () => {
 
   it('should render with large prop', () => {
     render(<ConnectButton large />)
-    const button = screen.getByTestId('connect-button')
+    const button = screen.getByTestId('body-connect-button')
     expect(button).toBeInTheDocument()
     expect(button.parentElement).toHaveStyle('width: 100%')
   })
@@ -111,19 +161,19 @@ describe('ConnectButton', () => {
   it('should render small button on mobile without large prop', () => {
     vi.mocked(useBreakpoint).mockReturnValue({ sm: false })
     render(<ConnectButton />)
-    const button = screen.getByTestId('connect-button')
+    const button = screen.getByTestId('body-connect-button')
     expect(button).toHaveAttribute('data-size', 'small')
   })
 
   it('should render medium button on desktop or with large prop', () => {
     render(<ConnectButton large />)
-    const button = screen.getByTestId('connect-button')
+    const button = screen.getByTestId('body-connect-button')
     expect(button).toHaveAttribute('data-size', 'medium')
   })
 
   it('should call openConnectModal when clicked', () => {
     render(<ConnectButton />)
-    screen.getByTestId('connect-button').click()
+    screen.getByTestId('body-connect-button').click()
     expect(mockOpenConnectModal).toHaveBeenCalled()
   })
 
@@ -226,9 +276,30 @@ describe('HeaderProfile', () => {
   })
 
   it('should render with address when no ENS name', () => {
-    vi.mocked(usePrimaryName).mockReturnValue({ data: undefined })
+    vi.mocked(useAccountSafely).mockReturnValue({
+      address: TEST_ADDRESS,
+      chainId: 1,
+      chain: { id: 1, name: 'Mainnet' },
+      connector: undefined,
+      isConnected: true,
+      isConnecting: false,
+      isDisconnected: false,
+      isReconnecting: false,
+      status: 'connected',
+    })
+    vi.mocked(usePrimaryName).mockReturnValue({
+      ...mockPrimaryName,
+      data: undefined,
+      isSuccess: true,
+      status: 'success',
+      refetch: vi.fn(),
+      isRefetching: false,
+      isFetching: false,
+      isPlaceholderData: false,
+      isPaused: false,
+    })
     render(<HeaderConnect />)
-    expect(screen.getByText(TEST_ADDRESS)).toBeInTheDocument()
+    expect(screen.getByText('0x1234...cdef')).toBeInTheDocument()
   })
 
   it('should render with avatar when available', () => {
