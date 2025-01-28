@@ -23,7 +23,7 @@ describe('SocialIcon', () => {
     expect(link).toHaveStyle('color: rgb(161, 161, 161)')
   })
 
-  it('should render and handle colored icon correctly', () => {
+  it('should render and handle colored icon correctly with proper component rendering', () => {
     render(
       <SocialIcon
         Icon={mockIcon}
@@ -42,6 +42,10 @@ describe('SocialIcon', () => {
     expect(coloredIconWrapper).toHaveStyle('height: 100%')
     expect(coloredIconWrapper).toHaveStyle('position: absolute')
     expect(coloredIconWrapper).toHaveStyle('transition: 0.15s all ease-in-out')
+    
+    // Verify that both icons are rendered with the correct component type
+    expect(defaultIcon.parentElement?.getAttribute('as')).toBe(undefined) // Icon is directly rendered
+    expect(coloredIcon.parentElement?.getAttribute('as')).toBe(undefined) // ColoredIcon is directly rendered
   })
 
   it('should handle hover states correctly', async () => {
@@ -146,7 +150,7 @@ describe('SocialIcon', () => {
     expect(icon).toHaveStyle('transition: 0.15s all ease-in-out')
   })
 
-  it('should have correct default styles', () => {
+  it('should have correct default styles and props', () => {
     render(
       <SocialIcon
         Icon={mockIcon}
@@ -168,6 +172,9 @@ describe('SocialIcon', () => {
     expect(icon).toHaveStyle('height: 100%')
     expect(icon).toHaveStyle('fill: rgb(161, 161, 161)')
     expect(icon).toHaveStyle('transition: 0.15s all ease-in-out')
+    
+    // Check that key prop is set correctly
+    expect(icon.parentElement).toHaveAttribute('key', 'https://example.com')
   })
 
   it('should apply custom color on hover', async () => {
