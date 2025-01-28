@@ -379,7 +379,7 @@ export const ProfileDetails = ({
             actionWarnings.length > 0 &&
             actionWarnings.map((warning) => (
               <Helper
-                type="warning"
+                alert="warning"
                 key={warning}
                 alignment={breakpoint.sm ? 'horizontal' : 'vertical'}
               >

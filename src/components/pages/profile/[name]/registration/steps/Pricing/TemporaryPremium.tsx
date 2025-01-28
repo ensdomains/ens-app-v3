@@ -525,7 +525,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   }, [selectedPoint, selectedPrice])
 
   return (
-    <Helper style={{ overflow: 'hidden' }} type="info">
+    <Helper style={{ overflow: 'hidden' }} alert="info">
       <Container>
         <HeadingContainer>
           <Typography weight="bold">{t('steps.pricing.premium.heading')}</Typography>
