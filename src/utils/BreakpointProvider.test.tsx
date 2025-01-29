@@ -15,57 +15,47 @@ const breakpoints = {
 
 describe('BreakpointProvider', () => {
   type MediaQueryListener = (e: MediaQueryListEvent) => void
-  type MediaQueryData = { matches: boolean; listeners: Set<MediaQueryListener> }
-  const mediaQueries = new Map<string, MediaQueryData>()
+  const mediaQueries = new Map<string, Set<MediaQueryListener>>()
+  const mediaMatches = new Map<string, boolean>()
 
   beforeEach(() => {
-    vi.useFakeTimers({ shouldAdvanceTime: true })
+    vi.useFakeTimers()
     mediaQueries.clear()
+    mediaMatches.clear()
 
     window.matchMedia = vi.fn().mockImplementation((query: string) => {
       if (!mediaQueries.has(query)) {
-        mediaQueries.set(query, { matches: false, listeners: new Set() })
+        mediaQueries.set(query, new Set())
+        mediaMatches.set(query, false)
       }
-      const queryData = mediaQueries.get(query)!
 
       const mql = {
-        matches: queryData.matches,
+        matches: mediaMatches.get(query),
         media: query,
         onchange: null,
-        addListener(listener: MediaQueryListener) {
-          this.addEventListener('change', listener)
+        addListener: (listener: MediaQueryListener) => {
+          mediaQueries.get(query)!.add(listener)
         },
-        removeListener(listener: MediaQueryListener) {
-          this.removeEventListener('change', listener)
+        removeListener: (listener: MediaQueryListener) => {
+          mediaQueries.get(query)!.delete(listener)
         },
-        addEventListener(type: string, listener: MediaQueryListener) {
-          if (type === 'change') {
-            queryData.listeners.add(listener)
-          }
+        addEventListener: (type: string, listener: MediaQueryListener) => {
+          if (type === 'change') mediaQueries.get(query)!.add(listener)
         },
-        removeEventListener(type: string, listener: MediaQueryListener) {
-          if (type === 'change') {
-            queryData.listeners.delete(listener)
-          }
+        removeEventListener: (type: string, listener: MediaQueryListener) => {
+          if (type === 'change') mediaQueries.get(query)!.delete(listener)
         },
-        dispatchEvent(event: Event) {
-          if (event.type === 'change') {
+        dispatchEvent: (event: { type: string; matches?: boolean }) => {
+          if (event.type === 'change' && event.matches !== undefined) {
+            mediaMatches.set(query, event.matches)
             const mediaQueryEvent = new Event('change') as MediaQueryListEvent
             Object.defineProperty(mediaQueryEvent, 'matches', { value: event.matches })
             Object.defineProperty(mediaQueryEvent, 'media', { value: query })
-            queryData.matches = event.matches
-            mql.matches = event.matches
-            queryData.listeners.forEach(listener => listener(mediaQueryEvent))
+            mediaQueries.get(query)!.forEach(listener => listener(mediaQueryEvent))
           }
           return true
         }
       }
-
-      vi.spyOn(mql, 'addListener')
-      vi.spyOn(mql, 'removeListener')
-      vi.spyOn(mql, 'addEventListener')
-      vi.spyOn(mql, 'removeEventListener')
-      vi.spyOn(mql, 'dispatchEvent')
 
       return mql
     })
@@ -90,10 +80,12 @@ describe('BreakpointProvider', () => {
     )
 
     await act(async () => {
-      vi.advanceTimersByTime(100)
+      vi.runOnlyPendingTimers()
+      await Promise.resolve()
     })
+
     const totalListeners = Array.from(mediaQueries.values())
-      .reduce((acc, curr) => acc + curr.listeners.size, 0)
+      .reduce((acc, curr) => acc + curr.size, 0)
     expect(totalListeners).toBe(Object.keys(breakpoints).length)
   })
 
@@ -109,6 +101,11 @@ describe('BreakpointProvider', () => {
       </BreakpointProvider>,
     )
 
+    await act(async () => {
+      vi.runOnlyPendingTimers()
+      await Promise.resolve()
+    })
+
     // Initial state should have all breakpoints as false
     const initialState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
     expect(initialState.xs).toBe(false)
@@ -117,14 +114,11 @@ describe('BreakpointProvider', () => {
     // Simulate xs breakpoint change
     const xsMediaQuery = window.matchMedia(breakpoints.xs)
     await act(async () => {
-      mediaQueries.get(breakpoints.xs)!.matches = true
-      xsMediaQuery.dispatchEvent({ type: 'change', matches: true } as Event)
-      await new Promise(resolve => setTimeout(resolve, 0))
+      xsMediaQuery.dispatchEvent({ type: 'change', matches: true })
+      vi.runOnlyPendingTimers()
+      await Promise.resolve()
     })
 
-    await act(async () => {
-      vi.advanceTimersByTime(100)
-    })
     const updatedState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
     expect(updatedState.xs).toBe(true)
     expect(updatedState.sm).toBe(false)
@@ -132,14 +126,11 @@ describe('BreakpointProvider', () => {
     // Simulate sm breakpoint change
     const smMediaQuery = window.matchMedia(breakpoints.sm)
     await act(async () => {
-      mediaQueries.get(breakpoints.sm)!.matches = true
-      smMediaQuery.dispatchEvent({ type: 'change', matches: true } as Event)
-      await new Promise(resolve => setTimeout(resolve, 0))
+      smMediaQuery.dispatchEvent({ type: 'change', matches: true })
+      vi.runOnlyPendingTimers()
+      await Promise.resolve()
     })
 
-    await act(async () => {
-      vi.advanceTimersByTime(100)
-    })
     const finalState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
     expect(finalState.xs).toBe(true)
     expect(finalState.sm).toBe(true)
@@ -153,16 +144,23 @@ describe('BreakpointProvider', () => {
     )
 
     await act(async () => {
-      vi.advanceTimersByTime(100)
+      vi.runOnlyPendingTimers()
+      await Promise.resolve()
     })
+
     const totalListeners = Array.from(mediaQueries.values())
-      .reduce((acc, curr) => acc + curr.listeners.size, 0)
+      .reduce((acc, curr) => acc + curr.size, 0)
     expect(totalListeners).toBe(Object.keys(breakpoints).length)
 
     unmount()
 
+    await act(async () => {
+      vi.runOnlyPendingTimers()
+      await Promise.resolve()
+    })
+
     const remainingListeners = Array.from(mediaQueries.values())
-      .reduce((acc, curr) => acc + curr.listeners.size, 0)
+      .reduce((acc, curr) => acc + curr.size, 0)
     expect(remainingListeners).toBe(0)
   })
 })
