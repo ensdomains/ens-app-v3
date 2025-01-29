@@ -33,12 +33,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-reports
-          path: coverage
+          path: |
+            coverage/
+            coverage/lcov.info
+            coverage/coverage-final.json
+          retention-days: 14
 
       - name: Fix coverage paths for SonarCloud
         run: |
           sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace@g' coverage/lcov.info
           cp coverage/lcov.info coverage/coverage-final.json .
+          ls -la coverage/
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
