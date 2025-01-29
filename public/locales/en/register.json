@@ -1,1 +1,20 @@
-{}
+{
+  "steps": {
+    "profile": {
+      "options": {
+        "groups": {
+          "address": {
+            "placeholder": {
+              "eth": "0x123...",
+              "btc": "bc1...",
+              "ltc": "ltc1...",
+              "doge": "D...",
+              "sol": "...",
+              "atom": "cosmos1..."
+            }
+          }
+        }
+      }
+    }
+  }
+}
