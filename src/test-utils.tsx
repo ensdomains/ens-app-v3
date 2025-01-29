@@ -18,7 +18,7 @@ import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
 
 vi.mock('./utils/BreakpointProvider', () => ({
   BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
-  useBreakpoint: () => ({ sm: true, md: true, lg: true }),
+  useBreakpoint: vi.fn().mockReturnValue({ sm: true, md: true, lg: true }),
 }))
 
 const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
