@@ -109,9 +109,9 @@ describe('SocialIcon', () => {
       transition: '0.15s all ease-in-out'
     })
     await userEvent.hover(link)
-    expect(window.getComputedStyle(coloredIconWrapper!).opacity).toBe('1')
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '1' })
     await userEvent.unhover(link)
-    expect(window.getComputedStyle(coloredIconWrapper!).opacity).toBe('0')
+    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
   })
 
   it('should change icon color on hover when color prop is provided', async () => {
@@ -126,14 +126,16 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
     
-    const initialLinkStyles = window.getComputedStyle(link)
-    expect(initialLinkStyles.display).toBe('flex')
-    expect(initialLinkStyles.position).toBe('relative')
-    expect(initialLinkStyles.cursor).toBe('pointer')
+    expect(link).toHaveStyle({
+      display: 'flex',
+      position: 'relative',
+      cursor: 'pointer'
+    })
     
     await userEvent.hover(link)
-    const hoverLinkStyles = window.getComputedStyle(link)
-    expect(hoverLinkStyles.color).toBe('rgb(255, 0, 0)')
+    expect(link).toHaveStyle({
+      color: 'rgb(255, 0, 0)'
+    })
   })
 
   it('should render without ColoredIcon prop', () => {
@@ -182,22 +184,23 @@ describe('SocialIcon', () => {
     const icon = screen.getByTestId('mock-icon')
     
     // Test SocialIconWrapper styles
-    const computedLinkStyles = window.getComputedStyle(link)
-    expect(computedLinkStyles.display).toBe('flex')
-    expect(computedLinkStyles.alignItems).toBe('center')
-    expect(computedLinkStyles.justifyContent).toBe('center')
-    expect(computedLinkStyles.width).toBe(lightTheme.space['6'])
-    expect(computedLinkStyles.minHeight).toBe(lightTheme.space['6'])
-    expect(computedLinkStyles.position).toBe('relative')
-    expect(computedLinkStyles.cursor).toBe('pointer')
+    expect(link).toHaveStyle({
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: lightTheme.space['6'],
+      minHeight: lightTheme.space['6'],
+      position: 'relative',
+      cursor: 'pointer'
+    })
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('href', 'https://example.com')
     
-    // Test StyledIcon styles
-    const computedIconStyles = window.getComputedStyle(icon)
-    expect(computedIconStyles.position).toBe('absolute')
-    expect(computedIconStyles.height).toBe('100%')
-    expect(computedIconStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    expect(icon.parentElement).toHaveStyle({
+      position: 'absolute',
+      height: '100%',
+      fill: lightTheme.colors.greyPrimary
+    })
     
     // Check that key prop is set correctly
     expect(icon.parentElement).toHaveAttribute('key', 'https://example.com')
@@ -297,12 +300,14 @@ describe('SocialIcon', () => {
     })
     
     await userEvent.hover(link)
-    const hoverIconStyles = window.getComputedStyle(defaultIcon)
-    expect(hoverIconStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    expect(defaultIcon.parentElement).toHaveStyle({
+      fill: lightTheme.colors.greyPrimary
+    })
     
     await userEvent.unhover(link)
-    const unhoverIconStyles = window.getComputedStyle(defaultIcon)
-    expect(unhoverIconStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    expect(defaultIcon.parentElement).toHaveStyle({
+      fill: lightTheme.colors.greyPrimary
+    })
   })
 
   it('should verify theme-based spacing for width and height', () => {
