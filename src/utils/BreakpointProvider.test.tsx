@@ -72,7 +72,7 @@ describe('BreakpointProvider', () => {
         }
       }
 
-      return mql
+      }
     })
   })
 
