@@ -33,10 +33,10 @@ describe('BreakpointProvider', () => {
         media: query,
         onchange: null,
         addListener(listener: MediaQueryListener) {
-          queryData.listeners.add(listener)
+          this.addEventListener('change', listener)
         },
         removeListener(listener: MediaQueryListener) {
-          queryData.listeners.delete(listener)
+          this.removeEventListener('change', listener)
         },
         addEventListener(type: string, listener: MediaQueryListener) {
           if (type === 'change') {
@@ -50,12 +50,12 @@ describe('BreakpointProvider', () => {
         },
         dispatchEvent(event: Event) {
           if (event.type === 'change') {
-            const mediaQueryEvent = event as MediaQueryListEvent
-            queryData.matches = mediaQueryEvent.matches
-            mql.matches = mediaQueryEvent.matches
-            queryData.listeners.forEach(listener => {
-              listener(mediaQueryEvent)
-            })
+            const mediaQueryEvent = new Event('change') as MediaQueryListEvent
+            Object.defineProperty(mediaQueryEvent, 'matches', { value: event.matches })
+            Object.defineProperty(mediaQueryEvent, 'media', { value: query })
+            queryData.matches = event.matches
+            mql.matches = event.matches
+            queryData.listeners.forEach(listener => listener(mediaQueryEvent))
           }
           return true
         }
@@ -118,10 +118,7 @@ describe('BreakpointProvider', () => {
     const xsMediaQuery = window.matchMedia(breakpoints.xs)
     await act(async () => {
       mediaQueries.get(breakpoints.xs)!.matches = true
-      const event = new Event('change')
-      Object.defineProperty(event, 'matches', { value: true, configurable: true })
-      Object.defineProperty(event, 'media', { value: breakpoints.xs, configurable: true })
-      xsMediaQuery.dispatchEvent(event)
+      xsMediaQuery.dispatchEvent({ type: 'change', matches: true } as Event)
       await new Promise(resolve => setTimeout(resolve, 0))
     })
 
@@ -136,10 +133,7 @@ describe('BreakpointProvider', () => {
     const smMediaQuery = window.matchMedia(breakpoints.sm)
     await act(async () => {
       mediaQueries.get(breakpoints.sm)!.matches = true
-      const event = new Event('change')
-      Object.defineProperty(event, 'matches', { value: true, configurable: true })
-      Object.defineProperty(event, 'media', { value: breakpoints.sm, configurable: true })
-      smMediaQuery.dispatchEvent(event)
+      smMediaQuery.dispatchEvent({ type: 'change', matches: true } as Event)
       await new Promise(resolve => setTimeout(resolve, 0))
     })
 
