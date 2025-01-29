@@ -32,17 +32,18 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*'],
-      exclude: ['**/*.d.ts', '**/*.test.ts', '**/*.test.tsx'],
+      exclude: ['**/*.d.ts', '**/*.test.ts', '**/*.test.tsx', '**/*.stories.tsx'],
       thresholds: {
         statements: 80,
         branches: 80,
         functions: 80,
         lines: 80
       },
-      reporter: ['text', 'json-summary', 'lcov', 'sonar'],
+      reporter: ['text', 'json-summary', 'lcov', 'html'],
       reportsDirectory: './coverage',
       all: true,
       clean: true,
+      enabled: true,
     },
     typecheck: {
       ignoreSourceErrors: true,

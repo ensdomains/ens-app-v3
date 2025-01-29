@@ -44,6 +44,9 @@ jobs:
           sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace@g' coverage/lcov.info
           cp coverage/lcov.info coverage/coverage-final.json .
           ls -la coverage/
+          cat coverage/lcov.info
+          echo "Coverage files:"
+          find coverage -type f -ls
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
