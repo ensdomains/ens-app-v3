@@ -64,35 +64,67 @@ describe('BreakpointProvider', () => {
     const { listeners } = createMockMatchMedia()
 
     const TestComponent = () => {
-      const _breakpoints = useBreakpoint()
-      return <div>{JSON.stringify(_breakpoints)}</div>
+      const breakpoints = useBreakpoint()
+      return <div data-testid="breakpoint-state">{JSON.stringify(breakpoints)}</div>
     }
 
-    const { rerender } = render(
+    const { getByTestId } = render(
       <BreakpointProvider queries={breakpoints}>
         <TestComponent />
       </BreakpointProvider>,
     )
 
+    // Initial state should have all breakpoints as false
+    const initialState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
+    expect(initialState.xs).toBe(false)
+    expect(initialState.sm).toBe(false)
+
+    // Simulate xs breakpoint change
     act(() => {
       const mockEvent = new Event('change') as MediaQueryListEvent
       Object.defineProperty(mockEvent, 'matches', { value: true })
-      Object.defineProperty(mockEvent, 'media', { value: Object.values(breakpoints)[0] })
+      Object.defineProperty(mockEvent, 'media', { value: breakpoints.xs })
       if (typeof listeners[0] === 'function') {
         listeners[0](mockEvent)
       }
     })
 
-    rerender(
+    await waitFor(() => {
+      const updatedState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
+      expect(updatedState.xs).toBe(true)
+      expect(updatedState.sm).toBe(false)
+    })
+
+    // Simulate sm breakpoint change
+    act(() => {
+      const mockEvent = new Event('change') as MediaQueryListEvent
+      Object.defineProperty(mockEvent, 'matches', { value: true })
+      Object.defineProperty(mockEvent, 'media', { value: breakpoints.sm })
+      if (typeof listeners[1] === 'function') {
+        listeners[1](mockEvent)
+      }
+    })
+
+    await waitFor(() => {
+      const finalState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
+      expect(finalState.xs).toBe(true)
+      expect(finalState.sm).toBe(true)
+    })
+  })
+
+  it('should clean up event listeners when unmounted', () => {
+    const { listeners } = createMockMatchMedia()
+    const removeEventListenerSpy = vi.fn()
+    vi.spyOn(window.matchMedia(''), 'removeEventListener').mockImplementation(removeEventListenerSpy)
+
+    const { unmount } = render(
       <BreakpointProvider queries={breakpoints}>
-        <TestComponent />
+        <div>Test</div>
       </BreakpointProvider>,
     )
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('{"xs":true,"sm":true,"md":true,"lg":true,"xl":true}'),
-      ).toBeInTheDocument()
-    })
+    expect(listeners.length).toBe(Object.keys(breakpoints).length)
+    unmount()
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(Object.keys(breakpoints).length)
   })
 })
