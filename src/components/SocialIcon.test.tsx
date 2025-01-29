@@ -125,7 +125,9 @@ describe('SocialIcon', () => {
       cursor: 'pointer'
     })
     await userEvent.hover(link)
-    expect(link).toHaveStyle(`color: ${customColor}`)
+    expect(link).toHaveStyle({
+      color: customColor
+    })
   })
 
   it('should render without ColoredIcon prop', () => {
@@ -235,10 +237,12 @@ describe('SocialIcon', () => {
       position: 'absolute',
       height: '100%',
       transition: '0.15s all ease-in-out',
-      fill: 'rgb(161, 161, 161)'
+      fill: theme.colors.greyPrimary
     })
     await userEvent.hover(link)
-    expect(icon).toHaveStyle(`fill: ${customColor}`)
+    expect(icon).toHaveStyle({
+      fill: customColor
+    })
   })
 
   it('should handle hover state transitions for both icons', async () => {
@@ -313,8 +317,8 @@ describe('SocialIcon', () => {
     )
     const link = screen.getByRole('link')
     expect(link).toHaveStyle({
-      width: '1.5rem',
-      minHeight: '1.5rem'
+      width: theme.space['6'],
+      minHeight: theme.space['6']
     })
   })
 
