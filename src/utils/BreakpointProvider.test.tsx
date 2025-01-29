@@ -22,12 +22,19 @@ describe('BreakpointProvider', () => {
     const listeners: ((e: MediaQueryListEvent) => void)[] = []
 
     const mockMatchMedia = (query: string) => ({
-      addListener: (listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
+      addListener: (listener: (e: MediaQueryListEvent) => void) => {
+        listeners.push(listener)
+        return listener
+      },
       removeListener: vi.fn(),
       matches: false,
       media: query,
       onchange: null,
-      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
+      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => {
+        if (type === 'change') {
+          listeners.push(listener)
+        }
+      },
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     })
@@ -79,7 +86,12 @@ describe('BreakpointProvider', () => {
 
     returnObject.matches = true
     act(() => {
-      listeners[0]({ matches: true, media: Object.values(breakpoints)[0] } as MediaQueryListEvent)
+      const mockEvent = new Event('change') as MediaQueryListEvent
+      Object.defineProperty(mockEvent, 'matches', { value: true })
+      Object.defineProperty(mockEvent, 'media', { value: Object.values(breakpoints)[0] })
+      if (typeof listeners[0] === 'function') {
+        listeners[0](mockEvent)
+      }
     })
 
     rerender(
