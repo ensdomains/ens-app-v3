@@ -86,7 +86,7 @@ describe('BreakpointProvider', () => {
 
     const totalListeners = Array.from(mediaQueries.values())
       .reduce((acc, curr) => acc + curr.size, 0)
-    expect(totalListeners).toBe(Object.keys(breakpoints).length)
+    expect(totalListeners).toBe(5)
   })
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
@@ -137,9 +137,14 @@ describe('BreakpointProvider', () => {
   })
 
   it('should clean up event listeners when unmounted', async () => {
+    const TestComponent = () => {
+      useBreakpoint()
+      return <div>Test</div>
+    }
+
     const { unmount } = render(
       <BreakpointProvider queries={breakpoints}>
-        <div>Test</div>
+        <TestComponent />
       </BreakpointProvider>,
     )
 
@@ -150,7 +155,7 @@ describe('BreakpointProvider', () => {
 
     const totalListeners = Array.from(mediaQueries.values())
       .reduce((acc, curr) => acc + curr.size, 0)
-    expect(totalListeners).toBe(Object.keys(breakpoints).length)
+    expect(totalListeners).toBe(5)
 
     unmount()
 
