@@ -43,7 +43,7 @@ describe('BreakpointProvider', () => {
     return { listeners }
   }
 
-  it('should set a listener for each breakpoint', () => {
+  it('should set a MediaQueryList listener for each breakpoint query', () => {
     const { listeners } = createMockMatchMedia()
 
     const TestComponent = () => {
