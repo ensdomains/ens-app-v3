@@ -21,12 +21,6 @@ describe('BreakpointProvider', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
     mediaQueries.clear()
-    Object.values(breakpoints).forEach(query => {
-      mediaQueries.set(query, { matches: false, listeners: new Set() })
-      const mql = window.matchMedia(query)
-      // Initialize all breakpoints to ensure proper setup
-      mql.dispatchEvent(new Event('change'))
-    })
 
     window.matchMedia = vi.fn().mockImplementation((query: string) => {
       if (!mediaQueries.has(query)) {
@@ -34,22 +28,12 @@ describe('BreakpointProvider', () => {
       }
       const queryData = mediaQueries.get(query)!
 
-      const createEvent = (matches: boolean): MediaQueryListEvent => {
-        const event = new Event('change') as MediaQueryListEvent
-        Object.defineProperties(event, {
-          matches: { value: matches, configurable: true },
-          media: { value: query, configurable: true }
-        })
-        return event
-      }
-
       const mql = {
         matches: queryData.matches,
         media: query,
         onchange: null,
         addListener(listener: MediaQueryListener) {
           queryData.listeners.add(listener)
-          listener(createEvent(queryData.matches))
         },
         removeListener(listener: MediaQueryListener) {
           queryData.listeners.delete(listener)
@@ -57,7 +41,6 @@ describe('BreakpointProvider', () => {
         addEventListener(type: string, listener: MediaQueryListener) {
           if (type === 'change') {
             queryData.listeners.add(listener)
-            listener(createEvent(queryData.matches))
           }
         },
         removeEventListener(type: string, listener: MediaQueryListener) {
@@ -71,7 +54,7 @@ describe('BreakpointProvider', () => {
             queryData.matches = mediaQueryEvent.matches
             mql.matches = mediaQueryEvent.matches
             queryData.listeners.forEach(listener => {
-              listener(createEvent(mediaQueryEvent.matches))
+              listener(mediaQueryEvent)
             })
           }
           return true
