@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { normalise } from '@ensdomains/ensjs/utils'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import StarsSVG from '@app/assets/Stars.svg'
@@ -41,7 +40,7 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
   const profileActions = useProfileActions({
     name,
   })
-  const abilities = useAbilities({ name: normalise(name) })
+  const abilities = useAbilities({ name })
   const canEditRecords = abilities.data?.canEditRecords
   const records = existingRecords.filter(({ value }) => value)
 
