@@ -43,7 +43,6 @@ async function collectTranslationKeys(filePath, allKeys = new Set(), keyToFiles 
         keyToFiles.set(fullKey, files)
       } else if (typeof obj[key] === 'object' && obj[key] !== null) {
         recurse(obj[key], fullKey)
-        allKeys.add(fullKey)
       }
     }
   }
