@@ -53,7 +53,7 @@ const BreakpointProvider = ({
       isAttached = true
       keys.forEach((media) => {
         if (typeof queries[media] === 'string') {
-          mediaQueryLists[media]?.addListener(handleQueryListener)
+          mediaQueryLists[media]?.addEventListener('change', handleQueryListener)
         }
       })
     }
@@ -62,7 +62,7 @@ const BreakpointProvider = ({
       if (isAttached) {
         keys.forEach((media) => {
           if (typeof queries[media] === 'string') {
-            mediaQueryLists[media]?.removeListener(handleQueryListener)
+            mediaQueryLists[media]?.removeEventListener('change', handleQueryListener)
           }
         })
       }
