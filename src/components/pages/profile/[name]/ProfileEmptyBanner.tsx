@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { normalise } from '@ensdomains/ensjs/utils'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 
 import StarsSVG from '@app/assets/Stars.svg'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { useProfile } from '@app/hooks/useProfile'
 
@@ -39,14 +41,15 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
   const profileActions = useProfileActions({
     name,
   })
-
+  const abilities = useAbilities({ name: normalise(name) })
+  const canEditRecords = abilities.data?.canEditRecords
   const records = existingRecords.filter(({ value }) => value)
 
   const action = (profileActions.profileActions ?? []).find(
     (i) => i.label === t('tabs.profile.actions.editProfile.label'),
   )
 
-  if (records.length || isProfileLoading || !action) return null
+  if (records.length || isProfileLoading || !action || !canEditRecords) return null
 
   return (
     <Container data-testid="profile-empty-banner">
