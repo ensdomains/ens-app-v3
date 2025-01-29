@@ -4,6 +4,7 @@
       "options": {
         "groups": {
           "address": {
+            "label": "Address",
             "placeholder": {
               "eth": "0xb8c2C2...",
               "btc": "3FZbgi29...",
