@@ -1,31 +1,20 @@
 {
   "title": "Import {{name}} into ENS",
   "error": {
-    "unknown": "An unknown error occurred",
-    "noTxtRecord": "No record found",
-    "dnssecFailure": "DNSSEC is not enabled",
-    "invalidTxtRecord": "Invalid record found",
-    "invalidAddressChecksum": "Address is not valid",
-    "resolutionFailure": "The provided record did not resolve"
+    "unknown": "An unknown error occurred"
   },
   "status": {
     "checking": "Checking...",
-    "error": "An error occurred while checking",
-    "secondsAgo": "Last checked seconds ago",
-    "aWhileAgo": "Last checked a while ago",
-    "minutesAgo_one": "Last checked {{count}} minute ago",
-    "minutesAgo_other": "Last checked {{count}} minutes ago"
+    "error": "An error occurred while checking"
   },
   "steps": {
     "selectType": {
       "title": "Claim {{name}}",
       "subtitle": "Importing domain names allows them to be used as ENS names.",
-      "learnMore": "Learn more about importing names",
       "select": {
         "heading": "How would you like to import your domain?",
         "offchain": {
           "name": "Offchain",
-          "tag": "Free",
           "description": "Your name will not have an onchain token.<br/>This does not affect it's ability to receive transactions or be used as a primary name.<br/><b>You will not be able to edit your profile from within the ENS app.</b>"
         },
         "onchain": {
@@ -36,15 +25,11 @@
     },
     "enableDnssec": {
       "title": "Enable DNSSEC",
-      "help": {
-        "findOutRegistrar": "Find out your registrar"
-      },
       "status": {
         "enabled": "DNSSEC is enabled on this domain.",
         "disabled": {
           "heading": "You'll need to visit your domain registrar to enable DNSSEC.",
-          "message": "DNSSEC is not enabled",
-          "help": "Help enabling DNSSEC"
+          "message": "DNSSEC is not enabled"
         }
       }
     },
@@ -54,17 +39,9 @@
         "disconnected": "Connect your wallet to verify ownership.",
         "mismatching": {
           "heading": "Add the DNS record below to verify your ownership of this domain.",
-          "help": "Help adding TXT records",
-          "message": "No record found",
-          "error": {
-            "onchain": "The record found does not match your connected address. You can still import this name, but you will not have ownership of it.",
-            "offchain": "The record found does not match your connected address. You can still import this name, but it will not point to your connected address and cannot be used as your primary name."
-          }
+          "message": "No record found"
         },
         "matching": "A record matching your connected address was found."
-      },
-      "action": {
-        "importWithoutOwnership": "Import without ownership"
       }
     },
     "transaction": {
@@ -75,23 +52,17 @@
       "matching": {
         "title": "Claim your domain",
         "subtitle": "Your ownership has been verified."
-      },
-      "estimatedNetworkCost": "Estimated network cost"
+      }
     },
     "complete": {
       "title": "Congratulations!",
       "import": {
         "subtitle": "<gradient>{{name}}</gradient> has been imported",
-        "description": "This domain has been successfully imported into ENS. You can now view this name.",
-        "warning": "Gasless DNS names do not currently appear in your \"Names\" list."
+        "description": "This domain has been successfully imported into ENS. You can now view this name."
       },
       "claim": {
         "subtitle": "You are now the owner of <gradient>{{name}}</gradient>",
         "description": "Your domain has been successfully claimed. You can now view and manage your name."
-      },
-      "action": {
-        "claimAnother": "Claim another",
-        "viewName": "View name"
       }
     }
   }
