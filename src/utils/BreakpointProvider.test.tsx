@@ -144,8 +144,13 @@ describe('BreakpointProvider', () => {
     })
 
     const updatedState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
-    expect(updatedState.xs).toBe(true)
-    expect(updatedState.sm).toBe(false)
+    expect(updatedState).toEqual({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: true,
+      xl: true
+    })
   })
 
   it('should clean up event listeners when unmounted', async () => {
