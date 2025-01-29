@@ -39,7 +39,8 @@ export default defineConfig({
         functions: 80,
         lines: 80
       },
-      reporter: ['text', 'json-summary'],
+      reporter: ['text', 'json-summary', 'lcov'],
+      reportsDirectory: './coverage',
     },
     typecheck: {
       ignoreSourceErrors: true,
