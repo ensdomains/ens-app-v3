@@ -1,5 +1,8 @@
 import { getAddress } from 'viem'
 
+export const isEthCoin = (coin: string | number): boolean =>
+  (typeof coin === 'string' && coin.toLowerCase() === 'eth') || coin === 60
+
 export const normalizeCoinAddress = ({
   coin,
   address,
@@ -8,7 +11,7 @@ export const normalizeCoinAddress = ({
   address?: string | null
 }): string => {
   if (!address) return ''
-  if (coin === 'eth' || coin === 'ETH' || coin === 60) {
+  if (isEthCoin(coin)) {
     try {
       return getAddress(address)
     } catch {

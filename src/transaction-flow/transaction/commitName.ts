@@ -1,9 +1,11 @@
 import type { TFunction } from 'react-i18next'
 
 import { RegistrationParameters } from '@ensdomains/ensjs/utils'
-import { commitName } from '@ensdomains/ensjs/wallet'
+import { commitName, legacyCommitName } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
+import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
 
 type Data = RegistrationParameters & { name: string }
 
@@ -27,6 +29,8 @@ const displayItems = (
 ]
 
 const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  if (isLegacyRegistration(data))
+    return legacyCommitName.makeFunctionData(connectorClient, makeLegacyRegistrationParams(data))
   return commitName.makeFunctionData(connectorClient, data)
 }
 
