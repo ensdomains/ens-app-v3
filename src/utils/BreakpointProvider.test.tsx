@@ -58,13 +58,13 @@ describe('BreakpointProvider', () => {
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
     const listeners: ((e: MediaQueryListEvent) => void)[] = []
-    const mockMatchMedia = (query: string) => ({
+    const mediaQueryList = {
       addListener: (listener: (e: MediaQueryListEvent) => void) => {
         listeners.push(listener)
       },
       removeListener: vi.fn(),
       matches: false,
-      media: query,
+      media: '',
       onchange: null,
       addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => {
         if (type === 'change') {
@@ -73,7 +73,9 @@ describe('BreakpointProvider', () => {
       },
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
-    })
+    }
+
+    const mockMatchMedia = () => mediaQueryList
     ;(window as any).matchMedia = mockMatchMedia
 
     const TestComponent = () => {
