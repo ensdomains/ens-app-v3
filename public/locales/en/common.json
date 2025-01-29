@@ -153,11 +153,6 @@
     "sendOwner": "Send Owner",
     "renew": "Renew {{name}}"
   },
-  "address": {
-    "label": "Address",
-    "viewAddress": "View address",
-    "copyAddress": "Copy address"
-  },
   "records": {
     "label": "Records"
   },

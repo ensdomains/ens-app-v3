@@ -1,13 +1,5 @@
 {
   "title": "Import {{name}} into ENS",
-  "error": {
-    "unknown": "An unknown error occurred",
-    "noTxtRecord": "No record found",
-    "dnssecFailure": "DNSSEC is not enabled",
-    "invalidTxtRecord": "Invalid record found",
-    "invalidAddressChecksum": "Address is not valid",
-    "resolutionFailure": "The provided record did not resolve"
-  },
   "status": {
     "checking": "Checking...",
     "error": "An error occurred while checking",
