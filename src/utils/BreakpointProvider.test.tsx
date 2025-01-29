@@ -45,13 +45,10 @@ describe('BreakpointProvider', () => {
         removeEventListener: (type: string, listener: MediaQueryListener) => {
           if (type === 'change') mediaQueries.get(query)!.delete(listener)
         },
-        dispatchEvent: (event: { type: string; matches?: boolean }) => {
-          if (event.type === 'change' && event.matches !== undefined) {
+        dispatchEvent: (event: Event) => {
+          if (event.type === 'change' && event instanceof MediaQueryListEvent) {
             mediaMatches.set(query, event.matches)
-            const mediaQueryEvent = new Event('change') as MediaQueryListEvent
-            Object.defineProperty(mediaQueryEvent, 'matches', { value: event.matches })
-            Object.defineProperty(mediaQueryEvent, 'media', { value: query })
-            mediaQueries.get(query)!.forEach(listener => listener(mediaQueryEvent))
+            mediaQueries.get(query)!.forEach(listener => listener(event))
           }
           return true
         }
@@ -114,7 +111,10 @@ describe('BreakpointProvider', () => {
     // Simulate xs breakpoint change
     const xsMediaQuery = window.matchMedia(breakpoints.xs)
     await act(async () => {
-      xsMediaQuery.dispatchEvent({ type: 'change', matches: true })
+      const xsEvent = new Event('change') as MediaQueryListEvent
+      Object.defineProperty(xsEvent, 'matches', { value: true })
+      Object.defineProperty(xsEvent, 'media', { value: breakpoints.xs })
+      xsMediaQuery.dispatchEvent(xsEvent)
       vi.runOnlyPendingTimers()
       await Promise.resolve()
     })
@@ -126,7 +126,10 @@ describe('BreakpointProvider', () => {
     // Simulate sm breakpoint change
     const smMediaQuery = window.matchMedia(breakpoints.sm)
     await act(async () => {
-      smMediaQuery.dispatchEvent({ type: 'change', matches: true })
+      const smEvent = new Event('change') as MediaQueryListEvent
+      Object.defineProperty(smEvent, 'matches', { value: true })
+      Object.defineProperty(smEvent, 'media', { value: breakpoints.sm })
+      smMediaQuery.dispatchEvent(smEvent)
       vi.runOnlyPendingTimers()
       await Promise.resolve()
     })
