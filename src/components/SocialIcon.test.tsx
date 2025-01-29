@@ -18,15 +18,17 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
     const styledIcon = icon.parentElement
+    expect(styledIcon).not.toBeNull()
 
     expect(icon).toBeInTheDocument()
     expect(link).toHaveAttribute('href', 'https://example.com')
     expect(link).toHaveAttribute('target', '_blank')
-    const computedStyles = window.getComputedStyle(styledIcon!)
-    expect(computedStyles.height).toBe('100%')
-    expect(computedStyles.position).toBe('absolute')
-    expect(computedStyles.fill).toBe(lightTheme.colors.greyPrimary)
-    expect(computedStyles.transition).toBe('0.15s all ease-in-out')
+
+    const iconStyles = window.getComputedStyle(styledIcon!)
+    expect(iconStyles.height).toBe('100%')
+    expect(iconStyles.position).toBe('absolute')
+    expect(iconStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    expect(iconStyles.transition).toBe('0.15s all ease-in-out')
   })
 
   it('should render and handle colored icon correctly with proper component rendering', () => {
@@ -43,12 +45,12 @@ describe('SocialIcon', () => {
     
     expect(defaultIcon).toBeInTheDocument()
     expect(coloredIcon).toBeInTheDocument()
-    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
-    const computedStyles = window.getComputedStyle(coloredIconWrapper!)
-    expect(computedStyles.height).toBe('100%')
-    expect(computedStyles.position).toBe('absolute')
-    expect(computedStyles.opacity).toBe('0')
-    expect(computedStyles.transition).toBe('0.15s all ease-in-out')
+    const styledColoredIcon = coloredIcon.parentElement
+    expect(styledColoredIcon).not.toBeNull()
+
+    const coloredIconStyles = window.getComputedStyle(styledColoredIcon!)
+    expect(coloredIconStyles.opacity).toBe('0')
+    expect(coloredIconStyles.transition).toBe('0.15s all ease-in-out')
     
     // Verify that both icons are rendered with the correct component type
     expect(defaultIcon.parentElement?.getAttribute('as')).toBe(undefined) // Icon is directly rendered
@@ -93,12 +95,10 @@ describe('SocialIcon', () => {
     expect(coloredIconStyles.transition).toBe('0.15s all ease-in-out')
 
     await userEvent.hover(link)
-    expect(styledIcon).toHaveStyle({
-      fill: customColor
-    })
-    expect(styledColoredIcon).toHaveStyle({
-      opacity: '1'
-    })
+    const hoverIconStyles = window.getComputedStyle(styledIcon!)
+    const hoverColoredStyles = window.getComputedStyle(styledColoredIcon!)
+    expect(hoverIconStyles.fill).toBe(customColor)
+    expect(hoverColoredStyles.opacity).toBe('1')
   })
 
   it('should show colored icon on hover when ColoredIcon is provided', async () => {
@@ -141,11 +141,11 @@ describe('SocialIcon', () => {
     const icon = screen.getByTestId('mock-icon')
     const styledIcon = icon.parentElement
     
-    const initialStyles = window.getComputedStyle(styledIcon!)
-    expect(initialStyles.height).toBe('100%')
-    expect(initialStyles.position).toBe('absolute')
-    expect(initialStyles.fill).toBe(lightTheme.colors.greyPrimary)
-    expect(initialStyles.transition).toBe('0.15s all ease-in-out')
+    const iconStyles = window.getComputedStyle(styledIcon!)
+    expect(iconStyles.height).toBe('100%')
+    expect(iconStyles.position).toBe('absolute')
+    expect(iconStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    expect(iconStyles.transition).toBe('0.15s all ease-in-out')
     
     await userEvent.hover(link)
     const hoverStyles = window.getComputedStyle(styledIcon!)
@@ -180,9 +180,12 @@ describe('SocialIcon', () => {
     expect(linkStyles.alignItems).toBe('center')
     expect(linkStyles.justifyContent).toBe('center')
 
-    const iconStyles = window.getComputedStyle(icon.parentElement!)
-    expect(iconStyles.position).toBe('absolute')
+    const wrapperStyles = window.getComputedStyle(icon.parentElement!)
+    expect(wrapperStyles.position).toBe('relative')
+    
+    const iconStyles = window.getComputedStyle(icon)
     expect(iconStyles.height).toBe('100%')
+    expect(iconStyles.position).toBe('absolute')
     expect(iconStyles.transition).toBe('0.15s all ease-in-out')
   })
 
@@ -226,13 +229,12 @@ describe('SocialIcon', () => {
       />,
     )
     const coloredIcon = screen.getByTestId('mock-colored-icon')
-    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
-    
-    const computedStyles = window.getComputedStyle(coloredIconWrapper!)
-    expect(computedStyles.height).toBe('100%')
-    expect(computedStyles.position).toBe('absolute')
-    expect(computedStyles.opacity).toBe('0')
-    expect(computedStyles.transition).toBe('0.15s all ease-in-out')
+    const styledColoredIcon = coloredIcon.parentElement
+    expect(styledColoredIcon).not.toBeNull()
+
+    const coloredIconStyles = window.getComputedStyle(styledColoredIcon!)
+    expect(coloredIconStyles.opacity).toBe('0')
+    expect(coloredIconStyles.transition).toBe('0.15s all ease-in-out')
   })
 
   it('should apply custom color on hover', async () => {
@@ -247,14 +249,20 @@ describe('SocialIcon', () => {
     const icon = screen.getByTestId('mock-icon')
     const link = screen.getByRole('link')
     
-    const initialStyles = window.getComputedStyle(icon.parentElement!)
-    expect(initialStyles.position).toBe('absolute')
-    expect(initialStyles.height).toBe('100%')
-    expect(initialStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    const wrapperStyles = window.getComputedStyle(icon.parentElement!)
+    expect(wrapperStyles.position).toBe('relative')
+    
+    const iconStyles = window.getComputedStyle(icon)
+    expect(iconStyles.height).toBe('100%')
+    expect(iconStyles.position).toBe('absolute')
+    expect(iconStyles.fill).toBe(lightTheme.colors.greyPrimary)
     
     await userEvent.hover(link)
     const hoverStyles = window.getComputedStyle(icon.parentElement!)
     expect(hoverStyles.fill).toBe(customColor)
+    expect(hoverStyles.position).toBe('absolute')
+    expect(hoverStyles.height).toBe('100%')
+    expect(hoverStyles.transition).toBe('0.15s all ease-in-out')
   })
 
   it('should handle hover state transitions for both icons', async () => {
@@ -272,23 +280,52 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const coloredIconWrapper = coloredIcon.parentElement?.parentElement
 
-    const initialIconStyles = window.getComputedStyle(defaultIcon.parentElement!)
-    expect(initialIconStyles.fill).toBe(lightTheme.colors.greyPrimary)
-    const initialColoredStyles = window.getComputedStyle(coloredIconWrapper!)
-    expect(initialColoredStyles.opacity).toBe('0')
+    const styledIcon = defaultIcon.parentElement
+    const styledColoredIcon = coloredIcon.parentElement
+    const socialIconWrapper = styledIcon?.parentElement
+    expect(styledIcon).not.toBeNull()
+    expect(styledColoredIcon).not.toBeNull()
+    expect(socialIconWrapper).not.toBeNull()
+
+    const iconStyles = window.getComputedStyle(styledIcon!)
+    const coloredIconStyles = window.getComputedStyle(styledColoredIcon!)
+    const wrapperStyles = window.getComputedStyle(socialIconWrapper!)
+
+    // StyledIcon styles
+    expect(iconStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    expect(iconStyles.position).toBe('absolute')
+    expect(iconStyles.height).toBe('100%')
+    expect(iconStyles.transition).toBe('0.15s all ease-in-out')
+
+    // StyledColoredIcon styles
+    expect(coloredIconStyles.opacity).toBe('0')
+    expect(coloredIconStyles.position).toBe('absolute')
+    expect(coloredIconStyles.height).toBe('100%')
+    expect(coloredIconStyles.transition).toBe('0.15s all ease-in-out')
 
     await userEvent.hover(link)
-    const hoverIconStyles = window.getComputedStyle(defaultIcon.parentElement!)
+    const hoverIconStyles = window.getComputedStyle(styledIcon!)
+    const hoverColoredStyles = window.getComputedStyle(styledColoredIcon!)
     expect(hoverIconStyles.fill).toBe(customColor)
+    expect(hoverIconStyles.position).toBe('absolute')
+    expect(hoverIconStyles.height).toBe('100%')
     expect(hoverIconStyles.transition).toBe('0.15s all ease-in-out')
-    const hoverColoredStyles = window.getComputedStyle(coloredIconWrapper!)
     expect(hoverColoredStyles.opacity).toBe('1')
+    expect(hoverColoredStyles.position).toBe('absolute')
+    expect(hoverColoredStyles.height).toBe('100%')
+    expect(hoverColoredStyles.transition).toBe('0.15s all ease-in-out')
 
     await userEvent.unhover(link)
-    const unhoverIconStyles = window.getComputedStyle(defaultIcon.parentElement!)
+    const unhoverIconStyles = window.getComputedStyle(styledIcon!)
+    const unhoverColoredStyles = window.getComputedStyle(styledColoredIcon!)
     expect(unhoverIconStyles.fill).toBe(lightTheme.colors.greyPrimary)
-    const unhoverColoredStyles = window.getComputedStyle(coloredIconWrapper!)
+    expect(unhoverIconStyles.position).toBe('absolute')
+    expect(unhoverIconStyles.height).toBe('100%')
+    expect(unhoverIconStyles.transition).toBe('0.15s all ease-in-out')
     expect(unhoverColoredStyles.opacity).toBe('0')
+    expect(unhoverColoredStyles.position).toBe('absolute')
+    expect(unhoverColoredStyles.height).toBe('100%')
+    expect(unhoverColoredStyles.transition).toBe('0.15s all ease-in-out')
   })
 
   it('should maintain default fill color on hover when no custom color is provided', async () => {
@@ -301,11 +338,25 @@ describe('SocialIcon', () => {
     const defaultIcon = screen.getByTestId('mock-icon')
     const link = screen.getByRole('link')
 
-    const initialStyles = window.getComputedStyle(defaultIcon.parentElement!)
-    expect(initialStyles.fill).toBe(lightTheme.colors.greyPrimary)
-    expect(initialStyles.position).toBe('absolute')
-    expect(initialStyles.height).toBe('100%')
-    expect(initialStyles.transition).toBe('0.15s all ease-in-out')
+    const styledIcon = defaultIcon.parentElement
+    const socialIconWrapper = styledIcon?.parentElement
+    expect(styledIcon).not.toBeNull()
+    expect(socialIconWrapper).not.toBeNull()
+
+    const iconStyles = window.getComputedStyle(styledIcon!)
+    const wrapperStyles = window.getComputedStyle(socialIconWrapper!)
+
+    // StyledIcon styles
+    expect(iconStyles.fill).toBe(lightTheme.colors.greyPrimary)
+    expect(iconStyles.position).toBe('absolute')
+    expect(iconStyles.height).toBe('100%')
+    expect(iconStyles.transition).toBe('0.15s all ease-in-out')
+
+    // SocialIconWrapper styles
+    expect(wrapperStyles.position).toBe('relative')
+    expect(wrapperStyles.display).toBe('flex')
+    expect(wrapperStyles.alignItems).toBe('center')
+    expect(wrapperStyles.justifyContent).toBe('center')
     
     await userEvent.hover(link)
     const hoverStyles = window.getComputedStyle(defaultIcon.parentElement!)
@@ -342,17 +393,15 @@ describe('SocialIcon', () => {
     const styledIcon = defaultIcon.parentElement
     const styledColoredIcon = coloredIcon.parentElement
 
-    expect(styledIcon).toHaveStyle({
-      height: '100%',
-      position: 'absolute',
-      transition: '0.15s all ease-in-out'
-    })
+    const iconStyles = window.getComputedStyle(styledIcon!)
+    expect(iconStyles.height).toBe('100%')
+    expect(iconStyles.position).toBe('absolute')
+    expect(iconStyles.transition).toBe('0.15s all ease-in-out')
 
-    expect(styledColoredIcon).toHaveStyle({
-      height: '100%',
-      position: 'absolute',
-      transition: '0.15s all ease-in-out'
-    })
+    const coloredIconStyles = window.getComputedStyle(styledColoredIcon!)
+    expect(coloredIconStyles.height).toBe('100%')
+    expect(coloredIconStyles.position).toBe('absolute')
+    expect(coloredIconStyles.transition).toBe('0.15s all ease-in-out')
   })
 
   it('should handle required props correctly', () => {
