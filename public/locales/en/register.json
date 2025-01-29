@@ -7,10 +7,13 @@
             "placeholder": {
               "eth": "0x123...",
               "btc": "bc1...",
-              "ltc": "ltc1...",
-              "doge": "D...",
               "sol": "...",
-              "atom": "cosmos1..."
+              "op": "0xb8c2C2...",
+              "arb1": "0xb8c2C2...",
+              "base": "0xb8c2C2...",
+              "matic": "0xb8c2C2...",
+              "linea": "0xb8c2C2...",
+              "scr": "0xb8c2C2..."
             }
           }
         }
