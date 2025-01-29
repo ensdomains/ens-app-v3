@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 
@@ -14,38 +14,55 @@ const breakpoints = {
 }
 
 describe('BreakpointProvider', () => {
-  afterEach(() => {
-    delete (window as any).matchMedia
-  })
+  const mediaQueryLists = new Map<string, { matches: boolean; listeners: Set<(e: MediaQueryListEvent) => void> }>()
 
-  const createMockMatchMedia = () => {
-    const listeners: ((e: MediaQueryListEvent) => void)[] = []
+  beforeEach(() => {
+    mediaQueryLists.clear()
+    
     const mockMatchMedia = (query: string) => {
+      if (!mediaQueryLists.has(query)) {
+        mediaQueryLists.set(query, { matches: false, listeners: new Set() })
+      }
+      const queryData = mediaQueryLists.get(query)!
+      
       const mediaQueryList = {
-        matches: false,
+        matches: queryData.matches,
         media: query,
         onchange: null,
         addListener: (listener: (e: MediaQueryListEvent) => void) => {
-          listeners.push(listener)
+          queryData.listeners.add(listener)
         },
-        removeListener: vi.fn(),
+        removeListener: (listener: (e: MediaQueryListEvent) => void) => {
+          queryData.listeners.delete(listener)
+        },
         addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => {
-          if (type === 'change') {
-            listeners.push(listener)
-          }
+          if (type === 'change') queryData.listeners.add(listener)
         },
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
+        removeEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => {
+          if (type === 'change') queryData.listeners.delete(listener)
+        },
+        dispatchEvent: () => {
+          queryData.matches = true
+          const mediaQueryEvent = new Event('change') as MediaQueryListEvent
+          Object.defineProperties(mediaQueryEvent, {
+            matches: { value: queryData.matches },
+            media: { value: query }
+          })
+          queryData.listeners.forEach(listener => listener(mediaQueryEvent))
+          return true
+        }
       }
+
       return mediaQueryList
     }
-    vi.stubGlobal('matchMedia', mockMatchMedia)
-    return { listeners }
-  }
+
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: mockMatchMedia,
+    })
+  })
 
   it('should set a MediaQueryList listener for each breakpoint query', () => {
-    const { listeners } = createMockMatchMedia()
-
     const TestComponent = () => {
       useBreakpoint()
       return <div>TestComponent</div>
@@ -57,12 +74,12 @@ describe('BreakpointProvider', () => {
       </BreakpointProvider>,
     )
 
-    expect(listeners.length).toBe(Object.keys(breakpoints).length)
+    const totalListeners = Array.from(mediaQueryLists.values())
+      .reduce((acc, curr) => acc + curr.listeners.size, 0)
+    expect(totalListeners).toBe(Object.keys(breakpoints).length)
   })
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
-    const { listeners } = createMockMatchMedia()
-
     const TestComponent = () => {
       const breakpoints = useBreakpoint()
       return <div data-testid="breakpoint-state">{JSON.stringify(breakpoints)}</div>
@@ -81,12 +98,8 @@ describe('BreakpointProvider', () => {
 
     // Simulate xs breakpoint change
     act(() => {
-      const mockEvent = new Event('change') as MediaQueryListEvent
-      Object.defineProperty(mockEvent, 'matches', { value: true })
-      Object.defineProperty(mockEvent, 'media', { value: breakpoints.xs })
-      if (typeof listeners[0] === 'function') {
-        listeners[0](mockEvent)
-      }
+      const mediaQueryList = window.matchMedia(breakpoints.xs)
+      mediaQueryList.dispatchEvent(new Event('change'))
     })
 
     await waitFor(() => {
@@ -97,12 +110,8 @@ describe('BreakpointProvider', () => {
 
     // Simulate sm breakpoint change
     act(() => {
-      const mockEvent = new Event('change') as MediaQueryListEvent
-      Object.defineProperty(mockEvent, 'matches', { value: true })
-      Object.defineProperty(mockEvent, 'media', { value: breakpoints.sm })
-      if (typeof listeners[1] === 'function') {
-        listeners[1](mockEvent)
-      }
+      const mediaQueryList = window.matchMedia(breakpoints.sm)
+      mediaQueryList.dispatchEvent(new Event('change'))
     })
 
     await waitFor(() => {
@@ -112,19 +121,23 @@ describe('BreakpointProvider', () => {
     })
   })
 
-  it('should clean up event listeners when unmounted', () => {
-    const { listeners } = createMockMatchMedia()
-    const removeEventListenerSpy = vi.fn()
-    vi.spyOn(window.matchMedia(''), 'removeEventListener').mockImplementation(removeEventListenerSpy)
-
+  it('should clean up event listeners when unmounted', async () => {
     const { unmount } = render(
       <BreakpointProvider queries={breakpoints}>
         <div>Test</div>
       </BreakpointProvider>,
     )
 
-    expect(listeners.length).toBe(Object.keys(breakpoints).length)
+    await vi.waitFor(() => {
+      const totalListeners = Array.from(mediaQueryLists.values())
+        .reduce((acc, curr) => acc + curr.listeners.size, 0)
+      expect(totalListeners).toBe(Object.keys(breakpoints).length)
+    })
+
     unmount()
-    expect(removeEventListenerSpy).toHaveBeenCalledTimes(Object.keys(breakpoints).length)
+
+    const remainingListeners = Array.from(mediaQueryLists.values())
+      .reduce((acc, curr) => acc + curr.listeners.size, 0)
+    expect(remainingListeners).toBe(0)
   })
 })

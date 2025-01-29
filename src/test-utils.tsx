@@ -19,11 +19,11 @@ import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
 vi.mock('./utils/BreakpointProvider', () => ({
   BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
   useBreakpoint: vi.fn().mockReturnValue({
-    xs: true,
-    sm: true,
-    md: true,
-    lg: true,
-    xl: true,
+    xs: false,
+    sm: false,
+    md: false,
+    lg: false,
+    xl: false,
   }),
 }))
 
@@ -102,40 +102,21 @@ const defaultQueries = {
 }
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
-  const content = (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={lightTheme}>
-          <ThorinGlobalStyles />
-          {children}
-        </ThemeProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  )
-
-  // Only wrap with BreakpointProvider if:
-  // 1. We're in a browser environment
-  // 2. BreakpointProvider is not being mocked
-  // 3. We're not testing BreakpointProvider itself
+  // When testing BreakpointProvider itself, don't wrap with another instance
   const isTestingBreakpointProvider =
     React.isValidElement(children) && children.type === BreakpointProvider
 
-  const shouldUseBreakpointProvider =
-    typeof window !== 'undefined' &&
-    !vi.isMockFunction(useBreakpoint) &&
-    !isTestingBreakpointProvider
-
-  return shouldUseBreakpointProvider ? (
+  return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
-          <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
+          {isTestingBreakpointProvider ? children : (
+            <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
+          )}
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
-  ) : (
-    content
   )
 }
 
