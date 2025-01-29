@@ -58,19 +58,37 @@ async function removeKeysFromFile(filePath, keysToRemove) {
   
   function removeKey(obj, keyPath) {
     const parts = keyPath.split('.')
-    const lastPart = parts.pop()
     let current = obj
+    let parent = null
+    let lastPart = null
     
-    for (const part of parts) {
-      if (!current[part] || typeof current[part] !== 'object') return
-      current = current[part]
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i]
+      if (i === parts.length - 1) {
+        parent = current
+        lastPart = part
+      } else {
+        if (!current[part] || typeof current[part] !== 'object') return
+        current = current[part]
+      }
     }
     
-    delete current[lastPart]
-    
-    // Clean up empty objects
-    if (Object.keys(current).length === 0 && parts.length > 0) {
-      removeKey(obj, parts.join('.'))
+    if (parent && lastPart) {
+      delete parent[lastPart]
+      
+      // Clean up empty parent objects recursively
+      let currentPath = parts.slice(0, -1)
+      while (currentPath.length > 0) {
+        let current = obj
+        for (const part of currentPath) {
+          if (!current[part]) break
+          current = current[part]
+        }
+        if (current && typeof current === 'object' && Object.keys(current).length === 0) {
+          removeKey(obj, currentPath.join('.'))
+        }
+        currentPath.pop()
+      }
     }
   }
   
