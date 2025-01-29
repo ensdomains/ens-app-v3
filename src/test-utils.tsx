@@ -16,36 +16,16 @@ import { mainnetWithEns } from '@app/constants/chains'
 import { DeepPartial } from './types'
 import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
 
-vi.mock('./utils/BreakpointProvider', () => {
-  const listeners: any[] = []
-  const mockMatchMedia = (query: string): MediaQueryList => ({
-    addListener: (listener: (ev: MediaQueryListEvent) => void) => {
-      listeners.push(listener)
-    },
-    removeListener: vi.fn(),
-    matches: true,
-    media: query,
-    onchange: null,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })
-
-  if (typeof window !== 'undefined') {
-    window.matchMedia = mockMatchMedia as (query: string) => MediaQueryList
-  }
-
-  return {
-    BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
-    useBreakpoint: vi.fn().mockReturnValue({
-      xs: true,
-      sm: true,
-      md: true,
-      lg: true,
-      xl: true,
-    }),
-  }
-})
+vi.mock('./utils/BreakpointProvider', () => ({
+  BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
+  useBreakpoint: vi.fn().mockReturnValue({
+    xs: true,
+    sm: true,
+    md: true,
+    lg: true,
+    xl: true,
+  }),
+}))
 
 const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
 const { privateKeyToAccount } =
