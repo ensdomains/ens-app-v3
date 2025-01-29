@@ -24,7 +24,6 @@ describe('BreakpointProvider', () => {
     const mockMatchMedia = (query: string) => ({
       addListener: (listener: (e: MediaQueryListEvent) => void) => {
         listeners.push(listener)
-        return listener
       },
       removeListener: vi.fn(),
       matches: false,
@@ -58,12 +57,18 @@ describe('BreakpointProvider', () => {
   it('should update the queryMatch state when the breakpoint changes', async () => {
     const listeners: ((e: MediaQueryListEvent) => void)[] = []
     const returnObject = {
-      addListener: (listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
+      addListener: (listener: (e: MediaQueryListEvent) => void) => {
+        listeners.push(listener)
+      },
       removeListener: vi.fn(),
       matches: false,
       media: '',
       onchange: null,
-      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
+      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => {
+        if (type === 'change') {
+          listeners.push(listener)
+        }
+      },
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     }
