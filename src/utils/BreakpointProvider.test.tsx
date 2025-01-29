@@ -20,20 +20,20 @@ describe('BreakpointProvider', () => {
 
   const createMockMatchMedia = () => {
     const listeners: ((e: MediaQueryListEvent) => void)[] = []
-    const mockMatchMedia = (query: string) => ({
+    const mockMatchMedia = vi.fn((query: string) => ({
       addListener: vi.fn(), // deprecated method
       removeListener: vi.fn(), // deprecated method
       matches: false,
       media: query,
       onchange: null,
-      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => {
+      addEventListener: vi.fn((type: string, listener: (e: MediaQueryListEvent) => void) => {
         if (type === 'change') {
           listeners.push(listener)
         }
-      },
+      }),
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
-    })
+    }))
     return { listeners, mockMatchMedia }
   }
 
