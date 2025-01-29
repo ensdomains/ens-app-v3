@@ -5,7 +5,11 @@ const LOCALES_DIR = path.join(process.cwd(), 'public', 'locales', 'en')
 const SRC_DIR = path.join(process.cwd(), 'src')
 
 async function collectTranslationKeys(filePath, allKeys = new Set()) {
-  const data = JSON.parse(await fs.readFile(filePath, 'utf-8'))
+  const content = await fs.readFile(filePath, 'utf-8')
+  if (!content.trim() || content.trim() === '{}') {
+    return allKeys
+  }
+  const data = JSON.parse(content)
   function recurse(obj, prefix = '') {
     for (const key of Object.keys(obj)) {
       const fullKey = prefix ? `${prefix}.${key}` : key
@@ -27,13 +31,6 @@ async function findTranslationUsage(filePath, usedKeys = new Set()) {
   const tFunctionPattern = /t\(['"]([^'"]+)['"]\)/g
   let match
   while ((match = tFunctionPattern.exec(content)) !== null) {
-    usedKeys.add(match[1])
-  }
-
-  // Match useTranslation('namespace') patterns to track namespaces
-  const useTranslationPattern = /useTranslation\(['"]([^'"]+)['"]\)/g
-  while ((match = useTranslationPattern.exec(content)) !== null) {
-    // Store namespace for reference
     usedKeys.add(match[1])
   }
 
@@ -76,6 +73,7 @@ async function main() {
     const keysByFile = {}
     for (const key of unusedKeys) {
       const [namespace, ...rest] = key.split('.')
+      if (!rest.length) continue // Skip namespace-only keys
       const filePath = path.join(LOCALES_DIR, `${namespace}.json`)
       if (!keysByFile[filePath]) keysByFile[filePath] = []
       keysByFile[filePath].push(rest.join('.'))
@@ -83,6 +81,7 @@ async function main() {
 
     // Output the keys grouped by file in a format easy to copy
     for (const [file, keys] of Object.entries(keysByFile)) {
+      if (keys.length === 0) continue // Skip files with no unused keys
       console.log(`\nFile: ${file}`)
       console.log('Keys to remove:')
       console.log(JSON.stringify(keys, null, 2))

@@ -56,7 +56,6 @@
   "records": {
     "label": "Records"
   },
-
   "errors": {
     "noResults": "No results found",
     "emailRequired": "Email is required",
