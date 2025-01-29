@@ -133,10 +133,12 @@ describe('BreakpointProvider', () => {
     })
 
     await act(async () => {
-      const xsQuery = window.matchMedia(breakpoints.xs)
-      mediaMatches.set(breakpoints.xs, true)
-      const event = new MockMediaQueryListEvent('change', { matches: true, media: breakpoints.xs })
-      xsQuery.dispatchEvent(event)
+      Object.keys(breakpoints).forEach(key => {
+        const query = window.matchMedia(breakpoints[key])
+        mediaMatches.set(breakpoints[key], true)
+        const event = new MockMediaQueryListEvent('change', { matches: true, media: breakpoints[key] })
+        query.dispatchEvent(event)
+      })
       vi.runAllTimers()
       await Promise.resolve()
     })
