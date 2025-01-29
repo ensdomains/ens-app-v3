@@ -1,1 +1,477 @@
-{}
+{
+  "meta": {
+    "title": "{{name}} on ENS",
+    "description": "{{name}}'s profile on the Ethereum Name Service"
+  },
+  "title": "Profile",
+  "yourWallet": "Your wallet",
+  "yourProfile": "Your profile",
+  "accounts": "Accounts",
+  "addresses": "Addresses",
+  "otherRecords": "Other Records",
+  "verifications": "Verifications",
+  "editProfile": "Edit Profile",
+  "ownership": "Ownership",
+  "viewDetails": "View Details",
+  "banner": {
+    "empty": {
+      "title": "Personalize your profile",
+      "description": "Add crypto addresses, social links, an avatar and more!",
+      "action": "Get started"
+    },
+    "available": {
+      "title": "{{name}} is available",
+      "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
+    }
+  },
+  "tabs": {
+    "profile": {
+      "name": "Profile",
+      "actions": {
+        "setAsPrimaryName": {
+          "label": "Set as primary name",
+          "title": "Set your primary name",
+          "description": "To set your primary name to this name, the ETH address must match this address."
+        },
+        "deleteSubname": {
+          "label": "Delete subname"
+        },
+        "extend": {
+          "label": "Extend name"
+        },
+        "editProfile": {
+          "label": "Edit profile"
+        },
+        "reclaim": {
+          "label": "Recreate name",
+          "warning": "This subname has expired and is not owned. You can recreate this subname."
+        },
+        "verifyProfile": {
+          "label": "Verifications"
+        }
+      },
+      "warnings": {
+        "wrappedDNS": "DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.",
+        "offchain": "Offchain names do not currently appear in your 'Names' list. <a>Learn more</a>",
+        "homoglyph": "This name contains non-ASCII characters. There may be characters that look identical or very similar to other characters, which could be used to deceive readers. <a>Learn more about homoglyphs</a>"
+      }
+    },
+    "records": {
+      "name": "Records"
+    },
+    "ownership": {
+      "name": "Ownership",
+      "warning": {
+        "ownerNotManager": "You are the owner but not the manager. This may be unintended if you’ve recently recieved this name from another address.",
+        "managerNotParentOwner": "The owner of <strong>{{parent}}</strong> can change ownership, roles, and settings. They cannot change the profile.",
+        "managerNotDNSOwner": "You are the Manager but not DNS Owner of this name. DNS names can be reclaimed by the DNS Owner at any time. You can send this name to the Owner, or update the DNS record to match.",
+        "dnsOwnerNotManager": "You cannot make changes to this name because you are the DNS Owner, but not the Manager. You can sync the manager to fix this."
+      },
+      "sections": {
+        "roles": {
+          "title": "Roles",
+          "addresses_one": "{{count}} address",
+          "addresses_other": "{{count}} addresses"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "Name expires"
+            },
+            "grace-period": {
+              "title": "Grace period ends",
+              "tooltip": "A 90 day grace window after expiration, when the name can still be extended but not re-registered."
+            },
+            "registration": {
+              "title": "Registered"
+            },
+            "parent-expiry": {
+              "title": "Parent name expires"
+            },
+            "parent-grace-period": {
+              "title": "Parent grace period ends"
+            }
+          }
+        },
+        "contract": {
+          "title": "Contract address",
+          "tooltip": "The address of the contract that enables Wrapped ENS names.",
+          "warning": "Some apps may show the contract address as the owner. This doesn't affect your ownership."
+        }
+      },
+      "tooltips": {
+        "owner": "The owner of this name. The owner cannot change the profile.",
+        "owner-emancipated": "The owner of this name.",
+        "parent-owner": "The owner of this name's parent ({{parent}}).",
+        "dns-owner": "The owner of this name, as set by DNS records. The owner cannot change the profile.",
+        "manager": "The address that can change the profile, settings and profile editors.",
+        "profile-editor": "An addres that can only change the profile",
+        "subname-manager": "An address or contract responsible for subname renewals.",
+        "eth-record": "The address that will receive funds sent to this name on mainnet.",
+        "grace-period": "A 90 day grace window after expiration, when the name can still be extended but not re-registered.",
+        "contract-address": "The address of the contract that enables Wrapped ENS names.",
+        "namewrapper": "The contract that enables Wrapped ENS names."
+      }
+    },
+    "subnames": {
+      "name": "Subnames"
+    },
+    "permissions": {
+      "name": "Permissions",
+      "parentUnlockedWarning": "<strong>You cannot change permissions on this name.</strong> You must first revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
+      "revokedLabel": "Revoked {{date}}",
+      "grantedLabel": "Granted {{date}}",
+      "role": {
+        "manager": "manager",
+        "owner": "owner",
+        "parent": "parent"
+      },
+      "ownership": {
+        "title": "Ownership Permissions",
+        "parentCanControl": {
+          "label": "This name can be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
+          "list": {
+            "title": "The owner of the parent name can:",
+            "item1": "Control and modify the settings and records",
+            "item2": "Retake or reassign ownership of this name",
+            "item3": "Remove this name"
+          }
+        },
+        "parentCannotControl": {
+          "label": "This name cannot be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
+          "sublabel": "The owner of the parent name cannot control, modify, remove or retake ownership of this name.",
+          "list": {
+            "title": "The name owner will retain ownership unless one of the following happens:",
+            "item1": "The name expires on {{date}} (can be extended)",
+            "item2": "The parent name expires on {{date}}",
+            "item3": "Ownership of the name is sent to another address"
+          }
+        },
+        "parentCanChange": {
+          "label": "The parent of this name (<parentLink>{{parent}}</parentLink>) can change permissions",
+          "list": {
+            "title": "The parent can:",
+            "item1": "Revoke permissions",
+            "item2": "Change or burn custom fuses"
+          }
+        },
+        "ownerCanChange": {
+          "label": "The owner of this name can change permissions",
+          "list": {
+            "title": "The owner can:",
+            "item1": "Revoke permissions",
+            "item2": "Change or burn custom fuses"
+          }
+        },
+        "ownerCannotChange": {
+          "label": "The owner of this name cannot change permissions",
+          "list": {
+            "title": "The owner cannot:",
+            "item1": "Revoke permissions",
+            "item2": "Change or burn custom fuses"
+          }
+        },
+        "unwrapWarning": {
+          "message": "Unwrap permissions must be revoked on the parent (<strong>{{parent}}</strong>) before giving up parent control.<br> <parentLink>Go to parent permissions</parentLink>"
+        },
+        "action": {
+          "giveUpControl": "Give up parent control",
+          "revokePermission": "Revoke permission"
+        }
+      },
+      "expiry": {
+        "permissions": {
+          "canExtendExpiry": {
+            "label": "Can extend expiry",
+            "description": "This names permission expiry can be extended by the {{managerOrOwner}}.",
+            "description_date": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
+          },
+          "cannotExtendExpiry": {
+            "label": "Cannot extend expiry",
+            "description": "This names permission expiry cannot be extended by the manager.",
+            "description_date": "This names permission expiry ({{date}}) cannot be extended by the manager."
+          }
+        },
+        "manager": "manager",
+        "owner": "owner",
+        "action": {
+          "changePermissions": "Change permissions"
+        }
+      },
+      "nameChangePermissions": {
+        "title": "Name Change Permissions",
+        "subtitle": {
+          "parent-can-change": "The parent of this name (<parentLink>{{parent}}</parentLink>) can change settings on this name.",
+          "owner-can-change": "The owner of this name can change settings on this name."
+        },
+        "permissions": {
+          "canUnwrap": {
+            "label": "Can unwrap this name",
+            "description": "The {{owner}} of this name can unwrap this name."
+          },
+          "cannotUnwrap": {
+            "label": "Cannot unwrap this name",
+            "description": "The {{owner}} of this name cannot unwrap this name."
+          },
+          "canCreateSubnames": {
+            "label": "Can create subnames",
+            "description": "The {{owner}} of this name can create new subnames."
+          },
+          "cannotCreateSubnames": {
+            "label": "Cannot create subnames",
+            "description": "The {{owner}} of this name cannot create new subnames."
+          },
+          "canSend": {
+            "label": "Can send this name",
+            "description": "The {{owner}} of this name can send it to a new owner."
+          },
+          "cannotSend": {
+            "label": "Cannot send this name",
+            "description": "The {{owner}} of this name cannot send it to a new owner."
+          },
+          "canSetResolver": {
+            "label": "Can set the resolver",
+            "description": "The {{owner}} of this name can set and change the resolver."
+          },
+          "cannotSetResolver": {
+            "label": "Cannot set the resolver",
+            "description": "The {{owner}} of this name cannot set and change the resolver."
+          },
+          "canSetTTL": {
+            "label": "Can set TTL",
+            "description": "The {{owner}} of this name can set and change the TTL."
+          },
+          "cannotSetTTL": {
+            "label": "Cannot set TTL",
+            "description": "The {{owner}} of this name cannot set and change the TTL."
+          },
+          "canApprove": {
+            "label": "Can change renewal manager",
+            "description": "The owner of this name can change the manager approved to renew subnames."
+          },
+          "cannotApprove": {
+            "label": "Cannot change renewal manager",
+            "description": "The owner of this name cannot change the manager approved to renew subnames."
+          }
+        },
+        "action": {
+          "changePermissions": "Change permissions"
+        }
+      }
+    },
+    "fuses": {
+      "name": "Fuses"
+    },
+    "more": {
+      "name": "More",
+      "resolver": {
+        "label": "Resolver",
+        "custom": "Custom",
+        "latest": "Latest",
+        "outdated": "Outdated",
+        "wildcard": "Wildcard",
+        "version": "Version",
+        "etherscan": "Etherscan"
+      },
+      "fuses": {
+        "label": "Fuses",
+        "info": "You must burn 'Can unwrap' in order to burn other fuses",
+        "callToAction": "Please wrap your name to unlock this feature",
+        "burnFormTitle": "Burn Permissions",
+        "burned": "Burned",
+        "permissions": {
+          "label": "Permissions",
+          "warning": "Fuses can be changed by the parent",
+          "CAN_DO_EVERYTHING": "Can do everything",
+          "CANNOT_BURN_FUSES": "Can burn fuses",
+          "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
+          "CANNOT_SET_RESOLVER": "Can set resolver",
+          "CANNOT_SET_TTL": "Can set TTL",
+          "CANNOT_TRANSFER": "Can transfer",
+          "CANNOT_UNWRAP": "Can unwrap",
+          "PARENT_CANNOT_CONTROL": "Parent can control",
+          "CAN_EXTEND_EXPIRY": "Cannot extend expiry",
+          "IS_DOT_ETH": "Is not .eth"
+        }
+      },
+      "ownership": {
+        "label": "Ownership",
+        "refreshDNS": "Refresh DNS",
+        "dnsOwnerWarning": {
+          "isDnsOwner": "You cannot make changes to this name because you are the DNS Owner, but not the Manager. You can sync the manager to fix this.",
+          "isManager": "You are the Manager but not DNS Owner of this name. DNS names can be reclaimed by the DNS Owner at any time. You can send this name to the Owner, or update the DNS record to match.",
+          "refreshDNS": "Refresh DNS",
+          "syncManager": "Sync manager"
+        }
+      },
+      "token": {
+        "label": "Token",
+        "noToken": "No token",
+        "hex": "hex",
+        "decimal": "decimal",
+        "wrapper": "wrapper",
+        "nameWrapper": "Name Wrapper",
+        "unwrappedText": " Wrapping your name gives it new features and functionality, however some functionality on your name will change. Please make sure you understand these changes before wrapping your name.",
+        "wrapName": "Wrap Name",
+        "unwrap": "Unwrap Name",
+        "unwrapWarning": "This name has revoked the permissions needed for this action.",
+        "tooltip": "The Name Wrapper enables additional functionality on ENS names.",
+        "status": {
+          "unwrapped": "Unwrapped",
+          "wrapped": "Wrapped"
+        },
+        "pcc": {
+          "controllable": "Parent-controllable",
+          "not-controllable": "Not parent-controllable"
+        }
+      },
+      "misc": {
+        "registered": "Registered",
+        "expires": "Expires",
+        "bankless": {
+          "title": "Bankless Reminders",
+          "enterEmail": "Receive <a>Bankless</a> Reminders through Email, PUSH, XMTP, Blockscan Chat, and Mailchain.",
+          "emailConfirmation": "You're almost done. Please check your email to confirm your subscription.",
+          "submitError": "Submission failed. Please try again."
+        },
+        "reminderOptions": {
+          "google": "Google calendar",
+          "outlook": "Outlook calendar",
+          "office365": "Office 365 calendar",
+          "yahoo": "Yahoo calendar",
+          "ical": "iCal download (.ics)",
+          "bankless": "Bankless Reminders"
+        }
+      }
+    }
+  },
+  "details": {
+    "title": "Name Details",
+    "notWrapped": "Not wrapped",
+    "sendName": {
+      "title": "Send Name",
+      "description": "Sending a name will give the new address control over it",
+      "learnMore": "Learn more about name ownership.",
+      "makeOwner": "Make owner",
+      "makeOwnerDescription": "The owner can send to a new owner and change the manager",
+      "makeManager": "Make manager",
+      "makeManagerDescription": "The manager can change and set records.",
+      "inputPlaceholder": "Enter an Ethereum address or ENS name",
+      "transferSubname": "Transfer Name",
+      "transferController": "Transfer Controller"
+    },
+    "wrap": {
+      "startTitle": "Upgrade your name",
+      "resumeTitle": "Resume your upgrade",
+      "completeTitle": "Upgrade complete",
+      "description": "Upgrading or \"wrapping\" your name gives it new features.",
+      "startLabel": "Upgrade",
+      "resumeLabel": "Resume Upgrade",
+      "boxTitle": "Unlock new features",
+      "boxDescription": "Upgrading your name unlocks the latest functionality of ENS"
+    },
+    "descriptions": {
+      "owner": "Owns and controls the name",
+      "controller": "Controls all the records of the name",
+      "registrant": "The owner of the NFT",
+      "dnsOwner": "Owner of the DNS name"
+    },
+    "tabs": {
+      "records": {
+        "label": "Records",
+        "text": "Text",
+        "contentHash": "Content Hash",
+        "noContentHash": "No Content Hash",
+        "editRecords": "Edit Records",
+        "noAbi": "No ABI",
+        "abi": "ABI",
+        "editRecordsDisabled": "Current resolver is not compatible with wrapped names"
+      },
+      "subnames": {
+        "label": "Subnames",
+        "loading": "Loading subnames",
+        "empty": "No subnames have been added",
+        "noResults": "No results",
+        "noMoreResults": "No more results",
+        "setProfile": "Set Profile",
+        "addSubname": {
+          "title": "Subnames let you create additional names from your existing name.",
+          "learn": "Learn about subnames",
+          "action": "New subname",
+          "dialog": {
+            "title": "Create Subname",
+            "error": {
+              "invalidCharacters": "Contains invalid characters",
+              "mustUseLowercase": "Must use lowercase letters",
+              "alreadyExists": "Name already exists",
+              "nameTooLong": "Name is too long",
+              "pccBurned": "Name is locked until {{date}}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "advancedEditor": {
+    "title": "{{name}}'s records",
+    "tabs": {
+      "text": {
+        "label": "Text",
+        "addRecord": "Add record",
+        "createRecord": "Type a record name...",
+        "placeholder": {
+          "default": "Add a value here..."
+        }
+      },
+      "address": {
+        "label": "Address",
+        "addRecord": "Add address",
+        "noOptions": "No address options available",
+        "placeholder": {
+          "default": "Add address here..."
+        }
+      },
+      "other": {
+        "label": "Other",
+        "labelDisabled": "Not supported by current resolver",
+        "contentHash": {
+          "label": "Content Hash",
+          "placeholder": "e.g. ipfs://"
+        },
+        "publicKey": {
+          "label": "Public Key",
+          "placeholder": "e.g. pub_1231231231231"
+        },
+        "abi": {
+          "label": "ABI",
+          "placeholder": "Enter an ABI here..."
+        }
+      }
+    }
+  },
+  "errors": {
+    "invalidName": "This name is invalid.",
+    "invalidAddress": "Not a valid address",
+    "expiringSoon": "The grace period for this name ends on {{date}}. If it isn’t extended before this date, it will become available for registration.",
+    "hasExpired": "{{ name }} has expired",
+    "ownerManagerChoice": "Must send owner or manager",
+    "unknown": "Unknown error",
+    "notMigrated": "This name is not migrated to the new registry.",
+    "featureNotAvailable": "Some features are not yet available, but you can still ",
+    "featureNotAvailableLink": "view this name in the old app.",
+    "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
+    "migrationNotAvailableLink": "migrate this name in the old app.",
+    "addressLength": "If address it should be 42 characters long",
+    "unsupportedTLD": "This TLD is not supported",
+    "keyInUse": "{{value}} is already in use",
+    "hasSubnames": "This name has subnames",
+    "permissionRevoked": "This name has revoked the permissions needed to perform this action.",
+    "gracePeriod": "This cannot be done because the name has expired",
+    "default": "This action is not available",
+    "invalidJSON": "Invalid JSON",
+    "isOwnerCannotEdit": "You must be the manager in order to edit the profile",
+    "cannotEdit": "You do not have permission to update to an authorised resolver",
+    "isOwnerCannotVerify": "You must be the Manager to verify your profile",
+    "cannotVerify": "You do not have permission to verify your profile"
+  }
+}

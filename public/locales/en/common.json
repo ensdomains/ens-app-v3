@@ -1,1 +1,422 @@
-{}
+{
+  "title": "Your web3 username",
+  "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
+  "loading": "Loading",
+  "unsupportedNetwork": "Unsupported network",
+  "notFound": "404 Not Found",
+  "etherscan": "Etherscan",
+  "action": {
+    "cancel": "Cancel",
+    "change": "Change",
+    "upload": "Upload",
+    "close": "Close",
+    "save": "Save",
+    "edit": "Edit",
+    "view": "View",
+    "clear": "Clear",
+    "update": "Update",
+    "learnMore": "Learn more",
+    "send": "Send",
+    "next": "Next",
+    "add": "Add",
+    "set": "Set",
+    "search": "Search",
+    "back": "Back",
+    "continue": "Continue",
+    "confirm": "Confirm",
+    "remove": "Remove",
+    "sign": "Sign",
+    "reset": "Reset",
+    "restart": "Restart",
+    "transfer": "Transfer",
+    "tryAgain": "Try Again",
+    "done": "Done",
+    "burnSelected": "Burn Selected",
+    "extend": "Extend",
+    "delete": "Delete",
+    "sort": "Sort",
+    "check": "Check",
+    "claim": "Claim",
+    "remindMe": "Remind Me",
+    "begin": "Begin",
+    "finish": "Finish",
+    "skip": "Skip",
+    "changeNetwork": "Change Network",
+    "understand": "I understand",
+    "feedback": "Feedback",
+    "enterEmail": "Enter your email",
+    "migrate": "Migrate",
+    "setToSelf": "Set to self",
+    "editRoles": "Edit roles",
+    "setReminder": "Set reminder",
+    "import": "Import",
+    "connect": "Connect",
+    "goToProfile": "Go to profile"
+  },
+  "unit": {
+    "years_one": "{{count}} year",
+    "years_other": "{{count}} years",
+    "months_one": "{{count}} month",
+    "months_other": "{{count}} months",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "hours_one": "{{count}} hour",
+    "hours_other": "{{count}} hours",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "invalid_date": "Invalid Date",
+    "yrs_one": "{{count}} yr",
+    "yrs_other": "{{count}} yrs",
+    "gas": "{{value}} gas",
+    "selected": "{{count}} selected",
+    "perPage": "{{count}} per page"
+  },
+  "navigation": {
+    "home": "Home",
+    "names": "My Names",
+    "favourites": "Favourites",
+    "settings": "Settings",
+    "governance": "Governance",
+    "community": "Community",
+    "developers": "Developers",
+    "support": "Support",
+    "bounty": "Bug Bounty",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
+    "back": "Back",
+    "oldApp": "Old ENS App",
+    "language": "Language",
+    "currency": "Currency",
+    "ipfsApp": "IPFS ENS App",
+    "feedback": "Feedback",
+    "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet."
+  },
+  "wallet": {
+    "myProfile": "Profile",
+    "disconnect": "Disconnect",
+    "connect": "Connect",
+    "noPrimaryName": "No Primary Name",
+    "viewProfile": "View Profile",
+    "viewDetails": "View Details",
+    "register": "Register"
+  },
+  "name": {
+    "registered": "Registered",
+    "expires": "Expires",
+    "graceEnd": "Grace end",
+    "noExpiry": "No expiry",
+    "expiry": "Expiry",
+    "parent": "Parent",
+    "noParent": "No parent",
+    "registrant": "Registrant",
+    "controller": "Controller",
+    "dnsOwner": "DNS Owner",
+    "owner": "Owner",
+    "notOwned": "Not Owned",
+    "manager": "Manager",
+    "all": "All Names",
+    "copy": "Copy name",
+    "yourPrimaryName": "Your primary name",
+    "expiresInYears_one": "Expires in {{count}} year",
+    "expiresInYears_other": "Expires in {{count}} years",
+    "expiresInMonths_one": "Expires in {{count}} month",
+    "expiresInMonths_other": "Expires in {{count}} months",
+    "expiresInDays_one": "Expires in {{count}} day",
+    "expiresInDays_other": "Expires in {{count}} days",
+    "expiresInHours_one": "Expires in {{count}} hour",
+    "expiresInHours_other": "Expires in {{count}} hours",
+    "expiresInHours_zero": "Expires in less than an hour",
+    "expiredInHours_one": "Expired {{count}} hour ago",
+    "expiredInHours_other": "Expired {{count}} hours ago",
+    "expiredInHours_zero": "Expired less than an hour ago",
+    "expiredInDays_one": "Expired {{count}} day ago",
+    "expiredInDays_other": "Expired {{count}} days ago",
+    "expiredInMonths_one": "Expired {{count}} month ago",
+    "expiredInMonths_other": "Expired {{count}} months ago",
+    "expiredInYears_one": "Expired {{count}} year ago",
+    "expiredInYears_other": "Expired {{count}} years ago",
+    "gracePeriod": {
+      "expiresInYears_one": "Grace period expires in {{count}} year",
+      "expiresInYears_other": "Grace period expires in {{count}} years",
+      "expiresInMonths_one": "Grace period expires in {{count}} month",
+      "expiresInMonths_other": "Grace period expires in {{count}} months",
+      "expiresInDays_one": "Grace period expires in {{count}} day",
+      "expiresInDays_other": "Grace period expires in {{count}} days",
+      "expiresInHours_one": "Grace period expires in {{count}} hour",
+      "expiresInHours_other": "Grace period expires in {{count}} hours",
+      "expiresInHours_zero": "Grace period expires in less than an hour"
+    },
+    "extend": "Extend",
+    "send": "Send",
+    "transfer": "Transfer",
+    "sendManager": "Send Manager",
+    "sendOwner": "Send Owner",
+    "renew": "Renew {{name}}"
+  },
+  "address": {
+    "label": "Address",
+    "viewAddress": "View address",
+    "copyAddress": "Copy address"
+  },
+  "records": {
+    "label": "Records"
+  },
+  "sortTypes": {
+    "expiryDate": "Expiry date",
+    "labelName": "Name",
+    "createdAt": "Creation date"
+  },
+  "errors": {
+    "noResults": "No results found",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email address",
+    "invalidAddress": "Invalid address",
+    "addressRequired": "Address required",
+    "indexingErrors": {
+      "title": "Error syncing data",
+      "message": "This data may be out of date. Please use caution.",
+      "message_datetime": "This data was last update at {{datetime}} and may be out of date. Please use caution"
+    },
+    "networkError": {
+      "title": "Error syncing data",
+      "message": "This data may be out of date. Please use caution.",
+      "blurb": "This button is currently disabled due to data sync issues."
+    },
+    "networkLatency": {
+      "title": "Slow data syncing",
+      "message": "The ENS app is experiencing slow downs due to network latency issues."
+    }
+  },
+  "transaction": {
+    "description": {
+      "setName": "Set name",
+      "setRecords": "Set records",
+      "test": "Test transaction",
+      "addSuccess": "Add success",
+      "sendName": "Send name",
+      "migrateProfile": "Migrate profile",
+      "migrateProfileWithReset": "Migrate profile",
+      "migrateProfileWithSync": "Migrate and update profile",
+      "migrateProfileWithEthAddress": "Migrate and update ETH address",
+      "wrapName": "Wrap name",
+      "updateResolver": "Update resolver",
+      "updateProfile": "Update profile",
+      "setPrimaryName": "Set primary name",
+      "resetPrimaryName": "Remove primary name",
+      "updateEthAddress": "Update ETH address",
+      "testSendName": "Send name",
+      "burnFuses": "Burn permissions",
+      "createSubname": "Create subname",
+      "deleteSubname": "Delete subname",
+      "extendNames": "Extend names",
+      "approveDnsRegistrar": "Approve DNS registrar",
+      "claimDnsName": "Claim DNS name",
+      "importDnsName": "Import DNS name",
+      "commitName": "Start timer",
+      "registerName": "Register name",
+      "approveNameWrapper": "Approve NameWrapper",
+      "clearRecords": "Clear records",
+      "updateRecords": "Update records",
+      "updateRecord": "Update record",
+      "removeRecord": "Remove record",
+      "resetProfileWithRecords": "Reset profile with records",
+      "transferName": "Transfer name",
+      "transferSubname": "Transfer subname",
+      "changePermissions": "Change permissions",
+      "syncManager": "Sync manager",
+      "updateProfileRecords": "Update profile",
+      "resetProfile": "Reset profile",
+      "unwrapName": "Unwrap name",
+      "updateVerificationRecord": "Update verification record",
+      "removeVerificationRecord": "Remove verification record"
+    },
+    "info": {
+      "sendName": "Set the controller and registrant of the name",
+      "migrateProfile": "Set existing records on new resolver",
+      "migrateProfileWithReset": "Set existing records on new resolver",
+      "migrateProfileWithSync": "Set existing records on new resolver",
+      "migrateProfileWithEthAddress": "Set existing records and eth address on new resolver",
+      "wrapName": "Wrap the name",
+      "updateResolver": "Change resolver to",
+      "updateProfile": "Update records on existing resolver",
+      "setPrimaryName": "Set the primary name for your address",
+      "updateEthAddress": "Update ETH address to this address",
+      "updateEthAddressOnLatestResolver": "Update ETH address on latest resolver",
+      "testSendName": "Set the controller and registrant of the name",
+      "createSubname": "Create a new subname on the name",
+      "burnFuses": "Burn the chosen permissions until name expiry",
+      "commitName": "Start timer to register name",
+      "approveNameWrapper": "Approve the NameWrapper to manage your names",
+      "fuses": {
+        "revoke": "Revoke",
+        "grant": "Grant",
+        "setExpiry": "Set expiry",
+        "PARENT_CANNOT_CONTROL": "Give up parent control",
+        "CAN_EXTEND_EXPIRY": "Extend expiry",
+        "CANNOT_UNWRAP": "Unwrap this name",
+        "CANNOT_CREATE_SUBDOMAIN": "Create subdomains",
+        "CANNOT_SET_RESOLVER": "Set resolver",
+        "CANNOT_SET_TTL": "Set TTL",
+        "CANNOT_TRANSFER": "Send this name",
+        "CANNOT_BURN_FUSES": "Change permissions",
+        "CANNOT_APPROVE": "Change renewal manager"
+      }
+    },
+    "itemLabel": {
+      "name": "Name",
+      "address": "Address",
+      "action": "Action",
+      "info": "Info",
+      "to": "To",
+      "subname": "Subname",
+      "duration": "Duration",
+      "cost": "Cost",
+      "update": "Update",
+      "resolver": "Resolver",
+      "records": "Records",
+      "record": "Record"
+    },
+    "itemValue": {
+      "records_one": "{{count}} record",
+      "records_other": "{{count}} records"
+    },
+    "status": {
+      "pending": {
+        "regular": "Pending"
+      },
+      "confirmed": {
+        "regular": "Confirmed",
+        "notifyTitle": "Transaction Successful",
+        "notifyMessage": "Your \"{{action}}\" transaction was successful"
+      },
+      "failed": {
+        "regular": "Failed",
+        "notifyTitle": "Transaction Failure",
+        "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
+      }
+    },
+    "dialog": {
+      "intro": {
+        "trailingButton": "Start",
+        "trailingButtonResume": "Resume",
+        "step": "Step {{step}}"
+      },
+      "confirm": {
+        "title": "Confirm Details",
+        "message": "Double check these details before confirming in your wallet.",
+        "waitingForWallet": "Waiting for Wallet",
+        "openWallet": "Open Wallet",
+        "insufficientFunds": "Insufficient funds"
+      },
+      "sent": {
+        "title": "Transaction Sent",
+        "message": "Your transaction is now in progress, you can close this and come back later.",
+        "progress": {
+          "title": "Sent",
+          "message": "Taking longer than expected"
+        },
+        "learn": "Learn about long running transactions"
+      },
+      "complete": {
+        "title": "Transaction Complete",
+        "message": "Your transaction is now complete!",
+        "progress": {
+          "title": "Done"
+        }
+      },
+      "failed": {
+        "title": "Transaction Failed",
+        "progress": {
+          "title": "Failed"
+        }
+      },
+      "error": {
+        "gasLimit": "The gas limit on your transaction wasn't high enough, please try again."
+      }
+    },
+    "error": {
+      "unknown": "An unknown error occurred"
+    },
+    "viewEtherscan": "View on Etherscan",
+    "viewMore": "View More"
+  },
+  "search": {
+    "label": "Name search",
+    "placeholder": "Search for a name",
+    "emptyText": "Type a name or address to search...",
+    "address": "Address",
+    "errors": {
+      "tooShort": "Name too short",
+      "invalid": "Invalid format for name"
+    },
+    "status": {
+      "registered": "Registered",
+      "gracePeriod": "Grace Period",
+      "premium": "Temporary Premium",
+      "available": "Available",
+      "notOwned": "Not Owned",
+      "notImported": "Not Imported",
+      "short": "Too Short",
+      "default": "Invalid",
+      "invalid": "Invalid",
+      "unsupportedTLD": "Not Supported",
+      "imported": "Imported",
+      "owned": "Owned",
+      "offChain": "View"
+    }
+  },
+  "selectableInput": {
+    "add": "Add",
+    "placeholder": "Select an option",
+    "empty": "No options found"
+  },
+  "testnetFaucet": {
+    "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the ENS manager app, as well as any other testnet usage.",
+    "note": "It may take a few minutes to show up in your wallet."
+  },
+  "roles": {
+    "owner": {
+      "title": "owner",
+      "description": "The address that owns this name."
+    },
+    "dns-owner": {
+      "title": "DNS owner",
+      "description": "The address that owns this name."
+    },
+    "parent-owner": {
+      "title": "Parent owner",
+      "description": "The address that owns the parent of this name."
+    },
+    "manager": {
+      "title": "manager",
+      "description": "An address or contract that can change the profile, settings, and profile managers."
+    },
+    "profile-editor": {
+      "title": "Profile editor",
+      "description": "An address that can change the profile."
+    },
+    "eth-record": {
+      "title": "ETH record",
+      "description": "The address that this name points to."
+    }
+  },
+  "dns": {
+    "refresh": "Refresh DNS"
+  },
+  "calendar": {
+    "pick_by_years": "Pick by years",
+    "pick_by_date": "Pick by date"
+  },
+  "verification": {
+    "verifiedBy": "Verified by {{ issuer }}",
+    "personhoodVerified": "Personhood verified",
+    "verificationFailed": "Verification failed, please reverify your profile"
+  },
+  "verificationErrorDialog": {
+    "title": "Verification failed",
+    "resolverRequired": "A valid resolver is required to complete the verification flow",
+    "ownerNotManager": "You must be connected as the Manager of this name to set the verification record. You can view and update the Manager under the Ownership tab.",
+    "wrongAccount": "You must be connected as <strong>{{ nameOrAddress }}</strong> to set the verification record.",
+    "default": "We could't verify your account. Please return to Dentity and try again."
+  }
+}

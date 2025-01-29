@@ -54,8 +54,16 @@ async function getUnusedKeys() {
 async function removeKeysFromFile(filePath, keysToRemove) {
   if (!keysToRemove?.length) return
 
-  const content = JSON.parse(await fs.readFile(filePath, 'utf-8'))
-  
+  const content = await fs.readFile(filePath, 'utf-8')
+  let data
+  try {
+    data = JSON.parse(content)
+  } catch (e) {
+    console.error(`Error parsing ${filePath}: ${e.message}`)
+    return
+  }
+
+  let modified = false
   function removeKey(obj, keyPath) {
     const parts = keyPath.split('.')
     let current = obj
@@ -73,8 +81,9 @@ async function removeKeysFromFile(filePath, keysToRemove) {
       }
     }
     
-    if (parent && lastPart) {
+    if (parent && lastPart && lastPart in parent) {
       delete parent[lastPart]
+      modified = true
       
       // Clean up empty parent objects recursively
       let currentPath = parts.slice(0, -1)
@@ -85,7 +94,8 @@ async function removeKeysFromFile(filePath, keysToRemove) {
           current = current[part]
         }
         if (current && typeof current === 'object' && Object.keys(current).length === 0) {
-          removeKey(obj, currentPath.join('.'))
+          const parentKey = currentPath.join('.')
+          removeKey(obj, parentKey)
         }
         currentPath.pop()
       }
@@ -93,10 +103,15 @@ async function removeKeysFromFile(filePath, keysToRemove) {
   }
   
   for (const key of keysToRemove) {
-    if (key) removeKey(content, key)
+    if (key) removeKey(data, key)
   }
-  
-  await fs.writeFile(filePath, JSON.stringify(content, null, 2) + '\n')
+
+  if (modified) {
+    const newContent = JSON.stringify(data, null, 2)
+    if (newContent !== '{}') {
+      await fs.writeFile(filePath, newContent + '\n')
+    }
+  }
 }
 
 async function main() {

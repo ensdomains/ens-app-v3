@@ -1,1 +1,462 @@
-{}
+{
+  "input": {
+    "profileEditor": {
+      "tabs": {
+        "avatar": {
+          "dropdown": {
+            "selectNFT": "Select NFT",
+            "uploadImage": "Upload Image"
+          },
+          "nft": {
+            "title": "Select an NFT",
+            "searchPlaceholder": "Search for an NFT",
+            "loading": "Loading your NFTs",
+            "unknown": "Unknown NFT",
+            "loadError": "NFT cannot be loaded",
+            "noNFTs": "No NFTs found for this address.",
+            "address": {
+              "owned": "Owned",
+              "other": "Other"
+            },
+            "selected": {
+              "title": "Selected NFT",
+              "subtitle": "Are you sure you want to use this NFT?"
+            },
+            "noResults": "No results found."
+          },
+          "image": {
+            "title": "Edit Image",
+            "upload": {
+              "title": "Upload Avatar",
+              "subtitle": "You need to sign a message to upload an avatar. This won't cost anything.",
+              "action": "Sign and Upload"
+            }
+          }
+        },
+        "general": {
+          "label": "General",
+          "name": {
+            "label": "Nickname",
+            "placeholder": "John Smith"
+          },
+          "url": {
+            "label": "Website",
+            "placeholder": "https://ens.domains"
+          },
+          "location": {
+            "label": "Location",
+            "placeholder": "Metaverse"
+          },
+          "description": {
+            "label": "Short Bio",
+            "placeholder": "I'm a yield farmer from rural Tennessee."
+          }
+        },
+        "accounts": {
+          "label": "Accounts",
+          "addAccount": "Add account",
+          "noOptions": "No account options available",
+          "placeholder": {
+            "default": "Add username here",
+            "com.twitter": "e.g. nicksdjohnson",
+            "com.github": "e.g. arachnid",
+            "com.discord": "e.g. nickjohnson",
+            "org.telegram": "e.g. nicksdjohnson",
+            "email": "e.g. hello@example.com"
+          }
+        },
+        "address": {
+          "label": "Address",
+          "addAddress": "Add address",
+          "noOptions": "No address options available",
+          "placeholder": {
+            "default": "Add address here",
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
+          }
+        },
+        "contentHash": {
+          "label": "Website",
+          "addContentHash": "Add decentralized website",
+          "placeholder": {
+            "default": "Add url here",
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "ar://...",
+            "swarm": "bzz://...",
+            "onion": "onion3://..."
+          }
+        },
+        "other": {
+          "label": "Other",
+          "addRecord": "Add record",
+          "createRecord": "Type a record name...",
+          "placeholder": {
+            "default": "Add a value here..."
+          }
+        }
+      },
+      "warningOverlay": {
+        "action": {
+          "learnMoreResolvers": "Learn more about resolvers",
+          "updateResolver": "Update resolver",
+          "setResolver": "Set resolver",
+          "ignoreUpdate": "Ignore this and continue using your current resolver. You will be asked again next time."
+        },
+        "invalidResolver": {
+          "title": "Unauthorised resolver",
+          "subtitle": "You do not have permission to set records for this resolver. You will need to update to the latest resolver to edit your profile.",
+          "action": "Update resolver"
+        },
+        "migrateProfileSelector": {
+          "title": "Profile",
+          "subtitle": "The profile records on each resolver do not match. Which set of records would you like to use?",
+          "option": {
+            "latest": "Profile records on new resolver",
+            "current": "Current profile records",
+            "reset": "Reset your profile",
+            "resetSubtitle": "Remove all profile records"
+          }
+        },
+        "migrateProfileWarning": {
+          "title": "Migrate profile",
+          "subtitle": "You are migrating your profile records to the latest resolver. This will permanently clear any existing records on the latest resolver and replace them with your current records."
+        },
+        "migrateRegistry": {
+          "title": "Registry out of date",
+          "subtitle": "You will need to migrate the registry before making changes to this name.",
+          "action": "Migrate"
+        },
+        "noResolver": {
+          "title": "No resolver set",
+          "subtitle": "A resolver needs to be set before editing your profile.",
+          "action": "Update"
+        },
+        "resetProfile": {
+          "title": "Reset profile",
+          "subtitle": "You are resetting your profile records. You will lose all existing profile information, such as ETH address, avatar and social records. These can be re-added by editing your profile."
+        },
+        "resolverNotNameWrapperAware": {
+          "title": "Resolver incompatible",
+          "subtitle": "Your current resolver is incompatible with wrapped names. You will need to update the resolver before editing your profile.",
+          "toggle": {
+            "title": "Transfer current profile",
+            "subtitle": "Unselecting this will only update your resolver."
+          }
+        },
+        "resolverOutOfDate": {
+          "title": "Resolver out of date",
+          "subtitle": "The resolver is out of date. It’s recommended you update it before editing your profile."
+        },
+        "resolverOutOfSync": {
+          "title": "Resolver out of sync",
+          "subtitle": "You are not using the latest public resolver, but you have profile records stored there. It’s recommended that you switch to the latest public resolver before editing your profile."
+        },
+        "transferOrResetProfile": {
+          "title": "Profile",
+          "subtitle": "You can transfer your current profile to the new resolver before updating your resolver.",
+          "toggle": {
+            "title": "Transfer current profile",
+            "subtitle": "Unselecting this will only update your resolver."
+          }
+        },
+        "updateResolverOrResetProfile": {
+          "title": "Profile",
+          "subtitle": "You can keep your current profile on the new resolver, or reset it and remove all profile records.",
+          "toggle": {
+            "title": "Keep current profile",
+            "subtitle": "Unselecting this will reset your profile."
+          }
+        },
+        "links": {
+          "learnMoreResolvers": "Learn more about resolvers"
+        }
+      },
+      "intro": {
+        "resetProfile": {
+          "title": "Reset profile",
+          "description": "This will remove all profile records from the latest resolver and then update the resolver."
+        },
+        "migrateProfile": {
+          "title": "Migrate profile",
+          "description": "This will migrate your current profile records to the latest resolver."
+        },
+        "migrateCurrentProfile": {
+          "title": "Migrate profile",
+          "description": "This will migrate your current profile records to the latest resolver."
+        }
+      }
+    },
+    "editResolver": {
+      "title": "Edit Resolver",
+      "latestLabel": "Use latest resolver",
+      "etherscan": "Etherscan",
+      "latestMessage": "You are on the latest resolver",
+      "customLabel": "Custom resolver",
+      "customPlaceholder": "Enter custom resolver address"
+    },
+    "editRoles": {
+      "views": {
+        "main": {
+          "title": "Edit roles",
+          "noneSet": "None set"
+        },
+        "editRole": {
+          "title": "Change {{role}}",
+          "views": {
+            "intro": {
+              "current": "Current {{role}}"
+            }
+          }
+        }
+      }
+    },
+    "extendNames": {
+      "title_one": "Extend {{name}}",
+      "title_other": "Extend {{count}} Names",
+      "ownershipWarning": {
+        "title_one": "You do not own {{name}}",
+        "title_other": "You do not own all these names",
+        "description_one": "Extending this name will extend the current owner's registration length. This will not give you ownership of it.",
+        "description_other": "Extending these names will extend the current owner's registration length. This will not give you ownership if you are not already the owner."
+      },
+      "invoice": {
+        "extension": "{{time}} extension",
+        "transaction": "Transaction fee",
+        "total": "Estimated total"
+      },
+      "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
+      "gasLimitError": "Not enough ETH in wallet"
+    },
+    "transferProfile": {
+      "title": "Transfer Profile",
+      "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
+      "message2": "Would you like to transfer your current profile?"
+    },
+    "revokePermissions": {
+      "views": {
+        "revokeWarning": {
+          "title": "This will make permanent changes",
+          "subtitle": "Permissions are an advanced feature that make permanent changes to your name.  You will not be able to undo these changes, and they will only be reset if the name expires.",
+          "subtitle2": "Make sure you are confident using this feature before proceeding. <infoLink>Learn more about permissions</infoLink>"
+        },
+        "revokePCC": {
+          "title": "Give up ownership",
+          "subtitle": "This will give ownership of this name to the manager ({{account}}). Unless you are also the manager, you will no longer be able to make changes to this name."
+        },
+        "grantExtendExpiry": {
+          "title": "Change permissions",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "Grant permission to: Extend expiry"
+          }
+        },
+        "setExpiry": {
+          "title": "Set name expiry",
+          "subtitle": "Set a date when permissions will expire. This date cannot be longer than the expiry of its parent ({{parent}}).",
+          "subtitleWithCEE": "Set a date when this name will expire. This will replace it’s existing permission expiry ({{expiry}}), and cannot be later than the expiry of its parent ({{parent}}).",
+          "options": {
+            "max": "Max",
+            "custom": "Choose an earlier date"
+          },
+          "error": {
+            "required": "A date is required if a custom date is selected",
+            "min": "Date must be greater than {{date}}",
+            "max": "Date must be less than {{date}}"
+          }
+        },
+        "revokeAdditional": {
+          "title": "Revoke permissions",
+          "subtitle": "Would you like to revoke permissions on this name before giving up ownership? This can only be done now.",
+          "action": {
+            "title": "Revoke additional permissions",
+            "description": "Unless you are also the manager, you will not be able to revoke additional permissions after this."
+          }
+        },
+        "revokeUnwrap": {
+          "title": "Revoke permissions",
+          "subtitle": "You are required to revoke this permission before others can be revoked. This prevents permissions from being removed.",
+          "fuses": {
+            "CANNOT_UNWRAP": "Revoke permission to: Unwrap this name"
+          }
+        },
+        "revokePermissions": {
+          "title": "Revoke permissions",
+          "unwrapSubtitle": "Select this to enable the others",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "Grant permission to: Extend expiry.",
+            "CANNOT_UNWRAP": "Revoke permission to: Unwrap this name",
+            "CANNOT_CREATE_SUBDOMAIN": "Revoke permission to: Create subdomains",
+            "CANNOT_TRANSFER": "Revoke permission to: Send this name",
+            "CANNOT_SET_RESOLVER": "Revoke permission to: Set resolver",
+            "CANNOT_SET_TTL": "Revoke permission to: Set TTL",
+            "CANNOT_BURN_FUSES": "Revoke permission to: Change permissions",
+            "CANNOT_APPROVE": "Revoke permission to: Change renewal manager"
+          }
+        },
+        "revokeChangeFuses": {
+          "title": "Revoke permissions",
+          "subtitle": "By revoking this permission you are permanently losing the ability to change any remaining fuses. This will only be reset if the name expires.",
+          "fuses": {
+            "CANNOT_BURN_FUSES": "Revoke permission to: Change permissions"
+          }
+        },
+        "revokeChangeFusesWarning": {
+          "title": "Remaining permissions will be locked",
+          "subtitle": "Permissions and custom fuses will be permanently locked in their current state after ‘change permissions’ is revoked. This will only be reset if the name expires."
+        },
+        "lastWarning": {
+          "title": "Are you absolutely sure?",
+          "subtitle": "You are making changes that can only undone when the name expires ({{date}}).",
+          "message": "Please type your ENS name ({{name}}) to confirm."
+        }
+      },
+      "action": {
+        "revoke": "Revoke"
+      }
+    },
+    "unknownLabels": {
+      "title": "Confirm your name",
+      "subtitle": "Some of the labels in your name aren't known. Please enter them to continue."
+    },
+    "deleteEmancipatedSubnameWarning": {
+      "title": "This subname cannot be recreated",
+      "message": "Deleting this subname will prevent it from being used or recreated until it has expired{{date}}. This cannot be undone because the parent control permissions have been revoked."
+    },
+    "deleteSubnameNotParentWarning": {
+      "title": "You cannot recreate this subname",
+      "message": "Only the {{ownershipTerm}} of the parent name (<b>{{parentOwner}}</b>) can recreate this subname. You will not be able to recreate this name yourself once it has been deleted."
+    },
+    "selectPrimaryName": {
+      "title": "Select a primary name",
+      "errors": {
+        "noNamesFound": "No names found",
+        "noEligibleNames": "No eligible names"
+      }
+    },
+    "resetPrimaryName": {
+      "title": "Remove Primary Name",
+      "description": "This name will no longer appear as the name for this address. However, transactions to this name will still resolve to this address unless you remove the ETH record."
+    },
+    "sendName": {
+      "views": {
+        "error": {
+          "title": "Cannot send name",
+          "description": "You do not have permission to send this name."
+        },
+        "search": {
+          "placeholder": "ENS name or Ethereum address",
+          "views": {
+            "error": {
+              "message": "Something went wrong. Please try again."
+            },
+            "intro": {
+              "message": "Search for an ENS name or ETH address"
+            },
+            "noResults": {
+              "message": "No results found"
+            }
+          }
+        },
+        "summary": {
+          "title": "Send name",
+          "fields": {
+            "name": {
+              "label": "Name",
+              "expires": "Expires {{date}}"
+            },
+            "recipient": "Recipient",
+            "options": {
+              "label": "Options",
+              "title": "Reset profile",
+              "description": "Remove all profile records. This costs additional gas."
+            },
+            "summary": {
+              "title": "Summary of changes",
+              "updates": {
+                "role": "Update {{role}} role to {{address}}",
+                "eth-record": "Update ETH record to {{address}}"
+              },
+              "remove": {
+                "profile": "Remove profile records"
+              }
+            }
+          }
+        },
+        "confirmation": {
+          "title": "Sending name",
+          "description": "Sending this name transfers ownership to the recipient, giving them your control.",
+          "warning": "You will lose the ability to modify, receive payments, or use it as your primary name.",
+          "learnMore": "Learn about sending names"
+        }
+      }
+    },
+    "syncManager": {
+      "title": "Sync manager",
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <strong>({{manager}})</strong> will no longer be able to make changes.",
+      "warning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
+    },
+    "verifyProfile": {
+      "list": {
+        "title": "Verify your profile",
+        "message": " You can verify profile information and add proofs of personhood. Verified records will be marked on your profile with a blue check.",
+        "added": "Added"
+      },
+      "dentity": {
+        "title": "Dentity verification",
+        "description": "Proceed to Dentity to verify your profile. You’ll need to provide proof of ownership for the records you want to verify. Dentity does not share any private information with ENS.",
+        "helper": "Your verification will not be complete until you have returned to ENS and updated your records. This will require a transaction.",
+        "remove": "Remove Dentity from profile",
+        "link": "Go to Dentity"
+      }
+    }
+  },
+  "transaction": {
+    "extendNames": {
+      "actionValue": "Extend registration",
+      "costValue": "{{value}} + fees",
+      "warning": "Extending this name will not give you ownership of it",
+      "newExpiry": "New expiry: {{date}}"
+    },
+    "deleteSubname": {
+      "warning": "Hello out there"
+    }
+  },
+  "intro": {
+    "migrateAndUpdateResolver": {
+      "title": "Action Required",
+      "heading": "The edits you want to save to your profile require that you upgrade your resolver.",
+      "link": "Learn more about resolver upgrades",
+      "warning": "Note that if you cancel this at any point your changes will not be saved."
+    },
+    "syncManager": {
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <b>({{manager}})</b> will no longer be able to make changes.",
+      "wrappedWarning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
+    },
+    "selectPrimaryName": {
+      "updateEthAddress": {
+        "title": "Update ETH address",
+        "description": "The ETH address for this name doesn't match this wallet. To use this as your primary name you will need to update the ETH address first."
+      },
+      "noResolver": {
+        "title": "No resolver set",
+        "description": "To use this as your primary name you will need to set a resolver and update the ETH address first."
+      },
+      "invalidResolver": {
+        "title": "Unauthorized resolver set",
+        "description": "To use this as your primary name you will need to set a valid resolver and update the ETH address first."
+      }
+    },
+    "multiStepSubnameDelete": {
+      "title": "Delete Subname",
+      "description": "Deleting this subname requires multiple transactions"
+    }
+  },
+  "errors": {
+    "duplicateKey": "{{value}} is a duplicate key"
+  }
+}

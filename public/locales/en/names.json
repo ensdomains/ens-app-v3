@@ -1,1 +1,19 @@
-{}
+{
+  "title": "Names",
+  "subtitle": {
+    "start": "All the names held by",
+    "this": "this",
+    "your": "your",
+    "wallet": "wallet"
+  },
+  "empty": "No names found for this address",
+  "sortTypes": {
+    "expiryDate": "Expiry date",
+    "labelName": "Name",
+    "createdAt": "Creation date"
+  },
+  "offchainWarning": {
+    "title": "Some names may not appear",
+    "text": "Offchain names do not currently appear in this list. You can still view them by searching for them directly. Click to learn more."
+  }
+}
