@@ -17,12 +17,16 @@ describe('SocialIcon', () => {
     )
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
+    const styledIcon = icon.parentElement
 
     expect(icon).toBeInTheDocument()
     expect(link).toHaveAttribute('href', 'https://example.com')
     expect(link).toHaveAttribute('target', '_blank')
-    expect(link).toHaveStyle({
-      color: lightTheme.colors.greyPrimary
+    expect(styledIcon).toHaveStyle({
+      height: '100%',
+      position: 'absolute',
+      fill: lightTheme.colors.greyPrimary,
+      transition: '0.15s all ease-in-out'
     })
   })
 
@@ -66,7 +70,8 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const defaultIcon = screen.getByTestId('mock-icon')
     const coloredIcon = screen.getByTestId('mock-colored-icon')
-    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
+    const styledIcon = defaultIcon.parentElement
+    const styledColoredIcon = coloredIcon.parentElement
 
     expect(link).toHaveStyle({
       display: 'flex',
@@ -78,17 +83,27 @@ describe('SocialIcon', () => {
       minHeight: '1.5rem'
     })
     
-    expect(defaultIcon.parentElement).toHaveStyle({
-      position: 'absolute',
+    expect(styledIcon).toHaveStyle({
       height: '100%',
+      position: 'absolute',
       fill: lightTheme.colors.greyPrimary,
       transition: '0.15s all ease-in-out'
     })
 
-    await userEvent.unhover(link)
-    
-    expect(link).toHaveStyle('color: rgb(161, 161, 161)')
-    expect(coloredIconWrapper).toHaveStyle('opacity: 0')
+    expect(styledColoredIcon).toHaveStyle({
+      height: '100%',
+      position: 'absolute',
+      opacity: '0',
+      transition: '0.15s all ease-in-out'
+    })
+
+    await userEvent.hover(link)
+    expect(styledIcon).toHaveStyle({
+      fill: customColor
+    })
+    expect(styledColoredIcon).toHaveStyle({
+      opacity: '1'
+    })
   })
 
   it('should show colored icon on hover when ColoredIcon is provided', async () => {
@@ -101,16 +116,18 @@ describe('SocialIcon', () => {
     )
     const link = screen.getByRole('link')
     const coloredIcon = screen.getByTestId('mock-colored-icon')
-    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
+    const styledColoredIcon = coloredIcon.parentElement
     
-    expect(coloredIconWrapper).toHaveStyle({
+    expect(styledColoredIcon).toHaveStyle({
+      height: '100%',
+      position: 'absolute',
       opacity: '0',
       transition: '0.15s all ease-in-out'
     })
     await userEvent.hover(link)
-    expect(coloredIconWrapper).toHaveStyle({ opacity: '1' })
+    expect(styledColoredIcon).toHaveStyle({ opacity: '1' })
     await userEvent.unhover(link)
-    expect(coloredIconWrapper).toHaveStyle({ opacity: '0' })
+    expect(styledColoredIcon).toHaveStyle({ opacity: '0' })
   })
 
   it('should change icon color on hover when color prop is provided', async () => {
@@ -124,16 +141,18 @@ describe('SocialIcon', () => {
     )
     const link = screen.getByRole('link')
     const icon = screen.getByTestId('mock-icon')
+    const styledIcon = icon.parentElement
     
-    expect(link).toHaveStyle({
-      display: 'flex',
-      position: 'relative',
-      cursor: 'pointer'
+    expect(styledIcon).toHaveStyle({
+      height: '100%',
+      position: 'absolute',
+      fill: lightTheme.colors.greyPrimary,
+      transition: '0.15s all ease-in-out'
     })
     
     await userEvent.hover(link)
-    expect(link).toHaveStyle({
-      color: 'rgb(255, 0, 0)'
+    expect(styledIcon).toHaveStyle({
+      fill: customColor
     })
   })
 
@@ -340,17 +359,18 @@ describe('SocialIcon', () => {
     )
     const defaultIcon = screen.getByTestId('mock-icon')
     const coloredIcon = screen.getByTestId('mock-colored-icon')
-    const coloredIconWrapper = coloredIcon.parentElement?.parentElement
+    const styledIcon = defaultIcon.parentElement
+    const styledColoredIcon = coloredIcon.parentElement
 
-    expect(defaultIcon.parentElement).toHaveStyle({
-      position: 'absolute',
+    expect(styledIcon).toHaveStyle({
       height: '100%',
+      position: 'absolute',
       transition: '0.15s all ease-in-out'
     })
 
-    expect(coloredIconWrapper).toHaveStyle({
-      position: 'absolute',
+    expect(styledColoredIcon).toHaveStyle({
       height: '100%',
+      position: 'absolute',
       transition: '0.15s all ease-in-out'
     })
   })
