@@ -4,6 +4,17 @@
       "options": {
         "groups": {
           "address": {
+            "placeholder": {
+              "eth": "0xb8c2C2...",
+              "btc": "3FZbgi29...",
+              "sol": "D4kA7VzHnmV...",
+              "op": "0xb8c2C2...",
+              "arb1": "0xb8c2C2...",
+              "base": "0xb8c2C2...",
+              "matic": "0xb8c2C2...",
+              "linea": "0xb8c2C2...",
+              "scr": "0xb8c2C2..."
+            }
           }
         }
       }
