@@ -66,17 +66,42 @@ async function main() {
     const moreSourceFiles = await getAllFiles(SRC_DIR, '.ts')
     await Promise.all([...sourceFiles, ...moreSourceFiles].map(file => findTranslationUsage(file, usedKeys)))
 
-    // Find unused keys
+    // Map keys to their source files
+    const keyToFiles = new Map()
+    for (const file of translationFiles) {
+      const content = await fs.readFile(file, 'utf-8')
+      if (!content.trim() || content.trim() === '{}') continue
+      const data = JSON.parse(content)
+      const namespace = path.basename(file, '.json')
+      function mapKeys(obj, prefix = '') {
+        for (const key of Object.keys(obj)) {
+          const fullKey = prefix ? `${prefix}.${key}` : key
+          if (typeof obj[key] === 'string') {
+            const files = keyToFiles.get(fullKey) || new Set()
+            files.add(file)
+            keyToFiles.set(fullKey, files)
+          } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+            mapKeys(obj[key], fullKey)
+          }
+        }
+      }
+      mapKeys(data)
+    }
+
+    // Find truly unused keys (not used in any file)
     const unusedKeys = Array.from(allKeys).filter(key => !usedKeys.has(key))
 
-    // Group unused keys by their JSON file
+    // Group unused keys by their JSON file, but only if the key exists in that file
     const keysByFile = {}
     for (const key of unusedKeys) {
-      const [namespace, ...rest] = key.split('.')
-      if (!rest.length) continue // Skip namespace-only keys
-      const filePath = path.join(LOCALES_DIR, `${namespace}.json`)
-      if (!keysByFile[filePath]) keysByFile[filePath] = []
-      keysByFile[filePath].push(rest.join('.'))
+      const files = keyToFiles.get(key)
+      if (!files) continue
+      for (const file of files) {
+        if (!keysByFile[file]) keysByFile[file] = []
+        const [namespace, ...rest] = key.split('.')
+        if (!rest.length) continue // Skip namespace-only keys
+        keysByFile[file].push(rest.join('.'))
+      }
     }
 
     // Output the keys grouped by file in a format easy to copy
