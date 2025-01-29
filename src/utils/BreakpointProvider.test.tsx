@@ -20,7 +20,7 @@ describe('BreakpointProvider', () => {
 
   const createMockMatchMedia = () => {
     const listeners: ((e: MediaQueryListEvent) => void)[] = []
-    const mockMatchMedia = vi.fn((query: string) => {
+    const mockMatchMedia = (query: string) => {
       const mediaQueryList = {
         matches: false,
         media: query,
@@ -38,18 +38,13 @@ describe('BreakpointProvider', () => {
         dispatchEvent: vi.fn(),
       }
       return mediaQueryList
-    })
-    return { listeners, mockMatchMedia }
+    }
+    vi.stubGlobal('matchMedia', mockMatchMedia)
+    return { listeners }
   }
 
   it('should set a listener for each breakpoint', () => {
-    const { listeners, mockMatchMedia } = createMockMatchMedia()
-    const originalMatchMedia = window.matchMedia
-    vi.stubGlobal('matchMedia', mockMatchMedia)
-
-    afterEach(() => {
-      vi.stubGlobal('matchMedia', originalMatchMedia)
-    })
+    const { listeners } = createMockMatchMedia()
 
     const TestComponent = () => {
       useBreakpoint()
@@ -66,14 +61,7 @@ describe('BreakpointProvider', () => {
   })
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
-    const { listeners, mockMatchMedia } = createMockMatchMedia()
-
-    const originalMatchMedia = window.matchMedia
-    vi.stubGlobal('matchMedia', mockMatchMedia)
-
-    afterEach(() => {
-      vi.stubGlobal('matchMedia', originalMatchMedia)
-    })
+    const { listeners } = createMockMatchMedia()
 
     const TestComponent = () => {
       const _breakpoints = useBreakpoint()
