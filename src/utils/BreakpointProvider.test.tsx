@@ -18,14 +18,11 @@ describe('BreakpointProvider', () => {
     delete (window as any).matchMedia
   })
 
-  it('should set a listener for each breakpoint', () => {
+  const createMockMatchMedia = () => {
     const listeners: ((e: MediaQueryListEvent) => void)[] = []
-
     const mockMatchMedia = (query: string) => ({
-      addListener: (listener: (e: MediaQueryListEvent) => void) => {
-        listeners.push(listener)
-      },
-      removeListener: vi.fn(),
+      addListener: vi.fn(), // deprecated method
+      removeListener: vi.fn(), // deprecated method
       matches: false,
       media: query,
       onchange: null,
@@ -37,7 +34,11 @@ describe('BreakpointProvider', () => {
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     })
+    return { listeners, mockMatchMedia }
+  }
 
+  it('should set a listener for each breakpoint', () => {
+    const { listeners, mockMatchMedia } = createMockMatchMedia()
     const originalMatchMedia = window.matchMedia
     vi.stubGlobal('matchMedia', mockMatchMedia)
 
@@ -60,23 +61,7 @@ describe('BreakpointProvider', () => {
   })
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
-    const listeners: ((e: MediaQueryListEvent) => void)[] = []
-    const mockMatchMedia = (query: string) => ({
-      addListener: (listener: (e: MediaQueryListEvent) => void) => {
-        listeners.push(listener)
-      },
-      removeListener: vi.fn(),
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => {
-        if (type === 'change') {
-          listeners.push(listener)
-        }
-      },
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })
+    const { listeners, mockMatchMedia } = createMockMatchMedia()
 
     const originalMatchMedia = window.matchMedia
     vi.stubGlobal('matchMedia', mockMatchMedia)
