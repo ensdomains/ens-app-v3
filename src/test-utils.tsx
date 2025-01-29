@@ -17,11 +17,7 @@ import { DeepPartial } from './types'
 import { BreakpointProvider } from './utils/BreakpointProvider'
 
 vi.mock('./utils/BreakpointProvider', () => ({
-  BreakpointProvider: ({
-    children,
-  }: {
-    children: React.ReactNode
-  }) => children,
+  BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
   useBreakpoint: vi.fn().mockReturnValue({
     xs: false,
     sm: false,
@@ -118,9 +114,7 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
           {isTestingBreakpointProvider ? (
             children
           ) : (
-            <BreakpointProvider queries={defaultQueries}>
-              {children}
-            </BreakpointProvider>
+            <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
           )}
         </ThemeProvider>
       </QueryClientProvider>
