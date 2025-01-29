@@ -19,15 +19,18 @@ describe('BreakpointProvider', () => {
   })
 
   it('should set a listener for each breakpoint', () => {
-    const listeners = []
+    const listeners: ((e: MediaQueryListEvent) => void)[] = []
 
-    const mockMatchMedia = () => {
-      return {
-        addListener: (listener: any) => listeners.push(listener),
-        removeListener: vi.fn(),
-        matches: false,
-      }
-    }
+    const mockMatchMedia = (query: string) => ({
+      addListener: (listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
+      removeListener: vi.fn(),
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })
 
     ;(window as any).matchMedia = mockMatchMedia
 
@@ -46,16 +49,22 @@ describe('BreakpointProvider', () => {
   })
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
-    const listeners: any[] = []
+    const listeners: ((e: MediaQueryListEvent) => void)[] = []
     const returnObject = {
-      addListener: (listener: any) => listeners.push(listener),
+      addListener: (listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
       removeListener: vi.fn(),
       matches: false,
+      media: '',
+      onchange: null,
+      addEventListener: (type: string, listener: (e: MediaQueryListEvent) => void) => listeners.push(listener),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
     }
 
-    ;(window as any).matchMedia = () => {
-      return returnObject
-    }
+    ;(window as any).matchMedia = (query: string) => ({
+      ...returnObject,
+      media: query,
+    })
 
     const TestComponent = () => {
       const _breakpoints = useBreakpoint()
@@ -70,7 +79,7 @@ describe('BreakpointProvider', () => {
 
     returnObject.matches = true
     act(() => {
-      listeners[0]()
+      listeners[0]({ matches: true, media: Object.values(breakpoints)[0] } as MediaQueryListEvent)
     })
 
     rerender(
