@@ -41,7 +41,6 @@ describe('SocialIcon', () => {
     expect(defaultIcon).toBeInTheDocument()
     expect(coloredIcon).toBeInTheDocument()
     const coloredIconWrapper = coloredIcon.parentElement?.parentElement
-    const computedStyles = window.getComputedStyle(coloredIconWrapper!)
     expect(coloredIconWrapper).toHaveStyle({
       height: '100%',
       position: 'absolute',
@@ -237,14 +236,16 @@ describe('SocialIcon', () => {
     const icon = screen.getByTestId('mock-icon')
     const link = screen.getByRole('link')
     
-    const initialIconStyles = window.getComputedStyle(icon)
-    expect(initialIconStyles.position).toBe('absolute')
-    expect(initialIconStyles.height).toBe('100%')
-    expect(initialIconStyles.fill).toBe('hsl(240 6% 63%)')
+    expect(icon.parentElement).toHaveStyle({
+      position: 'absolute',
+      height: '100%',
+      fill: lightTheme.colors.greyPrimary
+    })
     
     await userEvent.hover(link)
-    const hoverIconStyles = window.getComputedStyle(icon)
-    expect(hoverIconStyles.fill).toBe(customColor)
+    expect(icon.parentElement).toHaveStyle({
+      fill: customColor
+    })
   })
 
   it('should handle hover state transitions for both icons', async () => {
@@ -262,24 +263,29 @@ describe('SocialIcon', () => {
     const link = screen.getByRole('link')
     const coloredIconWrapper = coloredIcon.parentElement?.parentElement
 
-    const initialIconStyles = window.getComputedStyle(defaultIcon)
-    expect(initialIconStyles.fill).toBe(lightTheme.colors.greyPrimary)
-    const initialWrapperStyles = window.getComputedStyle(coloredIconWrapper!)
-    expect(initialWrapperStyles.opacity).toBe('0')
+    expect(defaultIcon.parentElement).toHaveStyle({
+      fill: lightTheme.colors.greyPrimary
+    })
+    expect(coloredIconWrapper).toHaveStyle({
+      opacity: '0'
+    })
 
     await userEvent.hover(link)
     expect(defaultIcon.parentElement).toHaveStyle({
       fill: customColor,
       transition: '0.15s all ease-in-out'
     })
-    const hoverWrapperStyles = window.getComputedStyle(coloredIconWrapper!)
-    expect(hoverWrapperStyles.opacity).toBe('1')
+    expect(coloredIconWrapper).toHaveStyle({
+      opacity: '1'
+    })
 
     await userEvent.unhover(link)
-    const unhoverIconStyles = window.getComputedStyle(defaultIcon)
-    expect(unhoverIconStyles.fill).toBe('rgb(161, 161, 161)')
-    const unhoverWrapperStyles = window.getComputedStyle(coloredIconWrapper!)
-    expect(unhoverWrapperStyles.opacity).toBe('0')
+    expect(defaultIcon.parentElement).toHaveStyle({
+      fill: lightTheme.colors.greyPrimary
+    })
+    expect(coloredIconWrapper).toHaveStyle({
+      opacity: '0'
+    })
   })
 
   it('should maintain default fill color on hover when no custom color is provided', async () => {
@@ -318,9 +324,10 @@ describe('SocialIcon', () => {
       />,
     )
     const link = screen.getByRole('link')
-    const computedLinkStyles = window.getComputedStyle(link)
-    expect(computedLinkStyles.width).toBe(lightTheme.space['6'])
-    expect(computedLinkStyles.minHeight).toBe(lightTheme.space['6'])
+    expect(link).toHaveStyle({
+      width: lightTheme.space['6'],
+      minHeight: lightTheme.space['6']
+    })
   })
 
   it('should verify transition timing for all styled components', () => {
