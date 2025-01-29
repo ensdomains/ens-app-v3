@@ -96,7 +96,6 @@ describe('BreakpointProvider', () => {
       </BreakpointProvider>,
     )
 
-    mediaQueryList.matches = true
     act(() => {
       const mockEvent = new Event('change') as MediaQueryListEvent
       Object.defineProperty(mockEvent, 'matches', { value: true })
