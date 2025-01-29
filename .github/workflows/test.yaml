@@ -29,6 +29,15 @@ jobs:
 
       - run: pnpm test:coverage
 
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            coverage/
+            coverage/lcov.info
+            coverage/coverage-final.json
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
