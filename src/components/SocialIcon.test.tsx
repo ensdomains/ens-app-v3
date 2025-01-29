@@ -316,9 +316,12 @@ describe('SocialIcon', () => {
     const defaultIconStyles = window.getComputedStyle(defaultIcon)
     expect(defaultIconStyles.position).toBe('absolute')
     expect(defaultIconStyles.height).toBe('100%')
+    expect(defaultIconStyles.transition).toBe('0.15s all ease-in-out')
+
     const coloredWrapperStyles = window.getComputedStyle(coloredIconWrapper!)
     expect(coloredWrapperStyles.position).toBe('absolute')
     expect(coloredWrapperStyles.height).toBe('100%')
+    expect(coloredWrapperStyles.transition).toBe('0.15s all ease-in-out')
   })
 
   it('should handle required props correctly', () => {
