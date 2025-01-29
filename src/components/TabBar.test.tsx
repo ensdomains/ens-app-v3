@@ -177,4 +177,44 @@ describe('TabBar', () => {
     const hasFavouritesLink = links.some((el) => el.getAttribute('href')?.includes('favourites'))
     expect(hasFavouritesLink).toBe(true)
   })
+
+  it('should close profile section when address becomes undefined', async () => {
+    const { rerender } = renderWithAddress()
+    const avatar = screen.getByAltText('avatar')
+    await userEvent.click(avatar)
+
+    const profileWrapper = screen
+      .getAllByRole('link')
+      .find((el) => el.getAttribute('href') === '/my/profile')
+    expect(profileWrapper?.closest('div')).toHaveClass('sc-lnPyaJ')
+
+    mockUseAccountSafely.mockReturnValue({ address: undefined })
+    rerender(<TabBar />)
+
+    const profileLinks = screen.queryAllByRole('link').filter(link => 
+      link.getAttribute('href')?.includes('/profile/')
+    )
+    expect(profileLinks.length).toBe(0)
+  })
+
+  it('should handle loading state of avatar', () => {
+    mockUseAccountSafely.mockReturnValue({ address: mockAddress })
+    mockUsePrimaryName.mockReturnValue({ data: { name: mockName }, isLoading: false })
+    mockUseEnsAvatar.mockReturnValue({ data: undefined, isLoading: true })
+    render(<TabBar />)
+
+    expect(screen.getByAltText('zorb')).toHaveAttribute('src', mockZorbUrl)
+  })
+
+  it('should handle primary data without name', () => {
+    mockUseAccountSafely.mockReturnValue({ address: mockAddress })
+    mockUsePrimaryName.mockReturnValue({ data: {}, isLoading: false })
+    mockUseEnsAvatar.mockReturnValue({ data: mockAvatarUrl, isLoading: false })
+    render(<TabBar />)
+
+    const profileLinks = screen.queryAllByRole('link').filter(link => 
+      link.getAttribute('href')?.includes('/profile/')
+    )
+    expect(profileLinks.length).toBe(0)
+  })
 })
