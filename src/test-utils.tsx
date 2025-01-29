@@ -18,14 +18,21 @@ import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
 
 vi.mock('./utils/BreakpointProvider', () => {
   const listeners: any[] = []
-  const mockMatchMedia = () => ({
-    addListener: (listener: any) => listeners.push(listener),
+  const mockMatchMedia = (query: string): MediaQueryList => ({
+    addListener: (listener: (ev: MediaQueryListEvent) => void) => {
+      listeners.push(listener)
+    },
     removeListener: vi.fn(),
     matches: true,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })
 
   if (typeof window !== 'undefined') {
-    window.matchMedia = mockMatchMedia
+    window.matchMedia = mockMatchMedia as (query: string) => MediaQueryList
   }
 
   return {
