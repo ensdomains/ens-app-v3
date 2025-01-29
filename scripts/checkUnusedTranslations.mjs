@@ -4,24 +4,36 @@ import path from 'path'
 const LOCALES_DIR = path.join(process.cwd(), 'public', 'locales', 'en')
 const SRC_DIR = path.join(process.cwd(), 'src')
 
-async function collectTranslationKeys(filePath, allKeys = new Set()) {
+async function collectTranslationKeys(filePath, allKeys = new Set(), keyToFiles = new Map()) {
   const content = await fs.readFile(filePath, 'utf-8')
   if (!content.trim() || content.trim() === '{}') {
-    return allKeys
+    return { allKeys, keyToFiles }
   }
-  const data = JSON.parse(content)
+  let data
+  try {
+    data = JSON.parse(content)
+  } catch (e) {
+    console.error(`Error parsing ${filePath}: ${e.message}`)
+    return { allKeys, keyToFiles }
+  }
+  if (Object.keys(data).length === 0) {
+    return { allKeys, keyToFiles }
+  }
   function recurse(obj, prefix = '') {
     for (const key of Object.keys(obj)) {
       const fullKey = prefix ? `${prefix}.${key}` : key
       if (typeof obj[key] === 'string') {
         allKeys.add(fullKey)
+        const files = keyToFiles.get(fullKey) || new Set()
+        files.add(filePath)
+        keyToFiles.set(fullKey, files)
       } else if (typeof obj[key] === 'object' && obj[key] !== null) {
         recurse(obj[key], fullKey)
       }
     }
   }
   recurse(data)
-  return allKeys
+  return { allKeys, keyToFiles }
 }
 
 async function findTranslationUsage(filePath, usedKeys = new Set()) {
@@ -55,38 +67,17 @@ async function getAllFiles(dir, extension) {
 
 async function main() {
   try {
-    // Collect all translation keys
+    // Collect all translation keys and their source files
     const allKeys = new Set()
+    const keyToFiles = new Map()
     const translationFiles = await getAllFiles(LOCALES_DIR, '.json')
-    await Promise.all(translationFiles.map(file => collectTranslationKeys(file, allKeys)))
+    await Promise.all(translationFiles.map(file => collectTranslationKeys(file, allKeys, keyToFiles)))
 
     // Collect all used keys
     const usedKeys = new Set()
     const sourceFiles = await getAllFiles(SRC_DIR, '.tsx')
     const moreSourceFiles = await getAllFiles(SRC_DIR, '.ts')
     await Promise.all([...sourceFiles, ...moreSourceFiles].map(file => findTranslationUsage(file, usedKeys)))
-
-    // Map keys to their source files
-    const keyToFiles = new Map()
-    for (const file of translationFiles) {
-      const content = await fs.readFile(file, 'utf-8')
-      if (!content.trim() || content.trim() === '{}') continue
-      const data = JSON.parse(content)
-      const namespace = path.basename(file, '.json')
-      function mapKeys(obj, prefix = '') {
-        for (const key of Object.keys(obj)) {
-          const fullKey = prefix ? `${prefix}.${key}` : key
-          if (typeof obj[key] === 'string') {
-            const files = keyToFiles.get(fullKey) || new Set()
-            files.add(file)
-            keyToFiles.set(fullKey, files)
-          } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-            mapKeys(obj[key], fullKey)
-          }
-        }
-      }
-      mapKeys(data)
-    }
 
     // Find truly unused keys (not used in any file)
     const unusedKeys = Array.from(allKeys).filter(key => !usedKeys.has(key))
@@ -97,10 +88,19 @@ async function main() {
       const files = keyToFiles.get(key)
       if (!files) continue
       for (const file of files) {
-        if (!keysByFile[file]) keysByFile[file] = []
-        const [namespace, ...rest] = key.split('.')
-        if (!rest.length) continue // Skip namespace-only keys
-        keysByFile[file].push(rest.join('.'))
+        const content = await fs.readFile(file, 'utf-8')
+        if (!content.trim() || content.trim() === '{}') continue
+        try {
+          const data = JSON.parse(content)
+          if (Object.keys(data).length === 0) continue
+          if (!keysByFile[file]) keysByFile[file] = []
+          const [namespace, ...rest] = key.split('.')
+          if (!rest.length) continue // Skip namespace-only keys
+          keysByFile[file].push(rest.join('.'))
+        } catch (e) {
+          console.error(`Error parsing ${file}: ${e.message}`)
+          continue
+        }
       }
     }
 
