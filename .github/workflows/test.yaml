@@ -29,6 +29,31 @@ jobs:
 
       - run: pnpm test:coverage
 
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            coverage/
+            coverage/lcov.info
+            coverage/coverage-final.json
+          retention-days: 14
+
+      - name: Fix coverage paths for SonarCloud
+        run: |
+          sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace@g' coverage/lcov.info
+          cp coverage/lcov.info coverage/coverage-final.json .
+          ls -la coverage/
+          cat coverage/lcov.info
+          echo "Coverage files:"
+          find coverage -type f -ls
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   build-stateless:
     runs-on: ubuntu-latest
     steps:
