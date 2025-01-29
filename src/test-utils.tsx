@@ -14,10 +14,14 @@ import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 import { mainnetWithEns } from '@app/constants/chains'
 
 import { DeepPartial } from './types'
-import { BreakpointProvider, useBreakpoint } from './utils/BreakpointProvider'
+import { BreakpointProvider } from './utils/BreakpointProvider'
 
 vi.mock('./utils/BreakpointProvider', () => ({
-  BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
+  BreakpointProvider: ({
+    children,
+  }: {
+    children: React.ReactNode
+  }) => children,
   useBreakpoint: vi.fn().mockReturnValue({
     xs: false,
     sm: false,
@@ -111,8 +115,12 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
-          {isTestingBreakpointProvider ? children : (
-            <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
+          {isTestingBreakpointProvider ? (
+            children
+          ) : (
+            <BreakpointProvider queries={defaultQueries}>
+              {children}
+            </BreakpointProvider>
           )}
         </ThemeProvider>
       </QueryClientProvider>
