@@ -67,7 +67,7 @@ export const VerificationOptionButton = ({ icon, children, verified, ...props }:
         </Tag>
       )}
       <ArrowWrapper>
-        <RightArrowSVG />
+        <RightArrowSVG height={16} width={16} />
       </ArrowWrapper>
     </Container>
   )

@@ -112,11 +112,12 @@ const CountdownContainer = styled.div(
   `,
 )
 
-const StyledCountdown = styled(CountdownCircle)(
-  ({ theme, disabled }) => css`
+const StyledCountdown = styled.div<{ disabled: boolean; complete: boolean }>(
+  ({ theme, disabled, complete }) => css`
     width: ${theme.space['52']};
     height: ${theme.space['52']};
-    & > div {
+
+    div > div {
       font-size: ${theme.fontSizes.headingOne};
       font-weight: ${theme.fontWeights.bold};
       width: ${theme.space['52']};
@@ -125,6 +126,22 @@ const StyledCountdown = styled(CountdownCircle)(
       ${disabled &&
       css`
         color: ${theme.colors.border};
+      `}
+    }
+
+    svg > circle:nth-child(2) {
+      stroke-width: ${theme.space['0.5']};
+    }
+
+    svg > circle:nth-child(1) {
+      stroke-width: ${complete ? theme.space['0'] : theme.space['0.5']};
+    }
+
+    circle {
+      stroke: ${theme.colors.accentPrimary};
+      ${disabled &&
+      css`
+        stroke: ${theme.colors.border};
       `}
     }
 
@@ -362,14 +379,21 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       <Heading>{t('steps.transactions.heading')}</Heading>
       <CountdownContainer>
         <StyledCountdown
-          countdownSeconds={60}
           disabled={match(transactionState)
             .with('commitReady', 'commitSent', 'commitFailed', () => true)
             .otherwise(() => false)}
-          startTimestamp={commitTimestamp}
-          size="large"
-          callback={() => setCommitComplete(true)}
-        />
+          complete={commitComplete}
+        >
+          <CountdownCircle
+            countdownSeconds={60}
+            disabled={match(transactionState)
+              .with('commitReady', 'commitSent', 'commitFailed', () => true)
+              .otherwise(() => false)}
+            startTimestamp={commitTimestamp}
+            size="large"
+            callback={() => setCommitComplete(true)}
+          />
+        </StyledCountdown>
         <CountDownInner
           $hide={match(transactionState)
             .with('commitComplete', 'registrationOverriden', () => true)

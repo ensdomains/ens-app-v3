@@ -52,7 +52,7 @@ const ButtonContainer = styled.div(
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
-    (min-width: 360px) {
+    @media (min-width: 360px) {
       width: max-content;
     }
   `,

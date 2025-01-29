@@ -104,7 +104,7 @@ export const StatusChecker = ({
           onClick={() => refetch()}
           shape="square"
         >
-          <CounterClockwiseArrowSVG style={{ width: '1rem', height: '1rem' }} />
+          <CounterClockwiseArrowSVG width={16} height={16} />
         </Button>
       </DnssecCheckTopItemsContainer>
       {statusHelperElement}

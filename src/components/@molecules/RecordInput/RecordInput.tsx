@@ -60,6 +60,8 @@ const InnerButtonWrapper = styled.div(
 
     svg {
       color: ${theme.colors.greyPrimary};
+      width: ${theme.space[4]};
+      height: ${theme.space[4]};
     }
 
     &:hover {
@@ -143,7 +145,7 @@ export const RecordInput = forwardRef(
     const prefix = (() => {
       if (prefixProp) return prefixProp
       if (option?.prefix) return option.prefix
-      if (showDefaultPrefix) return <UnsupportedSVG />
+      if (showDefaultPrefix) return <UnsupportedSVG width={22} height={23} viewBox="0 0 22 23" />
     })()
 
     const error = errorProp ? <ErrorWrapper>{errorProp}</ErrorWrapper> : undefined

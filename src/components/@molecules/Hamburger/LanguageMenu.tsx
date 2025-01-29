@@ -131,7 +131,12 @@ const LanguageItem = styled.div(
   `,
 )
 
-const CheckIcon = styled.svg(() => css``)
+const CheckIcon = styled.svg(
+  () => css`
+    width: 1rem;
+    height: 1rem;
+  `,
+)
 
 const LanguageMenu = ({
   setCurrentView,
@@ -157,7 +162,7 @@ const LanguageMenu = ({
     <Container>
       <HeadingWrapper>
         <Heading onClick={() => setCurrentView('main')}>
-          <LeftArrowSVG />
+          <LeftArrowSVG width={16} height={16} />
           <InnerHeading>
             <LanguageSVG />
             <Typography weight="bold">{t('navigation.language')}</Typography>

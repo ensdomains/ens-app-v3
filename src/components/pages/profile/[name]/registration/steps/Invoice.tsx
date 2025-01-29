@@ -127,7 +127,7 @@ export const Invoice = ({ name, expiryTitle, expiryDate, items }: Props) => {
           ]}
         >
           <ReminderContainer color="accentPrimary" fontVariant="small">
-            <CalendarSVG /> <span>{t('action.setReminder')}</span>
+            <CalendarSVG width={16} height={16} /> <span>{t('action.setReminder')}</span>
           </ReminderContainer>
         </Dropdown>
       </LineItem>
