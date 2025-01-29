@@ -14,6 +14,18 @@ import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 import { mainnetWithEns } from '@app/constants/chains'
 
 import { DeepPartial } from './types'
+import { BreakpointProvider } from './utils/BreakpointProvider'
+
+vi.mock('./utils/BreakpointProvider', () => ({
+  BreakpointProvider: ({ children }: { children: React.ReactNode }) => children,
+  useBreakpoint: vi.fn().mockReturnValue({
+    xs: false,
+    sm: false,
+    md: false,
+    lg: false,
+    xl: false,
+  }),
+}))
 
 const { createClient, http } = await vi.importActual<typeof import('viem')>('viem')
 const { privateKeyToAccount } =
@@ -81,13 +93,29 @@ vi.mock('@app/utils/query/wagmi', () => ({
   infuraUrl: () => 'http://infura.io',
 }))
 
+const defaultQueries = {
+  xs: '(min-width: 360px)',
+  sm: '(min-width: 640px)',
+  md: '(min-width: 768px)',
+  lg: '(min-width: 1024px)',
+  xl: '(min-width: 1280px)',
+}
+
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
+  // When testing BreakpointProvider itself, don't wrap with another instance
+  const isTestingBreakpointProvider =
+    React.isValidElement(children) && children.type === BreakpointProvider
+
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
           <ThorinGlobalStyles />
-          {children}
+          {isTestingBreakpointProvider ? (
+            children
+          ) : (
+            <BreakpointProvider queries={defaultQueries}>{children}</BreakpointProvider>
+          )}
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>

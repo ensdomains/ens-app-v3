@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 
@@ -14,23 +14,75 @@ const breakpoints = {
 }
 
 describe('BreakpointProvider', () => {
-  afterEach(() => {
-    delete (window as any).matchMedia
+  class MockMediaQueryListEvent extends Event {
+    matches: boolean
+    media: string
+    constructor(type: string, init: { matches: boolean; media: string }) {
+      super(type)
+      this.matches = init.matches
+      this.media = init.media
+    }
+  }
+
+  type MediaQueryListener = (e: MediaQueryListEvent) => void
+  const mediaQueries = new Map<string, Set<MediaQueryListener>>()
+  const mediaMatches = new Map<string, boolean>()
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    mediaQueries.clear()
+    mediaMatches.clear()
+
+    window.matchMedia = vi.fn().mockImplementation((query: string) => {
+      if (!mediaQueries.has(query)) {
+        mediaQueries.set(query, new Set())
+        mediaMatches.set(query, false)
+      }
+
+      const listeners = mediaQueries.get(query)!
+
+      return {
+        matches: mediaMatches.get(query),
+        media: query,
+        onchange: null,
+        addListener: (listener: MediaQueryListener) => {
+          listeners.add(listener)
+        },
+        removeListener: (listener: MediaQueryListener) => {
+          listeners.delete(listener)
+        },
+        addEventListener: (type: string, listener: MediaQueryListener) => {
+          if (type === 'change') {
+            listeners.add(listener)
+          }
+        },
+        removeEventListener: (type: string, listener: MediaQueryListener) => {
+          if (type === 'change') {
+            listeners.delete(listener)
+          }
+        },
+        dispatchEvent: (event: Event) => {
+          if (event.type === 'change' && event instanceof MockMediaQueryListEvent) {
+            mediaMatches.set(query, event.matches)
+            listeners.forEach(listener => {
+              listener(event as unknown as MediaQueryListEvent)
+            })
+          }
+          return true
+        }
+      }
+
+      }
+    })
   })
 
-  it('should set a listener for each breakpoint', () => {
-    const listeners = []
+  afterEach(() => {
+    vi.clearAllMocks()
+    vi.useRealTimers()
+    mediaQueries.clear()
+  })
 
-    const mockMatchMedia = () => {
-      return {
-        addListener: (listener: any) => listeners.push(listener),
-        removeListener: vi.fn(),
-        matches: false,
-      }
-    }
-
-    ;(window as any).matchMedia = mockMatchMedia
-
+  it('should set a MediaQueryList listener for each breakpoint query', async () => {
     const TestComponent = () => {
       useBreakpoint()
       return <div>TestComponent</div>
@@ -42,47 +94,95 @@ describe('BreakpointProvider', () => {
       </BreakpointProvider>,
     )
 
-    expect(listeners.length).toBe(Object.keys(breakpoints).length)
+    await act(async () => {
+      vi.runAllTimers()
+      await Promise.resolve()
+    })
+
+    const totalListeners = Array.from(mediaQueries.values())
+      .reduce((acc, curr) => acc + curr.size, 0)
+
+    expect(totalListeners).toBe(Object.keys(breakpoints).length)
+    expect(window.matchMedia).toHaveBeenCalledTimes(Object.keys(breakpoints).length)
   })
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
-    const listeners: any[] = []
-    const returnObject = {
-      addListener: (listener: any) => listeners.push(listener),
-      removeListener: vi.fn(),
-      matches: false,
-    }
-
-    ;(window as any).matchMedia = () => {
-      return returnObject
-    }
-
     const TestComponent = () => {
-      const _breakpoints = useBreakpoint()
-      return <div>{JSON.stringify(_breakpoints)}</div>
+      const breakpoints = useBreakpoint()
+      return <div data-testid="breakpoint-state">{JSON.stringify(breakpoints)}</div>
     }
 
-    const { rerender } = render(
+    const { getByTestId } = render(
       <BreakpointProvider queries={breakpoints}>
         <TestComponent />
       </BreakpointProvider>,
     )
 
-    returnObject.matches = true
-    act(() => {
-      listeners[0]()
+    await act(async () => {
+      vi.runAllTimers()
+      await Promise.resolve()
     })
 
-    rerender(
+    const initialState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
+    expect(initialState).toEqual({
+      xs: false,
+      sm: false,
+      md: false,
+      lg: false,
+      xl: false,
+    })
+
+    await act(async () => {
+      Object.keys(breakpoints).forEach(key => {
+        const query = window.matchMedia(breakpoints[key])
+        mediaMatches.set(breakpoints[key], true)
+        const event = new MockMediaQueryListEvent('change', { matches: true, media: breakpoints[key] })
+        query.dispatchEvent(event)
+      })
+      vi.runAllTimers()
+      await Promise.resolve()
+    })
+
+    const updatedState = JSON.parse(getByTestId('breakpoint-state').textContent || '{}')
+    expect(updatedState).toEqual({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: true,
+      xl: true
+    })
+  })
+
+  it('should clean up event listeners when unmounted', async () => {
+    const TestComponent = () => {
+      useBreakpoint()
+      return <div>Test</div>
+    }
+
+    const { unmount } = render(
       <BreakpointProvider queries={breakpoints}>
         <TestComponent />
       </BreakpointProvider>,
     )
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('{"xs":true,"sm":true,"md":true,"lg":true,"xl":true}'),
-      ).toBeInTheDocument()
+    await act(async () => {
+      vi.runAllTimers()
+      await Promise.resolve()
     })
+
+    const initialListeners = Array.from(mediaQueries.values())
+      .reduce((acc, curr) => acc + curr.size, 0)
+    expect(initialListeners).toBe(Object.keys(breakpoints).length)
+
+    unmount()
+
+    await act(async () => {
+      vi.runAllTimers()
+      await Promise.resolve()
+    })
+
+    const finalListeners = Array.from(mediaQueries.values())
+      .reduce((acc, curr) => acc + curr.size, 0)
+    expect(finalListeners).toBe(0)
   })
 })
