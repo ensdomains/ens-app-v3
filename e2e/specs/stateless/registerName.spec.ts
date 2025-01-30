@@ -312,7 +312,7 @@ test.describe.serial('normal registration', () => {
     await expect(page.getByTestId('setup-profile-button')).toBeVisible()
     await expect(page.getByTestId('setup-profile-button').locator('div')).toHaveCSS(
       'color',
-      'rgb(56, 136, 255)',
+      'rgb(56, 137, 255)',
     )
 
     // should allow registering a name without setting primary name

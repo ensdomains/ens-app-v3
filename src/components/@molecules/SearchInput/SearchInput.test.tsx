@@ -75,7 +75,7 @@ describe('SearchInput', () => {
       screen.getByTestId('search-input-box-fake').click()
     })
 
-    await waitFor(() => screen.getByTestId('search-input-backdrop'), {
+    await waitFor(() => screen.getByTestId('backdrop-surface'), {
       timeout: 500,
     }).then((el) => expect(el).toBeVisible())
   })

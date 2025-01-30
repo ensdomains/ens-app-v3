@@ -3,12 +3,11 @@ import { render, screen } from '@testing-library/react'
 import { TextWithTooltip } from './TextWithTooltip'
 import { userEvent } from '@testing-library/user-event'
 import { ThemeProvider } from 'styled-components'
-import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
+import { lightTheme } from '@ensdomains/thorin'
 
 const renderWithTheme = (component: React.ReactNode) => {
   return render(
     <ThemeProvider theme={lightTheme}>
-      <ThorinGlobalStyles />
       {component}
     </ThemeProvider>
   )

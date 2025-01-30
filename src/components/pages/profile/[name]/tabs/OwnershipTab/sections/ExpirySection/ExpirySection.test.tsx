@@ -29,14 +29,14 @@ vi.mock('./hooks/useExpiryActions', () => ({
         {
           label: 'action.setReminder',
           type: 'set-reminder',
-          icon: <div>ICON</div>,
+          icon: () => <div>ICON</div>,
           primary: false,
           expiryDate: new Date(),
         },
         {
           label: 'action.extend',
           type: 'extend',
-          icon: <div>ICON</div>,
+          icon: () => <div>ICON</div>,
           primary: true,
           onClick: () => {
             mockShowInput()

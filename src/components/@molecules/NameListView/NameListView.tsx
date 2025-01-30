@@ -199,7 +199,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
             size="small"
             onClick={handleExtend}
             data-testid="extend-names-button"
-            prefix={<FastForwardSVG />}
+            prefix={FastForwardSVG}
             disabled={selectedNames.length === 0}
           >
             {t('action.extend', { ns: 'common' })}

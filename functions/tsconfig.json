@@ -1,5 +1,5 @@
 {
-  "include": ["../src/utils/gradient.ts", "./**/*"],
+  "include": ["../src/utils/createCsp.ts", "./**/*"],
   "compilerOptions": {
     "noEmit": true,
     "target": "ESNext",

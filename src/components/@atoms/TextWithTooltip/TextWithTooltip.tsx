@@ -47,7 +47,7 @@ export const TextWithTooltip = ({
     <Tooltip
       content={
         <TooltipContent>
-          <QuestionCircleSVG />
+          <QuestionCircleSVG width={20} height={20} />
           <Typography color="text" fontVariant="small">
             {tooltipContent}
           </Typography>

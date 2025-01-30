@@ -1,14 +1,14 @@
 import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, mq } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin'
 
 const StyledWrapButton = styled(Button)(
   ({ theme }) => css`
     width: 100%;
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       max-width: ${theme.space['36']};
-    `)}
+    }
   `,
 )
 

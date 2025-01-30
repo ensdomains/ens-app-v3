@@ -2,9 +2,9 @@ import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 
+import { makeMockIntersectionObserver } from '../../../../../../../../test/mock/makeMockIntersectionObserver'
 import { EarnifiDialog } from './EarnifiDialog'
 import { useSubscribeToEarnifi } from './useSubscribeToEarnifi'
-import { makeMockIntersectionObserver } from '../../../../../../../../test/mock/makeMockIntersectionObserver'
 
 vi.mock('./useSubscribeToEarnifi', () => ({
   useSubscribeToEarnifi: vi.fn(),

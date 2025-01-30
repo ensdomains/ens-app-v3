@@ -239,7 +239,7 @@ const NoOptionsContainer = styled.div<{ $inline: boolean }>(
     padding: 0 ${theme.space['3']} ${theme.space['0.75']} ${theme.space['3']};
     display: flex;
     align-items: center;
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.text};
     font-style: italic;
     margin-bottom: ${theme.space['0.75']};
   `,
@@ -279,6 +279,12 @@ type Props = {
   }
   onAddRecord?: (value: string) => void
 }
+
+const WrappedPlusSVG = () => (
+  <SVGWrapper>
+    <PlusSVG />
+  </SVGWrapper>
+)
 
 export const AddRecordButton = ({
   autocomplete,
@@ -429,11 +435,7 @@ export const AddRecordButton = ({
       </ControlsContainer>
       <ButtonContainer $state={state}>
         <Button
-          prefix={
-            <SVGWrapper>
-              <PlusSVG />
-            </SVGWrapper>
-          }
+          prefix={WrappedPlusSVG}
           colorStyle="transparent"
           onClick={handleButtonClick}
           size="medium"

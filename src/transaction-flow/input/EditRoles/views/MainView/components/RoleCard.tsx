@@ -114,7 +114,7 @@ export const RoleCard = ({ address, role, dirty, onClick }: Props) => {
               <Typography fontVariant="bodyBold" color="accent">
                 {t('action.add', { ns: 'common' })}
               </Typography>
-              <RightArrowSVG />
+              <RightArrowSVG height={16} width={16} />
             </FooterRight>
           </>
         ) : (
@@ -124,7 +124,7 @@ export const RoleCard = ({ address, role, dirty, onClick }: Props) => {
               <Typography fontVariant="bodyBold" color="accent">
                 {t('action.change', { ns: 'common' })}
               </Typography>
-              <RightArrowSVG />
+              <RightArrowSVG height={16} width={16} />
             </FooterRight>
           </>
         )}

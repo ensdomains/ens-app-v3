@@ -1,5 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { makeMockUseWrapperDataData } from '@root/test/mock/makeMockUseWrapperDataData.ts'
 import { labelhash, namehash } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -8,7 +9,6 @@ import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-import { makeMockUseWrapperDataData } from '@root/test/mock/makeMockUseWrapperDataData.ts'
 import Token from './Token'
 
 vi.mock('@app/hooks/useParentBasicName')

@@ -32,7 +32,7 @@ export const SearchViewIntroView = () => {
   return (
     <Container>
       <Message>
-        <MagnifyingGlassSVG />
+        <MagnifyingGlassSVG height={16} width={16} />
         <Typography fontVariant="body">
           {t('input.sendName.views.search.views.intro.message')}
         </Typography>

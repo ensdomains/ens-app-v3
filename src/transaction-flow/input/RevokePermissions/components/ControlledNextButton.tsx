@@ -65,7 +65,7 @@ export const ControlledNextButton = ({
   const props: ComponentProps<typeof Button> = useMemo(() => {
     const defaultProps: ComponentProps<typeof Button> = {
       disabled: false,
-      color: 'accent',
+      colorStyle: 'accentPrimary',
       count: 0,
       onClick: isLastView ? onSubmit : onIncrement,
       children: t('action.next', { ns: 'common' }),
@@ -75,7 +75,7 @@ export const ControlledNextButton = ({
       case 'revokeWarning':
         return {
           ...defaultProps,
-          color: 'red',
+          colorStyle: 'redPrimary',
           children: t('action.understand', { ns: 'common' }),
         }
       case 'revokePCC':

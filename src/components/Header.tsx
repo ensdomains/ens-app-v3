@@ -4,8 +4,6 @@ import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { mq } from '@ensdomains/thorin'
-
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
 import { legacyFavouritesRoute, routes } from '@app/routes'
@@ -24,9 +22,9 @@ const HeaderWrapper = styled.header(
   ({ theme }) => css`
     height: ${theme.space['12']};
 
-    ${mq.sm.max(css`
+    @media (max-width: ${theme.breakpoints.sm}px) {
       display: none;
-    `)}
+    }
   `,
 )
 
@@ -56,10 +54,10 @@ const NavContainer = styled.div(
     gap: ${theme.space['3']};
     height: ${theme.space['12']};
 
-    ${mq.lg.min(css`
+    @media (min-width: ${theme.breakpoints.lg}px) {
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -81,11 +79,11 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     transform: translateX(125%);
     opacity: 0;
 
-    ${mq.lg.min(css`
+    @media (min-width: ${theme.breakpoints.lg}px) {
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
       position: relative;
-    `)}
+    }
 
     ${$state === 'entered' &&
     css`
@@ -107,9 +105,9 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
     max-width: ${theme.space['80']};
     & > div > div {
       max-width: ${theme.space.full};
-      ${mq.lg.min(css`
+      @media (min-width: ${theme.breakpoints.lg}px) {
         max-width: ${theme.space['80']};
-      `)}
+      }
     }
 
     transition: margin 0.15s ease-in-out;
@@ -118,9 +116,9 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
     css`
       margin-right: 0;
     `}
-    ${mq.lg.min(css`
+    @media (min-width: ${theme.breakpoints.lg}px) {
       margin-right: 0;
-    `)}
+    }
   `,
 )
 

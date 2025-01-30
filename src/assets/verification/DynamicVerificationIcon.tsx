@@ -11,7 +11,7 @@ export const verificationIconTypes: {
 export const DynamicVerificationIcon = ({ name }: { name: VerificationProtocol }) => {
   if (name in verificationIconTypes) {
     const Icon = verificationIconTypes[name]
-    return <Icon />
+    return <Icon width={20} height={20} />
   }
   return null
 }

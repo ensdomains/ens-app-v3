@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
 import { validateName } from '@ensdomains/ensjs/utils'
-import { Button, Dialog, Input, mq, PlusSVG } from '@ensdomains/thorin'
+import { Button, Dialog, Input, PlusSVG } from '@ensdomains/thorin'
 
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
@@ -42,14 +42,14 @@ const ButtonContainer = styled.div(
   `,
 )
 
-const ButtonWrapper = styled.div(({ theme }) => [
-  css`
+const ButtonWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space.full};
+    @media (min-width: ${theme.breakpoints.xs}px) {
+      width: ${theme.space.max};
+    }
   `,
-  mq.xs.min(css`
-    width: max-content;
-  `),
-])
+)
 
 const ParentLabel = styled.div(
   ({ theme }) => css`
@@ -286,7 +286,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
                     size="medium"
                     onClick={() => setView('add-record')}
                     data-testid="show-add-profile-records-modal-button"
-                    prefix={<PlusSVG />}
+                    prefix={PlusSVG}
                   >
                     {registerT('steps.profile.addMore')}
                   </Button>

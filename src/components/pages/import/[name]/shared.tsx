@@ -1,7 +1,7 @@
 import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Heading, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, Heading, Helper, Typography } from '@ensdomains/thorin'
 
 import { Card } from '@app/components/Card'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -15,10 +15,10 @@ export const DnsImportCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -47,20 +47,19 @@ export const DnsImportActionsContainer = styled.div(
     justify-content: stretch;
     width: 100%;
     gap: ${theme.space['2']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       justify-content: center;
-    `)}
+    }
   `,
 )
 
 export const DnsImportActionButton = styled(Button)(
   ({ theme }) => css`
     width: 100%;
-
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: ${theme.space['40']};
-    `)}
+    }
   `,
 )
 

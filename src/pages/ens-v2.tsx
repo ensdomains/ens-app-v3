@@ -9,7 +9,6 @@ import {
   GasPumpSVG,
   // InfoCircleSVG,
   KeySVG,
-  mq,
   // QuestionBubbleSVG,
   // QuestionCircleSVG,
   // RightArrowSVG,
@@ -21,17 +20,19 @@ import {
 // import DAOSVG from '../assets/DAO.svg'
 // import SocialX from '../assets/social/SocialX.svg'
 
-const Title = styled.h1`
-  font-weight: 830;
-  text-align: center;
+const Title = styled.h1(
+  ({ theme }) => css`
+    font-weight: 830;
+    text-align: center;
 
-  font-size: 36px;
-  line-height: 104%;
+    font-size: 36px;
+    line-height: 104%;
 
-  @media (min-width: 640px) {
-    font-size: 52px;
-  }
-`
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      font-size: 52px;
+    }
+  `,
+)
 
 const Header = styled.header(
   ({ theme }) => css`
@@ -74,7 +75,7 @@ const Main = styled.main(
     & > a:hover {
       color: ${theme.colors.green};
     }
-    @media (min-width: 640px) {
+     @media (min-width: ${theme.breakpoints.sm}px) {
       border-radius: ${theme.radii['3xLarge']};
     }
   `,
@@ -164,7 +165,7 @@ const GridOneToThree = styled.div(
     gap: ${theme.space['4']};
     text-align: center;
     grid-template-columns: 1fr;
-    @media (min-width: 640px) {
+    @media (min-width: ${theme.breakpoints.sm}px) {
       grid-template-columns: repeat(3, 1fr);
     }
   `,
@@ -179,6 +180,11 @@ const CardHeader = styled.h3(
     font-weight: ${theme.fontWeights.bold};
     gap: ${theme.space['2']};
     align-items: center;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   `,
 )
 
@@ -219,12 +225,8 @@ const AnnouncementContainer = styled.div(
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     gap: ${theme.space['4']};
-
-    ${mq.sm.min(css`
-      flex-direction: row;
-    `)}
+    flex-flow: row wrap;
   `,
 )
 
@@ -271,7 +273,7 @@ export default function ENSv2() {
         allowFullScreen
       />
       <CenteredCard>
-        <Typography fontVariant="headingTwo" asProp="h2">
+        <Typography fontVariant="headingTwo" as="h2">
           {t('learn-more.title')}
         </Typography>
         <Typography fontVariant="body">{t('learn-more.caption')}</Typography>
@@ -288,7 +290,7 @@ export default function ENSv2() {
       </CenteredCard>
       <GridOneToThree>
         <CardWithEmoji>
-          <Typography fontVariant="headingTwo" asProp="h2">
+          <Typography fontVariant="headingTwo" as="h2">
             {t('accessible.title')}
           </Typography>
           <Typography fontVariant="body">{t('accessible.caption')}</Typography>
@@ -326,7 +328,7 @@ export default function ENSv2() {
         </Card>
       </GridOneToThree>
       <SlideshowContainer>
-        <Typography asProp="h3" fontVariant="headingThree">
+        <Typography as="h3" fontVariant="headingThree">
           {t('announcement.title')}
         </Typography>
         {/* <Carousel>

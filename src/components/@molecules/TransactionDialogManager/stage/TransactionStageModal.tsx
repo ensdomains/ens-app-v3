@@ -528,7 +528,7 @@ export const TransactionStageModal = ({
       return (
         <Button
           disabled
-          suffix={<Spinner color="background" />}
+          suffix={() => <Spinner color="background" />}
           data-testid="transaction-modal-confirm-button"
         >
           {t('transaction.dialog.confirm.waitingForWallet')}
@@ -590,7 +590,7 @@ export const TransactionStageModal = ({
       <Dialog.Content data-testid="transaction-modal-inner">
         {MiddleContent}
         {attemptedTransactionError && (
-          <Helper type="error">{t(attemptedTransactionError.message)}</Helper>
+          <Helper alert="error">{t(attemptedTransactionError.message)}</Helper>
         )}
         {FilledDisplayItems}
         {HelperContent}
@@ -599,7 +599,7 @@ export const TransactionStageModal = ({
             {t('transaction.viewEtherscan')}
           </Outlink>
         )}
-        {preTransactionError && <Helper type="error">{preTransactionError.message}</Helper>}
+        {preTransactionError && <Helper alert="error">{preTransactionError.message}</Helper>}
       </Dialog.Content>
       <Dialog.Footer
         currentStep={currentStep}

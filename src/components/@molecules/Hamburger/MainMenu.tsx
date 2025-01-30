@@ -5,10 +5,11 @@ import styled, { css } from 'styled-components'
 import {
   CurrencyToggle,
   LanguageSVG,
-  mq,
   RightChevronSVG,
   Spinner,
+  ThemeToggle,
   Typography,
+  useTheme,
   WalletSVG,
 } from '@ensdomains/thorin'
 
@@ -36,12 +37,12 @@ const Container = styled.div(
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    background-color: ${theme.colors.background};
+    background-color: ${theme.colors.backgroundPrimary};
 
     padding: ${theme.space['4']};
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: 0;
       gap: 0;
       & > div {
@@ -51,7 +52,7 @@ const Container = styled.div(
       & > div:last-child {
         border-bottom: none;
       }
-    `)}
+    }
   `,
 )
 
@@ -66,11 +67,11 @@ const SettingsSection = styled.div(
     margin-bottom: ${theme.space['2']};
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['2']};
       margin: 0;
       gap: 0;
-    `)}
+    }
   `,
 )
 
@@ -99,9 +100,9 @@ const SettingsItem = styled.div(
       }
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       border: none;
-    `)}
+    }
   `,
 )
 
@@ -135,10 +136,10 @@ const miscSectionStyle = css(
     background-color: ${theme.colors.greySurface};
     border-radius: ${theme.radii.large};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       background-color: transparent;
       border-radius: none;
-    `)}
+    }
   `,
 )
 
@@ -164,9 +165,9 @@ const RouteItem = styled.a(
       background-color: ${theme.colors.greySurface};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['2']} ${theme.space['4']};
-    `)}
+    }
   `,
 )
 
@@ -196,9 +197,9 @@ const NetworkSectionContainer = styled.div(
       text-transform: capitalize;
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']};
-    `)}
+    }
   `,
   miscSectionStyle,
 )
@@ -211,6 +212,18 @@ const NetworkSectionRow = styled.div(
     justify-content: center;
     gap: ${theme.space['2']};
     text-align: center;
+  `,
+)
+
+const DarkModeItem = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: ${theme.space['2']};
+
+    padding: ${theme.space['4']} ${theme.space['6']};
   `,
 )
 
@@ -254,25 +267,26 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
   const { t, i18n } = useTranslation('common')
   const language = i18n.resolvedLanguage || 'en'
   const { userConfig, setCurrency } = useUserConfig()
+  const { setMode, mode } = useTheme()
 
   return (
     <Container>
       <SettingsSection>
         <HoverableSettingsItem onClick={() => setCurrentView('language')}>
           <div>
-            <LanguageSVG />
+            <LanguageSVG height={16} width={16} />
             <Typography weight="bold">{t('navigation.language')}</Typography>
           </div>
           <div>
             <Typography>
               {ISO6391.getNativeName(language)} ({language.toLocaleUpperCase()})
             </Typography>
-            <RightChevronSVG />
+            <RightChevronSVG height={16} width={16} />
           </div>
         </HoverableSettingsItem>
         <SettingsItem>
           <div>
-            <WalletSVG />
+            <WalletSVG height={16} width={16} />
             <Typography weight="bold">{t('navigation.currency')}</Typography>
           </div>
           <div>
@@ -284,6 +298,19 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
             />
           </div>
         </SettingsItem>
+        <DarkModeItem>
+          <Typography fontWeight="bold">Theme</Typography>
+          <ThemeToggle
+            checked={mode === 'light'}
+            size="extraSmall"
+            onChange={(e) => {
+              const newValue = e.target.checked ? 'light' : 'dark'
+              if (newValue !== mode) {
+                setMode(newValue)
+              }
+            }}
+          />
+        </DarkModeItem>
       </SettingsSection>
       <RoutesSection>
         {disconnectedRoutes.map((route) => (

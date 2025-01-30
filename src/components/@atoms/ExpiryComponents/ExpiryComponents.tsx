@@ -140,7 +140,7 @@ export const ReadableExpiry = ({ expiry }: { expiry: Date }) => {
           day: 'numeric',
         })}, ${expiry.getFullYear()}`}
       </Typography>
-      <Typography weight="bold" color="textTertiary">
+      <Typography weight="bold" color="grey">
         {`at ${expiry.toLocaleTimeString(undefined, {
           hour: '2-digit',
           minute: '2-digit',

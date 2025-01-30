@@ -14,7 +14,7 @@ const Container = styled.div(
     gap: ${theme.space['1']};
 
     font-size: ${theme.fontSizes.small};
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
     font-weight: bold;
 
     padding: 0 ${theme.space['4']};

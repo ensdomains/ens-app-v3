@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
 
-import { Button, mq } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -30,10 +30,10 @@ const Row = styled.div(({ theme }) => [
     > *:last-child {
       flex: 0 0 ${theme.space['24']};
     }
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      padding: ${theme.space['4']} ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['4']} ${theme.space['6']};
-  `),
 ])
 
 const Container = styled.div(

@@ -8,8 +8,8 @@ import type { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 
-import { TransactionSection } from './TransactionSection'
 import { makeMockIntersectionObserver } from '../../../../../../test/mock/makeMockIntersectionObserver'
+import { TransactionSection } from './TransactionSection'
 
 vi.mock('@app/hooks/chain/useChainName')
 vi.mock('@app/hooks/transactions/useClearRecentTransactions')

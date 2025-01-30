@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, mq } from '@ensdomains/thorin'
+import { Avatar } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'
@@ -39,10 +39,10 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     &:last-of-type {
       border: none;
     }
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['3']} ${theme.space['4.5']};
       gap: ${theme.space['4']};
-    `)}
+    }
   `,
 )
 
@@ -74,14 +74,6 @@ const NameItemContent = styled.div(
     position: relative;
     flex-direction: column;
     overflow: hidden;
-    min-width: 0;
-    width: 0;
-  `,
-)
-
-const TitleWrapper = styled(StyledName)(
-  () => css`
-    font-size: 1rem;
   `,
 )
 
@@ -106,6 +98,7 @@ const AvatarOverlay = styled.div(
     background: rgba(82, 152, 255, 0.5);
     border-radius: ${theme.radii.full};
     svg {
+      fill: transparent;
       path {
         stroke: ${theme.colors.backgroundPrimary};
         stroke-width: 1px;
@@ -194,7 +187,7 @@ export const NameDetailItem = ({
             )}
           </AvatarWrapper>
           <NameItemContent>
-            <TitleWrapper name={truncatedName || name} disabled={disabled} />
+            <StyledName name={truncatedName || name} disabled={disabled} />
             {_expiryDate && (
               <SubtitleWrapper>
                 <ShortExpiry expiry={_expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />

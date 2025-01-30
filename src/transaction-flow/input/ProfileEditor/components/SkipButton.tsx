@@ -51,7 +51,7 @@ export const SkipButton = ({ description, actionLabel = 'Skip', onClick, ...prop
         <Typography fontVariant="bodyBold" color="yellowDim">
           {actionLabel}
         </Typography>
-        <RightArrowSVG />
+        <RightArrowSVG height={16} width={16} />
       </SkipLabel>
     </Container>
   )
