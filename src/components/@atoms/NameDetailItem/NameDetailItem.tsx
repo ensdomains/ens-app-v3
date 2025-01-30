@@ -77,12 +77,6 @@ const NameItemContent = styled.div(
   `,
 )
 
-const TitleWrapper = styled(StyledName)(
-  () => css`
-    font-size: 1rem;
-  `,
-)
-
 const SubtitleWrapper = styled.div(
   ({ theme }) => css`
     font-size: ${theme.space['3.5']};
@@ -193,7 +187,7 @@ export const NameDetailItem = ({
             )}
           </AvatarWrapper>
           <NameItemContent>
-            <TitleWrapper name={truncatedName || name} disabled={disabled} />
+            <StyledName name={truncatedName || name} disabled={disabled} />
             {_expiryDate && (
               <SubtitleWrapper>
                 <ShortExpiry expiry={_expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />
