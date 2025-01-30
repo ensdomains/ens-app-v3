@@ -1,13 +1,50 @@
 diff --git a/src/manager.js b/src/manager.js
-index 7716f36c882f9e1600d4866d9ce39f07e9ccbd3c..e0bb9c545048ab8b7c93df8a2a619aaba097c6ea 100644
+index 7716f36c882f9e1600d4866d9ce39f07e9ccbd3c..71540904f50ab4a33b0139d394e539d133115a85 100644
 --- a/src/manager.js
 +++ b/src/manager.js
-@@ -226,6 +226,8 @@ export const main = async (_config, _options, justKill) => {
-     },
-   )
- 
-+  console.log({ cmdsToRun, options })
-+
-   if (cleanupRunning) return
+@@ -230,9 +230,13 @@ export const main = async (_config, _options, justKill) => {
  
    await waitOn({ resources: ['tcp:localhost:8545'] })
+ 
++  console.log('not stuck after wait-on')
++
+   // wait 1000 ms to make sure the server is up
+   await new Promise((resolve) => setTimeout(resolve, 1000))
+ 
++  console.log('not stuck here either')
++
+   if (!options.save) {
+     if (!options.extraTime) {
+       // set next block timestamp to ensure consistent hashes
+@@ -384,6 +388,7 @@ export const main = async (_config, _options, justKill) => {
+         indexArray[0] === 0
+       )
+     }
++    console.log('it got this far', { cmdsToRun })
+     /**
+      * @type {import('concurrently').ConcurrentlyResult['result']}
+      **/
+@@ -392,16 +397,22 @@ export const main = async (_config, _options, justKill) => {
+       prefix: 'name',
+     }))
+ 
++    console.log('still not stuck')
++
+     commands.forEach((cmd) => {
++      console.log('perhaps here?')
+       if (inxsToFinishOnExit.includes(cmd.index)) {
+         cmd.close.subscribe(({ exitCode }) => cleanup(undefined, exitCode))
++        
++        console.log('or here?')
+       } else {
+         cmd.close.subscribe(
+           ({ exitCode }) => exitCode === 0 || cleanup(undefined, exitCode),
+         )
++        console.log('or here? (2x)')
+       }
+     })
+-
++	console.log('if it all worked why did it get stuck')
+     result.catch(cleanup.bind(null, { exit: true }))
+   }
+ }
