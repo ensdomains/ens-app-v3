@@ -105,7 +105,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
     "@ensdomains/buffer": "^0.1.1",
-    "@ensdomains/ens-test-env": "0.5.0-beta.6",
+    "@ensdomains/ens-test-env": "0.5.0-beta.7",
     "@ensdomains/headless-web3-provider": "^1.0.8",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.0",
     "@next/bundle-analyzer": "^13.4.19",
@@ -275,8 +275,7 @@
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "@ensdomains/ens-test-env@0.5.0-beta.6": "patches/@ensdomains__ens-test-env@0.5.0-beta.6.patch"
+      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
     }
   },
   "packageManager": "pnpm@9.3.0"
