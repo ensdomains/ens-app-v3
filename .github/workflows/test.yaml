@@ -25,7 +25,7 @@ jobs:
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start --no-graph --no-scripts --no-build" \
-          "pnpm wait-on --timeout 600000 --window 2000 ./.env.local"'
+          "pnpm wait-on ./.env.local"'
 
       - run: pnpm test:coverage
 
@@ -48,7 +48,7 @@ jobs:
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start --no-graph --no-scripts --no-build" \
-          "pnpm wait-on --timeout 600000 --window 2000 ./.env.local"'
+          "pnpm wait-on ./.env.local"'
 
       - name: Build stateless and export
         run: pnpm build:glocal && pnpm export
@@ -179,7 +179,7 @@ jobs:
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on --timeout 600000 --window 2000 http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
+          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           # NEXT_PUBLIC_GRAPH_URI: https://api.studio.thegraph.com/query/49574/ensholesky/version/latest
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
