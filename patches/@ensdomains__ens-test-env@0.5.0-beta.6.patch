@@ -1,0 +1,13 @@
+diff --git a/src/manager.js b/src/manager.js
+index 7716f36c882f9e1600d4866d9ce39f07e9ccbd3c..e0bb9c545048ab8b7c93df8a2a619aaba097c6ea 100644
+--- a/src/manager.js
++++ b/src/manager.js
+@@ -226,6 +226,8 @@ export const main = async (_config, _options, justKill) => {
+     },
+   )
+ 
++  console.log({ cmdsToRun, options })
++
+   if (cleanupRunning) return
+ 
+   await waitOn({ resources: ['tcp:localhost:8545'] })

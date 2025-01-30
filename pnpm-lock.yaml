@@ -101,6 +101,9 @@ overrides:
   wrtc: https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz
 
 patchedDependencies:
+  '@ensdomains/ens-test-env@0.5.0-beta.6':
+    hash: gchaw2w73lqj4gbwwxcg65eb3q
+    path: patches/@ensdomains__ens-test-env@0.5.0-beta.6.patch
   next-dev-https@0.1.2:
     hash: q5l3x5627ujg3rak6l6v24c2cq
     path: patches/next-dev-https@0.1.2.patch
@@ -259,7 +262,7 @@ importers:
         version: 0.1.1
       '@ensdomains/ens-test-env':
         specifier: 0.5.0-beta.6
-        version: 0.5.0-beta.6
+        version: 0.5.0-beta.6(patch_hash=gchaw2w73lqj4gbwwxcg65eb3q)
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
         version: 1.0.8(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
@@ -11502,7 +11505,7 @@ snapshots:
       '@openzeppelin/contracts': 4.9.6
       dns-packet: 5.6.1
 
-  '@ensdomains/ens-test-env@0.5.0-beta.6':
+  '@ensdomains/ens-test-env@0.5.0-beta.6(patch_hash=gchaw2w73lqj4gbwwxcg65eb3q)':
     dependencies:
       cli-progress: 3.12.0
       commander: 13.0.0
