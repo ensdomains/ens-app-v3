@@ -1,0 +1,19 @@
+{
+  "title": "Nombres",
+  "subtitle": {
+    "start": "Todos los nombres que ostentan",
+    "this": "esto",
+    "your": "su",
+    "wallet": "billetera"
+  },
+  "empty": "No se encontraron nombres para esta dirección",
+  "sortTypes": {
+    "expiryDate": "Fecha de caducidad",
+    "labelName": "Nombres",
+    "createdAt": "Fecha de creación"
+  },
+  "offchainWarning": {
+    "title": "Algunos nombres pueden no aparecer",
+    "text": "Offchain nombres no aparecen actualmente en esta lista. Puedes verlos buscándolos directamente. Haz clic para obtener más información."
+  }
+}
