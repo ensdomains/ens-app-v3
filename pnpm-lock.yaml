@@ -258,8 +258,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@ensdomains/ens-test-env':
-        specifier: 0.5.0-beta.5
-        version: 0.5.0-beta.5
+        specifier: 0.5.0-beta.6
+        version: 0.5.0-beta.6
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
         version: 1.0.8(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
@@ -467,9 +467,6 @@ importers:
       ws:
         specifier: ^8.16.0
         version: 8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      yalc:
-        specifier: ^1.0.0-pre.53
-        version: 1.0.0-pre.53
 
 packages:
 
@@ -1606,8 +1603,8 @@ packages:
   '@ensdomains/ens-contracts@1.2.0-beta.0':
     resolution: {integrity: sha512-mb/1cPtwhShyaP6fWqDix6GfrJwVWlKgCFxzDKmqNGeFQhBOD/ojYGsy96eJ9UlM/7Tsg7w4RAj7xWrOlHtYIA==}
 
-  '@ensdomains/ens-test-env@0.5.0-beta.5':
-    resolution: {integrity: sha512-PdMWFbFhNn25q+uzrE6rHIUlJgiEucObYvKpxb4U6HcBnMNfsBpqXCdXFEcsr3p2YfFjPHqEr0pgxJKEDNJo+g==}
+  '@ensdomains/ens-test-env@0.5.0-beta.6':
+    resolution: {integrity: sha512-l1JFjVwbg9P9nFJkOK8IwQnSiDDbbfPLYj33zFS8f5IqhC8Sbup2Cvr6HcQjIgFZZIVAaUF3x4dWt7nZAiZekw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -5149,10 +5146,6 @@ packages:
     resolution: {integrity: sha512-rlpvsxUtM0PQvy9iZe640/IWwWYyBsTApREbA1pHOpmOUIl9MkP/U4z7vTtg4Oaojvqhxt7sdufnT0EzGaR31g==}
     engines: {node: '>=4'}
 
-  detect-indent@6.1.0:
-    resolution: {integrity: sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA==}
-    engines: {node: '>=8'}
-
   detect-libc@1.0.3:
     resolution: {integrity: sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==}
     engines: {node: '>=0.10'}
@@ -6278,9 +6271,6 @@ packages:
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
-  ignore-walk@3.0.4:
-    resolution: {integrity: sha512-PY6Ii8o1jMRA1z4F2hRkH/xN59ox43DavKvD3oDpfurRlOJyAHpifIwpbdv1n4jt4ov0jSpw3kQ4GhJnpBL6WQ==}
-
   ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
@@ -6328,10 +6318,6 @@ packages:
 
   ini@1.3.8:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
-
-  ini@2.0.0:
-    resolution: {integrity: sha512-7PnF4oN3CvZF23ADhA5wRaYEQpJ8qygSkbtTXWBeXWXmEVRXK+1ITciHWwHhsjv1TmW0MgacIv6hEi5pX5NQdA==}
-    engines: {node: '>=10'}
 
   inline-style-prefixer@7.0.0:
     resolution: {integrity: sha512-I7GEdScunP1dQ6IM2mQWh6v0mOYdYmH3Bp31UecKdrcUgcURTcctSe1IECdUznSHKSmsHtjrT3CwCPI1pyxfUQ==}
@@ -7439,17 +7425,6 @@ packages:
   normalize-url@6.1.0:
     resolution: {integrity: sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==}
     engines: {node: '>=10'}
-
-  npm-bundled@1.1.2:
-    resolution: {integrity: sha512-x5DHup0SuyQcmL3s7Rx/YQ8sbw/Hzg0rj48eN0dV7hf5cmQq5PXIeioroH3raV1QC1yh3uTYuMThvEQF3iKgGQ==}
-
-  npm-normalize-package-bin@1.0.1:
-    resolution: {integrity: sha512-EPfafl6JL5/rU+ot6P3gRSCpPDW5VmIzX959Ob1+ySFUuuYHWHekXpwdUZcKP5C+DS4GEtdJluwBjnsNDl+fSA==}
-
-  npm-packlist@2.2.2:
-    resolution: {integrity: sha512-Jt01acDvJRhJGthnUJVF/w6gumWOZxO7IkpY/lsX9//zqQgnF7OJaxgQXcerd4uQOLu7W5bkb4mChL9mdfm+Zg==}
-    engines: {node: '>=10'}
-    hasBin: true
 
   npm-run-path@4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}
@@ -9221,6 +9196,10 @@ packages:
     resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
     engines: {node: '>=14.0'}
 
+  undici@7.3.0:
+    resolution: {integrity: sha512-Qy96NND4Dou5jKoSJ2gm8ax8AJM/Ey9o9mz7KN1bb9GP+G0l20Zw8afxTnY2f4b7hmhn/z8aC2kfArVQlAhFBw==}
+    engines: {node: '>=20.18.1'}
+
   unenv@1.9.0:
     resolution: {integrity: sha512-QKnFNznRxmbOF1hDgzpqrlIf6NC5sbZ2OJ+5Wl3OX8uM+LUJXbj4TXvLJCtwbPTmbMHCLIz6JLKNinNsMShK9g==}
 
@@ -10048,10 +10027,6 @@ packages:
   yaeti@0.0.6:
     resolution: {integrity: sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug==}
     engines: {node: '>=0.10.32'}
-
-  yalc@1.0.0-pre.53:
-    resolution: {integrity: sha512-tpNqBCpTXplnduzw5XC+FF8zNJ9L/UXmvQyyQj7NKrDNavbJtHvzmZplL5ES/RCnjX7JR7W9wz5GVDXVP3dHUQ==}
-    hasBin: true
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
@@ -11527,7 +11502,7 @@ snapshots:
       '@openzeppelin/contracts': 4.9.6
       dns-packet: 5.6.1
 
-  '@ensdomains/ens-test-env@0.5.0-beta.5':
+  '@ensdomains/ens-test-env@0.5.0-beta.6':
     dependencies:
       cli-progress: 3.12.0
       commander: 13.0.0
@@ -11538,6 +11513,7 @@ snapshots:
       picocolors: 1.1.1
       progress-stream: 2.0.0
       tar-fs: 3.0.8
+      undici: 7.3.0
       wait-on: 8.0.2
     transitivePeerDependencies:
       - bare-buffer
@@ -15967,8 +15943,6 @@ snapshots:
 
   detect-indent@5.0.0: {}
 
-  detect-indent@6.1.0: {}
-
   detect-libc@1.0.3: {}
 
   detect-libc@2.0.3:
@@ -17541,10 +17515,6 @@ snapshots:
 
   ieee754@1.2.1: {}
 
-  ignore-walk@3.0.4:
-    dependencies:
-      minimatch: 3.1.2
-
   ignore@5.3.1: {}
 
   image-size@1.1.1:
@@ -17581,8 +17551,6 @@ snapshots:
   inherits@2.0.4: {}
 
   ini@1.3.8: {}
-
-  ini@2.0.0: {}
 
   inline-style-prefixer@7.0.0:
     dependencies:
@@ -18890,19 +18858,6 @@ snapshots:
   normalize-path@3.0.0: {}
 
   normalize-url@6.1.0: {}
-
-  npm-bundled@1.1.2:
-    dependencies:
-      npm-normalize-package-bin: 1.0.1
-
-  npm-normalize-package-bin@1.0.1: {}
-
-  npm-packlist@2.2.2:
-    dependencies:
-      glob: 7.2.3
-      ignore-walk: 3.0.4
-      npm-bundled: 1.1.2
-      npm-normalize-package-bin: 1.0.1
 
   npm-run-path@4.0.1:
     dependencies:
@@ -20828,6 +20783,8 @@ snapshots:
     dependencies:
       '@fastify/busboy': 2.1.1
 
+  undici@7.3.0: {}
+
   unenv@1.9.0:
     dependencies:
       consola: 3.2.3
@@ -21901,17 +21858,6 @@ snapshots:
   y18n@5.0.8: {}
 
   yaeti@0.0.6: {}
-
-  yalc@1.0.0-pre.53:
-    dependencies:
-      chalk: 4.1.2
-      detect-indent: 6.1.0
-      fs-extra: 8.1.0
-      glob: 7.2.3
-      ignore: 5.3.1
-      ini: 2.0.0
-      npm-packlist: 2.2.2
-      yargs: 16.2.0
 
   yallist@3.1.1: {}
 

@@ -174,8 +174,7 @@
     "vitest-canvas-mock": "^0.3.3",
     "wait-on": "^8.0.2",
     "wrangler": "^3.26.0",
-    "ws": "^8.16.0",
-    "yalc": "^1.0.0-pre.53"
+    "ws": "^8.16.0"
   },
   "pnpm": {
     "overrides": {
