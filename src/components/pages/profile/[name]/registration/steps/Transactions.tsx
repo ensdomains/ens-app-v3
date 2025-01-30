@@ -129,20 +129,20 @@ const StyledCountdown = styled.div<{ disabled: boolean; complete: boolean }>(
       `}
     }
 
-    svg > circle:nth-child(2) {
-      stroke-width: ${theme.space['0.5']};
-    }
-
-    svg > circle:nth-child(1) {
-      stroke-width: ${complete ? theme.space['0'] : theme.space['0.5']};
-    }
-
     circle {
       stroke: ${theme.colors.accentPrimary};
       ${disabled &&
       css`
         stroke: ${theme.colors.border};
       `}
+    }
+
+    svg > circle:nth-child(2) {
+      stroke-width: ${theme.space['0.5']};
+    }
+
+    svg > circle:nth-child(1) {
+      stroke-width: ${complete ? theme.space['0'] : theme.space['0.5']};
     }
 
     svg {
