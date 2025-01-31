@@ -1,0 +1,61 @@
+{
+  "title": "Namechain es una Capa 2 diseñada para la identidad onchain",
+  "caption": "Creada para todos aquellos cansados de direcciones, números y complejidad. Namechain permite a usuarios y desarrolladores crear identidades onchain a través del poder de los nombres, no de los números.",
+  "accessible": {
+    "title": "Haciendo ENS más accesible para más personas",
+    "caption": "Estamos aprovechando nuestros 7 años de experiencia en la frontera de la nomenclatura de web3 para rediseñar la arquitectura desde cero en L2. Al utilizar L2, queremos hacer que ENS sea más accesible para una variedad más amplia de usuarios.",
+    "link": "Plan del Proyecto ENSv2",
+    "gas": {
+      "title": "Costos de gas más bajos",
+      "text": "Layer 2 reduce las comisiones de gas, haciendo que los registros y renovaciones .eth sean más económicos y rápidos."
+    },
+    "control": {
+      "title": "Control mejorado",
+      "text": "ENSv2 proporciona a cada nombre .eth su propio registro, ofreciendo más flexibilidad y control."
+    },
+    "multichain": {
+      "title": "Multichain mejorado",
+      "text": "Layer 2 habilita el uso fluido de nombres .eth en múltiples blockchains con conexiones confiables (trustless)."
+    }
+  },
+  "learn-more": {
+    "title": "¿Quieres saber más?",
+    "caption": "Si estás interesado en aprender más y construir sobre Namechain, únete al Telegram de Desarrolladores de ENS.",
+    "button": "Telegram de Desarrolladores"
+  },
+  "announcement": {
+    "title": "Anuncios",
+    "l2": {
+      "title": "Anuncio de socio en L2",
+      "caption": "¡Hemos anunciado que nos estamos asociando con _____! Mira la presentación de Nick ___ para ver el anuncio completo."
+    },
+    "ensv2": {
+      "title": "ENSv2: Una actualización de nuestro progreso",
+      "caption": "Esta actualización pretende ser informativa y ligeramente técnica, permitiéndote, como comunidad de ENS, mantenerte al tanto de nuestro avance."
+    },
+    "nextgen": {
+      "title": "ENSv2: La próxima generación de ENS",
+      "caption": "Nuestra visión para las siguientes iteraciones del protocolo ENS en L2."
+    }
+  },
+  "footer": {
+    "title": "¿Tienes preguntas?",
+    "learn": {
+      "title": "Aprender",
+      "faq": "Preguntas Frecuentes de ENSv2",
+      "plan": "Plan del Proyecto ENSv2",
+      "base": "Base de conocimiento"
+    },
+    "support": {
+      "title": "Soporte",
+      "ticket": "Abrir un ticket",
+      "twitter": "X (Twitter)",
+      "dao": "Foros de la DAO"
+    }
+  },
+  "banner": {
+    "title": "¡Namechain está llegando!",
+    "caption": "Mantente al día con el desarrollo de ENSv2",
+    "cta": "Centro de ENSv2"
+  }
+}
