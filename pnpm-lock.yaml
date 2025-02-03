@@ -258,8 +258,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@ensdomains/ens-test-env':
-        specifier: 0.5.0-beta.8
-        version: 0.5.0-beta.8(encoding@0.1.13)
+        specifier: 0.5.0-beta.9
+        version: 0.5.0-beta.9(encoding@0.1.13)
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
         version: 1.0.8(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
@@ -1603,8 +1603,8 @@ packages:
   '@ensdomains/ens-contracts@1.2.0-beta.0':
     resolution: {integrity: sha512-mb/1cPtwhShyaP6fWqDix6GfrJwVWlKgCFxzDKmqNGeFQhBOD/ojYGsy96eJ9UlM/7Tsg7w4RAj7xWrOlHtYIA==}
 
-  '@ensdomains/ens-test-env@0.5.0-beta.8':
-    resolution: {integrity: sha512-qqtIWXe8BaAf8P6eZH9ISthqdMGBEvfF1eiqJVT0IGpTBlPwe6NI2UOLQ4GHNkZOtQXUwdbQ6aKum8uE/tU0SQ==}
+  '@ensdomains/ens-test-env@0.5.0-beta.9':
+    resolution: {integrity: sha512-2bMLONdXk/gOkIk2/HJVUmFzsYSFgPD6+AXEhrKP/aQVz1AvaJkebWP3jiMijmkKOvQF+hplGbqHYJopi3bLGQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -11472,7 +11472,7 @@ snapshots:
       '@openzeppelin/contracts': 4.9.6
       dns-packet: 5.6.1
 
-  '@ensdomains/ens-test-env@0.5.0-beta.8(encoding@0.1.13)':
+  '@ensdomains/ens-test-env@0.5.0-beta.9(encoding@0.1.13)':
     dependencies:
       cli-progress: 3.12.0
       commander: 9.5.0
