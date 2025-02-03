@@ -51,8 +51,8 @@ export const getChainsFromUrl = () => {
   if (typeof window === 'undefined') {
     return [
       ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-      sepoliaWithEns,
       mainnetWithEns,
+      sepoliaWithEns,
       holeskyWithEns,
     ]
   }
@@ -62,16 +62,9 @@ export const getChainsFromUrl = () => {
   const chainParam = params.get('chain')
   const segments = hostname.split('.')
 
+  // holesky by default on staging
   if (segments.length === 4 && segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-    if (chainParam === 'mainnet') return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
-    return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
-  }
-
-  if (segments.length === 5 && segments.slice(2).join('.') === 'ens-app-v3.pages.dev') {
-    const chainSubname = segments[0]
-    if (chainSubname === 'mainnet') return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
-    if (chainSubname === 'sepolia') return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
-    return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
+    return [holeskyWithEns, mainnetWithEns, sepoliaWithEns]
   }
 
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
@@ -86,22 +79,6 @@ export const getChainsFromUrl = () => {
       sepoliaWithEns,
     ]
   }
-
-  if (!hostname.includes('app.ens.domains'))
-    return [
-      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-      mainnetWithEns,
-      holeskyWithEns,
-      sepoliaWithEns,
-    ]
-
-  if (segments.length !== 4)
-    return [
-      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-      mainnetWithEns,
-      holeskyWithEns,
-      sepoliaWithEns,
-    ]
 
   return match(segments[0])
     .with('sepolia', () => [
