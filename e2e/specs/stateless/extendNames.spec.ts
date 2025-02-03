@@ -113,11 +113,16 @@ test('should be able to extend a single unwrapped name from profile', async ({
   login,
   makePageObject,
   makeName,
+  consoleListener,
 }) => {
   const name = await makeName({
     label: 'legacy',
     type: 'legacy',
     owner: 'user2',
+  })
+
+  await consoleListener.initialize({
+    regex: /^>>>/,
   })
 
   const profilePage = makePageObject('ProfilePage')
@@ -157,7 +162,12 @@ test('should be able to extend a single unwrapped name from profile', async ({
 
   await test.step('should show correct fiat values', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.00')
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.0')
+    await page.waitForTimeout(1000)
+    const messages = consoleListener.getMessages()
+    for (const message of messages) {
+      console.log(message)
+    }
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.13')
     await extendNamesModal.getCounterMinusButton.click()

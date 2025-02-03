@@ -56,6 +56,7 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
   const total = filteredItems.reduce((a, b) => a + b, 0n)
   const hasEmptyItems = filteredItems.length !== items.length
 
+  console.log('>>> value', items[0])
   return (
     <Container>
       {items.map(({ label, value, bufferPercentage, color }, inx) => (
