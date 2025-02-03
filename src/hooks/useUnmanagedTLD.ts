@@ -7,5 +7,5 @@ export const useUnmanagedTLD = (name = '') => {
 
   if (isCustomized) return true
   if (!dnsOffchainStatus?.resolver?.status) return false
-  return dnsOffchainStatus.resolver.status === 'mismatching' && dnsOffchainStatus.resolver.address !== undefined
+  return dnsOffchainStatus.resolver.status === 'mismatching' && dnsOffchainStatus.resolver.value !== undefined
 }
