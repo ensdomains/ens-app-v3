@@ -27,7 +27,6 @@ export const CurrencyText = ({ eth, bufferPercentage = 100n, currency = 'eth' }:
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
 
   const isLoading = isEthPriceLoading || !eth || !ethPrice
-  console.log('>>> ethPrice', eth, ethPrice, bufferPercentage, currency, isLoading)
 
   return (
     <Skeleton loading={isLoading}>

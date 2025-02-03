@@ -14,6 +14,7 @@ import MinusIcon from '@app/assets/Minus.svg'
 import PlusIcon from '@app/assets/Plus.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 import { createChangeEvent } from '@app/utils/syntheticEvent'
+import { yearsToSeconds } from '@app/utils/time'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -191,9 +192,14 @@ export const PlusMinusControl = forwardRef(
     const incrementHandler = (inc: number) => () => {
       const newValue = (value || 0) + inc
       const normalizedValue = normalizeValue(newValue)
+      console.log(`>>>> normalizedValue`, normalizedValue)
       if (normalizedValue === value) return
       setInputValue(normalizedValue.toFixed(0))
       const newEvent = createChangeEvent(normalizedValue, name)
+      console.log(`>>>> newEvent`, newEvent.target.value)
+      const newYears = parseInt(newEvent.target.value)
+      console.log(`>>>> newYears`, newYears)
+      console.log('>>> seconds', yearsToSeconds(newYears))
       onChange?.(newEvent)
     }
 
