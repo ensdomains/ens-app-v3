@@ -19,30 +19,38 @@ export const getDefaultWallets = ({
   appName: string
   projectId: string
 }) => {
-  const wallets: WalletList = [
-    {
-      groupName: 'Popular',
-      wallets: [
-        // injected / not always shown
-        injectedWallet,
-        safeWallet,
-        braveWallet,
-        () => ({
-          ...phantomWallet(),
-          iconUrl: async () => (await import('../assets/PhantomWallet')).default,
-          iconBackground: '#9A8AEE',
-          downloadUrls: {},
-        }),
-        // always shown
-        walletConnectWallet,
-        rainbowWallet,
-        coinbaseWallet,
-        metaMaskWallet,
-        ledgerWallet,
-        argentWallet,
-      ],
-    },
-  ]
+  const wallets: WalletList =
+    window.parent.location.hostname === ''
+      ? [
+          {
+            groupName: 'Popular',
+            wallets: [walletConnectWallet, coinbaseWallet, safeWallet],
+          },
+        ]
+      : [
+          {
+            groupName: 'Popular',
+            wallets: [
+              // injected / not always shown
+              injectedWallet,
+              safeWallet,
+              braveWallet,
+              () => ({
+                ...phantomWallet(),
+                iconUrl: async () => (await import('../assets/PhantomWallet')).default,
+                iconBackground: '#9A8AEE',
+                downloadUrls: {},
+              }),
+              // always shown
+              walletConnectWallet,
+              rainbowWallet,
+              coinbaseWallet,
+              metaMaskWallet,
+              ledgerWallet,
+              argentWallet,
+            ],
+          },
+        ]
 
   return connectorsForWallets(wallets, {
     appName,
