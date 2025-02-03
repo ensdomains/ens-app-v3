@@ -10,7 +10,8 @@ import { useAccount } from 'wagmi'
 import { lightTheme } from '@ensdomains/thorin'
 
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
-import { useCustomizedTLD } from '@app/hooks/useCustomizedTLD'
+import { useUnmanagedTLD } from '@app/hooks/useUnmanagedTLD'
+import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import i18n from '@app/i18n'
 
 import { calculateDnsSteps, SelectImportType } from './SelectImportType'
@@ -33,14 +34,21 @@ vi.mock('wagmi', () => ({
   })),
 }))
 
-vi.mock('@app/hooks/useCustomizedTLD', () => ({
-  useCustomizedTLD: vi.fn(),
+vi.mock('@app/hooks/useUnmanagedTLD', () => ({
+  useUnmanagedTLD: vi.fn(),
 }))
 
-const mockUseCustomizedTLD = vi.fn()
+const mockUseUnmanagedTLD = vi.fn()
 
 vi.mock('@app/hooks/dns/useDnsSecEnabled', () => ({
   useDnsSecEnabled: vi.fn(() => ({ data: false })),
+}))
+
+vi.mock('@app/hooks/dns/useDnsOffchainStatus', () => ({
+  useDnsOffchainStatus: vi.fn(() => ({
+    data: { resolver: { status: 'matching' } },
+    isLoading: false,
+  })),
 }))
 
 vi.mock('@app/hooks/useQueryOptions', () => ({
@@ -182,11 +190,11 @@ describe('calculateDnsSteps', () => {
 
 describe('SelectImportType component', () => {
   beforeEach(() => {
-    vi.mocked(useCustomizedTLD).mockReturnValue(false)
+    vi.mocked(useUnmanagedTLD).mockReturnValue(false)
   })
 
   it('should show customized TLD message for .club domains', () => {
-    vi.mocked(useCustomizedTLD).mockReturnValue(true)
+    vi.mocked(useUnmanagedTLD).mockReturnValue(true)
     render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
@@ -203,8 +211,30 @@ describe('SelectImportType component', () => {
     expect(screen.getByText(/The team behind club/)).toBeInTheDocument()
   })
 
-  it('should show normal import options for non-customized TLDs', () => {
-    mockUseCustomizedTLD.mockReturnValue(false)
+  it('should show customized TLD message for TLDs not managed by DNSRegistrar', () => {
+    vi.mocked(useUnmanagedTLD).mockReturnValue(true)
+    vi.mocked(useDnsOffchainStatus).mockReturnValue({
+      data: { resolver: { status: 'mismatching' } },
+      isLoading: false,
+    })
+    render(
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={lightTheme}>
+          <I18nextProvider i18n={i18n}>
+            <SelectImportType
+              dispatch={() => {}}
+              item={{ type: null }}
+              selected={{ name: 'test.xyz' }}
+            />
+          </I18nextProvider>
+        </ThemeProvider>
+      </QueryClientProvider>,
+    )
+    expect(screen.getByText(/The team behind xyz/)).toBeInTheDocument()
+  })
+
+  it('should show normal import options for managed TLDs', () => {
+    vi.mocked(useUnmanagedTLD).mockReturnValue(false)
     render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={lightTheme}>
