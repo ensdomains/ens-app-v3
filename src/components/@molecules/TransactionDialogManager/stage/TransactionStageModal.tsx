@@ -38,7 +38,7 @@ import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
 import { wagmiConfig } from '@app/utils/query/wagmi'
-import { makeEtherscanLink } from '@app/utils/utils'
+import { hasCapsuleConnection, makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
 import {
@@ -500,6 +500,8 @@ export const TransactionStageModal = ({
     return <Helper {...helper} />
   }, [helper])
 
+  const isCapsuleConnected = hasCapsuleConnection(connections)
+
   const ActionButton = useMemo(() => {
     const handleCompleteTransaction = () => {
       dispatch({ name: 'incrementTransaction' })
@@ -583,7 +585,9 @@ export const TransactionStageModal = ({
         onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
         data-testid="transaction-modal-confirm-button"
       >
-        {t('transaction.dialog.confirm.openWallet')}
+        {isCapsuleConnected
+          ? t('transaction.dialog.confirm.openCapsule')
+          : t('transaction.dialog.confirm.openWallet')}
       </Button>
     )
   }, [
@@ -603,6 +607,7 @@ export const TransactionStageModal = ({
     trackEvent,
     actionName,
     preTransactionError,
+    isCapsuleConnected,
   ])
 
   return (

@@ -307,6 +307,7 @@
         "message": "Double check these details before confirming in your wallet.",
         "waitingForWallet": "Waiting for Wallet",
         "openWallet": "Open Wallet",
+        "openCapsule": "Start",
         "insufficientFunds": "Insufficient funds"
       },
       "sent": {

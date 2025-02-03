@@ -51,9 +51,9 @@ export const getChainsFromUrl = () => {
   if (typeof window === 'undefined') {
     return [
       ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
+      holeskyWithEns,
       mainnetWithEns,
       sepoliaWithEns,
-      holeskyWithEns,
     ]
   }
 
@@ -62,7 +62,6 @@ export const getChainsFromUrl = () => {
   const chainParam = params.get('chain')
   const segments = hostname.split('.')
 
-  // holesky by default on staging
   if (segments.length === 4 && segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
     return [holeskyWithEns, mainnetWithEns, sepoliaWithEns]
   }
