@@ -37,6 +37,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install corepack
+        run: npm i -g corepack
+
       - name: Install pnpm
         run: corepack enable pnpm
 
@@ -69,6 +72,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: corepack enable pnpm
@@ -135,6 +141,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install corepack
+        run: npm i -g corepack
+
       - name: Install pnpm
         run: corepack enable pnpm
 
@@ -185,6 +194,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: ./scripts/check-chrome.sh
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: corepack enable pnpm
