@@ -6,6 +6,8 @@ import { useAccount, useChainId } from 'wagmi'
 import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { RadioButton, RadioButtonGroup, Tag, Typography } from '@ensdomains/thorin'
 
+import { useCustomizedTLD } from '@app/hooks/useCustomizedTLD'
+
 import { SupportOutlink } from '@app/components/@atoms/SupportOutlink'
 import { OFFCHAIN_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
@@ -158,6 +160,7 @@ export const SelectImportType = ({
 
   const { address } = useAccount()
   const chainId = useChainId()
+  const isCustomizedTLD = useCustomizedTLD(selected.name)
   const { data: tldResolver } = useResolver({ name: selected.name.split('.')[1] })
 
   const tldResolverIsOffchainResolver = useMemo(
@@ -191,6 +194,18 @@ export const SelectImportType = ({
     })
     dispatch({ name: 'setSteps', selected, payload: steps })
     dispatch({ name: 'increaseStep', selected })
+  }
+
+  if (isCustomizedTLD) {
+    const tld = selected.name.split('.').pop()
+    return (
+      <DnsImportCard>
+        <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
+        <CenteredTypography>
+          {t('customizedTld', { tld })}
+        </CenteredTypography>
+      </DnsImportCard>
+    )
   }
 
   return (
