@@ -13,7 +13,7 @@ jobs:
       can_deploy: ${{ steps.has_yalc.conclusion == 'success' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Yalc
         run: npm i -g yalc
@@ -31,7 +31,7 @@ jobs:
       deployments: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Misc. Deps
         run: sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
@@ -39,6 +39,9 @@ jobs:
       - name: Check Yalc
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: if [ ${{ needs.yalc_check.outputs.can_deploy }} != true ]; then exit 1; else exit 0; fi
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: corepack enable pnpm
