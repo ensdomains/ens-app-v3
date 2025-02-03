@@ -186,7 +186,6 @@ const ExtendNames = ({
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
-  console.log('>>> seconds', seconds)
   const { address, isConnected: isAccountConnected } = useAccount()
   const { data: balance, isLoading: isBalanceLoading } = useBalance({
     address,
