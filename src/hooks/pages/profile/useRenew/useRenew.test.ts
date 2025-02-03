@@ -7,8 +7,6 @@ import { useSearchParams } from 'next/navigation'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, type UseAccountReturnType } from 'wagmi'
 
-import { sc } from '@ensdomains/address-encoder/coins'
-
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -25,7 +23,6 @@ vi.mock('next/navigation')
 
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseAbilities = mockFunction(useAbilities)
-// const mockUseConnectModal = mockFunction(useConnectModal)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 const mockUseSearchParams = mockFunction(useSearchParams)
@@ -509,7 +506,6 @@ describe('useRenew', () => {
   })
 
   it('should handle URL changes', () => {
-    console.log('hi there')
     mockRouter.push('/test.eth?renew=86400')
 
     mockUseSearchParams.mockReturnValue({
