@@ -208,7 +208,7 @@ describe('SelectImportType component', () => {
         </ThemeProvider>
       </QueryClientProvider>,
     )
-    expect(screen.getByText(/The team behind club/)).toBeInTheDocument()
+    expect(screen.getByText('The team behind .club have customized their ENS experience, so we're unable to help you import the name at this time')).toBeInTheDocument()
   })
 
   it('should show customized TLD message for TLDs not managed by DNSRegistrar', () => {
@@ -230,7 +230,7 @@ describe('SelectImportType component', () => {
         </ThemeProvider>
       </QueryClientProvider>,
     )
-    expect(screen.getByText(/The team behind xyz/)).toBeInTheDocument()
+    expect(screen.getByText('The team behind .xyz have customized their ENS experience, so we're unable to help you import the name at this time')).toBeInTheDocument()
   })
 
   it('should show normal import options for managed TLDs', () => {
