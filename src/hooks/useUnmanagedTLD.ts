@@ -5,5 +5,7 @@ export const useUnmanagedTLD = (name = '') => {
   const isCustomized = useCustomizedTLD(name)
   const { data: dnsOffchainStatus } = useDnsOffchainStatus({ name })
 
-  return isCustomized || (dnsOffchainStatus?.resolver?.status === 'mismatching')
+  if (isCustomized) return true
+  if (!dnsOffchainStatus?.resolver?.status) return false
+  return dnsOffchainStatus.resolver.status === 'mismatching'
 }
