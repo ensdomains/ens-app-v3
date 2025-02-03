@@ -6,14 +6,13 @@ import { useAccount, useChainId } from 'wagmi'
 import { GetDnsOwnerReturnType } from '@ensdomains/ensjs/dns'
 import { RadioButton, RadioButtonGroup, Tag, Typography } from '@ensdomains/thorin'
 
-import { useCustomizedTLD } from '@app/hooks/useCustomizedTLD'
-
 import { SupportOutlink } from '@app/components/@atoms/SupportOutlink'
 import { OFFCHAIN_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useCustomizedTLD } from '@app/hooks/useCustomizedTLD'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { getSupportLink } from '@app/utils/supportLinks'
 
@@ -201,9 +200,7 @@ export const SelectImportType = ({
     return (
       <DnsImportCard>
         <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
-        <CenteredTypography>
-          {t('customizedTld', { tld })}
-        </CenteredTypography>
+        <CenteredTypography>{t('customizedTld', { tld })}</CenteredTypography>
       </DnsImportCard>
     )
   }

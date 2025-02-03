@@ -1,20 +1,19 @@
-import { describe, expect, it, beforeEach } from 'vitest'
+import { mockFunction } from '@app/test-utils'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
+import { I18nextProvider } from 'react-i18next'
+import { ThemeProvider } from 'styled-components'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
+
+import { lightTheme } from '@ensdomains/thorin'
 
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useCustomizedTLD } from '@app/hooks/useCustomizedTLD'
-import { mockFunction } from '@app/test-utils'
+import i18n from '@app/i18n'
 
 import { calculateDnsSteps, SelectImportType } from './SelectImportType'
-
-import { vi } from 'vitest'
-
-import { I18nextProvider } from 'react-i18next'
-import i18n from '@app/i18n'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ThemeProvider } from 'styled-components'
-import { lightTheme } from '@ensdomains/thorin'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -199,7 +198,7 @@ describe('SelectImportType component', () => {
             />
           </I18nextProvider>
         </ThemeProvider>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
     expect(screen.getByText(/The team behind club/)).toBeInTheDocument()
   })
@@ -217,7 +216,7 @@ describe('SelectImportType component', () => {
             />
           </I18nextProvider>
         </ThemeProvider>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
     expect(screen.getByText(/How would you like to import your domain/)).toBeInTheDocument()
   })
