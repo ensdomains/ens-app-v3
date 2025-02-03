@@ -9,7 +9,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install corepack
         run: npm i -g corepack
@@ -35,7 +35,7 @@ jobs:
   build-stateless:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install corepack
         run: npm i -g corepack
@@ -71,7 +71,7 @@ jobs:
   build-stateful:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install corepack
         run: npm i -g corepack
@@ -139,7 +139,7 @@ jobs:
             29,
           ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install corepack
         run: npm i -g corepack
@@ -192,7 +192,7 @@ jobs:
         shard: [1, 2, 3]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: ./scripts/check-chrome.sh
 
       - name: Install corepack
