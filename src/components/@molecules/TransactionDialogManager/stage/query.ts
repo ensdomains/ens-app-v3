@@ -232,7 +232,7 @@ export const createTransactionRequestUnsafe = async ({
 
   const isCapsuleConnected = hasCapsuleConnection(connections)
 
-  let largestMedianGasFee = 0
+  let largestMedianGasFee = 0n
   if (isCapsuleConnected) {
     largestMedianGasFee = await getLargestMedianGasFee()
   }
