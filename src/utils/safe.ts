@@ -116,3 +116,5 @@ export const fetchTxFromSafeTxHash = async ({
     transactionHash: data.txHash,
   }
 }
+
+export const isInsideSafe = () => typeof window !== 'undefined' && window !== window.parent

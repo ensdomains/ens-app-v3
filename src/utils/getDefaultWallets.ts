@@ -12,6 +12,8 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 
+import { isInsideSafe } from './safe'
+
 export const getDefaultWallets = ({
   appName,
   projectId,
@@ -19,38 +21,37 @@ export const getDefaultWallets = ({
   appName: string
   projectId: string
 }) => {
-  const wallets: WalletList =
-    typeof window !== 'undefined' && window.parent.location.hostname === ''
-      ? [
-          {
-            groupName: 'Popular',
-            wallets: [walletConnectWallet, coinbaseWallet, safeWallet],
-          },
-        ]
-      : [
-          {
-            groupName: 'Popular',
-            wallets: [
-              // injected / not always shown
-              injectedWallet,
-              safeWallet,
-              braveWallet,
-              () => ({
-                ...phantomWallet(),
-                iconUrl: async () => (await import('../assets/PhantomWallet')).default,
-                iconBackground: '#9A8AEE',
-                downloadUrls: {},
-              }),
-              // always shown
-              walletConnectWallet,
-              rainbowWallet,
-              coinbaseWallet,
-              metaMaskWallet,
-              ledgerWallet,
-              argentWallet,
-            ],
-          },
-        ]
+  const wallets: WalletList = isInsideSafe()
+    ? [
+        {
+          groupName: 'Popular',
+          wallets: [safeWallet],
+        },
+      ]
+    : [
+        {
+          groupName: 'Popular',
+          wallets: [
+            // injected / not always shown
+            injectedWallet,
+            safeWallet,
+            braveWallet,
+            () => ({
+              ...phantomWallet(),
+              iconUrl: async () => (await import('../assets/PhantomWallet')).default,
+              iconBackground: '#9A8AEE',
+              downloadUrls: {},
+            }),
+            // always shown
+            walletConnectWallet,
+            rainbowWallet,
+            coinbaseWallet,
+            metaMaskWallet,
+            ledgerWallet,
+            argentWallet,
+          ],
+        },
+      ]
 
   return connectorsForWallets(wallets, {
     appName,

@@ -32,6 +32,40 @@ const nextConfig = {
   images: {
     domains: ['metadata.ens.domains'],
   },
+  // async headers() {
+  //   // keep this in case we need to debug Safe in the future
+  //   if (process.env.NODE_ENV === 'development') {
+  //     return [
+  //       {
+  //         source: '/manifest.json',
+  //         headers: [
+  //           {
+  //             key: 'Access-Control-Allow-Origin',
+  //             value: '*',
+  //           },
+  //           {
+  //             key: 'Access-Control-Allow-Methods',
+  //             value: 'GET, OPTIONS',
+  //           },
+  //           {
+  //             key: 'Access-Control-Allow-Headers',
+  //             value: 'X-Requested-With, content-type, Authorization',
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         source: '/(.*)',
+  //         headers: [
+  //           {
+  //             key: 'Content-Security-Policy',
+  //             value: "frame-ancestors 'self' https://app.safe.global;",
+  //           },
+  //         ],
+  //       },
+  //     ]
+  //   }
+  //   return []
+  // },
   async rewrites() {
     return [
       {
