@@ -20,7 +20,7 @@ export const getDefaultWallets = ({
   projectId: string
 }) => {
   const wallets: WalletList =
-    window.parent.location.hostname === ''
+    typeof window !== 'undefined' && window.parent.location.hostname === ''
       ? [
           {
             groupName: 'Popular',

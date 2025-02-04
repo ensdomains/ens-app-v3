@@ -15,5 +15,6 @@
   ],
   "theme_color": "#5298FF",
   "background_color": "#F6F6F6",
-  "display": "standalone"
+  "display": "standalone",
+  "description": "Decentralised naming for wallets, websites, & more"
 }
