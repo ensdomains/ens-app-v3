@@ -95,6 +95,9 @@ export const findDroppedTransactions = async (
     : []
   const accountTransactionHistory = etherscanJson
 
+  // Skip if etherscan api fails or returns no history
+  if (accountTransactionHistory.length === 0) return
+
   for (const searchingTransaction of searchingTransactions) {
     // A searchingTransaction likely means the transaction was submitted to a private mempool
     // Once we see it it is likely a mined transaction already.

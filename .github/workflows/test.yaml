@@ -63,7 +63,7 @@ jobs:
         run: tar -cvf stateless-build.tar out
 
       - name: Upload stateless
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: stateless-build
           path: stateless-build.tar
@@ -94,7 +94,7 @@ jobs:
         run: tar -cvf stateful-build.tar out
 
       - name: Upload stateful
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: stateful-build
           path: stateful-build.tar
@@ -159,9 +159,10 @@ jobs:
 
       - name: Download build
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: stateless-build
+          merge-multiple: true
 
       - name: Untar files
         run: tar -xvf stateless-build.tar
@@ -173,12 +174,13 @@ jobs:
         run: |
           PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: stateless-report
+          name: stateless-report-${{matrix.shard}}
           path: playwright-report/
           retention-days: 30
+          overwrite: true
 
   stateful:
     name: stateful (${{matrix.shard}})
@@ -211,7 +213,7 @@ jobs:
 
       - name: Download build
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: stateful-build
 
@@ -230,9 +232,9 @@ jobs:
           # NEXT_PUBLIC_GRAPH_URI: https://api.studio.thegraph.com/query/49574/ensholesky/version/latest
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: stateful-report
+          name: stateful-report-${{matrix.shard}}
           path: playwright-report/
           retention-days: 30
