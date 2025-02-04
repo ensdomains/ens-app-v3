@@ -93,32 +93,32 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
 
   const items: DropdownItem[] = [
     ...(primary.data?.name
-      ? [
+      ? ([
           {
             label: t('wallet.viewProfile'),
             onClick: () => router.push(getDestination(`/profile/${primary.data!.name}`) as string),
             color: 'text',
-            icon: UpRightArrowSVG,
+            icon: () => <UpRightArrowSVG height={16} width={16} />,
           },
           {
             label: t('name.copy'),
             onClick: () => copy(primary.data!.name!),
             color: 'text',
-            icon: CopySVG,
+            icon: () => <CopySVG height={16} width={16} />,
           },
-        ]
+        ] as DropdownItem[])
       : []),
     {
       label: t('address.viewAddress'),
       onClick: () => router.push(getDestination(`/address/${address}`) as string),
       color: 'text',
-      icon: UpRightArrowSVG,
+      icon: () => <UpRightArrowSVG height={16} width={16} />,
     },
     {
       label: t('address.copyAddress'),
       onClick: () => copy(address!),
       color: 'text',
-      icon: CopySVG,
+      icon: () => <CopySVG height={16} width={16} />,
     },
     ...(etherscanAction ? [etherscanAction] : []),
     ...(editRolesAction ? [editRolesAction] : []),
