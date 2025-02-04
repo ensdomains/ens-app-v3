@@ -541,7 +541,7 @@ const Pricing = ({
   const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
 
   const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
-    hasPendingMoonpayTransaction || balance?.value === 0n
+    hasPendingMoonpayTransaction || !balance?.value
       ? PaymentMethod.moonpay
       : PaymentMethod.ethereum,
   )
@@ -550,12 +550,13 @@ const Pricing = ({
   useEffect(() => {
     if (moonpayTransactionStatus) {
       setPaymentMethodChoice(
-        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction
+        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction || !balance?.value
           ? PaymentMethod.moonpay
           : PaymentMethod.ethereum,
       )
     }
   }, [
+    balance,
     hasFailedMoonpayTransaction,
     hasPendingMoonpayTransaction,
     moonpayTransactionStatus,

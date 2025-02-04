@@ -9,7 +9,8 @@ import {
   type CapsuleModalProps,
 } from '@usecapsule/rainbowkit-wallet'
 
-import { ENS_LINKS } from '../constants'
+import i18n from '../../i18n'
+import { ENS_LINKS, WC_PROJECT_ID } from '../constants'
 import { transports } from './wagmi'
 
 const prodCapsuleApiKey = process.env.NEXT_PUBLIC_CAPSULE_API_KEY_PROD
@@ -39,7 +40,7 @@ const capsuleConstructorOpts: ConstructorOpts = {
 export const capsuleClient = new CapsuleWeb(CAPSULE_ENV, CAPSULE_API_KEY, capsuleConstructorOpts)
 
 export const capsuleModalProps = {
-  appName: '',
+  appName: 'ENS Manager App',
   oAuthMethods: [
     OAuthMethod.GOOGLE,
     OAuthMethod.TWITTER,
@@ -51,7 +52,7 @@ export const capsuleModalProps = {
 
 const capsuleWalletItegratedOpts: GetCapsuleIntegratedOpts = {
   capsule: capsuleClient,
-  nameOverride: 'Sign in with Capsule',
+  nameOverride: i18n.t('capsule.signInWithCapsule'),
   iconBackgroundOverride: '#ffffff',
   transports,
 }
@@ -67,6 +68,6 @@ export const capsuleWalletConnectorFn = connectorsForWallets(
   ],
   {
     appName: APP_NAME,
-    projectId: '',
+    projectId: WC_PROJECT_ID,
   },
 )[0]

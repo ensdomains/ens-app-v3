@@ -437,5 +437,8 @@
       "description": "You've selected Holesky (testnet) in your wallet.",
       "action": "Go to holesky.app.ens.domains"
     }
+  },
+  "capsule": {
+    "signInWithCapsule": "Sign in with Capsule"
   }
 }
