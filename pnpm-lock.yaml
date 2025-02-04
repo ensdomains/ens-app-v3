@@ -258,8 +258,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@ensdomains/ens-test-env':
-        specifier: 0.5.0-beta.7
-        version: 0.5.0-beta.7
+        specifier: 0.5.0-beta.9
+        version: 0.5.0-beta.9(encoding@0.1.13)
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
         version: 1.0.8(viem@2.19.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.23.8))
@@ -1603,8 +1603,8 @@ packages:
   '@ensdomains/ens-contracts@1.2.0-beta.0':
     resolution: {integrity: sha512-mb/1cPtwhShyaP6fWqDix6GfrJwVWlKgCFxzDKmqNGeFQhBOD/ojYGsy96eJ9UlM/7Tsg7w4RAj7xWrOlHtYIA==}
 
-  '@ensdomains/ens-test-env@0.5.0-beta.7':
-    resolution: {integrity: sha512-xGpWRjd2z4uglLG6D5guLP5MEGwtU/2cs0ji9UnKEN7PV4YXTPuU+aPi3FCP3Og1LpJxsFv59KVXuf8CiDd1zA==}
+  '@ensdomains/ens-test-env@0.5.0-beta.9':
+    resolution: {integrity: sha512-2bMLONdXk/gOkIk2/HJVUmFzsYSFgPD6+AXEhrKP/aQVz1AvaJkebWP3jiMijmkKOvQF+hplGbqHYJopi3bLGQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -11472,7 +11472,7 @@ snapshots:
       '@openzeppelin/contracts': 4.9.6
       dns-packet: 5.6.1
 
-  '@ensdomains/ens-test-env@0.5.0-beta.7':
+  '@ensdomains/ens-test-env@0.5.0-beta.9(encoding@0.1.13)':
     dependencies:
       cli-progress: 3.12.0
       commander: 9.5.0
@@ -11480,12 +11480,14 @@ snapshots:
       docker-compose: 1.1.0
       dotenv: 16.4.5
       js-yaml: 4.1.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       picocolors: 1.1.1
       progress-stream: 2.0.0
       tar-fs: 2.1.2
       wait-on: 6.0.1
     transitivePeerDependencies:
       - debug
+      - encoding
 
   '@ensdomains/ens@0.4.5':
     dependencies:
