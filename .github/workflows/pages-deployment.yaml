@@ -41,6 +41,9 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: if [ ${{ needs.yalc_check.outputs.can_deploy }} != true ]; then exit 1; else exit 0; fi
 
+      - name: Install corepack
+        run: npm i -g corepack
+
       - name: Install pnpm
         run: corepack enable pnpm
 

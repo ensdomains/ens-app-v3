@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install corepack
+        run: npm i -g corepack
+
       - name: Install pnpm
         run: corepack enable pnpm
 
@@ -33,6 +36,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: corepack enable pnpm
@@ -67,6 +73,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install corepack
+        run: npm i -g corepack
+
       - name: Install pnpm
         run: corepack enable pnpm
 
@@ -97,9 +106,43 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+        shard:
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+          ]
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: corepack enable pnpm
@@ -149,6 +192,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: ./scripts/check-chrome.sh
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: corepack enable pnpm
