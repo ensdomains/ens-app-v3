@@ -231,13 +231,6 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             ],
           },
           {
-            address: '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
-            deployer: 'Custom ',
-            tag: null,
-            isNameWrapperAware: false,
-            supportedInterfaces: [],
-          },
-          {
             address: deploymentAddresses.LegacyPublicResolver,
             deployer: 'ENS Labs',
             tag: null,
@@ -254,7 +247,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             ],
           },
           {
-            address: deploymentAddresses.LegacyResolverV1,
+            address: deploymentAddresses.OutdatedResolver,
             deployer: 'ENS Labs',
             tag: 'outdated',
             isNameWrapperAware: false,
@@ -277,7 +270,7 @@ export const getKnownResolverData = ({
   chainId: number
   resolverAddress: string
 }): KnownResolverItem | undefined => {
-  console.log(KNOWN_RESOLVER_DATA[chainId])
+  console.log('getKnownResolverData', KNOWN_RESOLVER_DATA[chainId], resolverAddress, chainId)
   return KNOWN_RESOLVER_DATA[chainId]?.find(
     (data) => data.address?.toLowerCase() === resolverAddress?.toLowerCase(),
   )

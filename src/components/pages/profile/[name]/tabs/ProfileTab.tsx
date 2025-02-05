@@ -60,6 +60,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     gracePeriodEndDate,
   } = nameDetails
 
+  console.log('profile', profile)
+
   const abilities = useAbilities({ name })
 
   const { data: primaryData } = usePrimaryName({ address })

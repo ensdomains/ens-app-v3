@@ -179,6 +179,9 @@ export const AddProfileRecordView = ({
     hasAbiInterface,
   ])
 
+  const showProfileWarning =
+    !hasTextInterface || !hasAddressInterface || !hasContenthashInterface || !hasAbiInterface
+
   // Tracks when to skip updating the sidebar while options grid is scrolling
   const shouldSkipObserverUpdateRef = useRef<boolean>()
   const debouncedSetShouldSkipObserverUpdateRef = useDebouncedCallback(
@@ -334,9 +337,15 @@ export const AddProfileRecordView = ({
           <ScrollBox hideDividers>
             <div ref={topRef} style={{ height: '1px' }} data-group="top" />
             <Spacer $height="4" />
-            <Helper type="warning" alignment="horizontal">
-              Your custom resolver doesn't support all records
-            </Helper>
+            {showProfileWarning && (
+              <Helper
+                type="warning"
+                alignment="horizontal"
+                data-testid="add-profile-record-resolver-warning"
+              >
+                Your custom resolver doesn't support all records
+              </Helper>
+            )}
             {filteredOptions.map((option) => {
               const showLabel = !['address', 'website'].includes(option.group)
               if (option.items.length === 0 && option.group !== 'other') return null

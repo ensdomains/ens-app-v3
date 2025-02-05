@@ -16,6 +16,9 @@ export type View =
   | 'resolverOutOfDate'
   | 'transferOrResetProfile'
   | 'invalidResolver'
+  | 'migrateProfileSelector'
+  | 'migrateProfileWarning'
+  | 'resetProfile'
 
 type State = {
   stack: View[]
@@ -54,10 +57,6 @@ const initializer =
         },
         () => ({ ...defaultState, stack: ['migrateRegistry'] as View[] }),
       )
-      .with({ resolverStatus: { isOutdatedResolver: true } }, () => ({
-        ...defaultState,
-        stack: ['resolverOutOfDate'] as View[],
-      }))
       .with({ resolverStatus: { hasResolver: false } }, () => ({
         ...defaultState,
         stack: ['noResolver'] as View[],
@@ -65,6 +64,10 @@ const initializer =
       .with({ resolverStatus: { isNameWrapperAware: false }, isWrapped: true }, () => ({
         ...defaultState,
         stack: ['resolverNotNameWrapperAware'] as View[],
+      }))
+      .with({ resolverStatus: { isOutdatedResolver: true } }, () => ({
+        ...defaultState,
+        stack: ['resolverOutOfDate'] as View[],
       }))
       .with(
         { resolverStatus: { hasValidResolver: false } },

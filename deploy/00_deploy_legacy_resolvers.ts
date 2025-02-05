@@ -15,44 +15,44 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const ethController = await ethers.getContract('ETHRegistrarController', owner)
   const reverseRegistrar = await ethers.getContract('ReverseRegistrar', owner)
 
-  await deployments.deploy('LegacyResolverV1', {
+  await deployments.deploy('OutdatedResolver', {
     from: deployer,
     contract: JSON.parse(
-      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV1.json'), {
+      await fs.readFile(resolve(__dirname, './.contracts/OutdatedResolverV1.json'), {
         encoding: 'utf8',
       }),
     ),
     args: [registry.address],
   })
 
-  await deployments.deploy('LegacyResolverV2', {
+  await deployments.deploy('CustomOutdatedResolver', {
     from: deployer,
     contract: JSON.parse(
-      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV2.json'), {
+      await fs.readFile(resolve(__dirname, './.contracts/OutdatedResolverV3.json'), {
         encoding: 'utf8',
       }),
     ),
     args: [registry.address],
   })
 
-  await deployments.deploy('LegacyResolverV3', {
+  await deployments.deploy('CustomLegacyResolver', {
     from: deployer,
     contract: JSON.parse(
-      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV3.json'), {
+      await fs.readFile(resolve(__dirname, './.contracts/CustomLegacyResolver.json'), {
         encoding: 'utf8',
       }),
     ),
     args: [registry.address],
   })
 
-  await deployments.deploy('LegacyResolverV4', {
+  await deployments.deploy('CustomNameWrapperAwareResolver', {
     from: deployer,
     contract: JSON.parse(
-      await fs.readFile(resolve(__dirname, './.contracts/LegacyResolverV4.json'), {
+      await fs.readFile(resolve(__dirname, './.contracts/CustomNameWrapperAwareResolver.json'), {
         encoding: 'utf8',
       }),
     ),
-    args: [registry.address],
+    args: [registry.address, nameWrapper.address, ethController.address, reverseRegistrar.address],
   })
 
   // console.log('Deploying CustomResolver...')

@@ -34,7 +34,6 @@ import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { useProfileEditorReducer } from './hooks/useProfileEditorReducer'
-import type { View } from './hooks/useProfileEditorReducer'
 // import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -74,6 +73,18 @@ const ButtonWrapper = styled.div(({ theme }) => [
     width: max-content;
   `),
 ])
+
+const CloseButtonBlocker = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: ${theme.colors.backgroundPrimary};
+    width: ${theme.space['12']};
+    height: ${theme.space['12']};
+    z-index: 1000;
+  `,
+)
 
 type Data = {
   name?: string
@@ -210,7 +221,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   })
   const [hasTextInterface, hasAddressInterface, hasAbiInterface, hasContenthashInterface] =
     interfacesData || []
-  console.log(interfacesData)
+  console.log('interfacesData', interfacesData)
 
   // const chainId = useChainId()
 
@@ -252,14 +263,30 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     }
   }, [shouldShowResolverWarning])
 
+  const isLoading_ = isLoading || resolverStatus.isLoading
+  const [editorState, editorDispatch] = useProfileEditorReducer(
+    {
+      profile,
+      resolverStatus: resolverStatus.data,
+      isWrapped,
+      isLoading: isLoading_,
+    },
+    {
+      onDismiss,
+    },
+  )
+  const view_ = editorState.stack[editorState.stack.length - 1]
+
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
     process.nextTick(() => trigger())
   }
 
   const handleShowAddRecordModal = () => {
-    setView('addRecord')
+    editorDispatch({ type: 'pushView', payload: 'addRecord' })
   }
+
+  console.log('view', view)
 
   const handleUpdateResolver = () => {
     dispatch({
@@ -364,19 +391,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   console.log('canEditRecordsWhenWrapped', canEditRecordsWhenWrapped)
 
   console.log('resolverStatus', resolverStatus.isLoading)
-  const isLoading_ = isLoading || resolverStatus.isLoading
-  const [editorState, editorDispatch] = useProfileEditorReducer(
-    {
-      profile,
-      resolverStatus: resolverStatus.data,
-      isWrapped,
-      isLoading: isLoading_,
-    },
-    {
-      onDismiss,
-    },
-  )
-  const view_ = editorState.stack[editorState.stack.length - 1]
+
   console.log('editorState', view_)
 
   const shouldInitializeEditorState = !isLoading_ && view_ === 'loading'
@@ -398,6 +413,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   return (
     <>
+      <CloseButtonBlocker />
       {match(view_)
         .with('loading', () => <TransactionLoader />)
         .with('editor', () => (
@@ -412,12 +428,15 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               })}
               alwaysShowDividers={{ bottom: true }}
             >
+              {view_}
               <AvatarWrapper>
                 <WrappedAvatarButton
                   name={name}
                   control={control}
                   src={avatarSrc}
-                  onSelectOption={(option) => setView(option)}
+                  onSelectOption={(option) => {
+                    editorDispatch({ type: 'pushView', payload: option })
+                  }}
                   onAvatarChange={(avatar) => setAvatar(avatar)}
                   onAvatarFileChange={(file) => setAvatarFile(file)}
                   onAvatarSrcChange={(src) => setAvatarSrc(src)}
@@ -529,9 +548,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             hasContenthashInterface={hasContenthashInterface}
             onAdd={(newRecords) => {
               addRecords(newRecords)
-              setView('editor')
+              editorDispatch({ type: 'popView' })
             }}
-            onClose={() => setView('editor')}
+            onClose={() => editorDispatch({ type: 'popView' })}
           />
         ))
         .with('warning', () => (
@@ -554,19 +573,19 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           <AvatarViewManager
             name={name}
             avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
+            handleCancel={() => editorDispatch({ type: 'popView' })}
             type={type}
             handleSubmit={(_, uri, display) => {
               setAvatar(uri)
               setAvatarSrc(display)
-              setView('editor')
+              editorDispatch({ type: 'popView' })
               trigger()
             }}
           />
         ))
         .with('migrateRegistry', () => <MigrateRegistryView name={name} onCancel={onDismiss} />)
         .with('invalidResolver', () => (
-          <InvalidResolverView onConfirm={() => {}} onCancel={onDismiss} />
+          <InvalidResolverView onConfirm={() => handleUpdateResolver()} onCancel={onDismiss} />
         ))
         .with('migrateProfileSelector', () => (
           <MigrateProfileSelectorView
@@ -574,10 +593,15 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             currentResolverAddress={profile?.resolverAddress!}
             latestResolverAddress={resolverAddress!}
             hasCurrentProfile={resolverStatus.data?.hasProfile!}
-            selected="latest"
-            onChangeSelected={() => {}}
-            onBack={() => {}}
-            onNext={() => {}}
+            onBack={() => {
+              editorDispatch({ type: 'popView' })
+            }}
+            onNext={(selectedProfile) => {
+              if (selectedProfile === 'latest') handleUpdateResolver()
+              else if (selectedProfile === 'current')
+                editorDispatch({ type: 'pushView', payload: 'migrateProfileWarningView' })
+              else editorDispatch({ type: 'pushView', payload: 'resetProfile' })
+            }}
           />
         ))
         .with('migrateProfileWarningView', () => (
@@ -585,7 +609,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onBack={() => {
               editorDispatch({ type: 'popView' })
             }}
-            onNext={() => {}}
+            onNext={() => handleMigrateCurrentProfileToLatest()}
           />
         ))
         .with('noResolver', () => (
@@ -593,7 +617,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onCancel={() => {
               editorDispatch({ type: 'popView' })
             }}
-            onConfirm={() => {}}
+            onConfirm={() => handleUpdateResolver()}
           />
         ))
         .with('resetProfile', () => (
@@ -601,7 +625,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onBack={() => {
               editorDispatch({ type: 'popView' })
             }}
-            onNext={() => {}}
+            onNext={() => handleResetProfile()}
           />
         ))
         .with('resolverNotNameWrapperAware', () => (
@@ -610,7 +634,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             hasProfile={resolverStatus.data?.hasProfile!}
             onChangeSelected={() => {}}
             onCancel={onDismiss}
-            onNext={() => {}}
+            onNext={() => {
+              if (resolverStatus.data?.hasProfile || resolverStatus.data?.hasMigratedProfile)
+                editorDispatch({ type: 'pushView', payload: 'migrateProfileSelector' })
+              else handleUpdateResolver()
+            }}
           />
         ))
         .with('resolverOutOfDate', () => (
@@ -619,7 +647,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               editorDispatch({ type: 'popView' })
             }}
             onConfirm={() => {
-              if (resolverStatus.data?.hasProfile)
+              console.log(
+                'resolverStatus.data?.hasMigratedProfile',
+                resolverStatus.data?.hasMigratedProfile,
+              )
+              if (resolverStatus.data?.hasMigratedProfile)
+                editorDispatch({ type: 'pushView', payload: 'migrateProfileSelector' })
+              else if (resolverStatus.data?.hasProfile)
                 editorDispatch({ type: 'pushView', payload: 'transferOrResetProfile' })
               else handleUpdateResolver()
             }}

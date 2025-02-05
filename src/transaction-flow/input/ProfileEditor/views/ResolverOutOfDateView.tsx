@@ -6,7 +6,6 @@ import { Outlink } from '@app/components/Outlink'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 import { CenteredTypography } from '../components/CenteredTypography'
-import { SkipButton } from '../components/SkipButton'
 
 type Props = {
   onConfirm?: () => void

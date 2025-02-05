@@ -40,16 +40,19 @@ export const ResolverNotNameWrapperAwareView = ({
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>
-        {hasProfile && (
-          <DetailedSwitch
-            title={t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.title')}
-            description={t(
-              'input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.subtitle',
-            )}
-            checked={selected !== 'reset'}
-            onChange={(e) => onChangeSelected(e.target.checked ? 'latest' : 'reset')}
-          />
-        )}
+        {/* {hasProfile ||
+          (true && (
+            <DetailedSwitch
+              title={t(
+                'input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.title',
+              )}
+              description={t(
+                'input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.subtitle',
+              )}
+              checked={selected !== 'reset'}
+              onChange={(e) => onChangeSelected(e.target.checked ? 'latest' : 'reset')}
+            />
+          ))} */}
       </Dialog.Content>
       <Dialog.Footer
         leading={
