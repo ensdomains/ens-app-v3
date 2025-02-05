@@ -23,6 +23,17 @@ const babelIncludeRegexes = [
  * @type {import('next').NextConfig}
  * */
 const nextConfig = {
+  transpilePackages: [
+    '@usecapsule/rainbowkit',
+    '@usecapsule/rainbowkit-wallet',
+    '@usecapsule/core-components',
+    '@usecapsule/react-components',
+    '@usecapsule/react-sdk',
+    '@usecapsule/core-sdk',
+    '@usecapsule/web-sdk',
+    '@usecapsule/wagmi-v2-integration',
+    '@usecapsule/viem-v2-integration',
+  ],
   reactStrictMode: true,
   compiler: {
     styledComponents: true,

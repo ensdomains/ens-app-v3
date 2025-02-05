@@ -26,3 +26,14 @@ export const IS_DEV_ENVIRONMENT =
   process.env.NEXT_PUBLIC_PROVIDER
 
 export const INVALID_NAME = '[Invalid ENS Name]'
+
+export const ENS_LINKS = {
+  X: 'https://x.com/ensdomains',
+  DISCORD: 'https://chat.ens.domains',
+  MIRROR: 'https://ens.mirror.xyz',
+  DISCOURSE: 'https://discuss.ens.domains',
+  GITHUB: 'https://github.com/ensdomains',
+  EMAIL: 'mailto:support@ens.domains',
+  HOMEPAGE: 'https://ens.domains/',
+  YOUTUBE: 'https://www.youtube.com/ensdomains',
+}

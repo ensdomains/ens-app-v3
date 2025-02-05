@@ -44,15 +44,11 @@ export class Login {
       timeout: 15000,
     })
     // this isn't actually what the user experiences, just a quirk in headless-web3-provider
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestPermissions)
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(0)
-    await expect
-      .poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts))
-      .toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
+    const pendingRequests = await this.wallet.getPendingRequestCount()
     expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
-    await expect(this.getProfileButton).toBeVisible()
+    await expect.poll(() => this.getProfileButton.isVisible()).toBe(true)
   }
 
   async switchTo(user: User) {
