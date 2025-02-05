@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePreviousDistinct } from 'react-use'
-import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import type { Address } from 'viem'
