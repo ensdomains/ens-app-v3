@@ -538,8 +538,6 @@ const Pricing = ({
   const hasPendingMoonpayTransaction = moonpayTransactionStatus === 'pending'
   const hasFailedMoonpayTransaction = moonpayTransactionStatus === 'failed'
 
-  const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
-
   const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
     hasPendingMoonpayTransaction || !balance?.value
       ? PaymentMethod.moonpay
@@ -548,21 +546,12 @@ const Pricing = ({
 
   // Keep radio button choice up to date
   useEffect(() => {
-    if (moonpayTransactionStatus) {
-      setPaymentMethodChoice(
-        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction || !balance?.value
-          ? PaymentMethod.moonpay
-          : PaymentMethod.ethereum,
-      )
-    }
-  }, [
-    balance,
-    hasFailedMoonpayTransaction,
-    hasPendingMoonpayTransaction,
-    moonpayTransactionStatus,
-    previousMoonpayTransactionStatus,
-    setPaymentMethodChoice,
-  ])
+    setPaymentMethodChoice(
+      hasPendingMoonpayTransaction || hasFailedMoonpayTransaction || !balance?.value
+        ? PaymentMethod.moonpay
+        : PaymentMethod.ethereum,
+    )
+  }, [balance, hasFailedMoonpayTransaction, hasPendingMoonpayTransaction, setPaymentMethodChoice])
 
   const fullEstimate = useEstimateFullRegistration({
     name,
