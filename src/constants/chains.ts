@@ -62,8 +62,13 @@ export const getChainsFromUrl = () => {
   const chainParam = params.get('chain')
   const segments = hostname.split('.')
 
-  if (segments.length === 4 && segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-    return [holeskyWithEns, mainnetWithEns, sepoliaWithEns]
+  if (segments.length === 4) {
+    if (segments[0] === 'test') {
+      return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
+    }
+    if (segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
+      return [holeskyWithEns, mainnetWithEns, sepoliaWithEns]
+    }
   }
 
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
