@@ -1,26 +1,21 @@
 /** This is when the current resolver and latest resolver have matching records */
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { DetailedSwitch } from '../components/DetailedSwitch'
-import type { SelectedProfile } from '../ResolverWarningOverlay'
+import type { SelectedProfile } from '../types'
 
 type Props = {
-  selected: SelectedProfile
-  onChangeSelected: (selected: SelectedProfile) => void
-  onNext: () => void
+  onNext: (selected: SelectedProfile) => void
   onBack: () => void
 }
 
-export const UpdateResolverOrResetProfileView = ({
-  selected,
-  onChangeSelected,
-  onNext,
-  onBack,
-}: Props) => {
+export const UpdateResolverOrResetProfileView = ({ onNext, onBack }: Props) => {
   const { t } = useTranslation('transactionFlow')
+  const [selected, setSelected] = useState<SelectedProfile>('latest')
   return (
     <>
       <Dialog.Heading
@@ -32,7 +27,7 @@ export const UpdateResolverOrResetProfileView = ({
         </CenteredTypography>
         <DetailedSwitch
           checked={selected !== 'reset'}
-          onChange={(e) => onChangeSelected(e.currentTarget.checked ? 'latest' : 'reset')}
+          onChange={(e) => setSelected(e.currentTarget.checked ? 'latest' : 'reset')}
           title={t('input.profileEditor.warningOverlay.updateResolverOrResetProfile.toggle.title')}
           description={t(
             'input.profileEditor.warningOverlay.updateResolverOrResetProfile.toggle.subtitle',
@@ -50,7 +45,12 @@ export const UpdateResolverOrResetProfileView = ({
           </Button>
         }
         trailing={
-          <Button onClick={onNext} data-testid="warning-overlay-next-button">
+          <Button
+            onClick={() => {
+              onNext(selected)
+            }}
+            data-testid="warning-overlay-next-button"
+          >
             {t('action.next', { ns: 'common' })}
           </Button>
         }

@@ -10,9 +10,9 @@ import { CenteredTypography } from '../components/CenteredTypography'
 type Props = {
   onConfirm?: () => void
   onCancel?: () => void
-  onSkip?: () => void
 }
-export const ResolverOutOfDateView = ({ onConfirm, onCancel, onSkip }: Props) => {
+
+export const ResolverOutOfDateView = ({ onConfirm, onCancel }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
     <>

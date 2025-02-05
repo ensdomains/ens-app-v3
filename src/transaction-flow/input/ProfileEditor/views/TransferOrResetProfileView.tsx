@@ -5,7 +5,7 @@ import { Button, Dialog } from '@ensdomains/thorin'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { DetailedSwitch } from '../components/DetailedSwitch'
-import type { SelectedProfile } from '../ResolverWarningOverlay'
+import type { SelectedProfile } from '../types'
 
 type Props = {
   onNext: (profile: SelectedProfile) => void

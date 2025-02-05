@@ -343,7 +343,7 @@ export const AddProfileRecordView = ({
                 alignment="horizontal"
                 data-testid="add-profile-record-resolver-warning"
               >
-                Your custom resolver doesn't support all records
+                Your custom resolver doesn&apos;t support all records
               </Helper>
             )}
             {filteredOptions.map((option) => {

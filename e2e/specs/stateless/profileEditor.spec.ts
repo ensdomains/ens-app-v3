@@ -1185,7 +1185,7 @@ test.describe('wrapped name with legacy resolver', () => {
     await expect(recordsPage.getRecordButton('abi')).toHaveCount(0)
   })
 
-  test('should force a wrapped name (with a profile on currenct resolver) with a resolver that is not name wrapper aware to migrate update their resolver', async ({
+  test('should be able to transfer profile when only current resolver has a profile', async ({
     login,
     page,
     makeName,
@@ -1223,6 +1223,310 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('Migrate profile', async () => {
+      await page.pause()
+      await expect(
+        page.getByText(
+          'You can transfer your current profile to the new resolver before updating your resolver.',
+        ),
+      ).toBeVisible()
+      await page.getByTestId('detailed-switch').getByRole('checkbox').check()
+      await page.getByTestId('warning-overlay-next-button').click()
+    })
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver).toHaveText(latestResolver)
+
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
+    await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
+    await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('Hello2')
+    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+      createAccounts().getAddress('user'),
+    )
+    await expect(recordsPage.getRecordValue('address', 'btc')).toHaveText(
+      'bc1qjqg9slurvjukfl92wp58y94480fvh4uc2pwa6n',
+    )
+    await expect(recordsPage.getRecordValue('address', 'etcLegacy')).toHaveText(
+      '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+    )
+    await expect(recordsPage.getRecordValue('contentHash')).toHaveText(
+      'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
+    )
+    await expect(recordsPage.getRecordValue('abi')).toHaveText('{"test":"test"}')
+  })
+
+  test('should be able to update resolver when only current resolver has a profile', async ({
+    login,
+    page,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'legacy',
+      records: await makeRecords(),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const recordsPage = makePageObject('RecordsPage')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    await morePage.wrapButton.click()
+    await transactionModal.autoComplete()
+
+    await morePage.editResolverButton.click()
+    await page.getByTestId('custom-resolver-radio').check()
+    await page.getByTestId('dogfood').fill(legacyResolver)
+    await page.getByTestId('update-button').click()
+    await transactionModal.autoComplete()
+
+    await expect(morePage.resolver).toHaveText(legacyResolver)
+
+    await profilePage.goto(name)
+    await profilePage.editProfileButton.click()
+
+    await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await test.step('update resolver', async () => {
+      await page.pause()
+      await expect(
+        page.getByText(
+          'You can transfer your current profile to the new resolver before updating your resolver.',
+        ),
+      ).toBeVisible()
+      await page.getByTestId('detailed-switch').getByRole('checkbox').uncheck()
+      await page.getByTestId('warning-overlay-next-button').click()
+    })
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver).toHaveText(latestResolver)
+
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordButton('text', 'email')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('text', 'url')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('text', 'description')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'eth')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'btc')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'etcLegacy')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('contentHash')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('abi')).toHaveCount(0)
+  })
+
+  test('should be able to only update resolver if records on current and latest resolver are equal', async ({
+    login,
+    page,
+    makeName,
+    makePageObject,
+    accounts,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'legacy',
+      records: await makeRecords(),
+    })
+
+    await generateRecords({ accounts })({
+      name,
+      owner: 'user',
+      resolver: latestResolver,
+      records: await makeRecords(),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const recordsPage = makePageObject('RecordsPage')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    await morePage.wrapButton.click()
+    await transactionModal.autoComplete()
+
+    await morePage.editResolverButton.click()
+    await page.getByTestId('custom-resolver-radio').check()
+    await page.getByTestId('dogfood').fill(legacyResolver)
+    await page.getByTestId('update-button').click()
+    await transactionModal.autoComplete()
+
+    await expect(morePage.resolver).toHaveText(legacyResolver)
+
+    await profilePage.goto(name)
+    await profilePage.editProfileButton.click()
+
+    await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await test.step('Migrate profile', async () => {
+      await page.pause()
+      await expect(
+        page.getByText(
+          'You can keep your current profile on the new resolver, or reset it and remove all profile records.',
+        ),
+      ).toBeVisible()
+      await page.getByTestId('detailed-switch').getByRole('checkbox').check()
+      await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+    })
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver).toHaveText(latestResolver)
+
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
+    await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
+    await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('Hello2')
+    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+      createAccounts().getAddress('user'),
+    )
+    await expect(recordsPage.getRecordValue('address', 'btc')).toHaveText(
+      'bc1qjqg9slurvjukfl92wp58y94480fvh4uc2pwa6n',
+    )
+    await expect(recordsPage.getRecordValue('address', 'etcLegacy')).toHaveText(
+      '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+    )
+    await expect(recordsPage.getRecordValue('contentHash')).toHaveText(
+      'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
+    )
+    await expect(recordsPage.getRecordValue('abi')).toHaveText('{"test":"test"}')
+  })
+
+  test('should be able to reset resolver if records on current and latest resolver are equal', async ({
+    login,
+    page,
+    makeName,
+    makePageObject,
+    accounts,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'legacy',
+      records: await makeRecords(),
+    })
+
+    await generateRecords({ accounts })({
+      name,
+      owner: 'user',
+      resolver: latestResolver,
+      records: await makeRecords(),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const recordsPage = makePageObject('RecordsPage')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    await morePage.wrapButton.click()
+    await transactionModal.autoComplete()
+
+    await morePage.editResolverButton.click()
+    await page.getByTestId('custom-resolver-radio').check()
+    await page.getByTestId('dogfood').fill(legacyResolver)
+    await page.getByTestId('update-button').click()
+    await transactionModal.autoComplete()
+
+    await expect(morePage.resolver).toHaveText(legacyResolver)
+
+    await profilePage.goto(name)
+    await profilePage.editProfileButton.click()
+
+    await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await test.step('Migrate profile', async () => {
+      await page.pause()
+      await expect(
+        page.getByText(
+          'You can keep your current profile on the new resolver, or reset it and remove all profile records.',
+        ),
+      ).toBeVisible()
+      await page.getByTestId('detailed-switch').getByRole('checkbox').uncheck()
+      await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+    })
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver).toHaveText(latestResolver)
+
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordButton('text', 'email')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('text', 'url')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('text', 'description')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'eth')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'btc')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'etcLegacy')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('contentHash')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('abi')).toHaveCount(0)
+  })
+
+  test('should be able to migrate current profile if records on current and latest resolver are NOT equal', async ({
+    login,
+    page,
+    makeName,
+    makePageObject,
+    accounts,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'legacy',
+      records: await makeRecords(),
+    })
+
+    await generateRecords({ accounts })({
+      name,
+      owner: 'user',
+      resolver: latestResolver,
+      records: await makeRecords({
+        texts: [
+          {
+            key: 'description',
+            value: 'Do not set me as resolver',
+          },
+        ],
+      }),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const recordsPage = makePageObject('RecordsPage')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    await morePage.wrapButton.click()
+    await transactionModal.autoComplete()
+
+    await morePage.editResolverButton.click()
+    await page.getByTestId('custom-resolver-radio').check()
+    await page.getByTestId('dogfood').fill(legacyResolver)
+    await page.getByTestId('update-button').click()
+    await transactionModal.autoComplete()
+
+    await expect(morePage.resolver).toHaveText(legacyResolver)
+
+    await profilePage.goto(name)
+    await profilePage.editProfileButton.click()
+
+    await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await test.step('Migrate profile', async () => {
+      await page.pause()
       await page.getByTestId('migrate-profile-selector-current').check()
       await expect(page.getByTestId('migrate-profile-selector-latest')).not.toBeChecked()
       await expect(page.getByTestId('migrate-profile-selector-reset')).not.toBeChecked()
@@ -1254,6 +1558,170 @@ test.describe('wrapped name with legacy resolver', () => {
       'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
     )
     await expect(recordsPage.getRecordValue('abi')).toHaveText('{"test":"test"}')
+  })
+
+  test('should be able to update resolver if records on current and latest resolver are NOT equal', async ({
+    login,
+    page,
+    makeName,
+    makePageObject,
+    accounts,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'legacy',
+      records: await makeRecords({
+        texts: [
+          {
+            key: 'description',
+            value: 'Do not set me as resolver',
+          },
+        ],
+      }),
+    })
+
+    await generateRecords({ accounts })({
+      name,
+      owner: 'user',
+      resolver: latestResolver,
+      records: await makeRecords(),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const recordsPage = makePageObject('RecordsPage')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    await morePage.wrapButton.click()
+    await transactionModal.autoComplete()
+
+    await morePage.editResolverButton.click()
+    await page.getByTestId('custom-resolver-radio').check()
+    await page.getByTestId('dogfood').fill(legacyResolver)
+    await page.getByTestId('update-button').click()
+    await transactionModal.autoComplete()
+
+    await expect(morePage.resolver).toHaveText(legacyResolver)
+
+    await profilePage.goto(name)
+    await profilePage.editProfileButton.click()
+
+    await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await test.step('Migrate profile', async () => {
+      await page.pause()
+      await page.getByTestId('migrate-profile-selector-latest').check()
+      await expect(page.getByTestId('migrate-profile-selector-latest')).toBeChecked()
+      await expect(page.getByTestId('migrate-profile-selector-reset')).not.toBeChecked()
+      await expect(page.getByTestId('migrate-profile-selector-current')).not.toBeChecked()
+      await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+    })
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver).toHaveText(latestResolver)
+
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
+    await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
+    await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('Hello2')
+    await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
+      createAccounts().getAddress('user'),
+    )
+    await expect(recordsPage.getRecordValue('address', 'btc')).toHaveText(
+      'bc1qjqg9slurvjukfl92wp58y94480fvh4uc2pwa6n',
+    )
+    await expect(recordsPage.getRecordValue('address', 'etcLegacy')).toHaveText(
+      '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+    )
+    await expect(recordsPage.getRecordValue('contentHash')).toHaveText(
+      'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
+    )
+    await expect(recordsPage.getRecordValue('abi')).toHaveText('{"test":"test"}')
+  })
+
+  test('should be able to reset profile if records on current and latest resolver are NOT equal', async ({
+    login,
+    page,
+    makeName,
+    makePageObject,
+    accounts,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped',
+      type: 'legacy',
+      records: await makeRecords({
+        texts: [
+          {
+            key: 'description',
+            value: 'Do not set me as resolver',
+          },
+        ],
+      }),
+    })
+
+    await generateRecords({ accounts })({
+      name,
+      owner: 'user',
+      resolver: latestResolver,
+      records: await makeRecords(),
+    })
+
+    const morePage = makePageObject('MorePage')
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const recordsPage = makePageObject('RecordsPage')
+
+    await morePage.goto(name)
+    await login.connect()
+
+    await morePage.wrapButton.click()
+    await transactionModal.autoComplete()
+
+    await morePage.editResolverButton.click()
+    await page.getByTestId('custom-resolver-radio').check()
+    await page.getByTestId('dogfood').fill(legacyResolver)
+    await page.getByTestId('update-button').click()
+    await transactionModal.autoComplete()
+
+    await expect(morePage.resolver).toHaveText(legacyResolver)
+
+    await profilePage.goto(name)
+    await profilePage.editProfileButton.click()
+
+    await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
+    await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+
+    await test.step('Migrate profile', async () => {
+      await page.pause()
+      await page.getByTestId('migrate-profile-selector-reset').check()
+      await expect(page.getByTestId('migrate-profile-selector-latest')).not.toBeChecked()
+      await expect(page.getByTestId('migrate-profile-selector-reset')).toBeChecked()
+      await expect(page.getByTestId('migrate-profile-selector-current')).not.toBeChecked()
+      await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+      await expect(page.getByText('Reset profile')).toBeVisible()
+      await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
+    })
+
+    await transactionModal.autoComplete()
+
+    await morePage.goto(name)
+    await expect(morePage.resolver).toHaveText(latestResolver)
+
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordButton('text', 'email')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('text', 'url')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('text', 'description')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'eth')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'btc')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('address', 'etcLegacy')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('contentHash')).toHaveCount(0)
+    await expect(recordsPage.getRecordButton('abi')).toHaveCount(0)
   })
 })
 

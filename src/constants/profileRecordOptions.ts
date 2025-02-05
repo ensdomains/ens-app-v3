@@ -4,10 +4,7 @@ import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { supportedContentHashKeys } from '@app/constants/supportedContentHashKeys'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
-import {
-  getSupportedOtherRecordKeysForInterfaces,
-  supportedOtherRecordKeys,
-} from '@app/constants/supportedOtherRecordKeys'
+import { supportedOtherRecordKeys } from '@app/constants/supportedOtherRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
 export type ProfileRecordGroup =
