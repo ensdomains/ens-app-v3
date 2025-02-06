@@ -269,9 +269,7 @@ export const getKnownResolverData = ({
 }: {
   chainId: number
   resolverAddress: string
-}): KnownResolverItem | undefined => {
-  console.log('getKnownResolverData', KNOWN_RESOLVER_DATA[chainId], resolverAddress, chainId)
-  return KNOWN_RESOLVER_DATA[chainId]?.find(
+}): KnownResolverItem | undefined =>
+  KNOWN_RESOLVER_DATA[chainId]?.find(
     (data) => data.address?.toLowerCase() === resolverAddress?.toLowerCase(),
   )
-}

@@ -70,8 +70,6 @@ export const useResolverIsAuthorised = ({
     },
   })
 
-  console.log('estimateGasQuery', estimateGasQuery, name, resolverAddress, connector.data?.account)
-
   const {
     data: estimateGasData,
     isLoading: isEstimateGasLoading,

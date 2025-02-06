@@ -7,7 +7,7 @@ import { Button, Dialog, RadioButton, Typography } from '@ensdomains/thorin'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ProfileBlurb } from '../components/ProfileBlurb'
-import type { SelectedProfile } from '../types'
+import type { SelectedProfile } from '../ProfileEditor-flow'
 
 const RadioGroupContainer = styled.div(
   ({ theme }) => css`

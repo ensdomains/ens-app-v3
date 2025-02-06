@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
-// import { useChainId } from 'wagmi'
-
 import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -27,15 +25,12 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-import { useProfileEditorReducer, View } from './hooks/useProfileEditorReducer'
-// import { getResolverWrapperAwareness } from '@app/utils/utils'
-
+import { useProfileEditorReducer } from './hooks/useProfileEditorReducer'
 import { InvalidResolverView } from './views/InvalidResolverView'
 import { MigrateProfileSelectorView } from './views/MigrateProfileSelectorView.tsx'
 import { MigrateProfileWarningView } from './views/MigrateProfileWarningView'
@@ -95,7 +90,7 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-type SelectedProfile = 'latest' | 'current' | 'reset'
+export type SelectedProfile = 'latest' | 'current' | 'reset'
 
 const SubmitButton = ({
   control,
@@ -135,15 +130,6 @@ const SubmitButton = ({
       size="medium"
     />
   )
-}
-
-export const getPayloadForResolverStatus = (
-  resolverStatus: ReturnType<typeof useResolverStatus>['data'],
-): View | undefined => {
-  if (resolverStatus?.hasMigratedProfile && !resolverStatus.isMigratedProfileEqual)
-    return 'updateResolverOrResetProfile'
-  if (resolverStatus?.hasMigratedProfile) return 'migrateProfileSelector'
-  if (resolverStatus?.hasProfile) return 'transferOrResetProfile'
 }
 
 const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
@@ -218,16 +204,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     name,
   })
 
-  const { data: interfacesData } = useResolverHasInterfaces({
-    resolverAddress: profile?.resolverAddress!,
-    interfaceNames: ['TextResolver', 'AddressResolver', 'AbiResolver', 'ContentHashResolver'],
-    enabled: !!profile?.resolverAddress,
-  })
-  const [hasTextInterface, hasAddressInterface, hasAbiInterface, hasContenthashInterface] =
-    interfacesData || []
-
-  // const chainId = useChainId()
-
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
@@ -264,7 +240,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       onDismiss,
     },
   )
-  const view_ = editorState.stack[editorState.stack.length - 1]
+  const view = editorState.stack[editorState.stack.length - 1]
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
@@ -390,7 +366,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const canEditRecordsWhenWrapped = !!resolverStatus.data?.isAuthorized
 
-  const shouldInitializeEditorState = !isLoading_ && view_ === 'loading'
+  const shouldInitializeEditorState = !isLoading_ && view === 'loading'
   useEffect(() => {
     if (shouldInitializeEditorState)
       editorDispatch({
@@ -410,7 +386,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   return (
     <>
       <CloseButtonBlocker />
-      {match(view_)
+      {match(view)
         .with('loading', () => <TransactionLoader />)
         .with('editor', () => (
           <>
@@ -424,7 +400,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               })}
               alwaysShowDividers={{ bottom: true }}
             >
-              {view_}
+              {view}
               <AvatarWrapper>
                 <WrappedAvatarButton
                   name={name}
@@ -538,10 +514,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         .with('addRecord', () => (
           <AddProfileRecordView
             control={control}
-            hasTextInterface={hasTextInterface}
-            hasAddressInterface={hasAddressInterface}
-            hasAbiInterface={hasAbiInterface}
-            hasContenthashInterface={hasContenthashInterface}
             onAdd={(newRecords) => {
               addRecords(newRecords)
               editorDispatch({ type: 'popView' })
