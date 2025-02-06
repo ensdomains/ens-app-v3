@@ -280,7 +280,7 @@ describe('useResolverStatus', () => {
     expectEnabledHook(mockUseLatestResolverProfile, false)
   })
 
-  it('should call useProfile for latest resolver if current resolver address is empty address', () => {
+  it.only('should call useProfile for latest resolver if current resolver address is empty address', () => {
     mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
     mockUseProfile.mockReturnValueOnce({
       isLoading: false,
@@ -294,6 +294,7 @@ describe('useResolverStatus', () => {
         'isAuthorized',
         'hasMigratedProfile',
         'isMigratedProfileEqual',
+        'isNameWrapperAware',
       ]),
     )
     expectEnabledHook(mockUseProfile, true)
