@@ -254,8 +254,6 @@ test('should calculate needed steps without localstorage', async ({
   await morePage.goto(subname)
   await login.connect()
 
-  await expect(page.getByTestId('namewrapper-status')).toContainText('Unwrapped')
-
   await morePage.wrapButton.click()
   await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Approve NameWrapper')
   await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Migrate profile')

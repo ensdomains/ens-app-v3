@@ -58,10 +58,13 @@ const initializer = ({ profile, resolverStatus, isWrapped, isLoading }: InitialD
       ...defaultState,
       stack: ['noResolver'] as View[],
     }))
-    .with({ resolverStatus: { isNameWrapperAware: false }, isWrapped: true }, () => ({
-      ...defaultState,
-      stack: ['resolverNotNameWrapperAware'] as View[],
-    }))
+    .with(
+      { resolverStatus: { isNameWrapperAware: false, isAuthorized: false }, isWrapped: true },
+      () => ({
+        ...defaultState,
+        stack: ['resolverNotNameWrapperAware'] as View[],
+      }),
+    )
     .with({ resolverStatus: { isOutdatedResolver: true } }, () => ({
       ...defaultState,
       stack: ['resolverOutOfDate'] as View[],
