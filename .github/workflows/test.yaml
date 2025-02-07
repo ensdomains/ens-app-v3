@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -24,7 +24,7 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm tenv start -ng -ns -nb" \
+          "pnpm tenv start --no-graph --no-scripts --no-build --exit-after-deploy" \
           "pnpm wait-on ./.env.local"'
 
       - run: pnpm test:coverage
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -47,7 +47,7 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm tenv start -ng -ns -nb" \
+          "pnpm tenv start --no-graph --no-scripts --no-build --exit-after-deploy" \
           "pnpm wait-on ./.env.local"'
 
       - name: Build stateless and export
@@ -68,7 +68,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -102,7 +102,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -129,7 +129,7 @@ jobs:
 
       - name: Run tests
         run: |
-          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb
+          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci --no-build
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -153,7 +153,7 @@ jobs:
       - run: ./scripts/check-chrome.sh
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
         uses: actions/setup-node@v3
