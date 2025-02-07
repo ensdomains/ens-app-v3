@@ -33,7 +33,8 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegis
 
   const hasOwnerData = !!ownerData
 
-  const shouldMigrate = !resolverStatus.data?.isMigratedProfileEqual
+  const shouldMigrate =
+    !resolverStatus.data?.isMigratedProfileEqual && !resolverStatus.data?.isAuthorized
   const resolverAddress = profile?.resolverAddress
 
   const isSubname = name.split('.').length > 2
