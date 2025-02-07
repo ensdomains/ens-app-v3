@@ -234,7 +234,6 @@ test.describe('legacy resolver', () => {
 
     await profilePage.goto(name)
 
-    await page.pause()
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
     await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
     await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
@@ -377,7 +376,6 @@ test.describe('custom legacy resolver', () => {
 
     await profilePage.goto(name)
 
-    await page.pause()
     await expect(profilePage.record('text', 'description')).toHaveText('Hello2')
     await expect(profilePage.record('text', 'url')).toHaveText('twitter.com')
     await expect(profilePage.record('address', 'eth')).toHaveText('0xf39...92266')
@@ -683,7 +681,6 @@ test.describe('custom namewrapper aware resolver', () => {
 
 test.describe('outdated resolver', () => {
   test('should force a name with an outdated resolver to upgrade', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -703,7 +700,6 @@ test.describe('outdated resolver', () => {
     await login.connect()
 
     await profilePage.editProfileButton.click()
-    await page.pause()
     await expect(profilePage.profileEditor.locator('text=Resolver out of date')).toBeVisible()
 
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -745,7 +741,6 @@ test.describe('outdated resolver', () => {
     await login.connect()
 
     await profilePage.editProfileButton.click()
-    await page.pause()
     await expect(profilePage.profileEditor.locator('text=Resolver out of date')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
@@ -770,7 +765,6 @@ test.describe('outdated resolver', () => {
     await expect(recordsPage.getRecordValue('address', 'eth')).toHaveText(
       createAccounts().getAddress('user'),
     )
-    await page.pause()
     await expect(recordsPage.getRecordValue('address', 'btc')).toHaveText(
       'bc1qjqg9slurvjukfl92wp58y94480fvh4uc2pwa6n',
     )
@@ -813,7 +807,6 @@ test.describe('outdated resolver', () => {
     await login.connect()
 
     await profilePage.editProfileButton.click()
-    await page.pause()
     await expect(profilePage.profileEditor.locator('text=Resolver out of date')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
@@ -894,7 +887,6 @@ test.describe('legacy registryy', () => {
     const profilePage = makePageObject('ProfilePage')
     await profilePage.editProfileButton.click()
 
-    await page.pause()
     await expect(page.getByText('Registry out of date')).toBeVisible()
     await expect(page.getByTestId('warning-overlay-next-button')).toHaveAttribute(
       'href',
@@ -905,7 +897,6 @@ test.describe('legacy registryy', () => {
 
 test.describe('no resolver', () => {
   test('should force a name without a resolver to update their resolver', async ({
-    page,
     login,
     makeName,
     makePageObject,
@@ -933,7 +924,6 @@ test.describe('no resolver', () => {
     await login.connect()
 
     await profilePage.editProfileButton.click()
-    await page.pause()
     await expect(profilePage.profileEditor.locator('text=No resolver set')).toBeVisible()
 
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -949,7 +939,6 @@ test.describe('no resolver', () => {
 test.describe('unauthorised resolver', () => {
   test('should force a name with an unauthorised resolver to update their resolver', async ({
     login,
-    page,
     makeName,
     makePageObject,
   }) => {
@@ -972,7 +961,6 @@ test.describe('unauthorised resolver', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
-    await page.pause()
     await expect(profilePage.profileEditor.getByText('Unauthorised resolver')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
@@ -986,7 +974,6 @@ test.describe('unauthorised resolver', () => {
 test.describe('invalid resolver', () => {
   test('should force a name with an invalid resolver to update their resolver', async ({
     login,
-    page,
     makeName,
     makePageObject,
   }) => {
@@ -1009,7 +996,6 @@ test.describe('invalid resolver', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
-    await page.pause()
     await expect(profilePage.profileEditor.getByText('Unauthorised resolver')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
@@ -1086,7 +1072,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
-    await page.pause()
 
     await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -1104,7 +1089,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await expect(morePage.resolver).toHaveText(latestResolver)
 
     await recordsPage.goto(name)
-    await page.pause()
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
     await expect(recordsPage.getRecordValue('text', 'url')).toHaveText('https://twitter.com')
     await expect(recordsPage.getRecordValue('text', 'description')).toHaveText('Hello2')
@@ -1156,7 +1140,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
-    await page.pause()
 
     await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -1177,7 +1160,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await expect(morePage.resolver).toHaveText(latestResolver)
 
     await recordsPage.goto(name)
-    await page.pause()
     await expect(recordsPage.getRecordButton('text', 'email')).toHaveCount(0)
     await expect(recordsPage.getRecordButton('text', 'url')).toHaveCount(0)
     await expect(recordsPage.getRecordButton('text', 'description')).toHaveCount(0)
@@ -1231,7 +1213,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('Migrate profile', async () => {
-      await page.pause()
       await expect(
         page.getByText(
           'You can transfer your current profile to the new resolver before updating your resolver.',
@@ -1308,7 +1289,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('update resolver', async () => {
-      await page.pause()
       await expect(
         page.getByText(
           'You can transfer your current profile to the new resolver before updating your resolver.',
@@ -1384,7 +1364,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('Migrate profile', async () => {
-      await page.pause()
       await expect(
         page.getByText(
           'You can keep your current profile on the new resolver, or reset it and remove all profile records.',
@@ -1468,7 +1447,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('Migrate profile', async () => {
-      await page.pause()
       await expect(
         page.getByText(
           'You can keep your current profile on the new resolver, or reset it and remove all profile records.',
@@ -1551,7 +1529,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('Migrate profile', async () => {
-      await page.pause()
       await page.getByTestId('migrate-profile-selector-current').check()
       await expect(page.getByTestId('migrate-profile-selector-latest')).not.toBeChecked()
       await expect(page.getByTestId('migrate-profile-selector-reset')).not.toBeChecked()
@@ -1642,7 +1619,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('Migrate profile', async () => {
-      await page.pause()
       await page.getByTestId('migrate-profile-selector-latest').check()
       await expect(page.getByTestId('migrate-profile-selector-latest')).toBeChecked()
       await expect(page.getByTestId('migrate-profile-selector-reset')).not.toBeChecked()
@@ -1731,7 +1707,6 @@ test.describe('wrapped name with legacy resolver', () => {
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
 
     await test.step('Migrate profile', async () => {
-      await page.pause()
       await page.getByTestId('migrate-profile-selector-reset').check()
       await expect(page.getByTestId('migrate-profile-selector-latest')).not.toBeChecked()
       await expect(page.getByTestId('migrate-profile-selector-reset')).toBeChecked()
