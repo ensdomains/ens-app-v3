@@ -42,47 +42,50 @@ const initializer = ({ profile, resolverStatus, isWrapped, isLoading }: InitialD
   }
 
   if (isLoading || !profile || !resolverStatus) return defaultState
-  return match({
-    profile,
-    resolverStatus,
-    isWrapped,
-    isLoading,
-  })
-    .with(
-      {
-        profile: { isMigrated: false },
-      },
-      () => ({ ...defaultState, stack: ['migrateRegistry'] as View[] }),
-    )
-    .with({ resolverStatus: { hasResolver: false } }, () => ({
-      ...defaultState,
-      stack: ['noResolver'] as View[],
-    }))
-    .with(
-      { resolverStatus: { isNameWrapperAware: false, isAuthorized: false }, isWrapped: true },
-      () => ({
+  return (
+    match({
+      profile,
+      resolverStatus,
+      isWrapped,
+      isLoading,
+    })
+      .with(
+        {
+          profile: { isMigrated: false },
+        },
+        () => ({ ...defaultState, stack: ['migrateRegistry'] as View[] }),
+      )
+      .with({ resolverStatus: { hasResolver: false } }, () => ({
         ...defaultState,
-        stack: ['resolverNotNameWrapperAware'] as View[],
-      }),
-    )
-    .with({ resolverStatus: { isOutdatedResolver: true } }, () => ({
-      ...defaultState,
-      stack: ['resolverOutOfDate'] as View[],
-    }))
-    .with(
-      { resolverStatus: { hasValidResolver: false } },
-      {
-        resolverStatus: { isAuthorized: false },
-      },
-      () => ({
+        stack: ['noResolver'] as View[],
+      }))
+      // NOTE: isAuthorized is used as backup check in case the resolver is name wrapper aware but not a known resolver (custom resolver)
+      .with(
+        { resolverStatus: { isNameWrapperAware: false, isAuthorized: false }, isWrapped: true },
+        () => ({
+          ...defaultState,
+          stack: ['resolverNotNameWrapperAware'] as View[],
+        }),
+      )
+      .with({ resolverStatus: { isOutdatedResolver: true } }, () => ({
         ...defaultState,
-        stack: ['invalidResolver'] as View[],
-      }),
-    )
-    .otherwise(() => ({
-      ...defaultState,
-      stack: ['editor'] as View[],
-    }))
+        stack: ['resolverOutOfDate'] as View[],
+      }))
+      .with(
+        { resolverStatus: { hasValidResolver: false } },
+        {
+          resolverStatus: { isAuthorized: false },
+        },
+        () => ({
+          ...defaultState,
+          stack: ['invalidResolver'] as View[],
+        }),
+      )
+      .otherwise(() => ({
+        ...defaultState,
+        stack: ['editor'] as View[],
+      }))
+  )
 }
 
 type BaseAction = {

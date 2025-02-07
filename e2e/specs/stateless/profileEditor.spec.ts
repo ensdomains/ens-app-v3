@@ -5,10 +5,15 @@ import dotenv from 'dotenv'
 import { Address } from 'viem'
 
 import { encodeAbi, RecordOptions } from '@ensdomains/ensjs/utils'
+import { wrapName } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
-import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import {
+  testClient,
+  waitForTransaction,
+  walletClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 import { generateRecords } from '../../../playwright/fixtures/makeName/generators/generateRecords'
 import { emptyAddress } from '../../../src/utils/constants'
 
@@ -1018,7 +1023,6 @@ test.describe('invalid resolver', () => {
 test.describe('wrapped name with legacy resolver', () => {
   test('should force a wrapped name (with no profile) with a resolver that is not name wrapper aware to migrate update their resolver', async ({
     login,
-    page,
     makeName,
     makePageObject,
   }) => {
@@ -1039,7 +1043,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
-    await page.pause()
 
     await expect(profilePage.profileEditor.getByText('Resolver incompatible')).toBeVisible()
     await profilePage.profileEditor.getByTestId('warning-overlay-next-button').click()
@@ -1190,12 +1193,20 @@ test.describe('wrapped name with legacy resolver', () => {
     page,
     makeName,
     makePageObject,
+    accounts,
   }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'legacy',
       records: await makeRecords(),
     })
+
+    const wrapTx = await wrapName(walletClient, {
+      name,
+      newOwnerAddress: accounts.getAddress('user') as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(wrapTx)
 
     const morePage = makePageObject('MorePage')
     const profilePage = makePageObject('ProfilePage')
@@ -1204,9 +1215,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await morePage.goto(name)
     await login.connect()
-
-    await morePage.wrapButton.click()
-    await transactionModal.autoComplete()
 
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
@@ -1260,6 +1268,7 @@ test.describe('wrapped name with legacy resolver', () => {
   test('should be able to update resolver when only current resolver has a profile', async ({
     login,
     page,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -1269,6 +1278,13 @@ test.describe('wrapped name with legacy resolver', () => {
       records: await makeRecords(),
     })
 
+    const wrapTx = await wrapName(walletClient, {
+      name,
+      newOwnerAddress: accounts.getAddress('user') as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(wrapTx)
+
     const morePage = makePageObject('MorePage')
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
@@ -1276,9 +1292,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await morePage.goto(name)
     await login.connect()
-
-    await morePage.wrapButton.click()
-    await transactionModal.autoComplete()
 
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
@@ -1334,6 +1347,13 @@ test.describe('wrapped name with legacy resolver', () => {
       records: await makeRecords(),
     })
 
+    const wrapTx = await wrapName(walletClient, {
+      name,
+      newOwnerAddress: accounts.getAddress('user') as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(wrapTx)
+
     await generateRecords({ accounts })({
       name,
       owner: 'user',
@@ -1348,9 +1368,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await morePage.goto(name)
     await login.connect()
-
-    await morePage.wrapButton.click()
-    await transactionModal.autoComplete()
 
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
@@ -1414,6 +1431,13 @@ test.describe('wrapped name with legacy resolver', () => {
       records: await makeRecords(),
     })
 
+    const wrapTx = await wrapName(walletClient, {
+      name,
+      newOwnerAddress: accounts.getAddress('user') as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(wrapTx)
+
     await generateRecords({ accounts })({
       name,
       owner: 'user',
@@ -1428,9 +1452,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await morePage.goto(name)
     await login.connect()
-
-    await morePage.wrapButton.click()
-    await transactionModal.autoComplete()
 
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
@@ -1486,6 +1507,13 @@ test.describe('wrapped name with legacy resolver', () => {
       records: await makeRecords(),
     })
 
+    const wrapTx = await wrapName(walletClient, {
+      name,
+      newOwnerAddress: accounts.getAddress('user') as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(wrapTx)
+
     await generateRecords({ accounts })({
       name,
       owner: 'user',
@@ -1507,9 +1535,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await morePage.goto(name)
     await login.connect()
-
-    await morePage.wrapButton.click()
-    await transactionModal.autoComplete()
 
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
@@ -1580,6 +1605,13 @@ test.describe('wrapped name with legacy resolver', () => {
       }),
     })
 
+    const wrapTx = await wrapName(walletClient, {
+      name,
+      newOwnerAddress: accounts.getAddress('user') as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(wrapTx)
+
     await generateRecords({ accounts })({
       name,
       owner: 'user',
@@ -1594,9 +1626,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await morePage.goto(name)
     await login.connect()
-
-    await morePage.wrapButton.click()
-    await transactionModal.autoComplete()
 
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
@@ -1665,6 +1694,13 @@ test.describe('wrapped name with legacy resolver', () => {
       }),
     })
 
+    const wrapTx = await wrapName(walletClient, {
+      name,
+      newOwnerAddress: accounts.getAddress('user') as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(wrapTx)
+
     await generateRecords({ accounts })({
       name,
       owner: 'user',
@@ -1679,9 +1715,6 @@ test.describe('wrapped name with legacy resolver', () => {
 
     await morePage.goto(name)
     await login.connect()
-
-    await morePage.wrapButton.click()
-    await transactionModal.autoComplete()
 
     await morePage.editResolverButton.click()
     await page.getByTestId('custom-resolver-radio').check()
