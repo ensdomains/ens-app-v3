@@ -400,7 +400,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               })}
               alwaysShowDividers={{ bottom: true }}
             >
-              {view}
               <AvatarWrapper>
                 <WrappedAvatarButton
                   name={name}
