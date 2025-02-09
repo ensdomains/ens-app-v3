@@ -7,23 +7,12 @@ import { getSupportLink } from '@app/utils/supportLinks'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ContentContainer } from '../components/ContentContainer'
-import { DetailedSwitch } from '../components/DetailedSwitch'
-import type { SelectedProfile } from '../ResolverWarningOverlay'
 
 type Props = {
-  selected: SelectedProfile
-  hasProfile: boolean
-  onChangeSelected: (selected: SelectedProfile) => void
   onCancel: () => void
   onNext: () => void
 }
-export const ResolverNotNameWrapperAwareView = ({
-  selected,
-  hasProfile,
-  onChangeSelected,
-  onNext,
-  onCancel,
-}: Props) => {
+export const ResolverNotNameWrapperAwareView = ({ onNext, onCancel }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
     <>
@@ -40,16 +29,6 @@ export const ResolverNotNameWrapperAwareView = ({
             {t('input.profileEditor.warningOverlay.action.learnMoreResolvers')}
           </Outlink>
         </ContentContainer>
-        {hasProfile && (
-          <DetailedSwitch
-            title={t('input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.title')}
-            description={t(
-              'input.profileEditor.warningOverlay.resolverNotNameWrapperAware.toggle.subtitle',
-            )}
-            checked={selected !== 'reset'}
-            onChange={(e) => onChangeSelected(e.target.checked ? 'latest' : 'reset')}
-          />
-        )}
       </Dialog.Content>
       <Dialog.Footer
         leading={

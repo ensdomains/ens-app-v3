@@ -177,6 +177,13 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
         account: ownerAddress as `0x${string}`,
       })
       await waitForTransaction(resolverTx)
+
+      if (records) await generateRecords({ accounts })({
+        name,
+        owner,
+        resolver: resolver as `0x${string}`,
+        records,
+      })
     }
 
     if (childFuses) {
