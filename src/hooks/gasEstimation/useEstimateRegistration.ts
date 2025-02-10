@@ -1,7 +1,4 @@
 import { useMemo } from 'react'
-import { parseEther } from 'viem'
-
-import { makeCommitment } from '@ensdomains/ensjs/utils'
 
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
 import { deriveYearlyFee } from '@app/utils/utils'
@@ -13,6 +10,7 @@ import { useEstimateGasWithStateOverride } from '../chain/useEstimateGasWithStat
 import { useGasPrice } from '../chain/useGasPrice'
 import { usePrice } from '../ensjs/public/usePrice'
 import useRegistrationParams from '../useRegistrationParams'
+import { calculateTransactions } from './calculateTransactions'
 
 type UseEstimateFullRegistrationParameters = {
   registrationData: RegistrationReducerDataItem
@@ -38,7 +36,9 @@ export const useEstimateFullRegistration = ({
     contract: 'ensEthRegistrarController',
   })
 
-  const commitment = useMemo(() => makeCommitment(registrationParams), [registrationParams])
+  const legacyEthRegistrarControllerAddress = useContractAddress({
+    contract: 'legacyEthRegistrarController',
+  })
 
   const { data: blockTimestamp } = useBlockTimestamp()
   // default to use block timestamp as reference
@@ -54,34 +54,16 @@ export const useEstimateFullRegistration = ({
     [timestampReference],
   )
 
+  const transactions = calculateTransactions({
+    registrationParams,
+    ethRegistrarControllerAddress,
+    legacyEthRegistrarControllerAddress,
+    fiveMinutesAgoInSeconds,
+    price,
+  })
   const { data, isLoading } = useEstimateGasWithStateOverride({
-    transactions: [
-      {
-        name: 'commitName',
-        data: registrationParams,
-      },
-      {
-        name: 'registerName',
-        data: registrationParams,
-        stateOverride: [
-          {
-            address: ethRegistrarControllerAddress,
-            stateDiff: [
-              {
-                slot: 1,
-                keys: [commitment],
-                value: BigInt(fiveMinutesAgoInSeconds),
-              },
-            ],
-          },
-          {
-            address: registrationParams.owner,
-            balance: price ? (price.base + price.premium) * 2n + parseEther('10000') : undefined,
-          },
-        ],
-      },
-    ],
-    enabled: !!ethRegistrarControllerAddress && !!price,
+    transactions: transactions!,
+    enabled: !!transactions,
   })
 
   const premiumFee = price?.premium

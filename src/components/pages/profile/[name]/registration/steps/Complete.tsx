@@ -3,7 +3,6 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { tokenise } from '@ensdomains/ensjs/utils'
@@ -12,6 +11,7 @@ import { Button, mq, Typography } from '@ensdomains/thorin'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
+import { useRegistrationValueFromRegisterReceipt } from '@app/hooks/pages/register/useRegistrationValueFromRegisterReceipt'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { dateFromDateDiff } from '@app/utils/date'
@@ -125,47 +125,6 @@ const SubtitleWithGradient = styled(Typography)(
   `,
 )
 
-const nameRegisteredSnippet = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        name: 'name',
-        type: 'string',
-      },
-      {
-        indexed: true,
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        name: 'baseCost',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        name: 'premium',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        name: 'expires',
-        type: 'uint256',
-      },
-    ],
-    name: 'NameRegistered',
-    type: 'event',
-  },
-] as const
-
 const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
@@ -190,26 +149,10 @@ const useEthInvoice = (
   const commitReceipt = commitTxFlow?.minedData
   const registerReceipt = registerTxFlow?.minedData
 
-  const registrationValue = useMemo(() => {
-    if (!registerReceipt) return null
-    for (const log of registerReceipt.logs) {
-      try {
-        const {
-          args: { baseCost, premium },
-        } = decodeEventLog({
-          abi: nameRegisteredSnippet,
-          topics: log.topics,
-          data: log.data,
-          eventName: 'NameRegistered',
-        })
-        return baseCost + premium
-        // eslint-disable-next-line no-empty
-      } catch {}
-    }
-    return null
-  }, [registerReceipt])
+  const { data: registrationValue, isLoading: isRegistrationValueLoading } =
+    useRegistrationValueFromRegisterReceipt({ registerReceipt })
 
-  const isLoading = !commitReceipt || !registerReceipt
+  const isLoading = !commitReceipt || !registerReceipt || isRegistrationValueLoading
 
   useEffect(() => {
     const storage = localStorage.getItem(`avatar-src-${name}`)
