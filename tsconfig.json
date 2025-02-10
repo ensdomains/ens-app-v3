@@ -13,7 +13,7 @@
       "plugins": [
         {
           "name": "typescript-styled-plugin",
-          "tags": ["styled", "css", "mq"]
+          "tags": ["styled", "css"]
         }
       ]
     }
@@ -40,12 +40,13 @@
     "paths": {
       "@app/*": ["./src/*"],
       "@public/*": ["./public/*"],
-      "@root/*": ["./*"]
+      "@root/*": ["./*"],
+      "rainbow-sprinkles": ["./node_modules/rainbow-sprinkles/"]
     },
     "plugins": [
       {
         "name": "typescript-styled-plugin",
-        "tags": ["styled", "css", "mq"],
+        "tags": ["styled", "css"],
         "validate": false,
         "lint": {
           "validProperties": ["flex-gap"]

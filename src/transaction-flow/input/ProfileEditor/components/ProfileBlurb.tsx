@@ -61,7 +61,7 @@ export const ProfileBlurb = ({ name, resolverAddress }: Props) => {
   return (
     <Container>
       <AvatarWrapper>
-        <Avatar label="profile-button-avatar" src={avatar || zorb} noBorder />
+        <Avatar label="profile-button-avatar" src={avatar || zorb} />
       </AvatarWrapper>
       <InfoContainer>
         <Typography fontVariant="extraLargeBold">{name}</Typography>
