@@ -81,7 +81,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     return {
       label: t('transaction.viewEtherscan', { ns: 'common' }),
       onClick: () => window.open(makeEtherscanLink(address!, networkName, 'address'), '_blank'),
-      icon: OutlinkSVG,
+      icon: () => <OutlinkSVG height={16} width={16} />,
     }
   }, [primary.data?.name, isWrapped, t, address, networkName])
 
