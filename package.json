@@ -48,7 +48,7 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.2.0-beta.0",
-    "@ensdomains/ens-test-env": "0.5.0-beta.2",
+    "@ensdomains/ens-test-env": "0.6.0",
     "@ensdomains/ensjs": "4.0.2",
     "@ensdomains/thorin": "1.0.0-beta.24",
     "@metamask/post-message-stream": "^6.1.2",
