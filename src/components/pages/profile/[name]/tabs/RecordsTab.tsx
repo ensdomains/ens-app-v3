@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useChainId } from 'wagmi'
 
-import { Button, mq, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -37,10 +37,10 @@ const AllRecords = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['3']};
     padding: ${theme.space['4.5']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -85,7 +85,7 @@ const SectionTitle = styled(Typography)(
 
 const SectionSubtitle = styled(Typography)(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
   `,
 )
 
@@ -100,9 +100,9 @@ const Actions = styled.div(
     border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['4']} ${theme.space['6']};
-    `)}
+    }
   `,
 )
 

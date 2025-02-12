@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { mq, OutlinkSVG, Typography } from '@ensdomains/thorin'
+import { OutlinkSVG, Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 import { safeDateObj } from '@app/utils/date'
@@ -22,12 +22,12 @@ const Container = styled.div(({ theme }) => [
     gap: ${theme.space[2]};
     border-bottom: 1px solid ${theme.colors.border};
     padding: ${theme.space['4']} 0;
+    @media (min-width: ${theme.breakpoints.lg}px) {
+      border-bottom: none;
+      border-right: 1px solid ${theme.colors.border};
+      padding: 0 ${theme.space['1']} 0 ${theme.space['4']};
+    }
   `,
-  mq.lg.min(css`
-    border-bottom: none;
-    border-right: 1px solid ${theme.colors.border};
-    padding: 0 ${theme.space['1']} 0 ${theme.space['4']};
-  `),
 ])
 
 const Header = styled.div(

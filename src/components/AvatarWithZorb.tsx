@@ -2,7 +2,7 @@ import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { Avatar, mq, Space } from '@ensdomains/thorin'
+import { Avatar, Space } from '@ensdomains/thorin'
 
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
@@ -22,16 +22,30 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
           height: ${$size ? theme.space[$size] : theme.space.full};
           flex: 0 0 ${$size ? theme.space[$size] : theme.space.full};
         `
-      : Object.entries($size)
-          .filter(([key]) => key !== 'min')
-          .map(([key, value]) =>
-            mq[key as keyof typeof mq].min(css`
-              width: ${theme.space[value as Space]};
-              height: ${theme.space[value as Space]};
-              flex: 0 0 ${theme.space[value as Space]};
-            `),
-          )}
-
+      : css`
+          @media (min-width: ${theme.breakpoints.xs}px) {
+            width: ${theme.space[$size.min]};
+            height: ${theme.space[$size.min]};
+            flex: 0 0 ${theme.space[$size.min]};
+          }
+          ${Object.keys($size)
+            .filter((key) => key !== 'min' && key in theme.breakpoints)
+            .map((key) => {
+              const sizeValue = $size[key as keyof typeof $size]
+              return sizeValue
+                ? css`
+                    @media (min-width: ${theme.breakpoints[
+                        key as keyof typeof theme.breakpoints
+                      ]}px) {
+                      width: ${theme.space[sizeValue]};
+                      height: ${theme.space[sizeValue]};
+                      flex: 0 0 ${theme.space[sizeValue]};
+                    }
+                  `
+                : null
+            })}
+        `}
+    
     img {
       display: block;
     }

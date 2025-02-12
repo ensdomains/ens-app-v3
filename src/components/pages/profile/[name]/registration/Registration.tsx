@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { useAccount, useChainId } from 'wagmi'
 
-import { Dialog, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Dialog, Helper, Typography } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -48,10 +48,10 @@ const ViewProfileContainer = styled.div(
       }
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: 0;
       padding: 0;
-    `)}
+    }
   `,
 )
 
@@ -60,8 +60,8 @@ type Props = {
   isLoading: boolean
 }
 
-const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
-  css`
+const StyledInnerDialog = styled(InnerDialog)(
+  ({ theme }) => css`
     height: 85vh;
     max-height: 85vh;
     margin: -${theme.space['4']};
@@ -70,17 +70,17 @@ const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
     overflow: hidden;
     border-top-left-radius: ${theme.radii['3xLarge']};
     border-top-right-radius: ${theme.radii['3xLarge']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      height: 90vh;
+      max-height: 720px;
+      width: calc(80vw - 2 * ${theme.space['6']});
+      max-width: ${theme.space['128']};
+      margin: -${theme.space['6']};
+      border-bottom-left-radius: ${theme.radii['3xLarge']};
+      border-bottom-right-radius: ${theme.radii['3xLarge']};
+    }
   `,
-  mq.sm.min(css`
-    height: 90vh;
-    max-height: 720px;
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-    margin: -${theme.space['6']};
-    border-bottom-left-radius: ${theme.radii['3xLarge']};
-    border-bottom-right-radius: ${theme.radii['3xLarge']};
-  `),
-])
+)
 
 const MoonPayHeader = styled.div(
   ({ theme }) => css`
@@ -297,7 +297,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
             </ViewProfileContainer>
           ),
           trailing: match([labelTooLong, step])
-            .with([true, P._], () => <Helper type="error">{t('error.nameTooLong')}</Helper>)
+            .with([true, P._], () => <Helper alert="error">{t('error.nameTooLong')}</Helper>)
             .with([false, 'pricing'], () => (
               <Pricing
                 name={normalisedName}

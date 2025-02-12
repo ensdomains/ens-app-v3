@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, mq, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Button, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
@@ -18,7 +18,7 @@ const Container = styled.div<{ $banner?: string }>(
     width: 100%;
     padding: ${theme.space['4']};
     padding-top: ${theme.space['18']};
-    background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
+    background-image: ${$banner ? `url(${$banner})` : theme.colors.blueGradient};
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-size: 100% ${theme.space['28']};
@@ -33,10 +33,10 @@ const Container = styled.div<{ $banner?: string }>(
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
       padding-top: ${theme.space['12']};
-    `)}
+    }
   `,
 )
 
@@ -209,7 +209,7 @@ export const ProfileSnippet = ({
         <Button
           size="small"
           colorStyle="accentSecondary"
-          prefix={<FastForwardSVG />}
+          prefix={FastForwardSVG}
           data-testid="extend-button"
           onClick={() => {
             showExtendNamesInput(`extend-names-${name}`, {
