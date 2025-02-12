@@ -245,8 +245,8 @@ importers:
         specifier: ^0.2.6
         version: 0.2.6
       ts-pattern:
-        specifier: ^5.6.2
-        version: 5.6.2
+        specifier: ^4.3.0
+        version: 4.3.0
       use-immer:
         specifier: ^0.7.0
         version: 0.7.0(immer@9.0.21)(react@18.3.1)
@@ -8750,6 +8750,9 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
+
+  ts-pattern@4.3.0:
+    resolution: {integrity: sha512-pefrkcd4lmIVR0LA49Imjf9DYLK8vtWhqBPA3Ya1ir8xCW0O2yjL9dsCVvI7pCodLC5q7smNpEtDR2yVulQxOg==}
 
   ts-pattern@5.6.2:
     resolution: {integrity: sha512-d4IxJUXROL5NCa3amvMg6VQW2HVtZYmUTPfvVtO7zJWGYLJ+mry9v2OmYm+z67aniQoQ8/yFNadiEwtNS9qQiw==}
@@ -19931,6 +19934,8 @@ snapshots:
       typescript: 5.4.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+
+  ts-pattern@4.3.0: {}
 
   ts-pattern@5.6.2: {}
 

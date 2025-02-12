@@ -88,7 +88,7 @@
     "react-use-intercom": "^5.1.4",
     "styled-components": "^5.3.5",
     "tinyglobby": "^0.2.6",
-    "ts-pattern": "^5.6.2",
+    "ts-pattern": "^4.3.0",
     "use-immer": "^0.7.0",
     "viem": "2.19.4",
     "wagmi": "2.12.4"
