@@ -17,6 +17,9 @@
     "minutesAgo_other": "Last checked {{count}} minutes ago"
   },
   "steps": {
+    "importError": {
+      "message": "Importing domain names with non-ASCII characters is not supported"
+    },
     "selectType": {
       "title": "Claim {{name}}",
       "subtitle": "Importing domain names allows them to be used as ENS names.",
