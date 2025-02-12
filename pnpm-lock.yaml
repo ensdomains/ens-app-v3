@@ -432,8 +432,8 @@ importers:
         specifier: ^37.0.0
         version: 37.0.0(stylelint@16.14.1(typescript@5.4.5))
       stylelint-webpack-plugin:
-        specifier: ^3.3.0
-        version: 3.3.0(stylelint@16.14.1(typescript@5.4.5))
+        specifier: ^5.0.1
+        version: 5.0.1(stylelint@16.14.1(typescript@5.4.5))
       svgo:
         specifier: latest
         version: 3.3.2
@@ -1823,6 +1823,14 @@ packages:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
 
+  '@jest/schemas@29.6.3':
+    resolution: {integrity: sha512-mo5j5X+jIZmJQveBKeS/clAueipV7KgiX1vMgCxam1RNYiqE1w62n0/tJJnHtjW8ZHcQco5gY85jA3mi0L+nSA==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
+  '@jest/types@29.6.3':
+    resolution: {integrity: sha512-u3UPsIilWKOM3F9CXtrG8LEJmNxwoCQC/XVj4IKYXvvpx7QIi/Kg1LI5uDmDpKlac62NUtX7eLjRh+jVZcLOzw==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
   '@jridgewell/gen-mapping@0.3.5':
     resolution: {integrity: sha512-IzL8ZoEDIBRWEzlCcRhOaCupYyN5gdIK+Q6fbFdPDg6HqX6jpkItn7DFIpW9LQzXG6Df9sA7+OKnq0qlz/GaQg==}
     engines: {node: '>=6.0.0'}
@@ -2584,6 +2592,9 @@ packages:
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
+  '@sinclair/typebox@0.27.8':
+    resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
+
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
@@ -3081,6 +3092,15 @@ packages:
   '@types/http-cache-semantics@4.0.4':
     resolution: {integrity: sha512-1m0bIFVc7eJWyve9S0RnuRgcQqF/Xd5QsUZAZeQFr1Q3/p9JWoQQEqmVy+DPTNpGXwhgIetAoYF8JSc33q29QA==}
 
+  '@types/istanbul-lib-coverage@2.0.6':
+    resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
+
+  '@types/istanbul-lib-report@3.0.3':
+    resolution: {integrity: sha512-NQn7AHQnk/RSLOxrBbGyJM/aVQ+pjj5HCgasFxc0K/KhoATfQ/47AyUl15I2yBUpihjmas+a+VJBOqecrFH+uA==}
+
+  '@types/istanbul-reports@3.0.4':
+    resolution: {integrity: sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==}
+
   '@types/js-cookie@2.2.7':
     resolution: {integrity: sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA==}
 
@@ -3158,6 +3178,12 @@ packages:
 
   '@types/ws@8.5.10':
     resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
+
+  '@types/yargs-parser@21.0.3':
+    resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
+
+  '@types/yargs@17.0.33':
+    resolution: {integrity: sha512-WpxBCKWPLr4xSsHgz511rFJAM+wS28w2zEO1QDNY5zM/S8ok70NNfztH0xwhqKyaK0OHCbN98LDAZuy1ctxDkA==}
 
   '@typescript-eslint/eslint-plugin@6.21.0':
     resolution: {integrity: sha512-oy9+hTPCUFpngkEZUSzbf9MxI65wbKFoQYsgPdILTfbUldp5ovUuphZVe4i30emU9M/kP+T64Di0mxl7dSw3MA==}
@@ -3948,6 +3974,10 @@ packages:
 
   ci-info@2.0.0:
     resolution: {integrity: sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==}
+
+  ci-info@3.9.0:
+    resolution: {integrity: sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ==}
+    engines: {node: '>=8'}
 
   cids@0.7.5:
     resolution: {integrity: sha512-zT7mPeghoWAu+ppn8+BS1tQ5qGmbMfB4AregnQjA/qHY3GC1m1ptI9GkWNlgeu38r7CuRdXB47uY2XgAYt6QVA==}
@@ -5629,9 +5659,13 @@ packages:
   jest-canvas-mock@2.5.2:
     resolution: {integrity: sha512-vgnpPupjOL6+L5oJXzxTxFrlGEIbHdZqFU+LFNdtLxZ3lRDCl17FlTMM7IatoRQkrcyOTMlDinjUguqmQ6bR2A==}
 
-  jest-worker@28.1.3:
-    resolution: {integrity: sha512-CqRA220YV/6jCo8VWvAt1KKx6eek1VIHMPeLEbpcfSfkEeWyBNppynM/o6q+Wmw+sOhos2ml34wZbSX3G13//g==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+  jest-util@29.7.0:
+    resolution: {integrity: sha512-z6EbKajIpqGKU56y5KBUgy1dt1ihhQJgWzUlZHArA/+X2ad7Cb5iF+AK1EWVL/Bo7Rz9uurpqw6SiBCefUbCGA==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
+  jest-worker@29.7.0:
+    resolution: {integrity: sha512-eIz2msL/EzL9UFTFFx7jBTkeZfku0yUAyZZZmJ93H2TYEiroIx2PQjEXcwYtYl8zXCxb+PAmA2hLIt/6ZEkPHw==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
@@ -5979,10 +6013,6 @@ packages:
 
   micro-ftch@0.3.1:
     resolution: {integrity: sha512-/0LLxhzP0tfiR5hcQebtudP56gUurs2CLkGarnCiB/OqEyUFQ6U3paQi/tgLv0hBJYt2rnr9MNpxz4fiiugstg==}
-
-  micromatch@4.0.7:
-    resolution: {integrity: sha512-LPP/3KorzCwBxfeUuZmaR6bG2kdeHSbe0P2tY3FLRU4vYrjYz5hI4QZwV0njUx3jeuKe67YukQ1LSPZBKDqO/Q==}
-    engines: {node: '>=8.6'}
 
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
@@ -7453,11 +7483,11 @@ packages:
     peerDependencies:
       stylelint: ^16.13.0
 
-  stylelint-webpack-plugin@3.3.0:
-    resolution: {integrity: sha512-F53bapIZ9zI16ero8IWm6TrUE6SSibZBphJE9b5rR2FxtvmGmm1YmS+a5xjQzn63+cv71GVSCu4byX66fBLpEw==}
-    engines: {node: '>= 12.13.0'}
+  stylelint-webpack-plugin@5.0.1:
+    resolution: {integrity: sha512-07lpo1uVoFctKv0EOOg/YSrUppcLMjNBSMRqgooNnlbfAOgQfMzvLK+EbXz0HQiEgZobr+XQX9md/TgwTGdzbw==}
+    engines: {node: '>= 18.12.0'}
     peerDependencies:
-      stylelint: ^13.0.0 || ^14.0.0
+      stylelint: ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
       webpack: ^5.0.0
 
   stylelint@16.14.1:
@@ -10318,6 +10348,19 @@ snapshots:
 
   '@istanbuljs/schema@0.1.3': {}
 
+  '@jest/schemas@29.6.3':
+    dependencies:
+      '@sinclair/typebox': 0.27.8
+
+  '@jest/types@29.6.3':
+    dependencies:
+      '@jest/schemas': 29.6.3
+      '@types/istanbul-lib-coverage': 2.0.6
+      '@types/istanbul-reports': 3.0.4
+      '@types/node': 20.17.17
+      '@types/yargs': 17.0.33
+      chalk: 4.1.2
+
   '@jridgewell/gen-mapping@0.3.5':
     dependencies:
       '@jridgewell/set-array': 1.2.1
@@ -11202,6 +11245,8 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
+  '@sinclair/typebox@0.27.8': {}
+
   '@sindresorhus/is@4.6.0': {}
 
   '@snyk/github-codeowners@1.1.0':
@@ -11707,6 +11752,16 @@ snapshots:
 
   '@types/http-cache-semantics@4.0.4': {}
 
+  '@types/istanbul-lib-coverage@2.0.6': {}
+
+  '@types/istanbul-lib-report@3.0.3':
+    dependencies:
+      '@types/istanbul-lib-coverage': 2.0.6
+
+  '@types/istanbul-reports@3.0.4':
+    dependencies:
+      '@types/istanbul-lib-report': 3.0.3
+
   '@types/js-cookie@2.2.7': {}
 
   '@types/json-schema@7.0.15': {}
@@ -11783,6 +11838,12 @@ snapshots:
   '@types/ws@8.5.10':
     dependencies:
       '@types/node': 20.17.17
+
+  '@types/yargs-parser@21.0.3': {}
+
+  '@types/yargs@17.0.33':
+    dependencies:
+      '@types/yargs-parser': 21.0.3
 
   '@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5)':
     dependencies:
@@ -12988,6 +13049,8 @@ snapshots:
   chownr@1.1.4: {}
 
   ci-info@2.0.0: {}
+
+  ci-info@3.9.0: {}
 
   cids@0.7.5:
     dependencies:
@@ -15004,9 +15067,19 @@ snapshots:
       cssfontparser: 1.2.1
       moo-color: 1.0.3
 
-  jest-worker@28.1.3:
+  jest-util@29.7.0:
+    dependencies:
+      '@jest/types': 29.6.3
+      '@types/node': 20.17.17
+      chalk: 4.1.2
+      ci-info: 3.9.0
+      graceful-fs: 4.2.11
+      picomatch: 2.3.1
+
+  jest-worker@29.7.0:
     dependencies:
       '@types/node': 20.17.17
+      jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -15383,11 +15456,6 @@ snapshots:
   methods@1.1.2: {}
 
   micro-ftch@0.3.1: {}
-
-  micromatch@4.0.7:
-    dependencies:
-      braces: 3.0.3
-      picomatch: 2.3.1
 
   micromatch@4.0.8:
     dependencies:
@@ -16922,11 +16990,11 @@ snapshots:
       stylelint: 16.14.1(typescript@5.4.5)
       stylelint-config-recommended: 15.0.0(stylelint@16.14.1(typescript@5.4.5))
 
-  stylelint-webpack-plugin@3.3.0(stylelint@16.14.1(typescript@5.4.5)):
+  stylelint-webpack-plugin@5.0.1(stylelint@16.14.1(typescript@5.4.5)):
     dependencies:
       globby: 11.1.0
-      jest-worker: 28.1.3
-      micromatch: 4.0.7
+      jest-worker: 29.7.0
+      micromatch: 4.0.8
       normalize-path: 3.0.0
       schema-utils: 4.2.0
       stylelint: 16.14.1(typescript@5.4.5)
