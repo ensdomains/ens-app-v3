@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
-import { Button, CheckSVG, Helper, mq, Spinner, Tag, Typography } from '@ensdomains/thorin'
+import { Button, CheckSVG, Helper, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
 import CoreFeatureENS from '@app/assets/dotbox/CoreFeatureENS.svg'
 import CoreFeatureNFT from '@app/assets/dotbox/CoreFeatureNFT.svg'
@@ -27,10 +27,10 @@ const DotBoxCard = styled(Card)(
     padding: ${theme.space['4']};
     align-items: flex-start;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -176,7 +176,7 @@ export const DotBoxRegistration = () => {
                   ))
                   .with({ isLoading: false, nameStatus: P._ }, () => (
                     <>
-                      <Helper type="warning" alignment="horizontal">
+                      <Helper alert="warning" alignment="horizontal">
                         Online registration for this domain is unavailable. Please contact the
                         registry directly for further information.
                       </Helper>

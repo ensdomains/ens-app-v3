@@ -6,7 +6,7 @@ import { Address } from 'viem'
 
 import {
   Button,
-  Card,
+  CardDivider,
   CopySVG,
   Dropdown,
   OutlinkSVG,
@@ -81,7 +81,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     return {
       label: t('transaction.viewEtherscan', { ns: 'common' }),
       onClick: () => window.open(makeEtherscanLink(address!, networkName, 'address'), '_blank'),
-      icon: <OutlinkSVG />,
+      icon: () => <OutlinkSVG height={16} width={16} />,
     }
   }, [primary.data?.name, isWrapped, t, address, networkName])
 
@@ -98,13 +98,13 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
             label: t('wallet.viewProfile'),
             onClick: () => router.push(getDestination(`/profile/${primary.data!.name}`) as string),
             color: 'text',
-            icon: <UpRightArrowSVG />,
+            icon: () => <UpRightArrowSVG height={16} width={16} />,
           },
           {
             label: t('name.copy'),
             onClick: () => copy(primary.data!.name!),
             color: 'text',
-            icon: <CopySVG />,
+            icon: () => <CopySVG height={16} width={16} />,
           },
         ] as DropdownItem[])
       : []),
@@ -112,18 +112,18 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
       label: t('address.viewAddress'),
       onClick: () => router.push(getDestination(`/address/${address}`) as string),
       color: 'text',
-      icon: <UpRightArrowSVG />,
+      icon: () => <UpRightArrowSVG height={16} width={16} />,
     },
     {
       label: t('address.copyAddress'),
       onClick: () => copy(address!),
       color: 'text',
-      icon: <CopySVG />,
+      icon: () => <CopySVG height={16} width={16} />,
     },
     ...(etherscanAction ? [etherscanAction] : []),
     ...(editRolesAction ? [editRolesAction] : []),
     ...(syncManagerAction ? [syncManagerAction] : []),
-  ]
+  ] as DropdownItem[]
 
   const { isLoading } = primary
 
@@ -146,12 +146,12 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
               colorStyle="accentSecondary"
               size="small"
             >
-              <VerticalDotsSVG />
+              <VerticalDotsSVG width={12} height={12} />
             </Button>
           </Dropdown>
         </div>
       </Container>
-      <Card.Divider />
+      <CardDivider />
     </>
   )
 }

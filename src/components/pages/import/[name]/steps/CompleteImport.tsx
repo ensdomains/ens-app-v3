@@ -3,7 +3,7 @@ import type ConfettiT from 'react-confetti'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, mq, Typography } from '@ensdomains/thorin'
+import { Button, Helper, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
@@ -25,10 +25,10 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -68,7 +68,7 @@ const SubtitleWithGradient = styled(Typography)(
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
 
-    background: ${theme.colors.gradients.blue};
+    background: ${theme.colors.blueGradient};
     /* stylelint-disable property-no-vendor-prefix */
     -webkit-background-clip: text;
     -moz-background-clip: text;

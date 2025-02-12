@@ -14,7 +14,7 @@ const Container = styled.div(
 
 const Name = styled.span<{ $disabled?: boolean }>(
   ({ theme, $disabled }) => css`
-    color: ${$disabled ? theme.colors.textTertiary : theme.colors.text};
+    color: ${$disabled ? theme.colors.grey : theme.colors.text};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -24,13 +24,13 @@ const Name = styled.span<{ $disabled?: boolean }>(
 
 const Dot = styled.span(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
   `,
 )
 
 const Tld = styled.span(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.grey};
     white-space: nowrap;
   `,
 )

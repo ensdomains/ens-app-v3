@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import dynamic from 'next/dynamic'
+import { SVGProps } from 'react'
 
 import { QuestionCircleSVG } from '@ensdomains/thorin'
 
@@ -34,11 +35,10 @@ export const DynamicSocialIcon = ({
 }: {
   name: keyof typeof socialIconTypes | string
   showDefault?: boolean
-  fill?: string
-}) => {
+} & Omit<SVGProps<SVGSVGElement>, 'name'>) => {
   if (name in socialIconTypes) {
     const key = name as keyof typeof socialIconTypes
-    const Icon = socialIconTypes[key] as any
+    const Icon = socialIconTypes[key]
     const fill = socialIconColors[key]
     return <Icon {...props} fill={fill} />
   }
