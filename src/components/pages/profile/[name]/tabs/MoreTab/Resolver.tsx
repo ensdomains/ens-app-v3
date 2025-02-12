@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
-import { Button, mq, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -27,9 +27,9 @@ const Container = styled(TabWrapper)(
 
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -70,9 +70,9 @@ const ButtonStack = styled.div(
     justify-content: flex-end;
     gap: ${theme.space['4']};
 
-    ${mq.md.max(css`
+    @media (max-width: 640px) {
       flex-direction: column;
-    `)}
+    }
   `,
 )
 

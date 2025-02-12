@@ -205,7 +205,7 @@ test('should allow import (not owned by user)', async ({
     ),
   ).toBeVisible()
   await expect(importPage.nextButton).toHaveText('Import without ownership')
-  await expect(importPage.nextButton).toHaveCSS('background-color', 'rgb(197, 47, 27)')
+  await expect(importPage.nextButton).toHaveCSS('background-color', 'rgb(198, 48, 27)')
 
   await importPage.nextButton.click()
 

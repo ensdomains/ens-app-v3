@@ -107,7 +107,7 @@ The App is hosted on cloudflare and IPFS
 
 #### [Ens.js](https://github.com/ensdomains/ensjs-v3)
 
-Much of the logic around interacting with the ENS contracts has been extraced into this
+Much of the logic around interacting with the ENS contracts has been extracted into this
 library. This is mostly so that we can help to make the experience of interacting with
 ENS as simple as possible for other developers.
 
@@ -469,17 +469,10 @@ Cloudflare will automatically build and deploy a test site when pushed to a new 
 
 ## External Package Local Development
 
-1. Install yalc globally:
+2. Link a local package:
 
 ```bash
-npm i -g yalc
-```
-
-2. Run relevant update script within external repo, for example:
-
-```bash
-# Example publish script for ENSjs, be aware this may have changed.
-pnpm publish:local:ensjs
+pnpm link ../ensjs
 ```
 
 3. Run pnpm install within this repo:
@@ -488,7 +481,6 @@ pnpm publish:local:ensjs
 pnpm install
 ```
 
-If updating an existing yalc installation, you can add the `--force` flag.
 
 ## Coding guidelines
 

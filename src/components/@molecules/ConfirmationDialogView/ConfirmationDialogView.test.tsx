@@ -2,8 +2,8 @@ import { render, screen, userEvent } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import { ConfirmationDialogView } from './ConfirmationDialogView'
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
+import { ConfirmationDialogView } from './ConfirmationDialogView'
 
 const mockOnConfirm = vi.fn()
 const mockOnDecline = vi.fn()

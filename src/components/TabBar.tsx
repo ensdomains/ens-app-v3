@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useEnsAvatar } from 'wagmi'
 
-import { CrossSVG, LeftChevronSVG, mq, PersonSVG } from '@ensdomains/thorin'
+import { CrossSVG, LeftChevronSVG, PersonSVG } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
@@ -72,9 +72,9 @@ const TabWrapper = styled.div(
       ${theme.colors.backgroundSecondary} 60%
     );
     padding: ${theme.space['4']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       display: none;
-    `)}
+    }
   `,
 )
 

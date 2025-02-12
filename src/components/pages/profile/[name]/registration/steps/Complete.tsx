@@ -7,7 +7,7 @@ import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { tokenise } from '@ensdomains/ensjs/utils'
-import { Button, mq, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
@@ -34,10 +34,10 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -50,9 +50,9 @@ const ButtonContainer = styled.div(
     justify-content: center;
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -63,10 +63,10 @@ const NFTContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
     overflow: hidden;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: ${theme.space['80']};
       height: ${theme.space['80']};
-    `)}
+    }
   `,
 )
 
@@ -77,10 +77,11 @@ const InvoiceContainer = styled.div(
     justify-content: center;
     flex-direction: column;
     gap: ${theme.space['4']};
-    ${mq.sm.min(css`
+
+    @media (min-width: ${theme.breakpoints.sm}px) {
       gap: ${theme.space['6']};
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -109,7 +110,7 @@ const SubtitleWithGradient = styled(Typography)(
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
 
-    background-image: ${theme.colors.gradients.blue};
+    background-image: ${theme.colors.blueGradient};
     /* stylelint-disable property-no-vendor-prefix */
     -webkit-background-clip: text;
     -moz-background-clip: text;

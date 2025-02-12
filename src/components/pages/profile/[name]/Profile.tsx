@@ -89,7 +89,7 @@ export const NameAvailableBanner = ({
       <Banner
         alert="info"
         as="a"
-        icon={<CheckCircleSVG />}
+        icon={CheckCircleSVG}
         title={t('banner.available.title', { name: normalisedName })}
       >
         <Trans
