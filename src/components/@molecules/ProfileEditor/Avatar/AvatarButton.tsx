@@ -34,7 +34,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
 
     ${$dirty &&
     css`
-      :after {
+      ::after {
         background-color: ${theme.colors.blue};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
@@ -43,7 +43,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
 
     ${$validated &&
     css`
-      :after {
+      ::after {
         background-color: ${theme.colors.green};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
@@ -52,7 +52,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
 
     ${$error &&
     css`
-      :after {
+      ::after {
         background-color: ${theme.colors.red};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);

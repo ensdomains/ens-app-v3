@@ -22,7 +22,7 @@ const Container = styled.div<{ $banner?: string }>(
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-size: 100% ${theme.space['28']};
-    background-position-y: -1px; // for overlap with border i think
+    background-position-y: -1px; /* for overlap with border i think */
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.border};
