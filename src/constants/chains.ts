@@ -67,7 +67,7 @@ export const getChainsFromUrl = () => {
       return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
     }
     if (segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-      return [holeskyWithEns, mainnetWithEns, sepoliaWithEns]
+      return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
     }
   }
 
