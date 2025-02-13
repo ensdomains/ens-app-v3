@@ -10,7 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/setup.yaml
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -26,7 +39,20 @@ jobs:
         type: [stateless, stateful]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/setup.yaml
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       
       - name: Get contract addresses
         if: matrix.type == 'stateless'
@@ -63,7 +89,20 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/setup.yaml
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -108,7 +147,21 @@ jobs:
         shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/setup.yaml
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
       - run: ./scripts/check-chrome.sh
 
       - name: Cache Playwright browsers
