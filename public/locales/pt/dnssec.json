@@ -25,7 +25,7 @@
         "heading": "Como você gostaria de importar seu domínio?",
         "offchain": {
           "name": "Offchain",
-          "tag": "Grétis",
+          "tag": "Gratuito",
           "description": "Seu nome não terá um token onchain.<br/>Isso não afeta sua capacidade de receber transações ou usá-lo como nome principal.<br/><b>Você não poderá editar seu perfil da aplicação de ENS.</b>"
         },
         "onchain": {
