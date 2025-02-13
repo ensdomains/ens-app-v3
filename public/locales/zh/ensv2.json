@@ -1,0 +1,61 @@
+{
+  "title": "Namechain 是一个专为链上身份设计的二层网络",
+  "caption": "专为厌倦了地址、数字和复杂性的用户而打造。Namechain 通过名字而非数字的力量，让用户和开发者能够创建链上身份。",
+  "accessible": {
+    "title": "让 ENS 更易于使用",
+    "caption": "我们正在利用过去 7 年在 web3 名称领域前沿的经验，在二层网络上从零重新构思架构。通过利用二层网络，我们很高兴能让 ENS 服务更多用户。",
+    "link": "ENSv2 项目计划",
+    "gas": {
+      "title": "更低的网络费",
+      "text": "二层网络降低了网络费，使 .eth 注册和续费更便宜、更快捷。"
+    },
+    "control": {
+      "title": "增强控制",
+      "text": "ENSv2 为每个 .eth 名称提供独立的注册表，提供更多灵活性和控制权。"
+    },
+    "multichain": {
+      "title": "改进的多链支持",
+      "text": "二层网络通过无信任连接实现跨区块链无缝使用 .eth 名称。"
+    }
+  },
+  "learn-more": {
+    "title": "想了解更多？",
+    "caption": "如果你想了解更多并在 Namechain 上进行开发，欢迎加入 ENS 开发者 Telegram 群。",
+    "button": "开发者 Telegram 群"
+  },
+  "announcement": {
+    "title": "公告",
+    "l2": {
+      "title": "二层网络合作伙伴公告",
+      "caption": "我们宣布将与 _____ 合作！观看 Nick 的 _____ 演讲以了解完整公告。"
+    },
+    "ensv2": {
+      "title": "ENSv2：进展更新",
+      "caption": "本次更新旨在提供信息性和技术性的内容，让 ENS 社区了解我们的进展。"
+    },
+    "nextgen": {
+      "title": "ENSv2：下一代 ENS",
+      "caption": "我们对二层网络上下一代 ENS 协议的愿景。"
+    }
+  },
+  "footer": {
+    "title": "有疑问？",
+    "learn": {
+      "title": "学习",
+      "faq": "ENSv2 常见问题",
+      "plan": "ENSv2 项目计划",
+      "base": "知识库"
+    },
+    "support": {
+      "title": "支持",
+      "ticket": "提交工单",
+      "twitter": "X（Twitter）",
+      "dao": "DAO 论坛"
+    }
+  },
+  "banner": {
+    "title": "Namechain 即将到来！",
+    "caption": "关注 ENSv2 开发进展",
+    "cta": "ENSv2 中心"
+  }
+}

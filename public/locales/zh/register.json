@@ -3,13 +3,13 @@
   "subtitle": "注册",
   "heading": "注册 {{name}}",
   "invoice": {
-    "timeRegistration": "注册{{time}}",
-    "registration": "注册",
+    "timeRegistration": "注册 {{time}}",
     "estimatedNetworkFee": "预估网络费",
     "transactionFees": "网络费",
     "temporaryPremium": "临时溢价",
     "total": "预估总额",
-    "totalPaid": "支付总额"
+    "totalPaid": "支付总额",
+    "expiry": "到期时间"
   },
   "error": {
     "nameTooLong": "您要注册的名称太长了，请选择一个较短的名称。"
@@ -77,13 +77,15 @@
             "itemLabel": "{{coin}} 地址",
             "placeholder": {
               "default": "在此添加地址",
-              "eth": "0xD9hbQK...",
-              "bnb": "bnb1grpf...",
+              "eth": "0xb8c2C2...",
               "btc": "3FZbgi29...",
-              "ltc": "ltc1qdp7p...",
               "sol": "D4kA7VzHnmV...",
-              "dot": "1D4kA7VxH...",
-              "doge": "DFabcd12..."
+              "op": "0xb8c2C2...",
+              "arb1": "0xb8c2C2...",
+              "base": "0xb8c2C2...",
+              "matic": "0xb8c2C2...",
+              "linea": "0xb8c2C2...",
+              "scr": "0xb8c2C2..."
             }
           },
           "website": {
@@ -126,7 +128,8 @@
       "errors": {
         "labelRequired": "记录键是必填项",
         "duplicateRecord": "重复的记录键",
-        "avatarReserved": "该键已被头像管理员使用"
+        "avatarReserved": "该键已被头像管理员使用",
+        "invalidValue": "无效的值"
       },
       "confirmations": {
         "publicNotice": {
@@ -149,7 +152,6 @@
     "complete": {
       "heading": "恭喜!",
       "subheading": "您现是该名称的所有者: ",
-      "description": "名称注册成功。现在可以查看和管理您的名称。",
       "registerAnother": "再注册一个",
       "viewName": "查看名称"
     },
@@ -161,7 +163,10 @@
         "等待计时器完成 60 秒计时",
         "完成第二笔交易来获得该名称"
       ],
-      "moonpayItems": ["创建或登录现有的 Moonpay 账户", "使用信用卡或借记卡完成单笔交易"],
+      "moonpayItems": [
+        "创建或登录现有的 Moonpay 账户", 
+        "使用信用卡或借记卡完成单笔交易"
+      ],
       "setupProfile": "我希望先创建我的个人资料",
       "paymentMethod": "支付方式",
       "notEnoughEth": "钱包中的 ETH 不足",
@@ -177,11 +182,20 @@
     },
     "transactions": {
       "heading": "接近完成",
-      "subheading": "该计时器有助于防止其他人在您之前注册该名称。只有在完成第二笔交易之后，才能成功注册该名称。",
+      "subheading": {
+        "default": "您需要完成两笔交易来获得您的名称。第二笔交易必须在第一笔交易后的24小时内完成。",
+        "commitSent": "<strong>您的第一笔交易正在处理中。</strong><br>第二笔交易必须在第一笔交易后的24小时内完成。",
+        "commiting": "这段等待时间可以防止他人<tooltip>抢先注册</tooltip>。计时器完成后，系统会提示您完成第二笔交易。",
+        "commitComplete": "<strong>在完成第二笔交易之前，您的名称尚未注册。</strong><br>您还剩 {{duration}} 来完成交易。",
+        "commitCompleteNoDuration": "<strong>在完成第二笔交易之前，您的名称尚未注册。</strong>",
+        "commitExpired": "您的注册已过期。您需要重新开始注册流程。",
+        "frontRunning": "当有人看到您的交易并在您的交易完成之前注册该名称。"
+      },
       "startTimer": "启动计时器",
       "wait": "等待",
+      "completeRegistration": "完成注册",
       "transactionFailed": "交易失败",
-      "transactionProgress": "交易正在处理"
+      "transactionProgress": "查看进行中的交易"
     },
     "cancelRegistration": {
       "heading": "您的交易将会丢失",
