@@ -1,0 +1,153 @@
+{
+  "meta": {
+    "title": "{{name}} no ENS",
+    "description": "Perfil de {{name}} no Ethereum Name Service"
+  },
+  "title": "Perfil",
+  "yourWallet": "Sua carteira",
+  "yourProfile": "Seu perfil",
+  "accounts": "Contas",
+  "addresses": "Endereços",
+  "otherRecords": "Outros registros",
+  "verifications": "Verificações",
+  "editProfile": "Editar perfil",
+  "ownership": "Propriedade",
+  "viewDetails": "Ver detalhes",
+  "banner": {
+    "empty": {
+      "title": "Personalize seu perfil",
+      "description": "Adicione endereços de criptomoedas, links sociais, um avatar e muito mais!",
+      "action": "Começar"
+    },
+    "available": {
+      "title": "{{name}} está disponível",
+      "description": "Este nome expirou em <strong>{{date}}</strong>. Clique aqui para ver a página de registro."
+    }
+  },
+  "tabs": {
+    "profile": {
+      "name": "Perfil",
+      "actions": {
+        "setAsPrimaryName": {
+          "label": "Definir como nome principal",
+          "title": "Definir seu nome principal",
+          "description": "Para definir seu nome principal com este nome, o endereço ETH deve corresponder a este endereço."
+        },
+        "deleteSubname": {
+          "label": "Excluir subnome"
+        },
+        "extend": {
+          "label": "Estender nome"
+        },
+        "editProfile": {
+          "label": "Editar perfil"
+        },
+        "reclaim": {
+          "label": "Recriar nome",
+          "warning": "Este subnome expirou e não está em propriedade. Você pode recriá-lo."
+        },
+        "verifyProfile": {
+          "label": "Verificações"
+        }
+      },
+      "warnings": {
+        "wrappedDNS": "Os nomes DNS podem ser reivindicados pelo proprietário DNS a qualquer momento. Não compre nomes DNS.",
+        "offchain": "Os nomes off-chain não aparecem atualmente na sua lista de 'Nomes'. <a>Saiba mais</a>",
+        "homoglyph": "Este nome contém caracteres não ASCII. Podem existir caracteres idênticos ou muito similares a outros, o que pode ser usado para enganar os leitores. <a>Saiba mais sobre homóglifos</a>"
+      }
+    },
+    "records": {
+      "name": "Registros"
+    },
+    "ownership": {
+      "name": "Propriedade",
+      "warning": {
+        "ownerNotManager": "Você é o Proprietário mas não o Administrador. Isso pode ser involuntário se você recebeu recentemente este nome de outro endereço.",
+        "managerNotParentOwner": "O Proprietário de <strong>{{parent}}</strong> pode alterar a propriedade, os papéis e as configurações. Não pode alterar o perfil.",
+        "managerNotDNSOwner": "Você é o Administrador mas não o Proprietário DNS deste nome. Os nomes DNS podem ser reivindicados pelo Proprietário DNS a qualquer momento. Você pode enviar este nome ao Proprietário ou atualizar o registro DNS para que corresponda.",
+        "dnsOwnerNotManager": "Você não pode fazer alterações neste nome porque é o Proprietário DNS, mas não o Administrador. Você pode sincronizar o administrador para corrigir isso."
+      },
+      "sections": {
+        "roles": {
+          "title": "Papéis",
+          "addresses_one": "{{count}} endereço",
+          "addresses_other": "{{count}} endereços"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "O nome expira"
+            },
+            "grace-period": {
+              "title": "O período de carência termina",
+              "tooltip": "Um período de carência de 90 dias após a expiração, durante o qual o nome ainda pode ser estendido mas não registrado novamente."
+            },
+            "registration": {
+              "title": "Registrado"
+            },
+            "parent-expiry": {
+              "title": "O nome pai expira"
+            },
+            "parent-grace-period": {
+              "title": "O período de carência do pai termina"
+            }
+          }
+        },
+        "contract": {
+          "title": "Endereço do contrato",
+          "tooltip": "O endereço do contrato que habilita os nomes ENS empacotados (Wrapped).",
+          "warning": "Algumas aplicações podem mostrar o endereço do contrato como o proprietário. Isso não afeta sua propriedade."
+        }
+      },
+      "tooltips": {
+        "owner": "O proprietário deste nome. O proprietário não pode alterar o perfil.",
+        "owner-emancipated": "O proprietário deste nome.",
+        "parent-owner": "O proprietário do pai deste nome ({{parent}}).",
+        "dns-owner": "O proprietário deste nome, segundo os registros DNS. O proprietário não pode alterar o perfil.",
+        "manager": "O endereço que pode alterar o perfil, as configurações e os editores do perfil.",
+        "profile-editor": "Um endereço que só pode alterar o perfil.",
+        "subname-manager": "Um endereço ou contrato responsável pelas renovações de subnomes.",
+        "eth-record": "O endereço que receberá fundos enviados para este nome na mainnet.",
+        "grace-period": "Um período de carência de 90 dias após a expiração, durante o qual o nome ainda pode ser estendido mas não registrado novamente.",
+        "contract-address": "O endereço do contrato que habilita os nomes ENS empacotados (Wrapped).",
+        "namewrapper": "O contrato que habilita os nomes ENS empacotados (Wrapped)."
+      }
+    },
+    "subnames": {
+      "name": "Subnomes"
+    },
+    "permissions": {
+      "name": "Permissões",
+      "parentUnlockedWarning": "<strong>Você não pode alterar as permissões deste nome.</strong> Primeiro deve revogar 'desempacotar este nome' no pai ({{parent}}). Clique aqui para ver as permissões do pai.",
+      "revokedLabel": "Revogado {{date}}",
+      "grantedLabel": "Concedido {{date}}",
+      "role": {
+        "manager": "administrador",
+        "owner": "proprietário",
+        "parent": "pai"
+      },
+      "ownership": {
+        "title": "Permissões de Propriedade",
+        "parentCanControl": {
+          "label": "Este nome pode ser controlado por seu pai (<parentLink>{{parent}}</parentLink>)",
+          "list": {
+            "title": "O proprietário do nome pai pode:",
+            "item1": "Controlar e modificar as configurações e os registros",
+            "item2": "Retomar ou reassinar a propriedade deste nome",
+            "item3": "Excluir este nome"
+          }
+        },
+        "parentCannotControl": {
+          "label": "Este nome não pode ser controlado por seu pai (<parentLink>{{parent}}</parentLink>)",
+          "sublabel": "O proprietário do nome pai não pode controlar, modificar, excluir ou retomar a propriedade deste nome.",
+          "list": {
+            "title": "O proprietário do nome manterá a propriedade a menos que ocorra um dos seguintes eventos:",
+            "item1": "O nome expira em {{date}} (pode ser estendido)",
+            "item2": "O nome pai expira em {{date}}",
+            "item3": "A propriedade do nome é enviada para outro endereço"
+          }
+        }
+      }
+    }
+  }
+}
