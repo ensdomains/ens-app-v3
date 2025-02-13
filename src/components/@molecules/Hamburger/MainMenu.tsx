@@ -138,7 +138,7 @@ const miscSectionStyle = css(
 
     @media (min-width: ${theme.breakpoints.sm}px) {
       background-color: transparent;
-      border-radius: none;
+      border-radius: 0;
     }
   `,
 )
