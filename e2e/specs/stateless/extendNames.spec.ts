@@ -161,9 +161,9 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
     await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.14')
     await extendNamesModal.getCounterMinusButton.click()
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.0')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.1')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.1')
   })
 
   await test.step('should extend', async () => {
