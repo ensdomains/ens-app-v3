@@ -117,4 +117,5 @@ export const fetchTxFromSafeTxHash = async ({
   }
 }
 
+// Only applies to Safe because of our CSP policy not allowing other iframes
 export const isInsideSafe = () => typeof window !== 'undefined' && window !== window.parent
