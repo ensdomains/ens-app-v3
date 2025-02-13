@@ -22,8 +22,10 @@ const Container = styled.div(
     flex-direction: column;
     align-items: stretch;
     @supports (-webkit-touch-callout: none) {
-      // hack for iOS/iPadOS Safari
-      // width should always be 100% - total padding
+      /*
+        hack for iOS/iPadOS Safari
+        width should always be 100% - total padding
+       */
       width: calc(100% - calc(var(--padding-size) * 2));
       box-sizing: content-box;
     }

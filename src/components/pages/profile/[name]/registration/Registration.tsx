@@ -93,7 +93,7 @@ const MoonPayHeader = styled.div(
 
 const MoonPayIFrame = styled.iframe(
   ({ theme }) => css`
-    max-width: 590px; // Prevent moonpay iframe from going into modal mode
+    max-width: 590px; /* Prevent moonpay iframe from going into modal mode */
     padding: ${theme.space['2']};
     background-color: #fff;
 
