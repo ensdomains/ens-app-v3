@@ -1,18 +1,18 @@
 import { act, renderHook, waitFor } from '@app/test-utils'
 
-import { HttpResponse, http } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, describe, expect, it, test, vi } from 'vitest'
 
 import { EARNIFI_ENDPOINT, getErrorMessage, useSubscribeToEarnifi } from './useSubscribeToEarnifi'
 
 export const handlers = [
-  http.post(EARNIFI_ENDPOINT, async ({request}) => {
+  http.post(EARNIFI_ENDPOINT, async ({ request }) => {
     const { email, address, chainId } = (await request.json()) as Record<string, string>
     if (email && address && chainId) {
-      return HttpResponse.json({}, {status: 200})
+      return HttpResponse.json({}, { status: 200 })
     }
-    return HttpResponse.json({ message: 'Bad Request' }, {status: 400})
+    return HttpResponse.json({ message: 'Bad Request' }, { status: 400 })
   }),
 ]
 
