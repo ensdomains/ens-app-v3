@@ -6,22 +6,13 @@ env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
+  setup:
+    uses: ./.github/workflows/setup.yaml
+
   coverage:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start --no-graph --no-scripts --no-build --exit-after-deploy" \
@@ -30,21 +21,9 @@ jobs:
       - run: pnpm test:coverage
 
   build-stateless:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm tenv start --no-graph --no-scripts --no-build --exit-after-deploy" \
@@ -63,21 +42,9 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-
       - name: Build stateful and export
         run: pnpm build && pnpm export
 
@@ -92,7 +59,7 @@ jobs:
 
   stateless:
     name: stateless (${{matrix.shard}})
-    needs: build-stateless
+    needs: [setup, build-stateless]
     timeout-minutes: 20
     runs-on: ubuntu-latest
     strategy:
@@ -100,17 +67,20 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - run: pnpm rebuild -r
 
@@ -141,7 +111,7 @@ jobs:
 
   stateful:
     name: stateful (${{matrix.shard}})
-    needs: build-stateful
+    needs: [setup, build-stateful]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -151,17 +121,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: ./scripts/check-chrome.sh
-
+      
       - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - run: pnpm rebuild -r
 
@@ -183,7 +156,6 @@ jobs:
           "pnpm wrangle" \
           "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
-          # NEXT_PUBLIC_GRAPH_URI: https://api.studio.thegraph.com/query/49574/ensholesky/version/latest
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - uses: actions/upload-artifact@v4
