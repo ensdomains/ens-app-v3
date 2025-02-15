@@ -9,10 +9,16 @@
   "accounts": "账户",
   "addresses": "地址",
   "otherRecords": "其他记录",
+  "verifications": "验证",
   "editProfile": "编辑个人资料",
   "ownership": "所有权",
   "viewDetails": "查看详情",
   "banner": {
+    "empty": {
+      "title": "个性化您的个人资料",
+      "description": "添加加密货币地址、社交链接、头像等！",
+      "action": "开始设置"
+    },
     "available": {
       "title": "{{name}} 可以注册",
       "description": "该名称在 <strong>{{date}}</strong> 已经过期。点击此处查看注册页面。"
@@ -39,15 +45,73 @@
         "reclaim": {
           "label": "重新创建名称",
           "warning": "该子名称已过期，并且无人持有。您可以重新创建此子名称。"
+        },
+        "verifyProfile": {
+          "label": "验证"
         }
       },
       "warnings": {
         "wrappedDNS": "一个 DNS 的所有者可以随时收回他的 DNS 域名。不要购买 DNS 域名。",
+        "offchain": "链下名称目前不会显示在您的“名称”列表中。<a>了解更多</a>",
         "homoglyph": "该名称包含非 ASCII 字符。有些字符可能看起来与其他字符相同或非常相似，这可能会用于欺骗用户。<a>了解更多关于同形文字的知识</a>"
       }
     },
     "records": {
       "name": "记录"
+    },
+    "ownership": {
+      "name": "所有权",
+      "warning": {
+        "ownerNotManager": "您是所有者但不是管理员。如果您最近从其他地址收到此名称，这可能是非预期的。",
+        "managerNotParentOwner": "<strong>{{parent}}</strong> 的所有者可以更改所有权、角色和设置。他们不能更改个人资料。",
+        "managerNotDNSOwner": "您是该名称的管理员但不是 DNS 所有者。DNS 名称可以随时被 DNS 所有者收回。您可以将此名称发送给所有者，或更新 DNS 记录以匹配。",
+        "dnsOwnerNotManager": "您不能更改此名称，因为您是 DNS 所有者但不是管理员。您可以同步管理员来修复此问题。"
+      },
+      "sections": {
+        "roles": {
+          "title": "角色",
+          "addresses_one": "{{count}} 个地址",
+          "addresses_other": "{{count}} 个地址"
+        },
+        "expiry": {
+          "panel": {
+            "expiry": {
+              "title": "名称到期"
+            },
+            "grace-period": {
+              "title": "宽限期结束",
+              "tooltip": "到期后的 90 天宽限期，在此期间名称仍可续期但不能重新注册。"
+            },
+            "registration": {
+              "title": "注册时间"
+            },
+            "parent-expiry": {
+              "title": "父名称到期"
+            },
+            "parent-grace-period": {
+              "title": "父名称宽限期结束"
+            }
+          }
+        },
+        "contract": {
+          "title": "合约地址",
+          "tooltip": "启用包装 ENS 名称的合约地址。",
+          "warning": "某些应用可能会将合约地址显示为所有者。这不会影响您的所有权。"
+        }
+      },
+      "tooltips": {
+        "owner": "此名称的所有者。所有者不能更改个人资料。",
+        "owner-emancipated": "此名称的所有者。",
+        "parent-owner": "此名称的父名称 ({{parent}}) 的所有者。",
+        "dns-owner": "此名称的所有者，由 DNS 记录设置。所有者不能更改个人资料。",
+        "manager": "可以更改个人资料、设置和个人资料编辑者的地址。",
+        "profile-editor": "只能更改个人资料的地址",
+        "subname-manager": "负责子名称续期的地址或合约。",
+        "eth-record": "在主网上接收发送到此名称的资金的地址。",
+        "grace-period": "到期后的 90 天宽限期，在此期间名称仍可续期但不能重新注册。",
+        "contract-address": "启用包装 ENS 名称的合约地址。",
+        "namewrapper": "启用包装 ENS 名称的合约。"
+      }
     },
     "subnames": {
       "name": "子名称"
@@ -246,13 +310,19 @@
         "hex": "十六进制",
         "decimal": "十进制",
         "wrapper": "包装状态",
+        "nameWrapper": "名称包装器",
+        "unwrappedText": "包装您的名称可以获得新的功能，但是某些功能会发生变化。请在包装名称之前确保您理解这些变化。",
         "wrapName": "包装名称",
         "unwrap": "解除包装",
+        "unwrapWarning": "该名称撤销了执行此操作所需的权限。",
+        "tooltip": "名称包装器为 ENS 名称启用额外的功能。",
         "status": {
           "unwrapped": "未包装",
-          "wrapped": "已包装",
-          "emancipated": "已包装, 已解放",
-          "locked": "已包装, 已锁定"
+          "wrapped": "已包装"
+        },
+        "pcc": {
+          "controllable": "父名称可控制",
+          "not-controllable": "父名称不可控制"
         }
       },
       "misc": {
@@ -323,6 +393,7 @@
         "empty": "暂未创建子名称",
         "noResults": "无结果",
         "noMoreResults": "无其他结果",
+        "setProfile": "设置个人资料",
         "addSubname": {
           "title": "子名称功能允许您在现有名称上创建其他名称。",
           "learn": "了解子名称",
@@ -386,7 +457,7 @@
     "ownerManagerChoice": "必须发送所有者或管理员",
     "unknown": "未知错误",
     "notMigrated": "该名称没有迁移到新的注册表。",
-    "featureNotAvailable": "有些功能目前还不可用，但您仍然可以使用",
+    "featureNotAvailable": "有些功能目前还不可用，但您仍然可以",
     "featureNotAvailableLink": "在旧版 app 中查看该名称。",
     "migrationNotAvailable": "目前还不能迁移至新注册表，但您仍然可以",
     "migrationNotAvailableLink": "在旧版 app 中迁移该名称。",
@@ -395,6 +466,12 @@
     "keyInUse": "{{value}} 已经在使用了",
     "hasSubnames": "该名称拥有子名称",
     "permissionRevoked": "该名称撤销了执行此操作所需的权限。",
-    "invalidJSON": "无效 JSON"
+    "invalidJSON": "无效 JSON",
+    "gracePeriod": "由于名称已过期，无法执行此操作",
+    "default": "此操作不可用",
+    "isOwnerCannotEdit": "您必须是管理员才能编辑个人资料",
+    "cannotEdit": "您没有权限更新为授权解析器",
+    "isOwnerCannotVerify": "您必须是管理员才能验证您的个人资料",
+    "cannotVerify": "您没有权限验证您的个人资料"
   }
 }

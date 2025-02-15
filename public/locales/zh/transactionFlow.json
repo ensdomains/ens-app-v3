@@ -12,7 +12,12 @@
             "searchPlaceholder": "搜索 NFT",
             "loading": "正在加载您的 NFT",
             "unknown": "未知 NFT",
+            "loadError": "无法加载 NFT",
             "noNFTs": "此地址上未找到 NFT。",
+            "address": {
+              "owned": "已拥有",
+              "other": "其他"
+            },
             "selected": {
               "title": "选择 NFT",
               "subtitle": "您确定要使用该 NFT 吗?"
@@ -66,13 +71,13 @@
           "noOptions": "没有可用的地址",
           "placeholder": {
             "default": "在此添加地址",
-            "ETH": "0xD9hbQK...",
-            "BNB": "0xD9hbQK...",
-            "BTC": "3FZbgi29...",
-            "LTC": "3FZbgi29...",
-            "SOL": "D4kA7VzHnmV...",
-            "DOT": "1D4kA7VxH...",
-            "DOGE": "DFabcd12..."
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
           }
         },
         "contentHash": {
@@ -195,9 +200,31 @@
       "customLabel": "自定义解析器",
       "customPlaceholder": "输入自定义解析器地址"
     },
+    "editRoles": {
+      "views": {
+        "main": {
+          "title": "编辑角色",
+          "noneSet": "未设置"
+        },
+        "editRole": {
+          "title": "更改 {{role}}",
+          "views": {
+            "intro": {
+              "current": "当前 {{role}}"
+            }
+          }
+        }
+      }
+    },
     "extendNames": {
       "title_one": "名称续期",
       "title_other": "续期 {{count}} 个名称",
+      "ownershipWarning": {
+        "title_one": "您不拥有 {{name}}",
+        "title_other": "您不拥有所有这些名称",
+        "description_one": "延长此名称将延长当前所有者的注册时间。这不会让您获得其所有权。",
+        "description_other": "延长这些名称将延长当前所有者的注册时间。如果您不是所有者，这不会让您获得所有权。"
+      },
       "invoice": {
         "extension": "续期 {{count}} ",
         "transaction": "交易费",
@@ -281,6 +308,11 @@
         "revokeChangeFusesWarning": {
           "title": "剩余的权限将被锁定",
           "subtitle": "在撤销 “更改权限” 后，权限和自定义保险丝将永久锁定在其当前状态。只有在名称过期时才会重置。"
+        },
+        "lastWarning": {
+          "title": "您确定要这样做吗？",
+          "subtitle": "您正在进行的更改只能在名称过期时撤销 ({{date}})。",
+          "message": "请输入您的 ENS 名称 ({{name}}) 以确认。"
         }
       },
       "action": {
@@ -309,13 +341,86 @@
     "resetPrimaryName": {
       "title": "移除主名称",
       "description": "移除后它不会再作为当前地址的名称来显示。但是，发送到该名称的交易仍将解析到当前地址，除非您删除该名称的 ETH 记录。"
+    },
+    "sendName": {
+      "views": {
+        "error": {
+          "title": "无法发送名称",
+          "description": "您没有权限发送此名称。"
+        },
+        "search": {
+          "placeholder": "ENS 名称或以太坊地址",
+          "views": {
+            "error": {
+              "message": "出错了。请重试。"
+            },
+            "intro": {
+              "message": "搜索 ENS 名称或 ETH 地址"
+            },
+            "noResults": {
+              "message": "未找到结果"
+            }
+          }
+        },
+        "summary": {
+          "title": "发送名称",
+          "fields": {
+            "name": {
+              "label": "名称",
+              "expires": "过期时间 {{date}}"
+            },
+            "recipient": "接收方",
+            "options": {
+              "label": "选项",
+              "title": "重置个人资料",
+              "description": "删除所有个人资料记录。这需要额外的网络费用。"
+            },
+            "summary": {
+              "title": "更改摘要",
+              "updates": {
+                "role": "更新 {{role}} 角色为 {{address}}",
+                "eth-record": "更新 ETH 记录为 {{address}}"
+              },
+              "remove": {
+                "profile": "删除个人资料记录"
+              }
+            }
+          }
+        },
+        "confirmation": {
+          "title": "发送名称",
+          "description": "发送此名称会将所有权转让给接收方，让他们获得您的控制权。",
+          "warning": "您将失去修改、接收付款或将其用作主名称的能力。",
+          "learnMore": "了解更多关于发送名称的信息"
+        }
+      }
+    },
+    "syncManager": {
+      "title": "同步管理员",
+      "description": "同步管理员会让您成为该名称的新管理员。当前管理员 <b>({{manager}})</b> 将会失去管理权限。",
+      "warning": "同步管理员也将解除该名称的包装，这会烧毁 NFT 并重置所有权限。"
+    },
+    "verifyProfile": {
+      "list": {
+        "title": "验证您的个人资料",
+        "message": "您可以验证个人资料信息并添加身份证明。已验证的记录将在您的个人资料中标有蓝色对勾。",
+        "added": "已添加"
+      },
+      "dentity": {
+        "title": "Dentity 验证",
+        "description": "前往 Dentity 验证您的个人资料。您需要提供要验证的记录的所有权证明。Dentity 不会与 ENS 共享任何私人信息。",
+        "helper": "在您返回 ENS 并更新记录之前，验证不会完成。这需要一次交易。",
+        "remove": "从个人资料中移除 Dentity",
+        "link": "前往 Dentity"
+      }
     }
   },
   "transaction": {
     "extendNames": {
       "actionValue": "续期",
       "costValue": "{{value}} + 网络费",
-      "warning": "为该名称续期不会让您获得它的所有权"
+      "warning": "为该名称续期不会让您获得它的所有权",
+      "newExpiry": "新的过期时间: {{date}}"
     },
     "deleteSubname": {
       "warning": "大家好"
@@ -344,7 +449,7 @@
       "invalidResolver": {
         "title": "未经授权的解析器",
         "description": "要使用此名称作为您的主名称，您需要先设置一个有效的解析器并更新该名称的 ETH 地址记录。"
-      }     
+      }
     },
     "multiStepSubnameDelete": {
       "title": "删除子名称",
