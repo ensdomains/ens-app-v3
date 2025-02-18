@@ -3,8 +3,8 @@ import { match } from 'ts-pattern'
 import { Address } from 'viem'
 import { useChainId } from 'wagmi'
 
-import { TrackEventParameters, useEventTracker } from '@app/hooks/useEventTracker'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+import { sendEvent } from '@app/utils/analytics/events'
 import { isBrowser } from '@app/utils/utils'
 
 export const dnsConfigurationSteps = Object.freeze(['selectType', 'enableDnssec'] as const)
@@ -107,74 +107,66 @@ export const getSelectedIndex = (state: DnsImportReducerData, selected: Selected
 }
 
 /* eslint-disable no-param-reassign */
-const reducer =
-  ({ trackEvent }: { trackEvent: (event: TrackEventParameters) => void }) =>
-  (state: DnsImportReducerData, action: DnsImportReducerAction) => {
-    let selectedItemInx = getSelectedIndex(state, action.selected)
+const reducer = () => (state: DnsImportReducerData, action: DnsImportReducerAction) => {
+  let selectedItemInx = getSelectedIndex(state, action.selected)
 
-    if (!isBrowser) return
+  if (!isBrowser) return
 
-    if (selectedItemInx === -1) {
-      selectedItemInx = state.items.push(createDefaultData(action.selected)) - 1
-    }
-
-    const selectedItem = state.items[selectedItemInx]
-
-    switch (action.name) {
-      case 'increaseStep': {
-        const currentStep = selectedItem.steps[selectedItem.stepIndex]
-
-        const eventName = match(currentStep)
-          .with('selectType', () => 'dns_selected_import_type' as const)
-          .with('enableDnssec', () => 'dns_sec_enabled' as const)
-          .with('verifyOnchainOwnership', () => 'dns_verified_ownership' as const)
-          .with('transaction', () => 'dns_claimed' as const)
-          .with('verifyOffchainOwnership', () => 'dns_claimed' as const)
-          .otherwise(() => undefined)
-        if (eventName)
-          trackEvent({
-            eventName,
-            customProperties: { name: selectedItem.name, importType: selectedItem.type },
-          })
-        selectedItem.stepIndex += 1
-        return state
-      }
-      case 'decreaseStep':
-        selectedItem.stepIndex -= 1
-        break
-      case 'setSteps':
-        selectedItem.steps = action.payload
-        break
-      case 'setType':
-        selectedItem.type = action.payload
-        break
-      case 'setStarted':
-        selectedItem.started = true
-        break
-      case 'setAddress':
-        selectedItem.address = action.payload
-        break
-      case 'resetItem':
-        state.items[selectedItemInx] = createDefaultData(action.selected)
-        break
-      case 'clearItem':
-        state.items.splice(selectedItemInx, 1)
-        break
-      case 'cleanupNonMatching':
-        for (let i = 0; i < state.items.length; i += 1) {
-          const item = state.items[i]
-          if (item !== selectedItem && state.items[i].started === false) {
-            state.items.splice(i, 1)
-            i -= 1
-          }
-        }
-        break
-      default:
-        break
-    }
-
-    return state
+  if (selectedItemInx === -1) {
+    selectedItemInx = state.items.push(createDefaultData(action.selected)) - 1
   }
+
+  const selectedItem = state.items[selectedItemInx]
+
+  switch (action.name) {
+    case 'increaseStep': {
+      const currentStep = selectedItem.steps[selectedItem.stepIndex]
+
+      selectedItem.stepIndex += 1
+      return state
+    }
+    case 'decreaseStep':
+      sendEvent('import:back', {
+        name: selectedItem.name,
+        from: selectedItem.steps[selectedItem.stepIndex],
+        to: selectedItem.steps[selectedItem.stepIndex - 1],
+      })
+
+      selectedItem.stepIndex -= 1
+      break
+    case 'setSteps':
+      selectedItem.steps = action.payload
+      break
+    case 'setType':
+      selectedItem.type = action.payload
+      break
+    case 'setStarted':
+      selectedItem.started = true
+      break
+    case 'setAddress':
+      selectedItem.address = action.payload
+      break
+    case 'resetItem':
+      state.items[selectedItemInx] = createDefaultData(action.selected)
+      break
+    case 'clearItem':
+      state.items.splice(selectedItemInx, 1)
+      break
+    case 'cleanupNonMatching':
+      for (let i = 0; i < state.items.length; i += 1) {
+        const item = state.items[i]
+        if (item !== selectedItem && state.items[i].started === false) {
+          state.items.splice(i, 1)
+          i -= 1
+        }
+      }
+      break
+    default:
+      break
+  }
+
+  return state
+}
 /* eslint-enable no-param-reassign */
 
 export const useDnsImportReducer = ({
@@ -185,11 +177,10 @@ export const useDnsImportReducer = ({
   name: string
 }) => {
   const chainId = useChainId()
-  const { trackEvent } = useEventTracker()
   const selected = { address: address || null, name, chainId } as SelectedItemProperties
   const [state, dispatch] = useLocalStorageReducer<DnsImportReducerData, DnsImportReducerAction>(
     'dns-import',
-    reducer({ trackEvent }),
+    reducer(),
     { items: [] },
   )
 

@@ -211,6 +211,9 @@ importers:
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
+      posthog-js:
+        specifier: ^1.217.0
+        version: 1.217.2
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -346,13 +349,13 @@ importers:
         version: 8.50.0
       eslint-config-airbnb:
         specifier: ^19.0.4
-        version: 19.0.4(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint-plugin-jsx-a11y@6.8.0(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.34.1(eslint@8.50.0))(eslint@8.50.0)
+        version: 19.0.4(eslint-plugin-import@2.29.1)(eslint-plugin-jsx-a11y@6.8.0(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.34.1(eslint@8.50.0))(eslint@8.50.0)
       eslint-config-airbnb-base:
         specifier: ^15.0.0
-        version: 15.0.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint@8.50.0)
+        version: 15.0.0(eslint-plugin-import@2.29.1)(eslint@8.50.0)
       eslint-config-airbnb-typescript:
         specifier: ^17.1.0
-        version: 17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint@8.50.0)
+        version: 17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@8.50.0)
       eslint-config-next:
         specifier: ^13.4.19
         version: 13.5.6(eslint@8.50.0)(typescript@5.4.5)
@@ -4192,6 +4195,9 @@ packages:
   core-js-compat@3.37.1:
     resolution: {integrity: sha512-9TNiImhKvQqSUkOvk/mMRZzOANTiEVC7WaBNhHcKM7x+/5E1l5NvsysR19zuDQScE8k+kfQXWRN3AtS/eOSHpg==}
 
+  core-js@3.40.0:
+    resolution: {integrity: sha512-7vsMc/Lty6AGnn7uFpYT56QesI5D2Y/UkgKounk87OP9Z2H9Z8kj6jzcSGAxFmUtDOS0ntK6lbQz+Nsa0Jj6mQ==}
+
   core-util-is@1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
 
@@ -5048,6 +5054,9 @@ packages:
   fetch-blob@3.2.0:
     resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
     engines: {node: ^12.20 || >= 14.13}
+
+  fflate@0.4.8:
+    resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
 
   file-entry-cache@10.0.6:
     resolution: {integrity: sha512-0wvv16mVo9nN0Md3k7DMjgAPKG/TY4F/gYMBVb/wMThFRJvzrpaqBFqF6km9wf8QfYTN+mNg5aeaBLfy8k35uA==}
@@ -6698,8 +6707,11 @@ packages:
     resolution: {integrity: sha512-MjOadfU3Ys9KYoX0AdkBlFEF1Vx37uCCeN4ZHnmwm9FfpbsGWMZeBLMmmpY+6Ocqod7mkdZ0DT31OlbsFrLlkA==}
     engines: {node: ^10 || ^12 || >=14}
 
-  preact@10.22.0:
-    resolution: {integrity: sha512-RRurnSjJPj4rp5K6XoP45Ui33ncb7e4H7WiOHVpjbkvqvA3U+N8Z6Qbo0AE6leGYBV66n8EhEaFixvIu3SkxFw==}
+  posthog-js@1.217.2:
+    resolution: {integrity: sha512-3KC+UjI0UT5zh8kAOVqe/AfvRjBMKynRIBQNlv0TXnfpZG0+h3r/1ONecDgCCGLs/a/55SJCExrugDlx+HPH3w==}
+
+  preact@10.23.1:
+    resolution: {integrity: sha512-O5UdRsNh4vdZaTieWe3XOgSpdMAmkIYBCT3VhQDlKrzyCm8lUYsk0fmVEvoQQifoOjFRTaHZO69ylrzTW2BH+A==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -8204,6 +8216,9 @@ packages:
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
+
+  web-vitals@4.2.4:
+    resolution: {integrity: sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw==}
 
   web3-bzz@1.10.0:
     resolution: {integrity: sha512-o9IR59io3pDUsXTsps5pO5hW1D5zBmg46iNc2t4j2DkaYHNdDLwk2IP9ukoM2wg47QILfPEJYzhTfkS/CcX0KA==}
@@ -13261,6 +13276,8 @@ snapshots:
     dependencies:
       browserslist: 4.23.0
 
+  core-js@3.40.0: {}
+
   core-util-is@1.0.2: {}
 
   core-util-is@1.0.3: {}
@@ -13777,7 +13794,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-config-airbnb-base@15.0.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint@8.50.0):
+  eslint-config-airbnb-base@15.0.0(eslint-plugin-import@2.29.1)(eslint@8.50.0):
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 8.50.0
@@ -13786,18 +13803,18 @@ snapshots:
       object.entries: '@socketregistry/object.entries@1.0.5'
       semver: 6.3.1
 
-  eslint-config-airbnb-typescript@17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint@8.50.0):
+  eslint-config-airbnb-typescript@17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@8.50.0):
     dependencies:
       '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5)
       '@typescript-eslint/parser': 6.21.0(eslint@8.50.0)(typescript@5.4.5)
       eslint: 8.50.0
-      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint@8.50.0)
+      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.29.1)(eslint@8.50.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.50.0)
 
-  eslint-config-airbnb@19.0.4(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint-plugin-jsx-a11y@6.8.0(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.34.1(eslint@8.50.0))(eslint@8.50.0):
+  eslint-config-airbnb@19.0.4(eslint-plugin-import@2.29.1)(eslint-plugin-jsx-a11y@6.8.0(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.34.1(eslint@8.50.0))(eslint@8.50.0):
     dependencies:
       eslint: 8.50.0
-      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0))(eslint@8.50.0)
+      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.29.1)(eslint@8.50.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.50.0)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@8.50.0)
       eslint-plugin-react: 7.34.1(eslint@8.50.0)
@@ -13840,7 +13857,7 @@ snapshots:
       debug: 4.3.4(supports-color@5.5.0)
       enhanced-resolve: 5.16.1
       eslint: 8.50.0
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.50.0))(eslint@8.50.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.50.0)
       eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1)(eslint@8.50.0)
       fast-glob: 3.3.2
       get-tsconfig: 4.7.5
@@ -13852,7 +13869,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.50.0))(eslint@8.50.0):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.50.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -13873,7 +13890,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.50.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.50.0))(eslint@8.50.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.50.0)
       hasown: '@socketregistry/hasown@1.0.5'
       is-core-module: '@socketregistry/is-core-module@1.0.5'
       is-glob: 4.0.3
@@ -14364,6 +14381,8 @@ snapshots:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.3.3
+
+  fflate@0.4.8: {}
 
   file-entry-cache@10.0.6:
     dependencies:
@@ -16162,7 +16181,14 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  preact@10.22.0: {}
+  posthog-js@1.217.2:
+    dependencies:
+      core-js: 3.40.0
+      fflate: 0.4.8
+      preact: 10.23.1
+      web-vitals: 4.2.4
+
+  preact@10.23.1: {}
 
   prelude-ls@1.2.1: {}
 
@@ -17762,6 +17788,8 @@ snapshots:
     optional: true
 
   web-streams-polyfill@3.3.3: {}
+
+  web-vitals@4.2.4: {}
 
   web3-bzz@1.10.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
