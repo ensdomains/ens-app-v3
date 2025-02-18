@@ -10,6 +10,7 @@ import {
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+import { sendEvent } from '@app/utils/analytics/events'
 import { yearsToSeconds } from '@app/utils/utils'
 
 const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
@@ -99,10 +100,22 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'decreaseStep': {
+      sendEvent('register:back', {
+        ens_name: item.name,
+        from_step: item.queue[item.stepIndex],
+        to_step: item.queue[item.stepIndex - 1],
+      })
+
       item.stepIndex -= 1
       break
     }
     case 'increaseStep': {
+      if (item.queue[item.stepIndex + 1] === 'complete') {
+        sendEvent('register:complete', {
+          name: item.name,
+        })
+      }
+
       item.stepIndex += 1
       break
     }
@@ -135,6 +148,11 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     case 'moonpayTransactionCompleted': {
       item.externalTransactionId = ''
       item.stepIndex = item.queue.findIndex((step) => step === 'complete')
+
+      sendEvent('register:complete', {
+        name: item.name,
+      })
+
       break
     }
     // no default

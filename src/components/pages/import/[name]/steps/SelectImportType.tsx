@@ -13,6 +13,7 @@ import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
+import { sendEvent } from '@app/utils/analytics/events'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 import { DnsImportActionButton, DnsImportCard, DnsImportHeading } from '../shared'
@@ -189,6 +190,7 @@ export const SelectImportType = ({
       isDnsSecEnabled,
       offchainDnsStatus,
     })
+    sendEvent('import:select_type', { name: selected.name, type: item.type, next_step: steps[0] })
     dispatch({ name: 'setSteps', selected, payload: steps })
     dispatch({ name: 'increaseStep', selected })
   }

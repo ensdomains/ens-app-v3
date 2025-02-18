@@ -12,13 +12,13 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { sendEvent } from '@app/utils/analytics/events'
 import { isLabelTooLong, secondsToYears } from '@app/utils/utils'
 
 import Complete from './steps/Complete'
@@ -123,7 +123,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
-  const { trackEvent } = useEventTracker()
   const step = item.queue[item.stepIndex]
 
   const keySuffix = `${nameDetails.normalisedName}-${address}`
@@ -148,18 +147,14 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     ethPrice,
     durationType,
   }: RegistrationStepData['pricing']) => {
-    if (estimatedTotal && ethPrice) {
-      trackEvent({
-        eventName: 'payment_selected',
-        customProperties: {
-          duration: seconds,
-          durationType,
-          paymentMethod: paymentMethodChoice,
-          estimatedTotal,
-          ethPrice,
-        },
-      })
-    }
+    sendEvent('register:pricing', {
+      ens_name: normalisedName,
+      duration: seconds,
+      estimated_total: estimatedTotal ?? 0n,
+      eth_price: ethPrice ?? 0n,
+      payment_method: paymentMethodChoice,
+      add_reverse_record: reverseRecord,
+    })
 
     if (paymentMethodChoice === PaymentMethod.moonpay) {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
@@ -209,6 +204,14 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     resolverAddress,
     back,
   }: RegistrationStepData['profile'] & BackObj) => {
+    if (!back) {
+      sendEvent('register:profile', {
+        ens_name: normalisedName,
+        profile_records: records,
+        resolver_address: resolverAddress,
+      })
+    }
+
     dispatch({ name: 'setProfileData', payload: { records, resolverAddress }, selected })
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
@@ -218,8 +221,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   }
 
   const infoCallback = ({ back }: BackObj) => {
+    if (!back) {
+      sendEvent('register:info', {
+        ens_name: normalisedName,
+      })
+    }
+
     genericCallback({ back })
-    trackEvent({ eventName: 'commit_started' })
   }
 
   const transactionsCallback = useCallback(
@@ -234,6 +242,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   )
 
   const infoProfileCallback = () => {
+    sendEvent('register:back', {
+      ens_name: normalisedName,
+      from_step: 'info',
+      to_step: 'profile',
+    })
     dispatch({
       name: 'setQueue',
       payload: ['pricing', 'profile', 'info', 'transactions', 'complete'],
@@ -241,6 +254,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     })
   }
 
+  /**
+   * This is called when the user starts the commit transaction
+   */
   const onStart = () => {
     dispatch({ name: 'setStarted', selected })
   }
