@@ -163,7 +163,7 @@ export const DotBoxRegistration = () => {
                       <Button
                         width="45"
                         size="small"
-                        onClick={() => sendEvent('register:dotbox_start', { ens_name: name })}
+                        onClick={() => sendEvent('register:dotbox', { ens_name: name })}
                       >
                         <OutlinkInner>
                           Register on my.box
