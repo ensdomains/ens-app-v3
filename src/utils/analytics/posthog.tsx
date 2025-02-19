@@ -34,9 +34,20 @@ export const PostHogProvider = ({ children }: { children: ReactNode }) => {
 
   useAccountEffect({
     onConnect(data) {
-      posthog.identify(data.address, {
-        address: data.address,
+      posthog.identify(
+        data.address,
+        {
+          address: data.address,
+        },
+        {
+          initial_address: data.address,
+        },
+      )
+
+      posthog.register({
+        chain_id: data.chainId,
       })
+
       sendEvent('wallet:connect', {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         wallet_address: data.address,
