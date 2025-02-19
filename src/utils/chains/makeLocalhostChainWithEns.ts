@@ -43,6 +43,12 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
       ensDnssecImpl: {
         address: deploymentAddresses_.DNSSECImpl,
       },
+      legacyEthRegistrarController: {
+        address: deploymentAddresses_.LegacyETHRegistrarController,
+      },
+      legacyPublicResolver: {
+        address: deploymentAddresses_.LegacyPublicResolver,
+      },
     },
     subgraphs: {
       ens: {
