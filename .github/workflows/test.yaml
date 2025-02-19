@@ -7,7 +7,7 @@ env:
 
 jobs:
   coverage:
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-4vcpu-ubuntu-2204-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -20,7 +20,7 @@ jobs:
       - run: pnpm test:coverage
 
   build-stateless:
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-4vcpu-ubuntu-2204-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -85,7 +85,18 @@ jobs:
         run: tar -xvf stateless-build.tar
 
       - name: Install playwright
-        run: npx playwright install chromium
+        run: |
+          # Install Playwright browsers with system dependencies
+          if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then
+            # Install Chromium from system for ARM
+            sudo apt-get update
+            sudo apt-get install -y chromium-browser
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx playwright install
+            PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser npx playwright install-deps chromium
+          else
+            # Regular installation for AMD64
+            npx playwright install chromium
+          fi
 
       - name: Run tests
         run: |
@@ -125,7 +136,18 @@ jobs:
         run: tar -xvf stateful-build.tar
 
       - name: Install playwright
-        run: npx playwright install chromium
+        run: |
+          # Install Playwright browsers with system dependencies
+          if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then
+            # Install Chromium from system for ARM
+            sudo apt-get update
+            sudo apt-get install -y chromium-browser
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx playwright install
+            PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser npx playwright install-deps chromium
+          else
+            # Regular installation for AMD64
+            npx playwright install chromium
+          fi
 
       - name: Run tests
         run: |
