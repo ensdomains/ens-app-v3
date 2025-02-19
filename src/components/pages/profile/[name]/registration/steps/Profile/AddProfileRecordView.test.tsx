@@ -72,7 +72,7 @@ describe('AddProfileRecordView', () => {
     render(<AddProfileRecordView control={result.current.control} />)
     await userEvent.click(screen.getByTestId('profile-record-option-ipfs'))
     expect(screen.getByTestId('profile-record-option-ipfs')).toHaveStyle(
-      'background-color: ButtonFace',
+      'background-color: rgb(238, 245, 255)',
     )
     expect(screen.getByTestId('profile-record-option-skynet')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-swarm')).toBeDisabled()

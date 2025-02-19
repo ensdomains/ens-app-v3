@@ -1,0 +1,207 @@
+{
+  "title": "Registrar {{name}} no ENS",
+  "subtitle": "Registrar",
+  "heading": "Registrar {{name}}",
+  "invoice": {
+    "timeRegistration": "Registro de {{time}}",
+    "estimatedNetworkFee": "Custo estimado da rede",
+    "transactionFees": "Taxas de transação",
+    "temporaryPremium": "Prêmio temporário",
+    "total": "Total estimado",
+    "totalPaid": "Total pago",
+    "expiry": "O nome expira"
+  },
+  "error": {
+    "nameTooLong": "O nome que você deseja registrar é muito longo. Por favor, escolha um nome mais curto."
+  },
+  "steps": {
+    "pricing": {
+      "insufficientBalance": "Saldo insuficiente",
+      "multipleYearsMessage": "Estender o registro por vários anos economiza em custos de rede ao evitar transações anuais.",
+      "primaryName": "Usar como nome principal",
+      "primaryNameMessage": "Isso vincula seu endereço a este nome, permitindo que os dApps o mostrem como seu perfil quando você se conectar. Você só pode ter um nome principal por endereço.",
+      "premium": {
+        "heading": "Este nome tem um prêmio temporário",
+        "subheading": "Para proporcionar uma oportunidade justa aos nomes que acabaram de expirar, o prêmio começa em $100.000.000 e se reduz a $0 ao longo de 21 dias. Você pode calcular o prêmio em uma data específica abaixo.",
+        "targetPrice": "Preço alvo",
+        "targetDate": "Data alvo",
+        "timezone": "Data e hora mostradas no fuso horário local ({{timezone}})"
+      }
+    },
+    "profile": {
+      "title": "Crie seu perfil",
+      "title2": "Edite seu perfil",
+      "default": "Padrão",
+      "advanced": "Avançado",
+      "permissions": "Permissões",
+      "resolver": "Resolvedor",
+      "visibilityMessage": "As informações do seu perfil serão armazenadas na blockchain. Tudo que você adicionar será visível publicamente.",
+      "addProfile": "Adicionar campos ao perfil",
+      "addMore": "Adicionar mais ao perfil",
+      "options": {
+        "groups": {
+          "general": {
+            "label": "Geral",
+            "items": {
+              "name": "Apelido",
+              "url": "Site",
+              "location": "Localização",
+              "description": "Biografia curta"
+            },
+            "placeholder": {
+              "name": "João Silva",
+              "url": "https://ens.domains",
+              "location": "Metaverso",
+              "description": "Sou um yield farmer de uma área rural de Tennessee."
+            }
+          },
+          "social": {
+            "label": "Social",
+            "items": {
+              "com.twitter": "Twitter",
+              "com.github": "GitHub",
+              "com.discord": "Discord",
+              "org.telegram": "Telegram",
+              "email": "E-mail"
+            },
+            "placeholder": {
+              "com.twitter": "ex: ensdomains",
+              "com.github": "ex: ensdomains",
+              "com.discord": "ex: nickjohnson",
+              "org.telegram": "ex: nicksdjohnson",
+              "email": "ex: ola@exemplo.com"
+            }
+          },
+          "address": {
+            "label": "Endereço",
+            "itemLabel": "Endereço de {{coin}}",
+            "placeholder": {
+              "default": "Adicione o endereço aqui",
+              "eth": "0xb8c2C2...",
+              "btc": "3FZbgi29...",
+              "sol": "D4kA7VzHnmV...",
+              "op": "0xb8c2C2...",
+              "arb1": "0xb8c2C2...",
+              "base": "0xb8c2C2...",
+              "matic": "0xb8c2C2...",
+              "linea": "0xb8c2C2...",
+              "scr": "0xb8c2C2..."
+            }
+          },
+          "website": {
+            "label": "Site",
+            "items": {
+              "ipfs": "IPFS",
+              "ipns": "IPNS",
+              "swarm": "Swarm",
+              "onion": "Onion",
+              "skynet": "Skynet",
+              "arweave": "Arweave"
+            },
+            "placeholder": {
+              "default": "Adicione a URL aqui",
+              "ipfs": "ipfs://...",
+              "skynet": "sia://...",
+              "arweave": "ar://...",
+              "swarm": "bzz://...",
+              "onion": "onion3://..."
+            }
+          },
+          "other": {
+            "label": "Outros",
+            "items": {
+              "contentHash": "Content Hash",
+              "publicKey": "Chave Pública",
+              "abi": "ABI",
+              "custom": "Personalizado"
+            }
+          },
+          "custom": {
+            "key": "Chave",
+            "value": "Valor"
+          },
+          "default": {
+            "placeholder": "Adicione um valor aqui"
+          }
+        }
+      },
+      "errors": {
+        "labelRequired": "É necessária uma chave de registro",
+        "duplicateRecord": "Chave de registro duplicada",
+        "avatarReserved": "Esta chave está sendo utilizada pelo gerenciador de avatar",
+        "invalidValue": "Valor inválido"
+      },
+      "confirmations": {
+        "publicNotice": {
+          "title": "Seus dados são públicos",
+          "description": "Tudo que você adicionar ao seu perfil será visível publicamente na blockchain.",
+          "confirm": "Entendi",
+          "decline": "Voltar"
+        },
+        "clearEth": {
+          "title": "Apagar endereço ETH?",
+          "description": "Sem um endereço ETH, as pessoas não poderão enviar fundos para este nome. Isso pode ser atualizado depois.",
+          "confirm": "Apagar",
+          "decline": "Cancelar"
+        }
+      },
+      "actions": {
+        "skipProfile": "Pular perfil"
+      }
+    },
+    "complete": {
+      "heading": "Parabéns!",
+      "subheading": "Agora você é o proprietário de ",
+      "registerAnother": "Registrar outro",
+      "viewName": "Ver nome"
+    },
+    "info": {
+      "heading": "Antes de começar",
+      "subheading": "Registrar seu nome requer três etapas",
+      "ethItems": [
+        "Completar uma transação para iniciar o temporizador",
+        "Aguardar 60 segundos para que o temporizador termine",
+        "Completar uma segunda transação para garantir seu nome"
+      ],
+      "moonpayItems": [
+        "Criar ou fazer login em uma conta existente da MoonPay",
+        "Usar seu cartão de crédito ou débito para completar uma única transação"
+      ],
+      "setupProfile": "Desejo configurar meu perfil primeiro",
+      "paymentMethod": "Método de pagamento",
+      "notEnoughEth": "Não há ETH suficiente na carteira",
+      "creditOrDebit": "Cartão de crédito ou débito",
+      "additionalFee": "Taxa de processamento adicional",
+      "pendingMoonpayTransaction": "Sua transação com a MoonPay está sendo processada. Isso pode levar até dois minutos. Você pode verificar o progresso no e-mail de confirmação que recebeu.",
+      "failedMoonpayTransaction": "Sua transação com a MoonPay falhou. Tente novamente ou escolha o método 'Ethereum'.",
+      "ethereum": "Ethereum",
+      "processing": "Processando",
+      "poweredBy": "Desenvolvido por",
+      "moonpayModalHeader": "Pagamento com MoonPay",
+      "moonpayTestCard": "Detalhes do cartão de teste"
+    },
+    "transactions": {
+      "heading": "Quase pronto",
+      "subheading": {
+        "default": "Você precisará completar duas transações para garantir seu nome. A segunda transação deve ser completada dentro de 24 horas após a primeira.",
+        "commitSent": "<strong>Sua primeira transação está em andamento.</strong><br> A segunda transação deve ser completada dentro de 24 horas após a primeira.",
+        "commiting": "Esta espera evita que outros possam <tooltip>se antecipar</tooltip> à sua transação. Você será solicitado a completar uma segunda transação quando o temporizador terminar.",
+        "commitComplete": "<strong>Seu nome não estará registrado até que você complete a segunda transação.</strong><br> Você tem {{duration}} para completá-la.",
+        "commitCompleteNoDuration": "<strong>Seu nome não estará registrado até que você complete a segunda transação.</strong>",
+        "commitExpired": "Seu registro expirou. Você precisará iniciar o processo novamente.",
+        "frontRunning": "Quando alguém vê sua transação e registra o nome antes que sua transação possa ser completada."
+      },
+      "startTimer": "Iniciar temporizador",
+      "wait": "Aguardar",
+      "completeRegistration": "Completar registro",
+      "transactionFailed": "Transação falhou",
+      "transactionProgress": "Ver transação em andamento"
+    },
+    "cancelRegistration": {
+      "heading": "Você perderá sua transação",
+      "contentOne": "Se você voltar, sua primeira transação será redefinida. Se retornar, deverá completar a transação novamente e pagar as taxas associadas.",
+      "contentTwo": "Tem certeza de que deseja continuar?",
+      "footer": "Redefinir transação e voltar"
+    }
+  }
+}

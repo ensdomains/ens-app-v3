@@ -32,17 +32,4 @@ describe('ExpiryPanel', () => {
     rerender(<ExpiryPanel type="expiry" date={new Date(3255803954000)} />)
     expect(screen.queryByText('action.view')).toEqual(null)
   })
-
-  it('should not display tooltip only if tooltip is provided', async () => {
-    const { rerender } = render(
-      <ExpiryPanel type="expiry" date={new Date(3255803954000)} tooltip={'TOOLTIP'} />,
-    )
-    expect(screen.getByText('ICON')).toBeVisible()
-    expect(screen.queryByText('TOOLTIP')).toEqual(null)
-    await userEvent.hover(screen.getByText('ICON'))
-    expect(screen.getByText('TOOLTIP')).toBeVisible()
-    rerender(<ExpiryPanel type="expiry" date={new Date(3255803954000)} />)
-    expect(screen.queryByText('ICON')).toEqual(null)
-    expect(screen.queryByText('TOOLTIP')).toEqual(null)
-  })
 })

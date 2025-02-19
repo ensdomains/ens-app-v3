@@ -1,0 +1,18 @@
+{
+  "meta": {
+    "title": "{{address}} em ENS",
+    "description": "Todos os nomes de {{address}} em Ethereum Name Service"
+  },
+  "addressDetails": "Detalhes do endereço",
+  "nameCount": "{{count}} nomes",
+  "filter": "Filtrar",
+  "view": "Ver",
+  "noProfile": {
+    "title": "Nenhum nome primário estabelecido",
+    "message": "Esta carteira precisa estabelecer um nome primário para criar um perfil"
+  },
+  "noResults": "Nenhum nome encontrado",
+  "errors": {
+    "names": "Não foi possível encontrar o endereço"
+  }
+}
