@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { encodeLabelhash } from '@ensdomains/ensjs/utils'
 
-import UnknownLabels from './UnknownLabels-flow'
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
+import UnknownLabels from './UnknownLabels-flow'
 
 const mockDispatch = vi.fn()
 const mockOnDismiss = vi.fn()

@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CheckCircleSVG, LanguageSVG, LeftArrowSVG, mq, Typography } from '@ensdomains/thorin'
+import { CheckCircleSVG, LanguageSVG, LeftArrowSVG, Typography } from '@ensdomains/thorin'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -16,19 +16,19 @@ const Container = styled.div(
     padding: ${theme.space['4']};
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: column;
       padding: 0;
       gap: 0;
-    `)}
+    }
   `,
 )
 
 const HeadingWrapper = styled.div(
   ({ theme }) => css`
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       border-bottom: 1px solid ${theme.colors.border};
-    `)}
+    }
   `,
 )
 
@@ -55,7 +55,7 @@ const Heading = styled.div(
       color: ${theme.colors.grey};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       justify-content: flex-start;
       padding: ${theme.space['4']} ${theme.space['6']};
       margin: ${theme.space['2']};
@@ -67,7 +67,7 @@ const Heading = styled.div(
       & > div > svg {
         display: none;
       }
-    `)}
+    }
   `,
 )
 
@@ -88,11 +88,11 @@ const LanguagesContainer = styled.div(
     align-items: stretch;
     justify-content: flex-start;
     gap: ${theme.space['2']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: column;
       padding: ${theme.space['2']};
       gap: 0;
-    `)}
+    }
   `,
 )
 
@@ -125,14 +125,18 @@ const LanguageItem = styled.div(
         color: ${theme.colors.green};
       }
     }
-
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       border: none;
-    `)}
+    }
   `,
 )
 
-const CheckIcon = styled.svg(() => css``)
+const CheckIcon = styled.svg(
+  () => css`
+    width: 1rem;
+    height: 1rem;
+  `,
+)
 
 const LanguageMenu = ({
   setCurrentView,
@@ -158,7 +162,7 @@ const LanguageMenu = ({
     <Container>
       <HeadingWrapper>
         <Heading onClick={() => setCurrentView('main')}>
-          <LeftArrowSVG />
+          <LeftArrowSVG width={16} height={16} />
           <InnerHeading>
             <LanguageSVG />
             <Typography weight="bold">{t('navigation.language')}</Typography>

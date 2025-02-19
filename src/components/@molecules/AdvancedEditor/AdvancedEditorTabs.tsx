@@ -2,23 +2,21 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 
-import { mq } from '@ensdomains/thorin'
-
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 
-const TabButtonsContainer = styled.div(({ theme }) => [
-  css`
+const TabButtonsContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-wrap: wrap;
     gap: ${theme.space['1.25']} ${theme.space['3']};
     padding: 0 ${theme.space['4']} 0 ${theme.space['2']};
     width: ${theme.space.full};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      padding: 0 ${theme.space['2']};
+      margin: -${theme.space['1.5']} 0 -${theme.space['2']};
+    }
   `,
-  mq.sm.min(css`
-    padding: 0 ${theme.space['2']};
-    margin: -${theme.space['1.5']} 0 -${theme.space['2']};
-  `),
-])
+)
 
 const getIndicatorStyle = (
   theme: Theme,
@@ -32,7 +30,7 @@ const getIndicatorStyle = (
   else if ($isDirty) color = theme.colors.green
   if (!color) return ''
   return css`
-    :after {
+    ::after {
       content: '';
       position: absolute;
       background-color: ${color};
@@ -61,7 +59,7 @@ const TabButton = styled.button<{
     padding: 0;
     margin: 0;
     background: none;
-    color: ${$selected ? theme.colors.accent : theme.colors.textTertiary};
+    color: ${$selected ? theme.colors.accent : theme.colors.grey};
     font-size: 1.25rem;
     transition: all 0.15s ease-in-out;
     cursor: pointer;

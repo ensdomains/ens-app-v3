@@ -34,7 +34,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
 
     ${$dirty &&
     css`
-      :after {
+      ::after {
         background-color: ${theme.colors.blue};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
@@ -43,7 +43,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
 
     ${$validated &&
     css`
-      :after {
+      ::after {
         background-color: ${theme.colors.green};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
@@ -52,7 +52,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
 
     ${$error &&
     css`
-      :after {
+      ::after {
         background-color: ${theme.colors.red};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
@@ -136,7 +136,7 @@ const AvatarButton = ({
         [
           {
             label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-            color: 'black',
+            color: 'text',
             onClick: handleSelectOption('nft'),
           },
           ...(disabledUpload
@@ -144,7 +144,7 @@ const AvatarButton = ({
             : [
                 {
                   label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-                  color: 'black',
+                  color: 'text',
                   onClick: handleSelectOption('upload'),
                 },
               ]),
@@ -164,7 +164,7 @@ const AvatarButton = ({
       {...dropdownProps}
     >
       <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
-        <Avatar label="profile-button-avatar" src={src} noBorder />
+        <Avatar label="profile-button-avatar" src={src} />
         {!validated && !error && (
           <IconMask>
             <CameraIcon />

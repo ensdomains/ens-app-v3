@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, mq, Slider } from '@ensdomains/thorin'
+import { Button, Dialog, Slider } from '@ensdomains/thorin'
 
 import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
@@ -41,6 +41,10 @@ const ImageContainer = styled.div(
     max-width: ${theme.space['96']};
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
+
+    svg {
+      fill: none;
+    }
   `,
 )
 
@@ -91,10 +95,9 @@ const SliderContainer = styled.div(
       height: ${theme.space['6']};
       opacity: 0.15;
     }
-
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['2']} ${theme.space['8']};
-    `)}
+    }
   `,
 )
 

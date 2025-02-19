@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { mq, Spinner } from '@ensdomains/thorin'
+import { Spinner } from '@ensdomains/thorin'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -10,10 +10,10 @@ const Container = styled.div(
     padding: ${theme.space[4]};
     width: 100%;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: calc(80vw - 2 * ${theme.space['6']});
       max-width: ${theme.space['128']};
-    `)}
+    }
   `,
 )
 

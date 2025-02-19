@@ -16,6 +16,7 @@ const LatestResolverLabel = styled.div<{ $offset: boolean }>(
   ({ theme, $offset }) => css`
     display: flex;
     flex-direction: column;
+
     /* ${$offset && `padding-top: ${theme.space['5.5']};`} */
   `,
 )

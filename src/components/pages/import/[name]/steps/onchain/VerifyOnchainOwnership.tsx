@@ -105,7 +105,7 @@ export const VerifyOnchainOwnership = ({
       <DnsImportHeading>{t('title')}</DnsImportHeading>
       {dnsOwnerStatus !== 'matching' && <Typography>{t('status.mismatching.heading')}</Typography>}
       {(() => {
-        if (!isConnected) return <Helper type="info">{t('status.disconnected')}</Helper>
+        if (!isConnected) return <Helper alert="info">{t('status.disconnected')}</Helper>
         if (dnsOwnerStatus === 'matching')
           return (
             <SuccessHelper>
@@ -147,7 +147,7 @@ export const VerifyOnchainOwnership = ({
               }
               statusHelperElement={
                 dnsOwnerStatus === 'mismatching' && (
-                  <Helper type="error">{t('status.mismatching.error.onchain')}</Helper>
+                  <Helper alert="error">{t('status.mismatching.error.onchain')}</Helper>
                 )
               }
             />

@@ -12,7 +12,6 @@ import {
   Field,
   Heading,
   Helper,
-  mq,
   RadioButton,
   RadioButtonGroup,
   Toggle,
@@ -51,10 +50,10 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -70,9 +69,9 @@ const OutlinedContainer = styled.div(
     border-radius: ${theme.radii.large};
     background: ${theme.colors.backgroundSecondary};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       grid-template-areas: 'title checkbox' 'description checkbox';
-    `)}
+    }
   `,
 )
 
@@ -143,10 +142,10 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
       align-items: stretch;
-    `)}
+    }
   `,
 )
 
@@ -281,7 +280,7 @@ const PaymentChoice = ({
 
   return (
     <PaymentChoiceContainer>
-      <StyledTitle color="textTertiary" weight="bold">
+      <StyledTitle color="grey" weight="bold">
         {t('steps.info.paymentMethod')}
       </StyledTitle>
       <Spacer $height="2" />
@@ -301,7 +300,7 @@ const PaymentChoice = ({
           {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
             <>
               <Spacer $height="4" />
-              <Helper type="warning" alignment="horizontal">
+              <Helper alert="warning" alignment="horizontal">
                 {t('steps.info.notEnoughEth')}
               </Helper>
               <Spacer $height="2" />
@@ -330,7 +329,7 @@ const PaymentChoice = ({
             label={
               <LabelContainer>
                 <RadioLabel>{t('steps.info.creditOrDebit')}</RadioLabel>
-                <Typography color="textTertiary" weight="light">
+                <Typography color="grey" weight="light">
                   ({t('steps.info.additionalFee')})
                 </Typography>
               </LabelContainer>
@@ -352,7 +351,7 @@ const PaymentChoice = ({
               </InfoItems>
               <Spacer $height="4" />
               {hasFailedMoonpayTransaction && (
-                <Helper type="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
+                <Helper alert="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
               )}
               <Spacer $height="4" />
               <MoonpayContainer>

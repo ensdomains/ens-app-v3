@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
 import { useConnections, useDisconnect, useEnsAvatar } from 'wagmi'
 
-import { Button, mq, PersonSVG, Profile } from '@ensdomains/thorin'
+import { Button, PersonSVG, Profile } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
@@ -34,9 +34,9 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
             height: ${theme.space['10']};
             border-radius: ${theme.radii.full};
             font-size: ${theme.fontSizes.body};
-            ${mq.xs.min(css`
+            @media (min-width: ${theme.breakpoints.xs}px) {
               padding: 0 ${theme.space['8']};
-            `)}
+            }
           }
         `
       : css`
@@ -149,12 +149,13 @@ const HeaderProfile = ({ address }: { address: Address }) => {
         src: avatar || zorb,
         decoding: 'sync',
         loading: 'eager',
-        noBorder: true,
-        overlay: avatar ? undefined : (
-          <PersonOverlay>
-            <PersonSVG />
-          </PersonOverlay>
-        ),
+        icon: avatar
+          ? undefined
+          : () => (
+              <PersonOverlay>
+                <PersonSVG />
+              </PersonOverlay>
+            ),
       }}
       size="medium"
       alignDropdown="left"

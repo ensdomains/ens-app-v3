@@ -7,7 +7,12 @@ import { I18nextProvider } from 'react-i18next'
 import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
-import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
+import {
+  Mode,
+  modeVars,
+  lightTheme as thorinLightTheme,
+  ThemeProvider as ThorinThemeProvider,
+} from '@ensdomains/thorin'
 
 import { NetworkNotifications } from '@app/components/@molecules/NetworkNotifications/NetworkNotifications'
 import { TestnetWarning } from '@app/components/TestnetWarning'
@@ -71,6 +76,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     background: radial-gradient(50% 50% at 50% 50%, rgba(82, 152, 255, 0.062) 0%, rgba(255, 255, 255, 0) 100%), #F7F7F7;
+    color: var(--thrn-color-textPrimary);
   }
 
   body, .min-safe {
@@ -80,6 +86,10 @@ const GlobalStyle = createGlobalStyle`
       /* stylelint-disable-next-line value-no-vendor-prefix */
       min-height: -webkit-fill-available;
     }
+  }
+
+  [data-theme="dark"] body {
+    background: rgb(20, 20, 22);
   }
 
   a {
@@ -130,34 +140,66 @@ type AppPropsWithLayout = AppProps & {
 
 setupAnalytics()
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+declare global {
+  interface Window {
+    __theme: Mode
+    __setPreferredTheme: (theme: Mode) => void
+    __onThemeChange: (theme: Mode) => void
+  }
+}
+
+const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'router'>) => {
   const getLayout = Component.getLayout ?? ((page) => page)
+
+  const themeWithCSSVars = {
+    ...thorinLightTheme,
+    colors: modeVars.color,
+    boxShadows: {
+      '0': '0 0 0 0 var(--thrn-color-backgroundPrimary)',
+      '0.02': '0 2px 8px var(--thrn-color-backgroundPrimary)',
+      '0.5': '0 0 0 0.125rem var(--thrn-color-backgroundPrimary)',
+      '0.25': '0 2px 12px var(--thrn-color-backgroundPrimary)',
+      '1': '0 0 0 0.25rem var(--thrn-color-backgroundPrimary)',
+    },
+  }
+
+  return (
+    <RainbowKitWithCapsuleProvider>
+      <TransactionStoreProvider>
+        <ThemeProvider theme={themeWithCSSVars}>
+          <BreakpointProvider queries={breakpoints}>
+            <IntercomProvider appId={INTERCOM_ID}>
+              <GlobalStyle />
+              <SyncProvider>
+                <TransactionFlowProvider>
+                  <SyncDroppedTransaction>
+                    <NetworkNotifications />
+                    <TransactionNotifications />
+                    <TestnetWarning />
+                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                  </SyncDroppedTransaction>
+                </TransactionFlowProvider>
+              </SyncProvider>
+            </IntercomProvider>
+          </BreakpointProvider>
+        </ThemeProvider>
+      </TransactionStoreProvider>
+    </RainbowKitWithCapsuleProvider>
+  )
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const defaultMode = typeof window !== 'undefined' ? window.__theme : 'light'
 
   return (
     <I18nextProvider i18n={i18n}>
       <QueryProviders>
-        <RainbowKitWithCapsuleProvider>
-          <TransactionStoreProvider>
-            <ThemeProvider theme={thorinLightTheme}>
-              <BreakpointProvider queries={breakpoints}>
-                <IntercomProvider appId={INTERCOM_ID}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <SyncProvider>
-                    <TransactionFlowProvider>
-                      <SyncDroppedTransaction>
-                        <NetworkNotifications />
-                        <TransactionNotifications />
-                        <TestnetWarning />
-                        <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                      </SyncDroppedTransaction>
-                    </TransactionFlowProvider>
-                  </SyncProvider>
-                </IntercomProvider>
-              </BreakpointProvider>
-            </ThemeProvider>
-          </TransactionStoreProvider>
-        </RainbowKitWithCapsuleProvider>
+        <ThorinThemeProvider
+          onThemeChange={(mode) => window.__setPreferredTheme(mode)}
+          defaultMode={defaultMode}
+        >
+          <AppWithThorin {...{ Component, pageProps }} />
+        </ThorinThemeProvider>
       </QueryProviders>
     </I18nextProvider>
   )

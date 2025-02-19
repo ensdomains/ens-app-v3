@@ -78,8 +78,8 @@ const FaucetBanner = () => {
   const BannerComponent = (
     <BannerWrapper>
       <StyledBanner
-        actionIcon={<RightArrowSVG />}
-        icon={<EthSVG />}
+        actionIcon={RightArrowSVG}
+        icon={EthSVG}
         onClick={openDialog}
         alert="info"
         title={`You have unclaimed ${chainName} ETH!`}
@@ -112,7 +112,7 @@ const FaucetBanner = () => {
                 { label: 'Address', value: address || '', type: 'address', useRawLabel: true },
               ]}
             />
-            {isError && <Helper type="error">{(error as Error).message}</Helper>}
+            {isError && <Helper alert="error">{(error as Error).message}</Helper>}
           </Dialog.Content>
           <Dialog.Footer
             leading={

@@ -16,7 +16,7 @@ jobs:
       deployments: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Misc. Deps
         run: sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
@@ -25,10 +25,10 @@ jobs:
         run: npm i -g corepack
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'

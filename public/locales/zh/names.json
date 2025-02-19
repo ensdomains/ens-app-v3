@@ -11,5 +11,9 @@
     "expiryDate": "到期时间",
     "labelName": "名称",
     "createdAt": "创建时间"
+  },
+  "offchainWarning": {
+    "title": "部分名称可能不会显示",
+    "text": "链下名称目前不会在此列表中显示。您仍可以通过直接搜索来查看它们。点击了解更多。"
   }
 }
