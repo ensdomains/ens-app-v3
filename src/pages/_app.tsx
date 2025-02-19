@@ -1,3 +1,4 @@
+import '@ensdomains/thorin/dist/thorin.css'
 import '@splidejs/react-splide/css'
 
 import { NextPage } from 'next'

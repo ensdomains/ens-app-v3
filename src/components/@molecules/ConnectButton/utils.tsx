@@ -48,7 +48,7 @@ export const getDropdownItems = ({
             ),
             as: 'a' as 'a',
             color: 'text',
-            icon: <PersonSVG />,
+            icon: PersonSVG,
           },
         ]
       : []),
@@ -61,7 +61,7 @@ export const getDropdownItems = ({
         </BaseLink>
       ),
       as: 'a',
-      icon: <CogSVG />,
+      icon: CogSVG,
       showIndicator: hasPendingTransactions,
     },
     <SectionDivider key="divider" />,
@@ -69,14 +69,14 @@ export const getDropdownItems = ({
       label: shortenAddress(address),
       color: 'text',
       onClick: () => copy(address),
-      icon: copied ? <CheckSVG /> : <CopySVG />,
+      icon: copied ? CheckSVG : CopySVG,
     },
     ...(isCapsuleConnected
       ? [
           {
             label: t('wallet.myWallet'),
             color: 'text',
-            icon: <WalletSVG />,
+            icon: WalletSVG,
             wrapper: (children: ReactNode, key: Key) => (
               <a
                 href="https://connect.usecapsule.com/"
@@ -95,6 +95,6 @@ export const getDropdownItems = ({
       label: t('wallet.disconnect'),
       color: 'red',
       onClick: () => disconnect(),
-      icon: <ExitSVG />,
+      icon: ExitSVG,
     },
   ] as DropdownItem[]

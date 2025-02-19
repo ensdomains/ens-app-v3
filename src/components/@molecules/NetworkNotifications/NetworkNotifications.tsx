@@ -5,6 +5,9 @@ import { useAccount } from 'wagmi'
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { shouldOpenModal } from './utils'
+import { useChainId } from 'wagmi'
+import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useRouter } from 'next/router'
 
 const appLinks = {
   Ethereum: 'app.ens.domains',
@@ -16,16 +19,22 @@ const appLinks = {
 export const NetworkNotifications = () => {
   const { t } = useTranslation()
   const account = useAccount()
+  const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
 
   const connectedChainName = account?.chain?.name
   const connectedChainId = account?.chain?.id
 
+  const chain = useChainId()
+
+  console.log('account', account)
+  console.log('connectedChainName', connectedChainName, chain)
+
   useEffect(() => {
     setOpen(shouldOpenModal(connectedChainName, connectedChainId))
   }, [connectedChainName, connectedChainId])
 
-  if (!connectedChainName) return null
+  if (!connectedChainName || !router.isReady) return null
 
   return (
     <Toast
