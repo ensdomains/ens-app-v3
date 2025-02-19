@@ -1,7 +1,5 @@
 #!/bin/bash
-# Copied and modified from: https://github.com/actions/virtual-environments/issues/5651#issuecomment-1142075171
-# Used to ensure that tests are always using the latest version of Chrome.
-# This script now handles both ARM64 and AMD64 architectures.
+# Script to download and set up Chromium directly from official sources
 
 download_with_retries() {
     local URL="$1"
@@ -20,7 +18,6 @@ download_with_retries() {
     interval=30
     while [ $retries -gt 0 ]; do
         ((retries--))
-        # Temporary disable exit on error to retry on non-zero exit code
         set +e
         http_code=$(eval $COMMAND)
         exit_code=$?
@@ -28,10 +25,9 @@ download_with_retries() {
             echo "Download completed"
             return 0
         else
-            echo "Error — Either HTTP response code for '$URL' is wrong - '$http_code' or exit code is not 0 - '$exit_code'. Waiting $interval seconds before the next attempt, $retries attempts left"
+            echo "Error — HTTP code: '$http_code', exit code: '$exit_code'. Retrying in $interval seconds, $retries attempts left"
             sleep 30
         fi
-        # Enable exit on error back
         set -e
     done
 
@@ -43,51 +39,77 @@ download_with_retries() {
 ARCH=$(uname -m)
 echo "Detected architecture: $ARCH"
 
-# Check if Chrome is installed
-if command -v google-chrome &> /dev/null; then
-    INSTALLED_CHROME_VERSION=$(google-chrome --product-version)
-else
-    INSTALLED_CHROME_VERSION="none"
-fi
+# Create chrome directory
+CHROME_DIR="/usr/local/chrome"
+sudo mkdir -p $CHROME_DIR
 
-LATEST_VERSION_URL="https://omahaproxy.appspot.com/linux"
-echo "Fetching latest chrome version from: $LATEST_VERSION_URL"
-LATEST_CHROME_VERSION=$(curl "$LATEST_VERSION_URL")
-
-echo "Installed Chrome Version: $INSTALLED_CHROME_VERSION"
-echo "Latest Chrome Version: $LATEST_CHROME_VERSION"
-
-if [ "$INSTALLED_CHROME_VERSION" == "$LATEST_CHROME_VERSION" ]; then
-    echo "The latest major version of Chrome is already installed."
-    exit 0
-fi
-
-# Install dependencies
-echo "Installing dependencies..."
-sudo apt-get update
-sudo apt-get install -y wget gnupg
-
-# Add Chrome repository and install Chrome based on architecture
 if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-    echo "Installing Chrome for ARM64..."
+    echo "Setting up Chromium for ARM64..."
     
-    # For ARM64, we need to use Chromium as Chrome doesn't provide official ARM64 builds
-    sudo apt-get install -y chromium-browser
+    # Use Chromium directly from Ubuntu's Snap store - they provide ARM builds
+    SNAP_CHROMIUM_URL="https://launchpad.net/ubuntu/+archive/primary/+files/chromium-browser_120.0.6099.224-0ubuntu0.18.04.1_arm64.deb"
+    CHROMIUM_DEB="/tmp/chromium-browser.deb"
     
-    # Create symlink to make chromium accessible as google-chrome
-    sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
+    # Download and extract
+    download_with_retries $SNAP_CHROMIUM_URL "/tmp" "chromium-browser.deb"
+    cd /tmp
+    ar x chromium-browser.deb
+    tar xf data.tar.xz
     
-    # Install additional dependencies that might be needed
-    sudo apt-get install -y libnss3 libgbm1 libasound2
+    # Move binary to our chrome directory
+    sudo mv usr/lib/chromium-browser/* $CHROME_DIR/
+    
+    # Create symlink
+    sudo ln -sf $CHROME_DIR/chrome /usr/local/bin/google-chrome
+    
+    # Install minimal dependencies
+    sudo apt-get update
+    sudo apt-get install -y --no-install-recommends \
+        libnss3 \
+        libgbm1 \
+        libasound2 \
+        libatk1.0-0 \
+        libatk-bridge2.0-0 \
+        libcups2 \
+        libdrm2 \
+        libxkbcommon0 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxfixes3 \
+        libxrandr2 \
+        libgbm1 \
+        libasound2
 else
-    echo "Installing Chrome for AMD64..."
-    # Download and install Google Chrome
-    CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-    CHROME_DEB_NAME="google-chrome-stable_current_amd64.deb"
-    download_with_retries $CHROME_DEB_URL "/tmp" "${CHROME_DEB_NAME}"
-    sudo apt-get install -y "/tmp/${CHROME_DEB_NAME}" -f
+    echo "Setting up Chrome for AMD64..."
+    CHROME_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+    download_with_retries $CHROME_URL "/tmp" "chrome.deb"
+    
+    cd /tmp
+    ar x chrome.deb
+    tar xf data.tar.xz
+    
+    # Move binary to our chrome directory
+    sudo mv opt/google/chrome/* $CHROME_DIR/
+    
+    # Create symlink
+    sudo ln -sf $CHROME_DIR/chrome /usr/local/bin/google-chrome
+    
+    # Install minimal dependencies
+    sudo apt-get update
+    sudo apt-get install -y --no-install-recommends \
+        libnss3 \
+        libgbm1 \
+        libasound2
 fi
+
+# Set up chrome sandbox
+sudo chown root:root $CHROME_DIR/chrome_sandbox
+sudo chmod 4755 $CHROME_DIR/chrome_sandbox
+sudo cp $CHROME_DIR/chrome_sandbox $CHROME_DIR/chrome-sandbox
 
 # Verify installation
 CHROME_VERSION=$(google-chrome --version)
 echo "Installed Chrome/Chromium version: $CHROME_VERSION"
+
+# Export chrome path for Playwright
+echo "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/local/bin/google-chrome" >> $GITHUB_ENV

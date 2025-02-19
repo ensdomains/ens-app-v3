@@ -43,7 +43,7 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-4vcpu-ubuntu-2204-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -60,17 +60,41 @@ jobs:
           name: stateful-build
           path: stateful-build.tar
 
+  setup-chrome:
+    runs-on: blacksmith-4vcpu-ubuntu-2204-arm
+    outputs:
+      chrome_path: ${{ steps.chrome-setup.outputs.chrome_path }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Chrome
+        id: chrome-setup
+        run: |
+          ./scripts/check-chrome.sh
+          echo "chrome_path=${PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}" >> $GITHUB_OUTPUT
+
+      - name: Cache Chrome
+        uses: useblacksmith/cache@v5
+        with:
+          path: /usr/local/chrome
+          key: chrome-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/check-chrome.sh') }}
+
   stateless:
     name: stateless (${{matrix.shard}})
-    needs: build-stateless
+    needs: [build-stateless, setup-chrome]
     timeout-minutes: 20
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-4vcpu-ubuntu-2204-arm
     strategy:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+
+      - name: Restore Chrome
+        uses: useblacksmith/cache@v5
+        with:
+          path: /usr/local/chrome
+          key: chrome-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/check-chrome.sh') }}
 
       - run: pnpm rebuild -r
 
@@ -84,23 +108,17 @@ jobs:
       - name: Untar files
         run: tar -xvf stateless-build.tar
 
-      - name: Install playwright
+      - name: Install Playwright deps
         run: |
-          # Install Playwright browsers with system dependencies
-          if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then
-            # Install Chromium from system for ARM
-            sudo apt-get update
-            sudo apt-get install -y chromium-browser
-            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx playwright install
-            PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser npx playwright install-deps chromium
-          else
-            # Regular installation for AMD64
-            npx playwright install chromium
-          fi
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx playwright install
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${{ needs.setup-chrome.outputs.chrome_path }} npx playwright install-deps chromium
 
       - name: Run tests
         run: |
-          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci --no-build
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${{ needs.setup-chrome.outputs.chrome_path }} \
+          PLAYWRIGHT_SHARD=${{matrix.shard}} \
+          PLAYWRIGHT_TOTAL=${{strategy.job-total}} \
+          pnpm e2e:ci --no-build
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -112,17 +130,22 @@ jobs:
 
   stateful:
     name: stateful (${{matrix.shard}})
-    needs: build-stateful
+    needs: [build-stateful, setup-chrome]
     timeout-minutes: 10
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-4vcpu-ubuntu-2204-arm
     strategy:
       matrix:
         shard: [1, 2, 3]
 
     steps:
       - uses: actions/checkout@v4
-      - run: ./scripts/check-chrome.sh
       - uses: ./.github/actions/setup
+
+      - name: Restore Chrome
+        uses: useblacksmith/cache@v5        
+        with:
+          path: /usr/local/chrome
+          key: chrome-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/check-chrome.sh') }}
 
       - run: pnpm rebuild -r
 
@@ -135,22 +158,14 @@ jobs:
       - name: Untar files
         run: tar -xvf stateful-build.tar
 
-      - name: Install playwright
+      - name: Install Playwright deps
         run: |
-          # Install Playwright browsers with system dependencies
-          if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then
-            # Install Chromium from system for ARM
-            sudo apt-get update
-            sudo apt-get install -y chromium-browser
-            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx playwright install
-            PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser npx playwright install-deps chromium
-          else
-            # Regular installation for AMD64
-            npx playwright install chromium
-          fi
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx playwright install
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${{ needs.setup-chrome.outputs.chrome_path }} npx playwright install-deps chromium
 
       - name: Run tests
         run: |
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${{ needs.setup-chrome.outputs.chrome_path }} \
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
           "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
