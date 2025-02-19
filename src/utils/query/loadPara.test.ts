@@ -1,8 +1,8 @@
 import { reconnect } from '@wagmi/core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { capsuleClient, capsuleModalProps, capsuleWalletConnectorFn } from './capsuleWallet'
-import { loadCapsule } from './loadCapsule'
+import { loadPara } from './loadPara'
+import { paraClient, paraModalProps, paraWalletConnectorFn } from './paraWallet'
 import { prefix, wagmiConfig } from './wagmi'
 
 // Mock the external dependencies
@@ -26,13 +26,13 @@ vi.mock('./wagmi', () => ({
   },
 }))
 
-vi.mock('./capsuleWallet', () => ({
-  capsuleClient: {},
-  capsuleModalProps: {},
-  capsuleWalletConnectorFn: vi.fn(),
+vi.mock('./paraWallet', () => ({
+  paraClient: {},
+  paraModalProps: {},
+  paraWalletConnectorFn: vi.fn(),
 }))
 
-describe('loadCapsule', () => {
+describe('loadPara', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     localStorage.clear()
@@ -43,32 +43,32 @@ describe('loadCapsule', () => {
     vi.useRealTimers()
   })
 
-  it('should import capsuleWallet, set up the connector, and add it to wagmiConfig', async () => {
-    const mockInitialisedConnector = { id: 'capsule-integrated' }
+  it('should import paraWallet, set up the connector, and add it to wagmiConfig', async () => {
+    const mockInitialisedConnector = { id: 'para-integrated' }
     wagmiConfig._internal.connectors.setup.mockReturnValue(mockInitialisedConnector)
 
-    const result = await loadCapsule()
+    const result = await loadPara()
 
-    expect(wagmiConfig._internal.connectors.setup).toHaveBeenCalledWith(capsuleWalletConnectorFn)
+    expect(wagmiConfig._internal.connectors.setup).toHaveBeenCalledWith(paraWalletConnectorFn)
     expect(wagmiConfig._internal.connectors.setState).toHaveBeenCalled()
     expect(result).toEqual({
-      capsuleClient: capsuleClient,
-      capsuleModalProps: capsuleModalProps,
+      paraClient: paraClient,
+      paraModalProps: paraModalProps,
     })
   })
 
   it('should not attempt reconnection if shouldAttemptReconnect conditions are not met', async () => {
     localStorage.setItem(`${prefix}.recentConnectorId`, JSON.stringify('other-connector'))
 
-    await loadCapsule()
+    await loadPara()
 
     expect(wagmiConfig.subscribe).not.toHaveBeenCalled()
     expect(reconnect).not.toHaveBeenCalled()
   })
 
   it('should attempt reconnection if shouldAttemptReconnect conditions are met', async () => {
-    localStorage.setItem(`${prefix}.recentConnectorId`, JSON.stringify('capsule-integrated'))
-    localStorage.setItem(`${prefix}.capsule-integrated.connected`, 'true')
+    localStorage.setItem(`${prefix}.recentConnectorId`, JSON.stringify('para-integrated'))
+    localStorage.setItem(`${prefix}.para-integrated.connected`, 'true')
     wagmiConfig.state.status = 'disconnected'
 
     let subscriberCallback: (state: string) => void
@@ -77,7 +77,7 @@ describe('loadCapsule', () => {
       return vi.fn() // Return a mock unsubscribe function
     })
 
-    await loadCapsule()
+    await loadPara()
 
     expect(wagmiConfig.subscribe).toHaveBeenCalled()
 
@@ -98,25 +98,25 @@ describe('loadCapsule', () => {
   })
 
   it('should not attempt reconnection if already connected', async () => {
-    localStorage.setItem(`${prefix}.recentConnectorId`, JSON.stringify('capsule-integrated'))
-    localStorage.setItem(`${prefix}.capsule-integrated.connected`, 'true')
+    localStorage.setItem(`${prefix}.recentConnectorId`, JSON.stringify('para-integrated'))
+    localStorage.setItem(`${prefix}.para-integrated.connected`, 'true')
     wagmiConfig.state.status = 'connected'
 
-    await loadCapsule()
+    await loadPara()
 
     expect(wagmiConfig.subscribe).not.toHaveBeenCalled()
     expect(reconnect).not.toHaveBeenCalled()
   })
 
-  it('should add capsule connector and remove existing one with the same id', async () => {
-    const mockInitialisedConnector = { id: 'capsule-integrated' }
+  it('should add para connector and remove existing one with the same id', async () => {
+    const mockInitialisedConnector = { id: 'para-integrated' }
     wagmiConfig._internal.connectors.setup.mockReturnValue(mockInitialisedConnector)
 
-    await loadCapsule()
+    await loadPara()
 
     expect(wagmiConfig._internal.connectors.setState).toHaveBeenCalledWith(expect.any(Function))
     const setStateCallback = wagmiConfig._internal.connectors.setState.mock.calls[0][0]
-    const existingConnectors = [{ id: 'capsule-integrated' }, { id: 'other-connector' }]
+    const existingConnectors = [{ id: 'para-integrated' }, { id: 'other-connector' }]
     const newConnectors = setStateCallback(existingConnectors)
     expect(newConnectors).toEqual([{ id: 'other-connector' }, mockInitialisedConnector])
   })

@@ -24,15 +24,15 @@ const babelIncludeRegexes = [
  * */
 const nextConfig = {
   transpilePackages: [
-    '@usecapsule/rainbowkit',
-    '@usecapsule/rainbowkit-wallet',
-    '@usecapsule/core-components',
-    '@usecapsule/react-components',
-    '@usecapsule/react-sdk',
-    '@usecapsule/core-sdk',
-    '@usecapsule/web-sdk',
-    '@usecapsule/wagmi-v2-integration',
-    '@usecapsule/viem-v2-integration',
+    '@getpara/rainbowkit',
+    '@getpara/rainbowkit-wallet',
+    '@getpara/core-components',
+    '@getpara/react-components',
+    '@getpara/react-sdk',
+    '@getpara/core-sdk',
+    '@getpara/web-sdk',
+    '@getpara/wagmi-v2-integration',
+    '@getpara/viem-v2-integration',
   ],
   reactStrictMode: true,
   compiler: {

@@ -307,7 +307,7 @@
         "message": "Double check these details before confirming in your wallet.",
         "waitingForWallet": "Waiting for Wallet",
         "openWallet": "Open Wallet",
-        "openCapsule": "Start",
+        "openPara": "Start",
         "insufficientFunds": "Insufficient funds"
       },
       "sent": {
@@ -438,7 +438,7 @@
       "action": "Go to holesky.app.ens.domains"
     }
   },
-  "capsule": {
-    "signInWithCapsule": "Sign in with Capsule"
+  "para": {
+    "signInWithPara": "Sign in with Para"
   }
 }

@@ -23,7 +23,7 @@ export const getDropdownItems = ({
   copy,
   copied,
   hasPendingTransactions,
-  isCapsuleConnected,
+  isParaConnected,
   t,
   address,
 }: {
@@ -32,7 +32,7 @@ export const getDropdownItems = ({
   copy: any
   copied: any
   hasPendingTransactions: any
-  isCapsuleConnected: boolean
+  isParaConnected: boolean
   t: any
   address: Address
 }): DropdownItem[] =>
@@ -71,7 +71,7 @@ export const getDropdownItems = ({
       onClick: () => copy(address),
       icon: copied ? CheckSVG : CopySVG,
     },
-    ...(isCapsuleConnected
+    ...(isParaConnected
       ? [
           {
             label: t('wallet.myWallet'),
@@ -79,7 +79,7 @@ export const getDropdownItems = ({
             icon: WalletSVG,
             wrapper: (children: ReactNode, key: Key) => (
               <a
-                href="https://connect.usecapsule.com/"
+                href="https://connect.getpara.com/"
                 key={key}
                 target="_blank"
                 rel="noreferrer"

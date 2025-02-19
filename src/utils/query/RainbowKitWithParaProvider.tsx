@@ -1,10 +1,10 @@
-import { lightTheme, RainbowKitProvider, Theme } from '@usecapsule/rainbowkit'
+import { lightTheme, RainbowKitProvider, Theme } from '@getpara/rainbowkit'
 import { ComponentProps, useEffect, useState } from 'react'
 
 import { lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
 import { hslToHex } from '../utils'
-import { loadCapsule } from './loadCapsule'
+import { loadPara } from './loadPara'
 
 type RainbowKitProviderProps = ComponentProps<typeof RainbowKitProvider>
 
@@ -18,19 +18,19 @@ const rainbowKitTheme: Theme = {
   },
 }
 
-export const RainbowKitWithCapsuleProvider = (props: RainbowKitProviderProps) => {
-  const [capsuleData, setCapsule] = useState<Awaited<ReturnType<typeof loadCapsule>> | null>(null)
+export const RainbowKitWithParaProvider = (props: RainbowKitProviderProps) => {
+  const [paraData, setPara] = useState<Awaited<ReturnType<typeof loadPara>> | null>(null)
 
   useEffect(() => {
-    loadCapsule().then(setCapsule)
+    loadPara().then(setPara)
   }, [])
 
   return (
     <RainbowKitProvider
       theme={rainbowKitTheme}
       {...props}
-      capsule={capsuleData?.capsuleClient}
-      capsuleIntegratedProps={capsuleData?.capsuleModalProps}
+      para={paraData?.paraClient}
+      paraIntegratedProps={paraData?.paraModalProps}
     />
   )
 }

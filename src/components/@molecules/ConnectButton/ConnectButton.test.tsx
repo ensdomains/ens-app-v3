@@ -1,6 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { useConnectModal } from '@usecapsule/rainbowkit'
+import { useConnectModal } from '@getpara/rainbowkit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'

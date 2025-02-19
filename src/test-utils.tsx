@@ -31,7 +31,7 @@ const useConnectModalReturnValue = {
   openConnectModal: mockOpenConnectModal,
   connectModalOpen: false,
 }
-vi.mock('@usecapsule/rainbowkit', () => ({
+vi.mock('@getpara/rainbowkit', () => ({
   useConnectModal: () => useConnectModalReturnValue,
 }))
 
