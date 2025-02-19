@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
-import { makeCommitment } from '@ensdomains/ensjs/utils'
+import { makeCommitment, makeLegacyCommitment } from '@ensdomains/ensjs/utils'
 import { Button, CountdownCircle, Dialog, Heading, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
@@ -19,6 +19,8 @@ import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
+import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -258,8 +260,13 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const commitCouldBeFound =
     !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
+  const isLegacyCommit = isLegacyRegistration(registrationParams)
   useExistingCommitment({
-    commitment: makeCommitment(registrationParams),
+    registrationParams,
+    commitment: isLegacyCommit
+      ? makeLegacyCommitment(makeLegacyRegistrationParams(registrationParams))
+      : makeCommitment(registrationParams),
+    isLegacyCommit,
     enabled: commitCouldBeFound,
     commitKey,
   })
