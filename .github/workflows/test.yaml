@@ -7,7 +7,7 @@ env:
 
 jobs:
   coverage:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2204-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -20,7 +20,7 @@ jobs:
       - run: pnpm test:coverage
 
   build-stateless:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2204-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -43,7 +43,7 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2204-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -64,7 +64,7 @@ jobs:
     name: stateless (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2204-arm
     strategy:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
@@ -103,7 +103,7 @@ jobs:
     name: stateful (${{matrix.shard}})
     needs: build-stateful
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2204-arm
     strategy:
       matrix:
         shard: [1, 2, 3]
