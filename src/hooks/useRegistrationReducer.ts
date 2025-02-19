@@ -1,3 +1,5 @@
+import posthog from 'posthog-js'
+import { match, P } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
 import { randomSecret } from '@ensdomains/ensjs/utils'
@@ -11,7 +13,7 @@ import {
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { sendEvent } from '@app/utils/analytics/events'
-import { yearsToSeconds } from '@app/utils/utils'
+import { ONE_YEAR, yearsToSeconds } from '@app/utils/utils'
 
 const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
 
@@ -41,10 +43,18 @@ const isBrowser = !!(
   window.document.createElement
 )
 
+const getDefaultRegistrationDuration = () => {
+  const payload = posthog.getFeatureFlagPayload('default_registration_duration')
+
+  return match(payload)
+    .with({ years: P.number }, ({ years }) => years * ONE_YEAR)
+    .otherwise(() => ONE_YEAR)
+}
+
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
-  seconds: yearsToSeconds(1),
+  seconds: getDefaultRegistrationDuration(),
   reverseRecord: false,
   records: [],
   resolverAddress: '0x',
