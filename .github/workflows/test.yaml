@@ -229,7 +229,7 @@ jobs:
           "pnpm wrangle" \
           "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
-          # NEXT_PUBLIC_GRAPH_URI: https://api.studio.thegraph.com/query/49574/ensholesky/version/latest
+          NEXT_PUBLIC_CHAIN_NAME: holesky
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - uses: actions/upload-artifact@v4
