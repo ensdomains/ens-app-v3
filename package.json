@@ -3,6 +3,8 @@
   "version": "0.1.123",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
+    "dev:holesky": "NEXT_PUBLIC_CHAIN_NAME=holesky pnpm dev",
+    "dev:sepolia": "NEXT_PUBLIC_CHAIN_NAME=sepolia pnpm dev",
     "dev:https": "next dev --experimental-https --port 443",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",

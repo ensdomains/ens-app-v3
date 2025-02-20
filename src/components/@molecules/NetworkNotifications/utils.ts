@@ -1,21 +1,10 @@
-import { getChainsFromUrl, getSupportedChainById } from '@app/constants/chains'
+import { getSupportedChainById } from '@app/constants/chains'
 
 export const shouldOpenModal = (
-  connectedChainName: string | undefined,
-  connectedChainId: number | undefined,
+  connectedChainName: number | undefined,
+  accountChainId: number | undefined,
 ): boolean => {
-  if (!connectedChainName) return false
-  if (!getSupportedChainById(connectedChainId)) return false
-
-  const currentChain = getChainsFromUrl()?.[0]
-  if (!currentChain?.id) return false
-
-  if (currentChain?.id === connectedChainId) {
-    return false
-  }
-  if (currentChain?.id !== connectedChainId) {
-    return true
-  }
-
-  return false
+  if (!connectedChainName || !accountChainId) return false
+  if (!getSupportedChainById(accountChainId)) return false
+  return connectedChainName !== accountChainId
 }
