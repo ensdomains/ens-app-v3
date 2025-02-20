@@ -1,65 +1,65 @@
-#!/bin/bash
-# Script to set up and cache Chrome/Chromium for CI
+  #!/bin/bash
+  # Copied and modified from: https://github.com/actions/virtual-environments/issues/5651#issuecomment-1142075171
+  # Used to ensure that Cypress tests are always using the latest version of Chrome.
+  # This is important because sometimes when Chrome releases a new version, Github Action runners can run the
+  # previous version or the new version and when sharding the tests to run in parallel results in this error:
+  # https://github.com/cypress-io/github-action/issues/518
 
-# Detect architecture
-ARCH=$(uname -m)
-echo "Detected architecture: $ARCH"
+  download_with_retries() {
+  # Due to restrictions of bash functions, positional arguments are used here.
+  # In case if you using latest argument NAME, you should also set value to all previous parameters.
+  # Example: download_with_retries $ANDROID_SDK_URL "." "android_sdk.zip"
+      local URL="$1"
+      local DEST="${2:-.}"
+      local NAME="${3:-${URL##*/}}"
+      local COMPRESSED="$4"
 
-# Create chrome directory
-CHROME_DIR="/usr/local/chrome"
-sudo mkdir -p $CHROME_DIR
+      if [[ $COMPRESSED == "compressed" ]]; then
+          local COMMAND="curl $URL -4 -sL --compressed -o '$DEST/$NAME' -w '%{http_code}'"
+      else
+          local COMMAND="curl $URL -4 -sL -o '$DEST/$NAME' -w '%{http_code}'"
+      fi
 
-# Check if we already have a cached version
-if [ -f "$CHROME_DIR/chrome" ]; then
-    echo "Found cached Chrome/Chromium binary"
-    sudo ln -sf $CHROME_DIR/chrome /usr/local/bin/google-chrome
-    CHROME_VERSION=$(google-chrome --version || echo "none")
-    echo "Cached version: $CHROME_VERSION"
-else
-    echo "No cached version found, installing..."
-    
-    # Install dependencies
-    sudo apt-get update
-    sudo apt-get install -y --no-install-recommends \
-        libnss3 \
-        libgbm1 \
-        libasound2 \
-        libatk1.0-0 \
-        libatk-bridge2.0-0 \
-        libcups2 \
-        libdrm2 \
-        libxkbcommon0 \
-        libxcomposite1 \
-        libxdamage1 \
-        libxfixes3 \
-        libxrandr2
+      echo "Downloading '$URL' to '${DEST}/${NAME}'..."
+      retries=20
+      interval=30
+      while [ $retries -gt 0 ]; do
+          ((retries--))
+          # Temporary disable exit on error to retry on non-zero exit code
+          set +e
+          http_code=$(eval $COMMAND)
+          exit_code=$?
+          if [ $http_code -eq 200 ] && [ $exit_code -eq 0 ]; then
+              echo "Download completed"
+              return 0
+          else
+              echo "Error — Either HTTP response code for '$URL' is wrong - '$http_code' or exit code is not 0 - '$exit_code'. Waiting $interval seconds before the next attempt, $retries attempts left"
+              sleep 30
+          fi
+          # Enable exit on error back
+          set -e
+      done
 
-    if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-        echo "Installing Chromium for ARM64..."
-        sudo apt-get install -y chromium-browser
+      echo "Could not download $URL"
+      return 1
+  }
 
-        # Copy the installed binary to our cache directory
-        sudo cp -r /usr/lib/chromium-browser/* $CHROME_DIR/
-        sudo ln -sf $CHROME_DIR/chrome /usr/local/bin/google-chrome
-    else
-        echo "Installing Chrome for AMD64..."
-        wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-        
-        # Copy the installed binary to our cache directory
-        sudo cp -r /opt/google/chrome/* $CHROME_DIR/
-        sudo ln -sf $CHROME_DIR/chrome /usr/local/bin/google-chrome
-    fi
-fi
+  INSTALLED_CHROME_VERSION=$(google-chrome --product-version)
 
-# Set up chrome sandbox
-sudo chown root:root $CHROME_DIR/chrome_sandbox
-sudo chmod 4755 $CHROME_DIR/chrome_sandbox
-sudo cp -f $CHROME_DIR/chrome_sandbox $CHROME_DIR/chrome-sandbox
+  LATEST_VERSION_URL="https://omahaproxy.appspot.com/linux"
+  echo "Fetching latest chrome version from: $LATEST_VERSION_URL"
+  LATEST_CHROME_VERSION=$(curl "$LATEST_VERSION_URL")
 
-# Verify installation
-CHROME_VERSION=$(google-chrome --version)
-echo "Using Chrome/Chromium version: $CHROME_VERSION"
+  echo "Installed Chrome Version: $INSTALLED_CHROME_VERSION"
+  echo "Latest Chrome Version: $LATEST_CHROME_VERSION"
 
-# Export chrome path for Playwright
-echo "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/local/bin/google-chrome" >> $GITHUB_ENV
+  if [ "$INSTALLED_CHROME_VERSION" == "$LATEST_CHROME_VERSION" ]; then
+    echo "The latest major version of Chrome is already installed."
+    exit 0
+  fi
+
+  # Download and install Google Chrome
+  CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+  CHROME_DEB_NAME="google-chrome-stable_current_amd64.deb"
+  download_with_retries $CHROME_DEB_URL "/tmp" "${CHROME_DEB_NAME}"
+  sudo apt-get install -y "/tmp/${CHROME_DEB_NAME}" -f
