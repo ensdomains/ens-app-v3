@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
+import { useAccount, useConfig } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
@@ -19,11 +19,13 @@ export const NetworkNotifications = () => {
   const { t } = useTranslation()
   const account = useAccount()
   const connectedChainId = useChainId()
-  const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
 
   const accountChainId = account?.chainId
+  const config = useConfig()
+  console.log('config', config)
 
+  console.log('account', account)
   useEffect(() => {
     setOpen(shouldOpenModal(connectedChainId, accountChainId))
   }, [connectedChainId, accountChainId])

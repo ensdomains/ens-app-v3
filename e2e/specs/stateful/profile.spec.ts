@@ -80,9 +80,10 @@ const profiles = [
 
 test.describe('Profile', () => {
   test('should allow user to connect', async ({ page, login }) => {
-    await page.goto('/?chain=holesky')
+    await page.goto('/')
     await login.connect()
 
+    await page.pause()
     await page.getByTestId('header-profile').click()
     await expect(page.getByText('Profile')).toBeVisible()
     await page.getByTestId('header-profile').click()

@@ -48,6 +48,7 @@ export type SupportedChain =
   | typeof localhostWithEns
 
 export const getChainsFromUrl = () => {
+  console.log('NEXT_PUBLIC_CHAIN_NAME', process.env.NEXT_PUBLIC_CHAIN_NAME)
   if (typeof window === 'undefined') {
     return [
       ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
@@ -57,8 +58,7 @@ export const getChainsFromUrl = () => {
     ]
   }
 
-  const { hostname, search } = window.location
-  const params = new URLSearchParams(search)
+  const { hostname } = window.location
   const segments = hostname.split('.')
 
 
@@ -81,7 +81,8 @@ export const getChainsFromUrl = () => {
   // Dev environment
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     if (isLocalProvider) return [localhostWithEns]
-    return [mainnetWithEns]
+    console.log('setting holesky')
+    return [holeskyWithEns]
   }
 
   return match(segments[0])
