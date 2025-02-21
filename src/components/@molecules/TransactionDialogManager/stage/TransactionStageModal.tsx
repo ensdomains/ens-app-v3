@@ -321,9 +321,9 @@ export const handleSendTransaction = async (
 
   // TODO: Check if this is still needed
   // Basically for headless-web3-wallet
-  if (!isLocalProvider) {
-    await switchChain(wagmiConfig, { chainId: request?.chainId })
-  }
+  // if (!isLocalProvider) {
+  //   await switchChain(wagmiConfig, { chainId: request?.chainId })
+  // }
 
   sendTransaction(request)
 

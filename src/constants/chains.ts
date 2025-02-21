@@ -48,7 +48,6 @@ export type SupportedChain =
   | typeof localhostWithEns
 
 export const getChainsFromUrl = () => {
-  console.log('NEXT_PUBLIC_CHAIN_NAME', process.env.NEXT_PUBLIC_CHAIN_NAME)
   if (typeof window === 'undefined') {
     return [
       ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
@@ -81,7 +80,6 @@ export const getChainsFromUrl = () => {
   // Dev environment
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     if (isLocalProvider) return [localhostWithEns]
-    console.log('setting holesky')
     return [holeskyWithEns]
   }
 

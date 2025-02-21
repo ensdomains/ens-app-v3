@@ -1,9 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { shouldOpenModal } from './utils'
 import * as chains from '@app/constants/chains'
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { shouldOpenModal } from './utils'
-import * as chains from '@app/constants/chains'
 
 describe('shouldOpenModal', () => {
   beforeEach(() => {
@@ -16,38 +13,25 @@ describe('shouldOpenModal', () => {
     vi.clearAllMocks()
   })
 
-  it('should return undefined when connectedChainName is not provided', () => {
+  it('should return false when connectedChainId is not provided', () => {
     const result = shouldOpenModal(undefined, 1)
     expect(result).toBe(false)
   })
 
-  it('should return undefined when chain is not supported', () => {
-    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue(false)
-    const result = shouldOpenModal('ethereum', 999999)
+  it('should return false when accountChainId is not provided', () => {
+    const result = shouldOpenModal(1, undefined)
     expect(result).toBe(false)
   })
 
-  it('should return undefined when no chain is found in URL', () => {
-    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue(true)
-    vi.spyOn(chains, 'getChainsFromUrl').mockReturnValue(undefined)
-    
-    const result = shouldOpenModal('ethereum', 1)
+  it('should return false when chain is not supported', () => {
+    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue(undefined)
+    const result = shouldOpenModal(1, 999999)
     expect(result).toBe(false)
   })
 
-  it('should return false when connected chain matches URL chain', () => {
-    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue(true)
-    vi.spyOn(chains, 'getChainsFromUrl').mockReturnValue([{ id: 1 }])
-
-    const result = shouldOpenModal('ethereum', 1)
-    expect(result).toBe(false)
-  })
-
-  it('should return true when connected chain differs from URL chain', () => {
-    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue(true)
-    vi.spyOn(chains, 'getChainsFromUrl').mockReturnValue([{ id: 1 }])
-
-    const result = shouldOpenModal('polygon', 137)
+  it('should return true when connected chain id is different from account chain id and account chain id is supported', () => {
+    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue({ id: 17000 } as any)
+    const result = shouldOpenModal(1, 17000)
     expect(result).toBe(true)
   })
 })

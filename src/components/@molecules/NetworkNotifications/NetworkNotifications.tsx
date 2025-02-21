@@ -6,7 +6,6 @@ import { Button, Toast } from '@ensdomains/thorin'
 
 import { shouldOpenModal } from './utils'
 import { useChainId } from 'wagmi'
-import { useRouter } from 'next/router'
 import { getSupportedChainById } from '@app/constants/chains'
 const appLinks = {
   Ethereum: 'app.ens.domains',
@@ -22,10 +21,7 @@ export const NetworkNotifications = () => {
   const [open, setOpen] = useState<boolean>(false)
 
   const accountChainId = account?.chainId
-  const config = useConfig()
-  console.log('config', config)
 
-  console.log('account', account)
   useEffect(() => {
     setOpen(shouldOpenModal(connectedChainId, accountChainId))
   }, [connectedChainId, accountChainId])
