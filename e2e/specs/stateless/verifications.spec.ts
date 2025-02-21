@@ -427,8 +427,6 @@ test.describe('Verified records', () => {
     await page.goto(`/${name}`)
     await login.connect()
 
-    await page.pause()
-
     await expect(page.getByTestId('profile-section-verifications')).toBeVisible()
 
     await profilePage.isRecordVerified('text', 'com.twitter', false)
@@ -687,8 +685,10 @@ test.describe('OAuth flow', () => {
       })
     })
 
-    await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
+    await page.goto('/')
     await login.connect()
+    
+    await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
 
     await expect(page).toHaveURL(`/${name}`)
 

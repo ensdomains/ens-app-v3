@@ -83,7 +83,6 @@ test.describe('Profile', () => {
     await page.goto('/')
     await login.connect()
 
-    await page.pause()
     await page.getByTestId('header-profile').click()
     await expect(page.getByText('Profile')).toBeVisible()
     await page.getByTestId('header-profile').click()
