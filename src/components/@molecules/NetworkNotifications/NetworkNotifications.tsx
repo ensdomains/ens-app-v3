@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount, useConfig } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { shouldOpenModal } from './utils'
 import { useChainId } from 'wagmi'
 import { getSupportedChainById } from '@app/constants/chains'
+
 const appLinks = {
   Ethereum: 'app.ens.domains',
   Sepolia: 'sepolia.app.ens.domains',

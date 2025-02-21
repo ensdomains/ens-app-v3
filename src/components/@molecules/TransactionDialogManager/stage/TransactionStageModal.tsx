@@ -1,5 +1,4 @@
 import { queryOptions } from '@tanstack/react-query'
-import { switchChain } from '@wagmi/core'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -37,7 +36,6 @@ import { ConfigWithEns, TransactionDisplayItem } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
-import { wagmiConfig } from '@app/utils/query/wagmi'
 import { hasParaConnection, makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
