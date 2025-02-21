@@ -43,11 +43,12 @@ export class Login {
     await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
       timeout: 15000,
     })
+    await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toBeGreaterThanOrEqual(1)
     // this isn't actually what the user experiences, just a quirk in headless-web3-provider
     await this.wallet.authorize(Web3RequestKind.RequestPermissions)
+    await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toBeGreaterThanOrEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
-    const pendingRequests = await this.wallet.getPendingRequestCount()
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
+    await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
     await expect.poll(() => this.getProfileButton.isVisible()).toBe(true)
   }
 

@@ -57,50 +57,40 @@ export const getChainsFromUrl = () => {
     ]
   }
 
-  const { hostname, search } = window.location
-  const params = new URLSearchParams(search)
-  const chainParam = params.get('chain')
+  const { hostname } = window.location
   const segments = hostname.split('.')
 
+
+  // Chain override
+  const chain = process.env.NEXT_PUBLIC_CHAIN_NAME
+  if (chain === 'holesky') return [holeskyWithEns]
+  if (chain === 'sepolia') return [sepoliaWithEns]
+
+  // Previews
   if (segments.length === 4) {
+    /* Used for testing preview on mainnet at: test.app.ens.domains. Update by configuring dns */
     if (segments[0] === 'test') {
-      return [mainnetWithEns, holeskyWithEns, sepoliaWithEns]
+      return [mainnetWithEns]
     }
     if (segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-      return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
+      return [holeskyWithEns]
     }
   }
 
+  // Dev environment
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    if (chainParam) {
-      if (chainParam === 'holesky') return [holeskyWithEns, sepoliaWithEns, mainnetWithEns]
-      if (chainParam === 'sepolia') return [sepoliaWithEns, mainnetWithEns, holeskyWithEns]
-    }
-    return [
-      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-      holeskyWithEns,
-      mainnetWithEns,
-      sepoliaWithEns,
-    ]
+    if (isLocalProvider) return [localhostWithEns]
+    return [holeskyWithEns]
   }
 
   return match(segments[0])
     .with('sepolia', () => [
-      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
       sepoliaWithEns,
-      mainnetWithEns,
-      holeskyWithEns,
     ])
     .with('holesky', () => [
-      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
       holeskyWithEns,
-      sepoliaWithEns,
-      mainnetWithEns,
     ])
     .otherwise(() => [
-      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
       mainnetWithEns,
-      holeskyWithEns,
-      sepoliaWithEns,
     ])
 }

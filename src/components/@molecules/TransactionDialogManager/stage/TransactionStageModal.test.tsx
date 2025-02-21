@@ -228,10 +228,10 @@ describe('TransactionStageModal', () => {
             key="component-default"
           />,
         )
-        expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
-          await waitFor(() =>
-            expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
-          )
+        expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled()
+        await waitFor(() =>
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled()
+        )
         expect(mockEstimateGas).toHaveBeenCalledTimes(1)
       })
 

@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
+import { useAccount, useConfig } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { shouldOpenModal } from './utils'
 import { useChainId } from 'wagmi'
-import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useRouter } from 'next/router'
-
+import { getSupportedChainById } from '@app/constants/chains'
 const appLinks = {
   Ethereum: 'app.ens.domains',
   Sepolia: 'sepolia.app.ens.domains',
@@ -19,33 +17,28 @@ const appLinks = {
 export const NetworkNotifications = () => {
   const { t } = useTranslation()
   const account = useAccount()
-  const router = useRouter()
+  const connectedChainId = useChainId()
   const [open, setOpen] = useState<boolean>(false)
 
-  const connectedChainName = account?.chain?.name
-  const connectedChainId = account?.chain?.id
-
-  const chain = useChainId()
-
-  console.log('account', account)
-  console.log('connectedChainName', connectedChainName, chain)
+  const accountChainId = account?.chainId
 
   useEffect(() => {
-    setOpen(shouldOpenModal(connectedChainName, connectedChainId))
-  }, [connectedChainName, connectedChainId])
+    setOpen(shouldOpenModal(connectedChainId, accountChainId))
+  }, [connectedChainId, accountChainId])
 
-  if (!connectedChainName || !router.isReady) return null
+  const accountChainName = getSupportedChainById(accountChainId)?.name
+  if (!accountChainName) return null
 
   return (
     <Toast
-      description={t(`networkNotifications.${connectedChainName}.description`)}
+      description={t(`networkNotifications.${accountChainName}.description`)}
       open={open}
-      title={t(`networkNotifications.${connectedChainName}.title`)}
+      title={t(`networkNotifications.${accountChainName}.title`)}
       variant="desktop"
       onClose={() => setOpen(false)}
     >
-      <Button size="small" as="a" href={`https://${appLinks[connectedChainName]}`}>
-        {t(`networkNotifications.${connectedChainName}.action`)}
+      <Button size="small" as="a" href={`https://${appLinks[accountChainName]}`}>
+        {t(`networkNotifications.${accountChainName}.action`)}
       </Button>
     </Toast>
   )
