@@ -1,0 +1,98 @@
+{
+  "title": "Importar {{name}} para ENS",
+  "error": {
+    "unknown": "Ocorreu um erro desconhecido",
+    "noTxtRecord": "Nenhum registro encontrado",
+    "dnssecFailure": "DNSSEC não está habilitado",
+    "invalidTxtRecord": "Registro inválido encontrado",
+    "invalidAddressChecksum": "O endereço não é válido",
+    "resolutionFailure": "O registro fornecido não foi resolvido"
+  },
+  "status": {
+    "checking": "Verificando...",
+    "error": "Ocorreu um erro ao verificar",
+    "secondsAgo": "Verificado há alguns segundos",
+    "aWhileAgo": "Verificado há um momento",
+    "minutesAgo_one": "Verificado há {{count}} minuto",
+    "minutesAgo_other": "Verificado há {{count}} minutos"
+  },
+  "steps": {
+    "selectType": {
+      "title": "Reivindicar {{name}}",
+      "subtitle": "Importar nomes de domínio permite que sejam usados como nomes de ENS.",
+      "learnMore": "Mais informações sobre a importação de nomes",
+      "select": {
+        "heading": "Como você gostaria de importar seu domínio?",
+        "offchain": {
+          "name": "Offchain",
+          "tag": "Gratuito",
+          "description": "Seu nome não terá um token onchain.<br/>Isso não afeta sua capacidade de receber transações ou usá-lo como nome principal.<br/><b>Você não poderá editar seu perfil da aplicação de ENS.</b>"
+        },
+        "onchain": {
+          "name": "Onchain",
+          "description": "Seu nome terá um token onchain."
+        }
+      }
+    },
+    "enableDnssec": {
+      "title": "Habilitar DNSSEC",
+      "help": {
+        "findOutRegistrar": "Descubra quem é seu registrador"
+      },
+      "status": {
+        "enabled": "DNSSEC está habilitado neste domínio.",
+        "disabled": {
+          "heading": "Você precisa ir para o registrador do seu domínio para habilitar o DNSSEC.",
+          "message": "DNSSEC não está habilitado",
+          "help": "Ajuda para habilitar DNSSEC"
+        }
+      }
+    },
+    "verifyOwnership": {
+      "title": "Verificar propriedade",
+      "status": {
+        "disconnected": "Conecte sua carteira para verificar a propriedade.",
+        "mismatching": {
+          "heading": "Adicione o seguinte registro DNS para verificar que você é o proprietário deste domínio.",
+          "help": "Ajuda para adicionar registros TXT",
+          "message": "Nenhum registro encontrado",
+          "error": {
+            "onchain": "O registro encontrado não corresponde ao endereço conectado. Você ainda pode importar este nome, mas não terá a propriedade do mesmo.",
+            "offchain": "O registro encontrado não corresponde ao endereço conectado. Você ainda pode importar este nome, mas não apontará para o endereço conectado e não poderá ser usado como seu nome principal."
+          }
+        },
+        "matching": "Um registro foi encontrado que corresponde ao seu endereço conectado."
+      },
+      "action": {
+        "importWithoutOwnership": "Importar sem propriedade"
+      }
+    },
+    "transaction": {
+      "mismatching": {
+        "title": "Importar este domínio",
+        "subtitle": "Sua propriedade <b>não</b> foi verificada. No entanto, você pode importar este domínio."
+      },
+      "matching": {
+        "title": "Reivindicar seu domínio",
+        "subtitle": "Sua propriedade foi verificada."
+      },
+      "estimatedNetworkCost": "Custo estimado da rede"
+    },
+    "complete": {
+      "title": "Parabéns!",
+      "import": {
+        "subtitle": "<gradient>{{name}}</gradient> foi importado",
+        "description": "Este domínio foi importado com sucesso para ENS. Agora você pode ver este nome.",
+        "warning": "Os nomes DNS sem gas atualmente não aparecem na sua lista de \"Nomes\"."
+      },
+      "claim": {
+        "subtitle": "Agora você é o proprietário de <gradient>{{name}}</gradient>",
+        "description": "Seu domínio foi reivindicado com sucesso. Agora você pode ver e gerenciar seu nome."
+      },
+      "action": {
+        "claimAnother": "Reivindicar outro",
+        "viewName": "Ver nome"
+      }
+    }
+  }
+}

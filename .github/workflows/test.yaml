@@ -9,13 +9,13 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
@@ -24,7 +24,7 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm tenv start -ng -ns -nb" \
+          "pnpm tenv start --no-graph --no-scripts --no-build --exit-after-deploy" \
           "pnpm wait-on ./.env.local"'
 
       - run: pnpm test:coverage
@@ -32,13 +32,13 @@ jobs:
   build-stateless:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
@@ -47,7 +47,7 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm tenv start -ng -ns -nb" \
+          "pnpm tenv start --no-graph --no-scripts --no-build --exit-after-deploy" \
           "pnpm wait-on ./.env.local"'
 
       - name: Build stateless and export
@@ -65,13 +65,13 @@ jobs:
   build-stateful:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
@@ -99,13 +99,13 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
@@ -129,7 +129,7 @@ jobs:
 
       - name: Run tests
         run: |
-          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci -nb
+          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci --no-build
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -149,14 +149,14 @@ jobs:
         shard: [1, 2, 3]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: ./scripts/check-chrome.sh
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'

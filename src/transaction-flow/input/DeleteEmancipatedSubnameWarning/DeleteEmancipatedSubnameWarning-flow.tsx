@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin'
 
 import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -9,15 +9,15 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { createTransactionItem } from '../../transaction/index'
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
 
-const MessageContainer = styled(CenterAlignedTypography)(({ theme }) => [
-  css`
+const MessageContainer = styled(CenterAlignedTypography)(
+  ({ theme }) => css`
     width: 100%;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      width: calc(80vw - 2 * ${theme.space['6']});
+      max-width: ${theme.space['128']};
+    }
   `,
-  mq.sm.min(css`
-    width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: ${theme.space['128']};
-  `),
-])
+)
 
 type Data = {
   name: string

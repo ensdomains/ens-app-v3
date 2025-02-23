@@ -29,7 +29,7 @@ export const ContractSection = ({ details }: Props) => {
       <RecordItem as="a" value={address} link={makeEtherscanLink(address, chainName, 'address')}>
         {address}
       </RecordItem>
-      <Helper type="info" alignment={breakpoint.sm ? 'horizontal' : 'vertical'}>
+      <Helper alert="info" color="text" alignment={breakpoint.sm ? 'horizontal' : 'vertical'}>
         {t('tabs.ownership.sections.contract.warning')}
       </Helper>
     </Card>

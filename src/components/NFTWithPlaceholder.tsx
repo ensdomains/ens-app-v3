@@ -8,7 +8,7 @@ import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
 
 const StyledNftBox = styled.div(
   ({ theme }) => css`
-    width: 100%;
+    width: ${theme.space.full};
     border-radius: ${theme.radii.large};
     overflow: hidden;
   `,

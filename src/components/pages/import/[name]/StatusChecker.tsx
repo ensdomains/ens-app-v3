@@ -102,8 +102,9 @@ export const StatusChecker = ({
           data-testid="status-refetch"
           disabled={isLoading || isRefetching}
           onClick={() => refetch()}
+          shape="square"
         >
-          <CounterClockwiseArrowSVG />
+          <CounterClockwiseArrowSVG width={16} height={16} />
         </Button>
       </DnssecCheckTopItemsContainer>
       {statusHelperElement}
