@@ -12,6 +12,7 @@ import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 import { CompleteImport } from './steps/CompleteImport'
 import { EnableDnssec } from './steps/EnableDnssec'
+import { ImportError } from './steps/ImportError'
 import { ImportTransaction } from './steps/onchain/ImportTransaction'
 import { VerifyOnchainOwnership } from './steps/onchain/VerifyOnchainOwnership'
 import { SelectImportType } from './steps/SelectImportType'
@@ -20,12 +21,10 @@ import { useDnsImportReducer } from './useDnsImportReducer'
 
 export const DnsClaim = () => {
   const router = useRouterWithHistory()
+  const unencodedname = router.query.name as string
   const { address } = useAccount()
-  const {
-    registrationStatus,
-    isLoading,
-    name = '',
-  } = useBasicName({ name: router.query.name as string })
+  const { registrationStatus, isLoading, name = '' } = useBasicName({ name: unencodedname })
+  const nameContainsNonAscii = !!unencodedname && unencodedname.toLowerCase() !== name.toLowerCase()
 
   const { t } = useTranslation('dnssec')
 
@@ -92,22 +91,29 @@ export const DnsClaim = () => {
         inlineHeading
       >
         {{
-          trailing: match(step)
-            .with('selectType', () => (
+          trailing: match({ step, nameContainsNonAscii })
+            .with({ nameContainsNonAscii: true }, () => <ImportError selected={selected} />)
+            .with({ step: 'selectType' }, () => (
               <SelectImportType dispatch={dispatch} item={item} selected={selected} />
             ))
-            .with('enableDnssec', () => <EnableDnssec dispatch={dispatch} selected={selected} />)
-            .with('verifyOnchainOwnership', () => (
+            .with({ step: 'enableDnssec' }, () => (
+              <EnableDnssec dispatch={dispatch} selected={selected} />
+            ))
+            .with({ step: 'verifyOnchainOwnership' }, () => (
               <VerifyOnchainOwnership dispatch={dispatch} selected={selected} />
             ))
-            .with('transaction', () => (
+            .with({ step: 'transaction' }, () => (
               <ImportTransaction dispatch={dispatch} selected={selected} item={item} />
             ))
-            .with('completeOnchain', () => <CompleteImport selected={selected} item={item} />)
-            .with('verifyOffchainOwnership', () => (
+            .with({ step: 'completeOnchain' }, () => (
+              <CompleteImport selected={selected} item={item} />
+            ))
+            .with({ step: 'verifyOffchainOwnership' }, () => (
               <VerifyOffchainOwnership dispatch={dispatch} selected={selected} />
             ))
-            .with('completeOffchain', () => <CompleteImport selected={selected} item={item} />)
+            .with({ step: 'completeOffchain' }, () => (
+              <CompleteImport selected={selected} item={item} />
+            ))
             .exhaustive(),
         }}
       </Content>
