@@ -93,7 +93,7 @@ const SearchResultsContainer = styled.div<{
     ${$state === 'entered'
       ? css`
           opacity: 1;
-          transform: translateY(0px);
+          transform: translateY(0);
         `
       : css`
           & > div {

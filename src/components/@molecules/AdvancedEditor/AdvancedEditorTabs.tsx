@@ -30,7 +30,7 @@ const getIndicatorStyle = (
   else if ($isDirty) color = theme.colors.green
   if (!color) return ''
   return css`
-    :after {
+    ::after {
       content: '';
       position: absolute;
       background-color: ${color};
