@@ -39,7 +39,7 @@ const nextConfig = {
     styledComponents: true,
   },
   // change to true once infinite loop is fixed
-  swcMinify: false,
+  swcMinify: true,
   images: {
     domains: ['metadata.ens.domains'],
   },
