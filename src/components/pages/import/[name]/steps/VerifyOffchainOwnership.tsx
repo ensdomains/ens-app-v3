@@ -9,6 +9,7 @@ import RecordItem from '@app/components/RecordItem'
 import { DNS_TXT_RECORD_HELPER_LINKS } from '@app/constants/dnsLinks'
 import { EXTENDED_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
+import { sendEvent } from '@app/utils/analytics/events'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
@@ -165,7 +166,10 @@ export const VerifyOffchainOwnership = ({
         {isConnected ? (
           <DnsImportActionButton
             disabled={!dnsOffchainStatus || isLoading || isRefetching || isError || !!error}
-            onClick={() => dispatch({ name: 'increaseStep', selected })}
+            onClick={() => {
+              sendEvent('import:offchain_verify', { name: selected.name })
+              dispatch({ name: 'increaseStep', selected })
+            }}
             {...(dnsOffchainStatus?.address?.status === 'mismatching'
               ? {
                   colorStyle: 'redPrimary',

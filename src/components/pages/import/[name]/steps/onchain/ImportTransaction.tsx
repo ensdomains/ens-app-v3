@@ -15,8 +15,8 @@ import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { sendEvent } from '@app/utils/analytics/events'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
 import { shortenAddress } from '@app/utils/utils'
@@ -106,7 +106,6 @@ export const ImportTransaction = ({
   const { t } = useTranslation('dnssec', { keyPrefix: 'steps.transaction' })
   const { t: tc } = useTranslation('common')
 
-  const { trackEvent } = useEventTracker()
   const { data: gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -182,9 +181,8 @@ export const ImportTransaction = ({
 
   const startOrResumeFlow = () => {
     if (!item.started) {
-      trackEvent({
-        eventName: 'dns_claim_started',
-        customProperties: { name: selected.name, importType: 'onchain' },
+      sendEvent('import:transaction_start', {
+        name: selected.name,
       })
       dispatch({ name: 'setStarted', selected })
     }
@@ -207,6 +205,9 @@ export const ImportTransaction = ({
       if (status !== 'confirmed') return
       if (cbKey !== key) return
       dispatch({ name: 'increaseStep', selected })
+      sendEvent('import:transaction_complete', {
+        name: selected.name,
+      })
     },
     [dispatch, key, selected],
   )
