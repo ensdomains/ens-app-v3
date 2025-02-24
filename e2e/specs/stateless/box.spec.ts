@@ -65,9 +65,9 @@ test('should allow box registration with available name', async ({
     `https://my.box/search?domain=${name.replace('.box', '')}&ref=ensdomains`,
   )
 
-  await test.step('should fire tracking event: register_started_box', async () => {
+  await test.step('should fire tracking event: register:dotbox', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
-    await expect(consoleListener.getMessages().toString()).toContain('register_started_box')
+    await expect(consoleListener.getMessages().toString()).toContain('register:dotbox')
     consoleListener.clearMessages()
   })
 })

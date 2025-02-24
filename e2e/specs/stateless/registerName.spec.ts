@@ -17,7 +17,6 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
-import { EventDefs } from '@app/utils/analytics/events'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -45,9 +44,7 @@ test.describe.serial('normal registration', () => {
     const transactionModal = makePageObject('TransactionModal')
 
     await consoleListener.initialize({
-      regex: new RegExp(
-        `[PostHog.js] send.*?`,
-      ),
+      regex: new RegExp(`[PostHog.js] send.*?`),
     })
 
     await time.sync()
@@ -104,9 +101,9 @@ test.describe.serial('normal registration', () => {
       await page.getByTestId('next-button').click()
     })
 
-    await test.step('should fire tracking event: payment_selected', async () => {
+    await test.step('should fire tracking event: register:pricing', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('payment_selected')
+      await expect(consoleListener.getMessages().toString()).toContain('register:pricing')
       consoleListener.clearMessages()
     })
 
@@ -139,9 +136,9 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByTestId('transaction-modal-inner')).toBeVisible()
     })
 
-    await test.step('should fire tracking event: commit_started', async () => {
+    await test.step('should fire tracking event: register:info', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('commit_started')
+      await expect(consoleListener.getMessages().toString()).toContain('register:info')
       consoleListener.clearMessages()
     })
 
@@ -160,9 +157,9 @@ test.describe.serial('normal registration', () => {
       await transactionModal.confirm()
     })
 
-    await test.step('should fire tracking event: commit_wallet_opened', async () => {
+    await test.step('should fire tracking event: wallet:open', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('commit_wallet_opened')
+      await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
       consoleListener.clearMessages()
     })
 
@@ -205,10 +202,12 @@ test.describe.serial('normal registration', () => {
       await page.getByTestId('finish-button').click()
     })
 
-    await test.step('should fire tracking event: register_started', async () => {
+    await test.step('should fire tracking event: register:transaction_register', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
       // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
-      await expect(consoleListener.getMessages().toString()).toContain('register_started')
+      await expect(consoleListener.getMessages().toString()).toContain(
+        'register:transaction_register',
+      )
       consoleListener.clearMessages()
     })
 
@@ -217,9 +216,9 @@ test.describe.serial('normal registration', () => {
       await transactionModal.confirm()
     })
 
-    await test.step('should fire tracking event: register_wallet_opened', async () => {
+    await test.step('should fire tracking event: wallet:open', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('register_wallet_opened')
+      await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
       consoleListener.clearMessages()
     })
 
