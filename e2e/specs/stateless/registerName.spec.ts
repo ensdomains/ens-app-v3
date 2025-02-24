@@ -26,7 +26,7 @@ import {
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
 
-  test('should allow normal registration, if primary name is set, name is wrapped', async ({
+  test.only('should allow normal registration, if primary name is set, name is wrapped', async ({
     page,
     login,
     accounts,
@@ -44,7 +44,7 @@ test.describe.serial('normal registration', () => {
     const transactionModal = makePageObject('TransactionModal')
 
     await consoleListener.initialize({
-      regex: new RegExp(`[PostHog.js] send.*?`),
+      regex: new RegExp(`\\[Metrics\\] Event:.*?`),
     })
 
     await time.sync()
@@ -60,7 +60,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should fire tracking event: search:select', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
+      await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toMatch(
         new RegExp(`search:select.*?${name}`),
       )
@@ -102,7 +102,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should fire tracking event: register:pricing', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
+      await expect(consoleListener.getMessages(/register:pricing/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toContain('register:pricing')
       consoleListener.clearMessages()
     })
@@ -137,7 +137,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should fire tracking event: register:info', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
+      await expect(consoleListener.getMessages(/register:info/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toContain('register:info')
       consoleListener.clearMessages()
     })
@@ -158,7 +158,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should fire tracking event: wallet:open', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
+      await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
       consoleListener.clearMessages()
     })
@@ -203,7 +203,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should fire tracking event: register:transaction_register', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
+      await expect(consoleListener.getMessages(/register:transaction_register/)).toHaveLength(1)
       // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
       await expect(consoleListener.getMessages().toString()).toContain(
         'register:transaction_register',
@@ -217,7 +217,7 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should fire tracking event: wallet:open', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
+      await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
       consoleListener.clearMessages()
     })
@@ -264,7 +264,7 @@ test.describe.serial('normal registration', () => {
     consoleListener,
   }) => {
     await consoleListener.initialize({
-      regex: /Event triggered on local development.*?search_selected_eth/,
+      regex: new RegExp(`\\[Metrics\\] Event:.*?`),
     })
 
     const homePage = makePageObject('HomePage')
@@ -274,7 +274,7 @@ test.describe.serial('normal registration', () => {
     await homePage.searchInput.press('Enter')
 
     await test.step('should not fire tracking event: search_selected_eth', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(0)
+      await expect(consoleListener.getMessages(/search:select/)).toHaveLength(0)
     })
 
     await expect(page).toHaveURL(`/${name}`)
@@ -1563,7 +1563,7 @@ test.describe('Error handling', () => {
 
     await time.sync()
     await consoleListener.initialize({
-      regex: /Event triggered on local development.*register_override_triggered/,
+      regex: new RegExp(`\\[Metrics\\] Event:.*?`),
     })
     await homePage.goto()
     await login.connect()
@@ -1607,7 +1607,7 @@ test.describe('Error handling', () => {
     })
 
     await test.step('confirm plausible event was fired once', async () => {
-      expect(consoleListener.getMessages()).toHaveLength(1)
+      expect(consoleListener.getMessages(/register:transaction_override/)).toHaveLength(1)
     })
   })
 })

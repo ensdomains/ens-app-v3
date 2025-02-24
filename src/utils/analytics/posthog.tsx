@@ -1,10 +1,16 @@
 import { Router } from 'next/router'
-import posthog from 'posthog-js'
+import posthog, { type PostHog } from 'posthog-js'
 import { PostHogProvider as PostHogProviderBase } from 'posthog-js/react'
 import { ReactNode, useEffect } from 'react'
 import { useAccountEffect } from 'wagmi'
 
 import { sendEvent } from './events'
+
+function isProduction() {
+  if (typeof window !== 'undefined') {
+    return !!window.location.host.match('ens.domains')
+  }
+}
 
 export const PostHogProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
@@ -19,7 +25,9 @@ export const PostHogProvider = ({ children }: { children: ReactNode }) => {
       person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
       // Enable debug mode in development
       loaded: (posthogInstance) => {
-        if (process.env.NODE_ENV === 'development') posthogInstance.debug()
+        if (!isProduction()) {
+          posthogInstance.debug()
+        }
       },
     })
 

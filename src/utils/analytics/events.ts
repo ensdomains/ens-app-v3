@@ -183,6 +183,12 @@ export type EventDefs = {
   }
 }
 
+function isProduction() {
+  if (typeof window !== 'undefined') {
+    return !!window.location.host.match('ens.domains')
+  }
+}
+
 /**
  * Send a type safe event to PostHog
  * @param eventName - The name of the event to send
@@ -192,5 +198,9 @@ export const sendEvent = <TEvent extends keyof EventDefs>(
   eventName: TEvent,
   ...args: EventDefs[TEvent] extends undefined ? [] : [EventDefs[TEvent]]
 ): void => {
+  if (!isProduction()) {
+    console.log('[Metrics] Event:', eventName, args[0])
+  }
+
   posthog.capture(eventName, args[0])
 }
