@@ -85,7 +85,8 @@ test.describe.serial('normal registration', () => {
       })
 
     await test.step('should show cost comparison accurately', async () => {
-      await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
+      // Gas can fluctuate enough to cause the percentage to change, so we check for a range
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
       await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
       await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
     })
