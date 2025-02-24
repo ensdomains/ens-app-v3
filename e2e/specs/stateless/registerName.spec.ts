@@ -17,6 +17,7 @@ import {
   waitForTransaction,
   walletClient,
 } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { EventDefs } from '@app/utils/analytics/events'
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -45,17 +46,7 @@ test.describe.serial('normal registration', () => {
 
     await consoleListener.initialize({
       regex: new RegExp(
-        `Event triggered on local development.*?(${[
-          'register_override_triggered',
-          'search_selected_eth',
-          'search_selected_box',
-          'payment_selected',
-          'commit_started',
-          'commit_wallet_opened',
-          'register_started',
-          'register_started_box',
-          'register_wallet_opened',
-        ].join('|')})`,
+        `[PostHog.js] send.*?`,
       ),
     })
 
@@ -71,10 +62,10 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
     })
 
-    await test.step('should fire tracking event: search_selected_eth', async () => {
+    await test.step('should fire tracking event: search:select', async () => {
       await expect(consoleListener.getMessages()).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toMatch(
-        new RegExp(`search_selected_eth.*?${name}`),
+        new RegExp(`search:select.*?${name}`),
       )
       consoleListener.clearMessages()
     })
