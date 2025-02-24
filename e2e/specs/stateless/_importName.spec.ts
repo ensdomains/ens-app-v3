@@ -15,19 +15,7 @@ test('should allow claim (owned by user)', async ({
   console.log(strictModeEventCount)
   const name = 'swagabc.xyz'
   await consoleListener.initialize({
-    regex: new RegExp(
-      `Event triggered on local development.*?(${[
-        'search_selected_dns',
-        'dns_selected_import_type',
-        'dns_sec_enabled',
-        'dns_verified_ownership',
-        'dns_claim_started',
-        'dns_claimed',
-        'dns_approve_registrar_wallet_opened',
-        'dns_import_wallet_opened',
-        'dns_claim_wallet_opened',
-      ].join('|')})`,
-    ),
+    regex: new RegExp(`[PostHog.js] send.*?`),
   })
 
   const homePage = makePageObject('HomePage')
@@ -43,10 +31,10 @@ test('should allow claim (owned by user)', async ({
   await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Not Imported' }).waitFor()
   await homePage.searchInput.press('Enter')
 
-  await test.step('should fire DNS import tracking event: search_selected_dns', async () => {
+  await test.step('should fire DNS import tracking event: search:select', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toContain('search_selected_dns')
+    await expect(consoleListener.getMessages().toString()).toContain('search:select')
     consoleListener.clearMessages()
   })
 
@@ -66,11 +54,11 @@ test('should allow claim (owned by user)', async ({
   // should jump straight to transaction step
   await expect(importPage.heading).toHaveText('Claim your domain')
 
-  await test.step('should fire DNS import tracking event: dns_selected_import_type', async () => {
+  await test.step('should fire DNS import tracking event: import:select_type', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(strictModeEventCount)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(`dns_selected_import_type.*?${name}`),
+      new RegExp(`import:select_type.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -83,10 +71,10 @@ test('should allow claim (owned by user)', async ({
 
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: dns_claim_started', async () => {
+  await test.step('should fire DNS import tracking event: import:transaction_start', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toContain('dns_claim_started')
+    await expect(consoleListener.getMessages().toString()).toContain('import:transaction_start')
     consoleListener.clearMessages()
   })
 
@@ -95,11 +83,9 @@ test('should allow claim (owned by user)', async ({
 
   await transactionModal.confirm()
 
-  await test.step('should fire DNS import tracking event: dns_approve_registrar_wallet_opened', async () => {
+  await test.step('should fire DNS import tracking event: wallet:open', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
-    await expect(consoleListener.getMessages().toString()).toContain(
-      'dns_approve_registrar_wallet_opened',
-    )
+    await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
     consoleListener.clearMessages()
   })
 
@@ -119,9 +105,9 @@ test('should allow claim (owned by user)', async ({
   await expect(page.getByText('Open Wallet')).toBeVisible()
   await transactionModal.confirm()
 
-  await test.step('should fire DNS import tracking event: dns_claim_wallet_opened', async () => {
+  await test.step('should fire DNS import tracking event: wallet:open', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
-    await expect(consoleListener.getMessages().toString()).toContain('dns_claim_wallet_opened')
+    await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
     consoleListener.clearMessages()
   })
 
@@ -144,13 +130,7 @@ test('should allow import (not owned by user)', async ({
   const name = 'taytems.xyz'
 
   await consoleListener.initialize({
-    regex: new RegExp(
-      `Event triggered on local development.*?(${[
-        'search_selected_dns',
-        'dns_selected_import_type',
-        'dns_verified_ownership',
-      ].join('|')})`,
-    ),
+    regex: new RegExp(`[PostHog.js] send.*?`),
   })
 
   const homePage = makePageObject('HomePage')
@@ -166,11 +146,11 @@ test('should allow import (not owned by user)', async ({
   await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Not Imported' }).waitFor()
   await homePage.searchInput.press('Enter')
 
-  await test.step('should fire DNS import tracking event: search_selected_dns', async () => {
+  await test.step('should fire DNS import tracking event: search:select', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(1)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(`search_selected_dns.*?${name}`),
+      new RegExp(`search:select.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -188,11 +168,11 @@ test('should allow import (not owned by user)', async ({
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: dns_selected_import_type', async () => {
+  await test.step('should fire DNS import tracking event: import:select_type', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(strictModeEventCount)
 
     await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(`dns_selected_import_type.*?${name}`),
+      new RegExp(`import:select_type.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -209,10 +189,10 @@ test('should allow import (not owned by user)', async ({
 
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: dns_verified_ownership', async () => {
+  await test.step('should fire DNS import tracking event: import:onchain_verify', async () => {
     await expect(consoleListener.getMessages()).toHaveLength(strictModeEventCount)
 
-    await expect(consoleListener.getMessages().toString()).toContain('dns_verified_ownership')
+    await expect(consoleListener.getMessages().toString()).toContain('import:onchain_verify')
     consoleListener.clearMessages()
   })
 
