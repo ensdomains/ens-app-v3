@@ -3,14 +3,13 @@ import { ComponentProps, useEffect, useState } from 'react'
 
 import { lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
-import { hslToHex } from '../utils'
 import { loadPara } from './loadPara'
 
 type RainbowKitProviderProps = ComponentProps<typeof RainbowKitProvider>
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
-    accentColor: hslToHex(thorinLightTheme.colors.accent),
+    accentColor: thorinLightTheme.colors.accent,
     borderRadius: 'medium',
   }),
   fonts: {
