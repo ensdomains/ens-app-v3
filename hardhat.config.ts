@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import '@ensdomains/hardhat-toolbox-viem-extended'
-import '@nomicfoundation/hardhat-toolbox-viem'
+import '@nomicfoundation/hardhat-viem'
 import 'dotenv/config'
 import 'hardhat-deploy'
 

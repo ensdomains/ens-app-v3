@@ -1,7 +1,6 @@
 {
   "ts-node": {
     "experimentalResolver": true,
-    "experimentalSpecifierResolution": "node",
     "files": true,
     "compilerOptions": {
       "module": "CommonJS",

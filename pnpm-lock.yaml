@@ -104,6 +104,9 @@ overrides:
   wrtc: https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz
 
 patchedDependencies:
+  '@ensdomains/ens-test-env@0.6.0':
+    hash: 3g375zkti3ohnao75xzuai66lu
+    path: patches/@ensdomains__ens-test-env@0.6.0.patch
   '@nomicfoundation/hardhat-viem@2.0.3':
     hash: znglrikwqnjywwr7ebopjjz3mm
     path: patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch
@@ -132,7 +135,7 @@ importers:
         version: 1.4.0-beta.2(hardhat@2.22.18(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@ensdomains/ens-test-env':
         specifier: 0.6.0
-        version: 0.6.0
+        version: 0.6.0(patch_hash=3g375zkti3ohnao75xzuai66lu)
       '@ensdomains/ensjs':
         specifier: 4.0.3-alpha.12
         version: 4.0.3-alpha.12(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1))(zod@3.24.1)
@@ -8200,7 +8203,7 @@ snapshots:
       - hardhat
       - supports-color
 
-  '@ensdomains/ens-test-env@0.6.0':
+  '@ensdomains/ens-test-env@0.6.0(patch_hash=3g375zkti3ohnao75xzuai66lu)':
     dependencies:
       cli-progress: 3.12.0
       commander: 13.1.0

@@ -49,8 +49,8 @@
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.4.0-beta.2",
-    "@ensdomains/ensjs": "4.0.3-alpha.12",
     "@ensdomains/ens-test-env": "0.6.0",
+    "@ensdomains/ensjs": "4.0.3-alpha.12",
     "@ensdomains/thorin": "1.0.0-beta.24",
     "@metamask/post-message-stream": "^6.1.2",
     "@metamask/providers": "^14.0.2",
@@ -276,7 +276,8 @@
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
       "hardhat-deploy@0.12.4": "patches/hardhat-deploy@0.12.4.patch",
-      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch"
+      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch",
+      "@ensdomains/ens-test-env@0.6.0": "patches/@ensdomains__ens-test-env@0.6.0.patch"
     }
   },
   "packageManager": "pnpm@9.3.0"

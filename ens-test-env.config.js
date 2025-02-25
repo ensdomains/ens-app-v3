@@ -18,7 +18,7 @@ process.env.BATCH_GATEWAY_URLS = JSON.stringify([
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
  **/
 module.exports = {
-  deployCommand: 'pnpm hh deploy --no-compile',
+  deployCommand: 'pnpm hh --network localhost deploy --no-compile',
   buildCommand: 'pnpm build:glocal && pnpm export',
   scripts: [
     {
@@ -28,7 +28,9 @@ module.exports = {
     },
     {
       command: `pnpm wait-on http://localhost:8788 && ${
-        process.env.CI ? `pnpm playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}` : 'pnpm playwright'
+        process.env.CI
+          ? `pnpm playwright test --project=stateless --shard=${process.env.PLAYWRIGHT_SHARD}/${process.env.PLAYWRIGHT_TOTAL}`
+          : 'pnpm playwright'
       }`,
       name: 'playwright',
       prefixColor: 'yellow.bold',

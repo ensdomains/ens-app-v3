@@ -8,14 +8,11 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const allDeployments = await hre.deployments.all()
-  const deploymentAddressArray = Object.keys(allDeployments).map((dkey) => [
-    dkey,
-    allDeployments[dkey].address,
-  ])
-  const deploymentAddressMap = Object.fromEntries([
-    ...deploymentAddressArray,
+  const deploymentAddressArray = [
+    ...Object.keys(allDeployments).map((dkey) => [dkey, allDeployments[dkey].address]),
     ['Multicall', '0xca11bde05977b3631167028862be2a173976ca11'],
-  ])
+  ]
+  const deploymentAddressMap = Object.fromEntries(deploymentAddressArray)
 
   await writeFile(
     resolve(__dirname, '../.env.local'),
