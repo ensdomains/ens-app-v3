@@ -225,6 +225,16 @@ describe('getRegistrationStatus', () => {
     expect(result).toBe('unsupportedTLD')
   })
 
+  it('should return unsupported tld for .club domains', () => {
+    const result = getRegistrationStatus({
+      timestamp: Date.now(),
+      validation: { is2LD: true, isETH: false },
+      name: 'test.club',
+      wrapperData,
+    })
+    expect(result).toBe('unsupportedTLD')
+  })
+
   it('should not return short if name is short but is not .eth', () => {
     const result = getRegistrationStatus({
       timestamp: Date.now(),

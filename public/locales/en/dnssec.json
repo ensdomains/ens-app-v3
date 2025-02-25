@@ -24,6 +24,7 @@
       "title": "Claim {{name}}",
       "subtitle": "Importing domain names allows them to be used as ENS names.",
       "learnMore": "Learn more about importing names",
+      "customizedTld": "The team behind .{{tld}} have customized their ENS experience, so we're unable to help you import the name at this time",
       "select": {
         "heading": "How would you like to import your domain?",
         "offchain": {
