@@ -26,7 +26,7 @@ export const MainView = ({ manager, showWarning, onCancel, onConfirm }: Props) =
             <Trans t={t} i18nKey="input.syncManager.description" values={{ manager }} />
           </Typography>
         </Description>
-        {showWarning && <Helper type="warning">{t('input.syncManager.warning')}</Helper>}
+        {showWarning && <Helper alert="warning">{t('input.syncManager.warning')}</Helper>}
       </Dialog.Content>
       <Dialog.Footer
         leading={

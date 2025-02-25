@@ -40,14 +40,27 @@ const Button = styled.button<{ $active: boolean }>(
   `,
 )
 
-const StyledSpinner = styled(Spinner)(
+const SpinnerContainer = styled.div(
   ({ theme }) => css`
+    display: block;
     position: absolute;
-    height: ${theme.space['9']};
-    width: ${theme.space['9']};
     top: -${theme.space['0.5']};
     left: -${theme.space['0.5']};
-    stroke-width: ${theme.space['0.5']};
+
+    div {
+      display: block;
+      position: absolute;
+      height: ${theme.space['9']};
+      width: ${theme.space['9']};
+    }
+
+    svg {
+      display: block;
+      position: absolute;
+      height: ${theme.space['9']};
+      width: ${theme.space['9']};
+      stroke-width: ${theme.space['0.5']};
+    }
   `,
 )
 
@@ -218,7 +231,11 @@ const Hamburger = () => {
 
   const button = (
     <Button ref={btnRef} $active={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
-      {graphOutOfSync && <StyledSpinner color="accent" />}
+      {graphOutOfSync && (
+        <SpinnerContainer>
+          <Spinner color="accent" />
+        </SpinnerContainer>
+      )}
       <MenuSVG />
     </Button>
   )

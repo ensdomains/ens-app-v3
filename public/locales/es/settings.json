@@ -1,0 +1,28 @@
+{
+  "title": "Configuración",
+  "section": {
+    "wallet": {
+      "title": "Billetera"
+    },
+    "transaction": {
+      "title": "Transacciones",
+      "noRecentTransactions": "Sin transacciones recientes",
+      "clearTransactions": {
+        "title": "Borrar historial de transacciones",
+        "description": "Borrar tu historial de transacciones eliminará permanentemente estas transacciones de la aplicación de ENS. Tus transacciones seguirán siendo visibles en la blockchain.",
+        "actionLabel": "Borrar historial"
+      }
+    },
+    "privacy": {
+      "title": "Privacidad",
+      "action": {
+        "clearHistory": "Borrar historial de búsqueda"
+      }
+    },
+    "primary": {
+      "title": "Nombre primario",
+      "noNameDescription": "Un nombre primario vincula tu dirección a un nombre, permitiendo a las dApps mostrar ese nombre como tu perfil cuando te conectes. Aprende más sobre los nombres primarios",
+      "choosePrimaryName": "Elegir nombre primario"
+    }
+  }
+}

@@ -3,15 +3,15 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { decodeEventLog } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { tokenise } from '@ensdomains/ensjs/utils'
-import { Button, mq, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
+import { useRegistrationValueFromRegisterReceipt } from '@app/hooks/pages/register/useRegistrationValueFromRegisterReceipt'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { dateFromDateDiff } from '@app/utils/date'
@@ -34,10 +34,10 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -50,9 +50,9 @@ const ButtonContainer = styled.div(
     justify-content: center;
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -63,10 +63,10 @@ const NFTContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
     overflow: hidden;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       width: ${theme.space['80']};
       height: ${theme.space['80']};
-    `)}
+    }
   `,
 )
 
@@ -77,10 +77,11 @@ const InvoiceContainer = styled.div(
     justify-content: center;
     flex-direction: column;
     gap: ${theme.space['4']};
-    ${mq.sm.min(css`
+
+    @media (min-width: ${theme.breakpoints.sm}px) {
       gap: ${theme.space['6']};
       flex-direction: row;
-    `)}
+    }
   `,
 )
 
@@ -109,7 +110,7 @@ const SubtitleWithGradient = styled(Typography)(
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
 
-    background-image: ${theme.colors.gradients.blue};
+    background-image: ${theme.colors.blueGradient};
     /* stylelint-disable property-no-vendor-prefix */
     -webkit-background-clip: text;
     -moz-background-clip: text;
@@ -124,47 +125,6 @@ const SubtitleWithGradient = styled(Typography)(
     }
   `,
 )
-
-const nameRegisteredSnippet = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        name: 'name',
-        type: 'string',
-      },
-      {
-        indexed: true,
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        name: 'baseCost',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        name: 'premium',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        name: 'expires',
-        type: 'uint256',
-      },
-    ],
-    name: 'NameRegistered',
-    type: 'event',
-  },
-] as const
 
 const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
@@ -190,26 +150,10 @@ const useEthInvoice = (
   const commitReceipt = commitTxFlow?.minedData
   const registerReceipt = registerTxFlow?.minedData
 
-  const registrationValue = useMemo(() => {
-    if (!registerReceipt) return null
-    for (const log of registerReceipt.logs) {
-      try {
-        const {
-          args: { baseCost, premium },
-        } = decodeEventLog({
-          abi: nameRegisteredSnippet,
-          topics: log.topics,
-          data: log.data,
-          eventName: 'NameRegistered',
-        })
-        return baseCost + premium
-        // eslint-disable-next-line no-empty
-      } catch {}
-    }
-    return null
-  }, [registerReceipt])
+  const { data: registrationValue, isLoading: isRegistrationValueLoading } =
+    useRegistrationValueFromRegisterReceipt({ registerReceipt })
 
-  const isLoading = !commitReceipt || !registerReceipt
+  const isLoading = !commitReceipt || !registerReceipt || isRegistrationValueLoading
 
   useEffect(() => {
     const storage = localStorage.getItem(`avatar-src-${name}`)

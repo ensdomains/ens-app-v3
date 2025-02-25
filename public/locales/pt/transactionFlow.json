@@ -1,0 +1,87 @@
+{
+  "input": {
+    "profileEditor": {
+      "tabs": {
+        "avatar": {
+          "dropdown": {
+            "selectNFT": "Selecionar NFT",
+            "uploadImage": "Enviar imagem"
+          },
+          "nft": {
+            "title": "Selecionar um NFT",
+            "searchPlaceholder": "Buscar um NFT",
+            "loading": "Carregando seus NFTs",
+            "unknown": "NFT desconhecido",
+            "loadError": "Não foi possível carregar o NFT",
+            "noNFTs": "Nenhum NFT encontrado para este endereço",
+            "address": {
+              "owned": "Em posse",
+              "other": "Outro"
+            },
+            "selected": {
+              "title": "NFT selecionado",
+              "subtitle": "Tem certeza de que deseja usar este NFT?"
+            },
+            "noResults": "Nenhum resultado encontrado"
+          },
+          "image": {
+            "title": "Editar imagem",
+            "upload": {
+              "title": "Enviar avatar",
+              "subtitle": "Você precisa assinar uma mensagem para enviar um avatar. Isso não terá custo",
+              "action": "Assinar e enviar"
+            }
+          }
+        },
+        "address": {
+          "label": "Endereço",
+          "addAddress": "Adicionar endereço",
+          "noOptions": "Não há opções de endereço disponíveis",
+          "placeholder": {
+            "default": "Adicione o endereço aqui",
+            "eth": "0xD9hbQK...",
+            "bnb": "0xD9hbQK...",
+            "btc": "3FZbgi29...",
+            "ltc": "3FZbgi29...",
+            "sol": "D4kA7VzHnmV...",
+            "dot": "1D4kA7VxH...",
+            "doge": "DFabcd12..."
+          }
+        },
+        "contentHash": {
+          "label": "Site",
+          "addContentHash": "Adicionar site descentralizado",
+          "placeholder": {
+            "default": "Adicione a URL aqui",
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "ar://...",
+            "swarm": "bzz://...",
+            "onion": "onion3://..."
+          }
+        },
+        "other": {
+          "label": "Outros",
+          "addRecord": "Adicionar registro",
+          "createRecord": "Digite um nome de registro...",
+          "placeholder": {
+            "default": "Adicione um valor aqui"
+          }
+        }
+      },
+      "warningOverlay": {
+        "action": {
+          "learnMoreResolvers": "Saiba mais sobre resolvedores",
+          "updateResolver": "Atualizar resolvedor",
+          "setResolver": "Definir resolvedor",
+          "ignoreUpdate": "Ignorar isso e continuar usando seu resolvedor atual. Você será perguntado novamente na próxima vez"
+        },
+        "invalidResolver": {
+          "title": "Resolvedor não autorizado",
+          "subtitle": "Você não tem permissão para definir registros neste resolvedor. Você precisa atualizar para o resolvedor mais recente para editar seu perfil",
+          "action": "Atualizar resolvedor"
+        }
+      }
+    }
+  }
+}
