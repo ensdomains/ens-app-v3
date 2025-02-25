@@ -13,6 +13,12 @@
         "actionLabel": "清除历史"
       }
     },
+    "privacy": {
+      "title": "隐私",
+      "action": {
+        "clearHistory": "清除搜索历史"
+      }
+    },
     "primary": {
       "title": "主名称",
       "noNameDescription": "主名称将您的地址链接到名称，这样在连接到 dApp 时会将主名称显示为您的个人资料。了解主名称",

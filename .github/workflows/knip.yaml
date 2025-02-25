@@ -7,15 +7,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+<<<<<<< HEAD
 
       - name: Install corepack
         run: npm i -g corepack
+=======
+>>>>>>> a87770a8fd11cef16bd907569957a24c609917ee
 
       - name: Install pnpm
-        run: corepack enable pnpm
+        run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'

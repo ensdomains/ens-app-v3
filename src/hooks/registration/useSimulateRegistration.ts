@@ -1,14 +1,64 @@
+import { Address } from 'viem'
 import { usePublicClient, useSimulateContract, UseSimulateContractParameters } from 'wagmi'
 
-import { ethRegistrarControllerRegisterSnippet } from '@ensdomains/ensjs/contracts'
-import { makeRegistrationTuple, RegistrationParameters } from '@ensdomains/ensjs/utils'
+import {
+  ethRegistrarControllerRegisterSnippet,
+  legacyEthRegistrarControllerRegisterWithConfigSnippet,
+} from '@ensdomains/ensjs/contracts'
+import {
+  makeLegacyRegistrationWithConfigTuple,
+  makeRegistrationTuple,
+  RegistrationParameters,
+} from '@ensdomains/ensjs/utils'
 
+import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
+import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
 import { calculateValueWithBuffer } from '@app/utils/utils'
 
 import { usePrice } from '../ensjs/public/usePrice'
 
 type UseSimulateRegistrationParameters = Pick<UseSimulateContractParameters, 'query'> & {
   registrationParams: RegistrationParameters
+}
+
+type UseSimulateEthRegistrarControllerRegisterReturnType = UseSimulateContractParameters<
+  typeof ethRegistrarControllerRegisterSnippet,
+  'register'
+>
+
+type UseSimulateLegacyEthRegistrarControllerRegisterReturnType = UseSimulateContractParameters<
+  typeof legacyEthRegistrarControllerRegisterWithConfigSnippet,
+  'registerWithConfig'
+>
+
+type MakeSimulateRegistrationParamsReturnType =
+  | UseSimulateEthRegistrarControllerRegisterReturnType
+  | UseSimulateLegacyEthRegistrarControllerRegisterReturnType
+
+export const makeSimulateRegistrationParams = ({
+  registrationParams,
+  ensEthRegistrarControllerAddress,
+  legacyEthRegistrarControllerAddress,
+}: {
+  registrationParams: RegistrationParameters
+  ensEthRegistrarControllerAddress: Address
+  legacyEthRegistrarControllerAddress: Address
+}): MakeSimulateRegistrationParamsReturnType => {
+  if (isLegacyRegistration(registrationParams)) {
+    return {
+      abi: legacyEthRegistrarControllerRegisterWithConfigSnippet,
+      address: legacyEthRegistrarControllerAddress,
+      functionName: 'registerWithConfig',
+      args: makeLegacyRegistrationWithConfigTuple(makeLegacyRegistrationParams(registrationParams)),
+    }
+  }
+
+  return {
+    abi: ethRegistrarControllerRegisterSnippet,
+    address: ensEthRegistrarControllerAddress,
+    functionName: 'register',
+    args: makeRegistrationTuple(registrationParams),
+  }
 }
 
 export const useSimulateRegistration = ({
@@ -27,10 +77,12 @@ export const useSimulateRegistration = ({
   const value = base + premium
 
   return useSimulateContract({
-    abi: ethRegistrarControllerRegisterSnippet,
-    address: client.chain.contracts.ensEthRegistrarController.address,
-    functionName: 'register',
-    args: makeRegistrationTuple(registrationParams),
+    ...makeSimulateRegistrationParams({
+      registrationParams,
+      ensEthRegistrarControllerAddress: client.chain.contracts.ensEthRegistrarController.address,
+      legacyEthRegistrarControllerAddress:
+        client.chain.contracts.legacyEthRegistrarController.address,
+    }),
     value: calculateValueWithBuffer(value),
     query,
   })

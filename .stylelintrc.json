@@ -1,16 +1,12 @@
 {
-  "processors": ["stylelint-processor-styled-components"],
   "extends": [
-    "stylelint-config-standard-scss",
-    "stylelint-config-styled-components",
-    "stylelint-config-prettier"
+    "stylelint-config-standard"
   ],
-  "customSyntax": "postcss-scss",
+  "customSyntax": "postcss-styled-syntax",
   "rules": {
     "selector-type-case": ["lower", { "ignoreTypes": ["/^\\$\\w+/"] }],
     "selector-type-no-unknown": [true, { "ignoreTypes": ["/-styled-mixin/", "/^\\$\\w+/"] }],
     "value-keyword-case": ["lower", { "ignoreKeywords": ["dummyValue", "currentColor"] }],
-    "declaration-colon-newline-after": null,
     "declaration-empty-line-before": null,
     "property-no-unknown": [
       true,
@@ -20,11 +16,19 @@
     ],
     "color-function-notation": "legacy",
     "alpha-value-notation": "number",
-    "scss/operator-no-newline-after": null,
-    "scss/operator-no-unspaced": null,
     "custom-property-pattern": null,
     "rule-empty-line-before": null,
     "keyframes-name-pattern": null,
-    "keyframe-block-no-duplicate-selectors": null
+    "keyframe-block-no-duplicate-selectors": null,
+    "no-empty-source": null,
+    "media-query-no-invalid": null,
+    "at-rule-empty-line-before": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "media-feature-range-notation": null,
+    "declaration-property-value-no-unknown": [true, {
+      "ignoreProperties": {
+        "-moz-background-clip": ["text"]
+      }
+    }]
   }
 }

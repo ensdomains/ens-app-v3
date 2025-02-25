@@ -27,7 +27,7 @@ export const waitForSubgraph = () => async () => {
   do {
     await new Promise((resolve) => setTimeout(resolve, 500))
     const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
-    const res = await client.request(query)
+    const res = await client.request<{_meta: {block: {number: number}}}>(query)
 
     anvilBlockNumbers.push(res._meta.block.number)
     if (anvilBlockNumbers.length > 10) anvilBlockNumbers.shift()

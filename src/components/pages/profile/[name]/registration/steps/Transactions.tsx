@@ -4,8 +4,8 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
-import { makeCommitment } from '@ensdomains/ensjs/utils'
-import { Button, CountdownCircle, Dialog, Heading, mq, Spinner } from '@ensdomains/thorin'
+import { makeCommitment, makeLegacyCommitment } from '@ensdomains/ensjs/utils'
+import { Button, CountdownCircle, Dialog, Heading, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
@@ -19,6 +19,8 @@ import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
+import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -88,10 +90,10 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
@@ -112,11 +114,12 @@ const CountdownContainer = styled.div(
   `,
 )
 
-const StyledCountdown = styled(CountdownCircle)(
-  ({ theme, disabled }) => css`
+const StyledCountdown = styled.div<{ disabled: boolean; complete: boolean }>(
+  ({ theme, disabled, complete }) => css`
     width: ${theme.space['52']};
     height: ${theme.space['52']};
-    & > div {
+
+    div > div {
       font-size: ${theme.fontSizes.headingOne};
       font-weight: ${theme.fontWeights.bold};
       width: ${theme.space['52']};
@@ -126,6 +129,22 @@ const StyledCountdown = styled(CountdownCircle)(
       css`
         color: ${theme.colors.border};
       `}
+    }
+
+    circle {
+      stroke: ${theme.colors.accentPrimary};
+      ${disabled &&
+      css`
+        stroke: ${theme.colors.border};
+      `}
+    }
+
+    svg > circle:nth-child(2) {
+      stroke-width: ${theme.space['0.5']};
+    }
+
+    svg > circle:nth-child(1) {
+      stroke-width: ${complete ? theme.space['0'] : theme.space['0.5']};
     }
 
     svg {
@@ -241,8 +260,13 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const commitCouldBeFound =
     !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
+  const isLegacyCommit = isLegacyRegistration(registrationParams)
   useExistingCommitment({
-    commitment: makeCommitment(registrationParams),
+    registrationParams,
+    commitment: isLegacyCommit
+      ? makeLegacyCommitment(makeLegacyRegistrationParams(registrationParams))
+      : makeCommitment(registrationParams),
+    isLegacyCommit,
     enabled: commitCouldBeFound,
     commitKey,
   })
@@ -362,14 +386,21 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       <Heading>{t('steps.transactions.heading')}</Heading>
       <CountdownContainer>
         <StyledCountdown
-          countdownSeconds={60}
           disabled={match(transactionState)
             .with('commitReady', 'commitSent', 'commitFailed', () => true)
             .otherwise(() => false)}
-          startTimestamp={commitTimestamp}
-          size="large"
-          callback={() => setCommitComplete(true)}
-        />
+          complete={commitComplete}
+        >
+          <CountdownCircle
+            countdownSeconds={60}
+            disabled={match(transactionState)
+              .with('commitReady', 'commitSent', 'commitFailed', () => true)
+              .otherwise(() => false)}
+            startTimestamp={commitTimestamp}
+            size="large"
+            callback={() => setCommitComplete(true)}
+          />
+        </StyledCountdown>
         <CountDownInner
           $hide={match(transactionState)
             .with('commitComplete', 'registrationOverriden', () => true)
@@ -490,7 +521,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
             <>
               {ResetBackButton}
               <MobileFullWidth>
-                <Button data-testid="wait-button" disabled suffix={<Spinner color="greyPrimary" />}>
+                <Button
+                  data-testid="wait-button"
+                  disabled
+                  suffix={() => <Spinner color="greyPrimary" />}
+                >
                   {t('steps.transactions.wait')}
                 </Button>
               </MobileFullWidth>

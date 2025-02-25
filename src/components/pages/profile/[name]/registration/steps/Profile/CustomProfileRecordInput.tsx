@@ -1,8 +1,8 @@
 import { UseFormRegister, UseFormTrigger } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { CrossSVG, Input, mq } from '@ensdomains/thorin'
+import { CrossSVG, Input } from '@ensdomains/thorin'
 
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
@@ -15,37 +15,37 @@ const Container = styled.div(
   `,
 )
 
-const InnerResponsiveContainer = styled.div(({ theme }) => [
-  css`
+const InnerResponsiveContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     gap: ${theme.space[2]};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      flex-direction: row;
+    }
   `,
-  mq.sm.min(css`
-    flex-direction: row;
-  `),
-])
+)
 
-const LabelWrapper = styled.div(() => [
-  css`
+const LabelWrapper = styled.div(
+  ({ theme }) => css`
     width: 100%;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      flex: 0 0 25%;
+    }
   `,
-  mq.sm.min(css`
-    flex: 0 0 25%;
-  `),
-])
+)
 
-const ValueWrapper = styled.div(() => [
-  css`
+const ValueWrapper = styled.div(
+  ({ theme }) => css`
     width: 100%;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      flex: 1;
+    }
   `,
-  mq.sm.min(css`
-    flex: 1;
-  `),
-])
+)
 
-const ButtonContainer = styled.div(({ theme }) => [
-  css`
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['11']};
     margin-right: -${theme.space['1']};
     display: flex;
@@ -53,11 +53,11 @@ const ButtonContainer = styled.div(({ theme }) => [
     justify-content: flex-start;
     padding-top: calc(${theme.space['8']} + ${theme.space['12']} + ${theme.space['2']});
     margin-top: -1px;
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      padding-top: ${theme.space['8']};
+    }
   `,
-  mq.sm.min(css`
-    padding-top: ${theme.space['8']};
-  `),
-])
+)
 
 const DeleteButton = styled.button(
   ({ theme }) => css`
@@ -84,6 +84,8 @@ const InnerButtonWrapper = styled.div(
 
     svg {
       color: ${theme.colors.greyPrimary};
+      width: ${theme.space[4]};
+      height: ${theme.space[4]};
     }
 
     &:hover {
@@ -112,7 +114,6 @@ export const CustomProfileRecordInput = ({
   error,
   onDelete,
 }: Props) => {
-  const theme = useTheme()
   const { t } = useTranslation('register')
   return (
     <Container>
@@ -123,9 +124,6 @@ export const CustomProfileRecordInput = ({
               label=""
               hideLabel
               error={!!error}
-              parentStyles={css`
-                height: ${theme.space[12]};
-              `}
               placeholder={t('steps.profile.options.groups.custom.key')}
               {...register(`records.${index}.key`, {
                 required: t('steps.profile.errors.labelRequired'),
