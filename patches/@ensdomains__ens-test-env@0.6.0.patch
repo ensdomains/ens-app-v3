@@ -1,0 +1,16 @@
+diff --git a/src/docker-compose.yml b/src/docker-compose.yml
+index 86eff00634e6ae58b1b4574dd4953b1eb24cde3a..36f52437411a7b23e33d9939aedfe49243893471 100644
+--- a/src/docker-compose.yml
++++ b/src/docker-compose.yml
+@@ -1,9 +1,9 @@
+ services:
+   anvil:
+-    image: ghcr.io/ensdomains/anvil:next
++    image: ghcr.io/foundry-rs/foundry:stable
+     ports:
+       - '8545:8545'
+-    entrypoint: /bin/sh -c 'anvil --chain-id 1337 --gas-limit 50000000 --timestamp 1640995200 $ANVIL_EXTRA_ARGS'
++    entrypoint: anvil --chain-id 1337 --gas-limit 50000000 --timestamp 1640995200 $ANVIL_EXTRA_ARGS
+     environment:
+       ANVIL_IP_ADDR: '0.0.0.0'
+   graph-node:

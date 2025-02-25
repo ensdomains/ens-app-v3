@@ -1,0 +1,76 @@
+diff --git a/internal/clients.js b/internal/clients.js
+index 9466df2ac1545d26981da7f82401735b6660ac81..b3d2fd52bf81d9d1bcbf6ab320b0be907deb00e3 100644
+--- a/internal/clients.js
++++ b/internal/clients.js
+@@ -47,7 +47,7 @@ async function innerGetPublicClient(provider, chain, publicClientConfig) {
+     const parameters = { ...defaultParameters, ...publicClientConfig };
+     const publicClient = viem.createPublicClient({
+         chain,
+-        transport: viem.custom(provider),
++        transport: viem.custom(provider, { retryCount: 0 }),
+         ...parameters,
+     });
+     return publicClient;
+@@ -80,7 +80,7 @@ async function innerGetWalletClients(provider, chain, accounts, walletClientConf
+     const walletClients = accounts.map((account) => viem.createWalletClient({
+         chain,
+         account,
+-        transport: viem.custom(provider),
++        transport: viem.custom(provider, { retryCount: 0 }),
+         ...parameters,
+     }));
+     return walletClients;
+@@ -123,7 +123,7 @@ async function innerGetTestClient(provider, chain, mode, testClientConfig) {
+     const testClient = viem.createTestClient({
+         mode,
+         chain,
+-        transport: viem.custom(provider),
++        transport: viem.custom(provider, { retryCount: 0 }),
+         ...parameters,
+     });
+     return testClient;
+diff --git a/internal/type-extensions.d.ts b/internal/type-extensions.d.ts
+index 59bcafeb3e933db4c713921a4859e353f0d1af4d..522bfd04d52fa33f51a5e66beb8032e46458b904 100644
+--- a/internal/type-extensions.d.ts
++++ b/internal/type-extensions.d.ts
+@@ -1,18 +1,10 @@
+ import type { Address, PublicClientConfig, WalletClientConfig, TestClientConfig } from "viem";
+-import type { PublicClient, TestClient, WalletClient, deployContract, sendDeploymentTransaction, getContractAt } from "../types";
++import type { HardhatViemHelpers } from "../types";
+ import "hardhat/types/runtime";
+ import "hardhat/types/artifacts";
+ declare module "hardhat/types/runtime" {
+     interface HardhatRuntimeEnvironment {
+-        viem: {
+-            getPublicClient(publicClientConfig?: Partial<PublicClientConfig>): Promise<PublicClient>;
+-            getWalletClients(walletClientConfig?: Partial<WalletClientConfig>): Promise<WalletClient[]>;
+-            getWalletClient(address: Address, walletClientConfig?: Partial<WalletClientConfig>): Promise<WalletClient>;
+-            getTestClient(testClientConfig?: Partial<TestClientConfig>): Promise<TestClient>;
+-            deployContract: typeof deployContract;
+-            sendDeploymentTransaction: typeof sendDeploymentTransaction;
+-            getContractAt: typeof getContractAt;
+-        };
++        viem: HardhatViemHelpers;
+     }
+ }
+ declare module "hardhat/types/artifacts" {
+diff --git a/types.d.ts b/types.d.ts
+index af7740e3254faf417d252d7035eaeddd6062e09b..9edbba5ae645aca0e24817f5d83966887abf6a34 100644
+--- a/types.d.ts
++++ b/types.d.ts
+@@ -39,5 +39,14 @@ export declare function sendDeploymentTransaction<CN extends string>(contractNam
+     deploymentTransaction: GetTransactionReturnType;
+ }>;
+ export declare function getContractAt<CN extends string>(contractName: ContractName<CN>, address: viemT.Address, config?: GetContractAtConfig): Promise<GetContractReturnType>;
++export interface HardhatViemHelpers {
++    getPublicClient(publicClientConfig?: Partial<viemT.PublicClientConfig>): Promise<PublicClient>;
++    getWalletClients(walletClientConfig?: Partial<viemT.WalletClientConfig>): Promise<WalletClient[]>;
++    getWalletClient(address: viemT.Address, walletClientConfig?: Partial<viemT.WalletClientConfig>): Promise<WalletClient>;
++    getTestClient(testClientConfig?: Partial<viemT.TestClientConfig>): Promise<TestClient>;
++    deployContract: typeof deployContract;
++    sendDeploymentTransaction: typeof sendDeploymentTransaction;
++    getContractAt: typeof getContractAt;
++}
+ export type { AbiParameterToPrimitiveType } from "abitype";
+ //# sourceMappingURL=types.d.ts.map
+\ No newline at end of file

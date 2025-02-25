@@ -1,17 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { existsSync } from 'fs'
-import { mkdir, writeFile } from 'fs/promises'
-import { resolve } from 'path'
+import { existsSync } from 'node:fs'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { getAddress } from 'viem'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const allDeployments = await hre.deployments.all()
-  const deploymentAddressArray = Object.keys(allDeployments).map((dkey) => [
-    dkey,
-    allDeployments[dkey].address,
-  ])
+  const deploymentAddressArray = [
+    ...Object.keys(allDeployments).map((dkey) => [dkey, allDeployments[dkey].address]),
+    ['Multicall', '0xca11bde05977b3631167028862be2a173976ca11'],
+  ].map(([name, address]) => [name, getAddress(address)])
   const deploymentAddressMap = Object.fromEntries(deploymentAddressArray)
 
   await writeFile(
