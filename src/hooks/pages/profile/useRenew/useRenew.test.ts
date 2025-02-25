@@ -1,7 +1,7 @@
 import type { ParsedUrlQuery } from 'querystring'
 import { mockFunction, renderHook, screen } from '@app/test-utils'
 
-import { useConnectModal } from '@usecapsule/rainbowkit'
+import { useConnectModal } from '@getpara/rainbowkit'
 import mockRouter from 'next-router-mock'
 import { useSearchParams } from 'next/navigation'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

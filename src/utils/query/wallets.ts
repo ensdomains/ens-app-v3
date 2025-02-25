@@ -1,4 +1,4 @@
-import { connectorsForWallets, type WalletList } from '@usecapsule/rainbowkit'
+import { connectorsForWallets, type WalletList } from '@getpara/rainbowkit'
 import {
   argentWallet,
   braveWallet,
@@ -10,7 +10,7 @@ import {
   rainbowWallet,
   safeWallet,
   walletConnectWallet,
-} from '@usecapsule/rainbowkit/wallets'
+} from '@getpara/rainbowkit/wallets'
 
 import { WC_PROJECT_ID } from '../constants'
 
