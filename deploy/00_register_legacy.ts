@@ -5,7 +5,7 @@ import cbor from 'cbor'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import pako from 'pako'
-import { labelhash, namehash, stringToBytes } from 'viem'
+import { bytesToHex, labelhash, namehash, stringToBytes, type Address, type Hash } from 'viem'
 
 const dummyABI = [
   {
@@ -132,24 +132,24 @@ type Name = {
   namedAddr: string
   subname?: string
   namedController?: string
-  resolver?: string
+  resolver?: Address
   records?: {
     text?: {
       key: string
       value: string
     }[]
     addr?: {
-      key: number
-      value: string
+      key: bigint
+      value: Hash
     }[]
-    contenthash?: string
+    contenthash?: Hash
     abi?:
       | {
-          contentType: number
+          contentType: bigint
           data: any
         }
       | {
-          contentType: number
+          contentType: bigint
           data: any
         }[]
   }
@@ -157,7 +157,7 @@ type Name = {
     label: string
     namedOwner: string
   }[]
-  customDuration?: number
+  customDuration?: bigint
 }
 
 const names: Name[] = [
@@ -173,9 +173,9 @@ const names: Name[] = [
         { key: 'email', value: 'fakeemail@fake.com' },
       ],
       addr: [
-        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
-        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+        { key: 61n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0n, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2n, value: '0x0000000000000000000000000000000000000000' },
       ],
       contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
     },
@@ -192,9 +192,9 @@ const names: Name[] = [
         { key: 'email', value: 'fakeemail@fake.com' },
       ],
       addr: [
-        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
-        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+        { key: 61n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0n, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2n, value: '0x0000000000000000000000000000000000000000' },
       ],
       contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
     },
@@ -249,9 +249,9 @@ const names: Name[] = [
         { key: 'email', value: 'fakeemail@fake.com' },
       ],
       addr: [
-        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
-        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+        { key: 61n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0n, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2n, value: '0x0000000000000000000000000000000000000000' },
       ],
       contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
     },
@@ -281,31 +281,31 @@ const names: Name[] = [
     label: 'name-with-premium',
     namedOwner: 'owner',
     namedAddr: 'owner',
-    customDuration: 3283200,
+    customDuration: 3283200n,
   },
   {
     label: 'expired',
     namedOwner: 'owner',
     namedAddr: 'owner',
-    customDuration: 2419200,
+    customDuration: 2419200n,
   },
   {
     label: 'grace-period',
     namedOwner: 'owner',
     namedAddr: 'owner',
-    customDuration: 5011200,
+    customDuration: 5011200n,
   },
   {
     label: 'grace-period-in-list',
     namedOwner: 'owner',
     namedAddr: 'owner',
-    customDuration: 5011200,
+    customDuration: 5011200n,
   },
   {
     label: 'grace-period-starting-soon',
     namedOwner: 'owner',
     namedAddr: 'owner',
-    customDuration: 12900600,
+    customDuration: 12900600n,
   },
   {
     label: 'unwrapped-with-wrapped-subnames',
@@ -333,7 +333,7 @@ const names: Name[] = [
     namedAddr: 'owner',
     records: {
       abi: {
-        contentType: 1,
+        contentType: 1n,
         data: dummyABI,
       },
     },
@@ -345,29 +345,31 @@ const names: Name[] = [
     records: {
       abi: [
         {
-          contentType: 1,
+          contentType: 1n,
           data: dummyABI,
         },
         {
-          contentType: 2,
+          contentType: 2n,
           data: dummyABI,
         },
         {
-          contentType: 4,
+          contentType: 4n,
           data: dummyABI,
         },
         {
-          contentType: 8,
+          contentType: 8n,
           data: 'https://example.com',
         },
       ],
     },
   },
-]
+] as const
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network, viem } = hre
-  const allNamedAccts = await getNamedAccounts()
+  const { network, viem } = hre
+
+  const allNamedClients = await viem.getNamedClients()
+  const publicClient = await viem.getPublicClient()
 
   const registry = await viem.getContract('ENSRegistry')
   const controller = await viem.getContract('LegacyETHRegistrarController')
@@ -383,11 +385,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }: Name) => {
     // eslint-disable-next-line no-restricted-syntax
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
-    const registrant = allNamedAccts[namedOwner]
-    const owner = namedController ? allNamedAccts[namedController] : undefined
-    const addr = allNamedAccts[namedAddr]
+    const registrant = allNamedClients[namedOwner].account
+    const owner = namedController ? allNamedClients[namedController].account : undefined
+    const addr = allNamedClients[namedAddr].account
     const resolver = rest.resolver ?? publicResolver.address
-    const duration = customDuration || 31536000
+    const duration = customDuration || 31536000n
 
     return {
       ...rest,
@@ -398,7 +400,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       resolver,
       duration,
       subnames,
-    }
+    } as const
   }
 
   const makeCommitment =
@@ -407,17 +409,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       { label, registrant, secret, resolver, addr }: ReturnType<typeof makeData>,
       index: number,
     ) => {
-      const commitment = await controller.write.makeCommitmentWithConfig([
+      const commitment = await controller.read.makeCommitmentWithConfig([
         label,
-        registrant,
+        registrant.address,
         secret,
         resolver,
-        addr,
+        addr.address,
       ])
 
-      const _controller = controller.connect(await ethers.getSigner(registrant))
-      const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
-      console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`)
+      const commitTxHash = await controller.write.commit([commitment], {
+        account: registrant,
+        nonce: nonce + index,
+      })
+      console.log(`Commiting commitment for ${label}.eth (tx: ${commitTxHash})...`)
 
       return 1
     }
@@ -430,21 +434,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ) => {
       const price = await controller.read.rentPrice([label, duration])
 
-      const _controller = controller.connect(await ethers.getSigner(registrant))
-
-      const registerTx = await _controller.registerWithConfig(
-        label,
-        registrant,
-        duration,
-        secret,
-        resolver,
-        addr,
+      const registerTxHash = await controller.write.registerWithConfig(
+        [label, registrant.address, duration, secret, resolver, addr.address],
         {
+          account: registrant,
           value: price,
           nonce: nonce + index,
         },
       )
-      console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
+      console.log(`Registering name ${label}.eth (tx: ${registerTxHash})...`)
 
       return 1
     }
@@ -457,39 +455,38 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ) => {
       const records = _records!
       let nonceRef = nonce + index
-      const _publicResolver = publicResolver.connect(await ethers.getSigner(registrant))
 
       const hash = namehash(`${label}.eth`)
       console.log(`Setting records for ${label}.eth...`)
       if (records.text) {
         console.log('TEXT')
         for (const { key, value } of records.text) {
-          const setTextTx = await _publicResolver.setText(hash, key, value, { nonce: nonceRef })
-          console.log(` - ${key} ${value} (tx: ${setTextTx.hash})...`)
+          const setTextHash = await publicResolver.write.setText([hash, key, value], {
+            account: registrant,
+            nonce: nonceRef,
+          })
+          console.log(` - ${key} ${value} (tx: ${setTextHash})...`)
           nonceRef += 1
         }
       }
       if (records.addr) {
         console.log('ADDR')
         for (const { key, value } of records.addr) {
-          const setAddrTx = await _publicResolver['setAddr(bytes32,uint256,bytes)'](
-            hash,
-            key,
-            value,
-            {
-              nonce: nonceRef,
-            },
-          )
-          console.log(` - ${key} ${value} (tx: ${setAddrTx.hash})...`)
+          const setAddrHash = await publicResolver.write.setAddr([hash, key, value], {
+            account: registrant,
+            nonce: nonceRef,
+          })
+          console.log(` - ${key} ${value} (tx: ${setAddrHash})...`)
           nonceRef += 1
         }
       }
       if (records.contenthash) {
         console.log('CONTENTHASH')
-        const setContenthashTx = await _publicResolver.setContenthash(hash, records.contenthash, {
-          nonce: nonceRef,
-        })
-        console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
+        const setContenthashHash = await publicResolver.write.setContenthash(
+          [hash, records.contenthash],
+          { account: registrant, nonce: nonceRef },
+        )
+        console.log(` - ${records.contenthash} (tx: ${setContenthashHash})...`)
         nonceRef += 1
       }
       if (records.abi) {
@@ -498,14 +495,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
           console.log('ABI')
           const { contentType, data } = abi
           let data_
-          if (contentType === 1) data_ = stringToBytes(JSON.stringify(data))
-          else if (contentType === 2) data_ = pako.deflate(JSON.stringify(abi.data))
-          else if (contentType === 4) data_ = cbor.encode(abi.data)
+          if (contentType === 1n) data_ = stringToBytes(JSON.stringify(data))
+          else if (contentType === 2n) data_ = pako.deflate(JSON.stringify(abi.data))
+          else if (contentType === 4n) data_ = cbor.encode(abi.data)
           else data_ = stringToBytes(data)
-          const setAbiTx = await _publicResolver.setABI(hash, contentType, data_, {
-            nonce: nonceRef,
-          })
-          console.log(` - ${records.abi} (tx: ${setAbiTx.hash})...`)
+          const setAbiHash = await publicResolver.write.setABI(
+            [hash, contentType, bytesToHex(data_)],
+            { account: registrant, nonce: nonceRef },
+          )
+          console.log(` - ${records.abi} (tx: ${setAbiHash})...`)
           nonceRef += 1
         }
       }
@@ -521,19 +519,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       if (!subnames) return 0
       for (let i = 0; i < subnames.length; i += 1) {
         const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
-        const subOwner = allNamedAccts[namedSubOwner]
-        const _registry = registry.connect(await ethers.getSigner(registrant))
-        const subnameTx = await _registry.setSubnodeRecord(
-          namehash(`${label}.eth`),
-          labelhash(subnameLabel),
-          subOwner,
-          resolver,
-          0,
+        const subOwner = allNamedClients[namedSubOwner].account
+        const subnameTxHash = await registry.write.setSubnodeRecord(
+          [namehash(`${label}.eth`), labelhash(subnameLabel), subOwner.address, resolver, 0n],
           {
+            account: registrant,
             nonce: nonce + index + i,
           },
         )
-        console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
+        console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTxHash})...`)
       }
       return subnames.length
     }
@@ -541,13 +535,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const makeController =
     (nonce: number) =>
     async ({ label, owner, registrant }: ReturnType<typeof makeData>, index: number) => {
-      const _registry = registry.connect(await ethers.getSigner(registrant))
-      const setControllerTx = await _registry.setOwner(namehash(`${label}.eth`), owner, {
-        nonce: nonce + index,
-      })
-      console.log(
-        `Setting controller for ${label}.eth to ${owner} (tx: ${setControllerTx.hash})...`,
+      const setControllerTxHash = await registry.write.setOwner(
+        [namehash(`${label}.eth`), owner!.address],
+        {
+          account: registrant,
+          nonce: nonce + index,
+        },
       )
+      console.log(`Setting controller for ${label}.eth to ${owner} (tx: ${setControllerTxHash})...`)
 
       return 1
     }
@@ -561,21 +556,33 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     nonceMap?: Record<string, number>,
   ) => {
     const newNonceMap = nonceMap || {}
-    for (const account of Object.values(allNamedAccts)) {
-      const namesWithAccount = allNameData.filter(
-        (data) => data[property] === account && (filter ? filter(data) : true),
-      )
-      if (!newNonceMap[account]) {
-        const nonce = await ethers.provider.getTransactionCount(account)
-        newNonceMap[account] = nonce
+    for (const client of Object.values(allNamedClients)) {
+      const account = client.account
+      const address = account.address
+      const namesWithAccount = allNameData.filter((data) => {
+        const propertyValue = data[property]
+        if (typeof propertyValue === 'string') {
+          if (propertyValue !== address) return false
+        } else if (typeof propertyValue === 'object') {
+          if (!('address' in propertyValue)) return false
+          if (propertyValue.address !== address) return false
+        } else {
+          return false
+        }
+        if (filter) return filter(data)
+        return true
+      })
+      if (!newNonceMap[address]) {
+        const nonce = await publicClient.getTransactionCount({ address })
+        newNonceMap[address] = nonce
       }
       let usedNonces = 0
 
       for (let i = 0; i < namesWithAccount.length; i += 1) {
         const data = namesWithAccount[i]
-        usedNonces += await _func(newNonceMap[account])(data, usedNonces)
+        usedNonces += await _func(newNonceMap[address])(data, usedNonces)
       }
-      newNonceMap[account] += usedNonces
+      newNonceMap[address] += usedNonces
     }
     return newNonceMap
   }
@@ -583,7 +590,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_setAutomine', [false])
   await getNonceAndApply('registrant', makeCommitment)
   await network.provider.send('evm_mine')
-  const oldTimestamp = (await ethers.provider.getBlock('latest')).timestamp
+  const oldTimestamp = await publicClient.getBlock().then((b) => Number(b.timestamp))
   await network.provider.send('evm_setNextBlockTimestamp', [oldTimestamp + 60])
   await network.provider.send('evm_mine')
   await getNonceAndApply('registrant', makeRegistration)
@@ -608,16 +615,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // register subname
   const resolver = publicResolver.address
-  const registrant = allNamedAccts.owner
-  const _registry = registry.connect(await ethers.getSigner(registrant))
-  const subnameTx = await _registry.setSubnodeRecord(
-    namehash('test123.eth'),
-    labelhash('sub'),
-    registrant,
-    resolver,
-    0,
+  const registrant = allNamedClients.owner.account
+  const subnameTxHash = await registry.write.setSubnodeRecord(
+    [namehash('test123.eth'), labelhash('sub'), registrant.address, resolver, 0n],
+    {
+      account: registrant,
+    },
   )
-  await subnameTx.wait()
+  await viem.waitForTransactionSuccess(subnameTxHash)
 
   return true
 }

@@ -3,7 +3,7 @@
 /* eslint-disable no-await-in-loop */
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { Address, namehash } from 'viem'
+import { namehash } from 'viem'
 
 const names = [
   {
@@ -20,11 +20,11 @@ const names = [
       },
     ],
   },
-]
+] as const
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network, viem } = hre
-  const allNamedAccts = await getNamedAccounts()
+  const { network, viem } = hre
+  const allNamedClients = await viem.getNamedClients()
 
   const controller = await viem.getContract('ETHRegistrarController')
   const publicResolver = await viem.getContract('PublicResolver')
@@ -34,14 +34,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   for (const { label, namedOwner, data, reverseRecord, fuses, subnames } of names) {
     // eslint-disable-next-line no-restricted-syntax
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
-    const owner = allNamedAccts[namedOwner] as Address
+    const owner = allNamedClients[namedOwner].account
     const resolver = publicResolver.address
-    const duration = 31536000
-    const wrapperExpiry = 1659467455 + duration
+    const duration = 31536000n
+    const wrapperExpiry = 1659467455n + duration
 
-    const commitment = await controller.write.makeCommitment([
+    const commitment = await controller.read.makeCommitment([
       label,
-      owner,
+      owner.address,
       duration,
       secret,
       resolver,
@@ -50,15 +50,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       fuses,
     ])
 
-    const commitTx = await controller.write.commit(commitment)
+    const commitTx = await controller.write.commit([commitment])
     console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx})...`)
 
     await network.provider.send('evm_mine')
 
-    const [price] = await controller.read.rentPrice([label, duration])
+    const { base: price } = await controller.read.rentPrice([label, duration])
 
     const registerTx = await controller.write.register(
-      [label, owner, duration, secret, resolver, data, reverseRecord, fuses],
+      [label, owner.address, duration, secret, resolver, data, reverseRecord, fuses],
       {
         value: price,
         account: owner,
@@ -74,37 +74,38 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         namedOwner: namedSubnameOwner,
         contract: subnameContract,
       } of subnames) {
-        const subnameOwner = allNamedAccts[namedSubnameOwner]
-        const _nameWrapper = nameWrapper.connect(await ethers.getSigner(owner))
-        const setSubnameTx = await _nameWrapper.write.setSubnodeRecord(
-          namehash(`${label}.eth`),
-          subnameLabel,
-          subnameOwner,
-          resolver,
-          '0',
-          '0',
-          wrapperExpiry,
+        const subnameOwner = allNamedClients[namedSubnameOwner].account
+        const setSubnameHash = await nameWrapper.write.setSubnodeRecord(
+          [
+            namehash(`${label}.eth`),
+            subnameLabel,
+            subnameOwner.address,
+            resolver,
+            0n,
+            0,
+            wrapperExpiry,
+          ],
+          {
+            account: subnameOwner,
+          },
         )
-        console.log(` - ${subnameLabel} (tx: ${setSubnameTx.hash})...`)
-        await setSubnameTx.wait()
+        console.log(` - ${subnameLabel} (tx: ${setSubnameHash})...`)
+        await viem.waitForTransactionSuccess(setSubnameHash)
 
         if (subnameContract) {
           console.log('setting', subnameContract, 'contract for', `${subnameLabel}.${label}.eth`)
-          const _publicResolver = publicResolver.connect(await ethers.getSigner(subnameOwner))
 
-          const contract = await ethers.getContract(subnameContract)
+          const contract = await viem.getContract(subnameContract)
 
           const hash = namehash(`${subnameLabel}.${label}.eth`)
 
           console.log('setting address records for ', `${subnameLabel}.${label}.eth`)
 
-          const setAddrTx = await _publicResolver['setAddr(bytes32,uint256,bytes)'](
-            hash,
-            '60',
-            contract.address,
-          )
-          console.log(` - ${subnameContract} ${contract.address} (tx: ${setAddrTx.hash})...`)
-          await setAddrTx.wait()
+          const setAddrHash = await publicResolver.write.setAddr([hash, 60n, contract.address], {
+            account: subnameOwner,
+          })
+          console.log(` - ${subnameContract} ${contract.address} (tx: ${setAddrHash})...`)
+          await viem.waitForTransactionSuccess(setAddrHash)
         }
       }
     }

@@ -11,7 +11,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { viem } = hre
   const { owner } = await viem.getNamedClients()
 
-  const registry = await viem.getContract('LegacyENSRegistry', owner)
+  const registry = await viem.getContract('LegacyENSRegistry' as 'ENSRegistry', owner)
 
   const tldTx = await registry.write.setSubnodeOwner(
     [ZERO_HASH, labelhash('test'), owner.address],
@@ -39,7 +39,7 @@ func.skip = async function (hre: HardhatRuntimeEnvironment) {
   const { viem } = hre
   const { owner } = await viem.getNamedClients()
 
-  const registry = await viem.getContract('LegacyENSRegistry', owner)
+  const registry = await viem.getContract('LegacyENSRegistry' as 'ENSRegistry', owner)
 
   const ownerOfTestTld = await registry.read.owner([namehash('test')])
   if (ownerOfTestTld !== owner.address) {

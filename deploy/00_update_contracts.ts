@@ -6,14 +6,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { viem } = hre
   const { deployer } = await viem.getNamedClients()
 
-  const dummyOracale = await viem.getContract('DummyOracle', deployer)
+  const dummyOracle = await viem.getContract('DummyOracle')
 
-  const txHash = await dummyOracale.write['set(int256)'](['156058000000'], {
+  const txHash = await dummyOracle.write.set([156058000000n], {
     account: deployer.account,
     chain: deployer.public.chain,
   })
 
   console.log(`Setting dummy oracle to 156058000000 (tx: ${txHash})...`)
+  await viem.waitForTransactionSuccess(txHash)
   return true
 }
 

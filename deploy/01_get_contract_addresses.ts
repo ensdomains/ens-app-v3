@@ -12,7 +12,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     dkey,
     allDeployments[dkey].address,
   ])
-  const deploymentAddressMap = Object.fromEntries(deploymentAddressArray)
+  const deploymentAddressMap = Object.fromEntries([
+    ...deploymentAddressArray,
+    ['Multicall', '0xca11bde05977b3631167028862be2a173976ca11'],
+  ])
 
   await writeFile(
     resolve(__dirname, '../.env.local'),

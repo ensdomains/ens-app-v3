@@ -17,50 +17,58 @@ const names = [
         { key: 'email', value: 'fakeemail@fake.com' },
       ],
       addr: [
-        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
-        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
-        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+        { key: 61n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0n, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2n, value: '0x0000000000000000000000000000000000000000' },
       ],
       contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
     },
   },
-]
+] as const
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network, viem } = hre
-  const allNamedAccts = await getNamedAccounts()
+  const { network, viem } = hre
+  const namedClients = await viem.getNamedClients()
 
   const publicResolver = await viem.getContract('PublicResolver')
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
   for (const { label, namedOwner, records } of names) {
-    const registrant = allNamedAccts[namedOwner]
+    const registrant = namedClients[namedOwner].account
     const hash = namehash(`${label}.eth`)
-    const _publicResolver = publicResolver.connect(await ethers.getSigner(registrant))
 
     console.log(`Migrating records for ${label}.eth...`)
     if (records.text) {
       console.log('TEXT')
       for (const { key, value } of records.text) {
-        const setTextTx = await _publicResolver.setText(hash, key, value)
-        console.log(` - ${key} ${value} (tx: ${setTextTx.hash})...`)
-        await setTextTx.wait()
+        const setTextHash = await publicResolver.write.setText([hash, key, value], {
+          account: registrant,
+        })
+        console.log(` - ${key} ${value} (tx: ${setTextHash})...`)
+        await viem.waitForTransactionSuccess(setTextHash)
       }
     }
     if (records.addr) {
       console.log('ADDR')
       for (const { key, value } of records.addr) {
-        const setAddrTx = await _publicResolver['setAddr(bytes32,uint256,bytes)'](hash, key, value)
-        console.log(` - ${key} ${value} (tx: ${setAddrTx.hash})...`)
-        await setAddrTx.wait()
+        const setAddrHash = await publicResolver.write.setAddr([hash, key, value], {
+          account: registrant,
+        })
+        console.log(` - ${key} ${value} (tx: ${setAddrHash})...`)
+        await viem.waitForTransactionSuccess(setAddrHash)
       }
     }
     if (records.contenthash) {
       console.log('CONTENTHASH')
-      const setContenthashTx = await _publicResolver.setContenthash(hash, records.contenthash)
-      console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
-      await setContenthashTx.wait()
+      const setContenthashHash = await publicResolver.write.setContenthash(
+        [hash, records.contenthash],
+        {
+          account: registrant,
+        },
+      )
+      console.log(` - ${records.contenthash} (tx: ${setContenthashHash})...`)
+      await viem.waitForTransactionSuccess(setContenthashHash)
     }
   }
 

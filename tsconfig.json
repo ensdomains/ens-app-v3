@@ -1,6 +1,7 @@
 {
   "ts-node": {
     "experimentalResolver": true,
+    "experimentalSpecifierResolution": "node",
     "files": true,
     "compilerOptions": {
       "module": "CommonJS",
@@ -63,11 +64,9 @@
     "test/*.mts",
     "test/**/*.ts",
     "typings-custom/generated/*.d.ts",
-    "typings-custom/local-contracts.d.ts"
+    "typings-custom/local-contracts.d.ts",
+    "./node_modules/@ensdomains/ens-contracts/artifacts",
+    "./deploy/.utils/*.ts"
   ],
-  "exclude": [
-    "**/*.ignore.ts",
-    "**/*.ignore.tsx",
-    "functions/**/*"
-  ]
+  "exclude": ["**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
 }
