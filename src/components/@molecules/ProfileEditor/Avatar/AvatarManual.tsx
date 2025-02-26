@@ -57,6 +57,7 @@ export const AvatarManual = ({
     // Basic validation for common URI formats
     const isValidUri =
       value.startsWith('https://') ||
+      value.startsWith('http://') ||
       value.startsWith('ipfs://') ||
       value.startsWith('data:') ||
       value.startsWith('eip155:')
@@ -71,8 +72,10 @@ export const AvatarManual = ({
   }
 
   const handleUriChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUri(e.target.value)
-    if (error) validateUri(e.target.value)
+    const newValue = e.target.value
+    setUri(newValue)
+    // Always validate in real-time as the user types
+    validateUri(newValue)
   }
 
   const onSubmit = () => {
@@ -95,7 +98,7 @@ export const AvatarManual = ({
           <InputContainer>
             <Input
               label=""
-              placeholder="https://, ipfs://, data:, or eip155:"
+              placeholder="http(s)://, ipfs://, data:, or eip155:"
               value={uri}
               onChange={handleUriChange}
               error={error}
@@ -116,7 +119,7 @@ export const AvatarManual = ({
           </Button>
         }
         trailing={
-          <Button onClick={onSubmit} disabled={!uri} data-testid="avatar-manual-submit">
+          <Button onClick={onSubmit} disabled={!uri || !!error} data-testid="avatar-manual-submit">
             Confirm
           </Button>
         }

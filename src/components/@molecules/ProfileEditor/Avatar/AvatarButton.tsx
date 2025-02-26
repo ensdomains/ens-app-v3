@@ -2,7 +2,7 @@ import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Button, Dropdown } from '@ensdomains/thorin'
+import { Avatar, Button, Dropdown, Input } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
@@ -67,6 +67,21 @@ const OuterContainer = styled.div`
   width: 100%;
 `
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+`
+
+const DropdownContainer = styled.div`
+  width: fit-content;
+`
+
+const ReadOnlyInput = styled(Input)`
+  opacity: 0.7;
+`
+
 export type AvatarClickType = 'upload' | 'nft' | 'manual'
 
 type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
@@ -119,62 +134,75 @@ const AvatarButton = ({
       <div style={{ width: '128px' }}>
         <Avatar label="profile-button-avatar" src={src} />
       </div>
-      <Dropdown
-        items={
-          [
-            {
-              label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-              color: 'text',
-              onClick: handleSelectOption('nft'),
-            },
-            ...(disabledUpload
-              ? []
-              : [
-                  {
-                    label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-                    color: 'text',
-                    onClick: handleSelectOption('upload'),
-                  },
-                ]),
-            {
-              label: 'Enter manually',
-              color: 'text',
-              onClick: handleSelectOption('manual'),
-            },
-            ...(validated
-              ? [
-                  {
-                    label: t('action.remove', { ns: 'common' }),
-                    color: 'red',
-                    onClick: handleSelectOption('remove'),
-                  },
-                ]
-              : []),
-          ] as DropdownItem[]
-        }
-        keepMenuOnTop
-        shortThrow
-        align="right"
-        {...dropdownProps}
-      >
-        <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
-          <Button width="36" colorStyle="blueSecondary">
-            Add avatar
-          </Button>
-          <input
-            type="file"
-            style={{ display: 'none' }}
-            accept="image/*"
-            ref={fileInputRef}
-            onChange={(e) => {
-              if (e.target.files?.[0]) {
-                onSelectOption?.('upload')
-                onAvatarFileChange?.(e.target.files[0])
-              }
-            }}
+      <ButtonContainer>
+        {src && (
+          <ReadOnlyInput
+            label="Avatar URI"
+            value={src}
+            disabled
+            readOnly
+            data-testid="avatar-uri-display"
           />
-        </Container>
-      </Dropdown>
+        )}
+        <DropdownContainer>
+          <LegacyDropdown
+            items={
+              [
+                {
+                  label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
+                  color: 'text',
+                  onClick: handleSelectOption('nft'),
+                },
+                ...(disabledUpload
+                  ? []
+                  : [
+                      {
+                        label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
+                        color: 'text',
+                        onClick: handleSelectOption('upload'),
+                      },
+                    ]),
+                {
+                  label: 'Enter manually',
+                  color: 'text',
+                  onClick: handleSelectOption('manual'),
+                },
+                ...(validated
+                  ? [
+                      {
+                        label: t('action.remove', { ns: 'common' }),
+                        color: 'red',
+                        onClick: handleSelectOption('remove'),
+                      },
+                    ]
+                  : []),
+              ] as DropdownItem[]
+            }
+            keepMenuOnTop
+            shortThrow
+            align="right"
+            {...dropdownProps}
+          >
+            <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
+              <Button width="44" colorStyle="blueSecondary">
+                {src ? 'Change avatar' : 'Add avatar'}
+              </Button>
+              <input
+                type="file"
+                style={{ display: 'none' }}
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    onSelectOption?.('upload')
+                    onAvatarFileChange?.(e.target.files[0])
+                  }
+                }}
+              />
+            </Container>
+          </LegacyDropdown>
+        </DropdownContainer>
+      </ButtonContainer>
     </OuterContainer>
   )
 }

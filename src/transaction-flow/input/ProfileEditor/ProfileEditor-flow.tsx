@@ -38,6 +38,7 @@ const AvatarWrapper = styled.div(
   () => css`
     display: flex;
     justify-content: center;
+    width: 100%;
   `,
 )
 
