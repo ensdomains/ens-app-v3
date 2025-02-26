@@ -5,3 +5,7 @@
   position: relative;
   z-index: 998 !important;
 }
+
+cpsl-identicon {
+  background: var(--identicon-background-blue) !important;
+}

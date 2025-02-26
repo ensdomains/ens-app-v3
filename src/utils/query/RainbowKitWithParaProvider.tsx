@@ -10,7 +10,7 @@ type RainbowKitProviderProps = ComponentProps<typeof RainbowKitProvider>
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
-    accentColor: hslToHex(thorinLightTheme.colors.accent),
+    accentColor: thorinLightTheme.colors.accent,
     borderRadius: 'medium',
   }),
   fonts: {
