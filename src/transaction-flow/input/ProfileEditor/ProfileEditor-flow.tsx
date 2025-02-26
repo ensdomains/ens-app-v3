@@ -113,7 +113,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const { t } = useTranslation('register')
 
   const formRef = useRef<HTMLFormElement>(null)
-  const [view, setView] = useState<'editor' | 'upload' | 'nft' | 'addRecord' | 'warning'>('editor')
+  const [view, setView] = useState<
+    'editor' | 'upload' | 'nft' | 'manual' | 'addRecord' | 'warning'
+  >('editor')
 
   const { name = '', resumable = false } = data
 
@@ -240,6 +242,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     .otherwise(() => true)
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
+
+  console.log('view', view)
 
   return (
     <>
@@ -390,7 +394,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onDismissOverlay={() => setView('editor')}
           />
         ))
-        .with('upload', 'nft', (type) => (
+        .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={name}
             avatarFile={avatarFile}

@@ -323,7 +323,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
             onClose={() => setView('profile-editor')}
           />
         ))
-        .with('upload', 'nft', (type) => (
+        .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={parent} // TODO name
             avatarFile={avatarFile}

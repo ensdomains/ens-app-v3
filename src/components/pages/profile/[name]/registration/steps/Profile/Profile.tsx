@@ -203,7 +203,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
         open={modalOpen}
       >
         {match(modalOption)
-          .with('upload', 'nft', (_modalOption) => (
+          .with('upload', 'nft', 'manual', (_modalOption) => (
             <AvatarViewManager
               name={name}
               avatarFile={avatarFile}
