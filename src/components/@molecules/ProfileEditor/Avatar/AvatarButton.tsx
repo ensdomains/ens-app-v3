@@ -116,7 +116,7 @@ const AvatarButton = ({
 
   return (
     <OuterContainer>
-      <div style={{ width: '150px' }}>
+      <div style={{ width: '128px' }}>
         <Avatar label="profile-button-avatar" src={src} />
       </div>
       <Dropdown
