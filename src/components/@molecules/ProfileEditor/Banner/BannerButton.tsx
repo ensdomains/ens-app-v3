@@ -2,7 +2,7 @@ import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dropdown, Input } from '@ensdomains/thorin'
+import { Button, Dropdown, Input, Typography } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
@@ -72,6 +72,7 @@ const ButtonContainer = styled.div<{ $hasImage?: boolean }>(
     display: flex;
     flex-direction: column;
     flex: 1;
+    margin-top: 28px;
     ${$hasImage &&
     `
       height: 100px;
@@ -86,6 +87,19 @@ const ButtonContainer = styled.div<{ $hasImage?: boolean }>(
 
 const DropdownContainer = styled.div`
   width: fit-content;
+`
+
+const BannerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 300px;
+`
+
+const BannerLabel = styled(Typography)`
+  font-weight: 600;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `
 
 const BannerPreview = styled.div<{ $src?: string }>(
@@ -151,17 +165,12 @@ const BannerButton = ({
 
   return (
     <OuterContainer>
-      <BannerPreview $src={src} />
+      <BannerContainer>
+        <BannerLabel>Banner</BannerLabel>
+        <BannerPreview $src={src} />
+      </BannerContainer>
       <ButtonContainer $hasImage={!!src}>
-        {src && (
-          <Input
-            value={src}
-            disabled
-            readOnly
-            data-testid="banner-uri-display"
-            style={{ gap: 0 }}
-          />
-        )}
+        {src && <Input value={src} disabled readOnly data-testid="banner-uri-display" />}
         <DropdownContainer>
           <LegacyDropdown
             items={

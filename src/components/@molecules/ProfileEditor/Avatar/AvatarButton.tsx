@@ -2,7 +2,7 @@ import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Button, Dropdown, Input } from '@ensdomains/thorin'
+import { Avatar, Button, Dropdown, Input, Typography } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
@@ -72,10 +72,24 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   gap: 10px;
   flex: 1;
+  padding-top: 28px;
 `
 
 const DropdownContainer = styled.div`
   width: fit-content;
+`
+
+const AvatarContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 128px;
+`
+
+const AvatarLabel = styled(Typography)`
+  font-weight: 600;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `
 
 export type AvatarClickType = 'upload' | 'nft' | 'manual'
@@ -127,9 +141,10 @@ const AvatarButton = ({
 
   return (
     <OuterContainer>
-      <div style={{ width: '128px' }}>
+      <AvatarContainer>
+        <AvatarLabel>Avatar</AvatarLabel>
         <Avatar label="profile-button-avatar" src={src} />
-      </div>
+      </AvatarContainer>
       <ButtonContainer>
         {src && <Input value={src} disabled readOnly data-testid="avatar-uri-display" />}
         <DropdownContainer>
