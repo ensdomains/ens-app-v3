@@ -13,7 +13,8 @@ csp += ' script-src'
 csp += " 'self'"
 // allow plausible script
 csp += ' plausible.io'
-csp += ' *.posthog.com'
+// allow PostHog
+csp += ' jakob.ens.domains'
 // allow cloudflare analytics script
 csp += ' static.cloudflareinsights.com'
 // allow loading from the pages domain for this app
