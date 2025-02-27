@@ -5,6 +5,7 @@ import { CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
 import { DNSSEC_HELP_LINKS } from '@app/constants/dnsLinks'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
+import { sendEvent } from '@app/utils/analytics/events'
 
 import {
   DnsImportActionButton,
@@ -78,7 +79,12 @@ export const EnableDnssec = ({
         </DnsImportActionButton>
         <DnsImportActionButton
           disabled={!isDnsSecEnabled || isLoading || isRefetching}
-          onClick={() => dispatch({ name: 'increaseStep', selected })}
+          onClick={() => {
+            sendEvent('import:dnssec_enable', {
+              name: selected.name,
+            })
+            dispatch({ name: 'increaseStep', selected })
+          }}
           data-testid="import-next-button"
         >
           {tc('action.next')}

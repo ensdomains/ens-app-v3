@@ -26,6 +26,7 @@ import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionSto
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
+import { PostHogProvider } from '@app/utils/analytics/posthog'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
@@ -179,26 +180,28 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
   }
 
   return (
-    <RainbowKitProvider theme={rainbowKitTheme}>
-      <TransactionStoreProvider>
-        <ThemeProvider theme={themeWithCSSVars}>
-          <BreakpointProvider queries={breakpoints}>
-            <IntercomProvider appId={INTERCOM_ID}>
-              <GlobalStyle />
-              <SyncProvider>
-                <TransactionFlowProvider>
-                  <SyncDroppedTransaction>
-                    <Notifications />
-                    <TestnetWarning />
-                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                  </SyncDroppedTransaction>
-                </TransactionFlowProvider>
-              </SyncProvider>
-            </IntercomProvider>
-          </BreakpointProvider>
-        </ThemeProvider>
-      </TransactionStoreProvider>
-    </RainbowKitProvider>
+    <PostHogProvider>
+      <RainbowKitProvider theme={rainbowKitTheme}>
+        <TransactionStoreProvider>
+          <ThemeProvider theme={themeWithCSSVars}>
+            <BreakpointProvider queries={breakpoints}>
+              <IntercomProvider appId={INTERCOM_ID}>
+                <GlobalStyle />
+                <SyncProvider>
+                  <TransactionFlowProvider>
+                    <SyncDroppedTransaction>
+                      <Notifications />
+                      <TestnetWarning />
+                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                    </SyncDroppedTransaction>
+                  </TransactionFlowProvider>
+                </SyncProvider>
+              </IntercomProvider>
+            </BreakpointProvider>
+          </ThemeProvider>
+        </TransactionStoreProvider>
+      </RainbowKitProvider>
+    </PostHogProvider>
   )
 }
 
