@@ -131,14 +131,26 @@ export const profileEditorFormToProfileRecords = (data: ProfileEditorForm): Prof
           } as ProfileRecord,
         ]
       : []),
+    ...(data.banner
+      ? [
+          {
+            key: 'banner',
+            type: 'text',
+            group: 'media',
+            value: data.banner,
+          } as ProfileRecord,
+        ]
+      : []),
   ]
 }
 
 export const profileRecordsToProfileEditorForm = (records: ProfileRecord[]): ProfileEditorForm => {
-  return records.reduce<{ avatar: string; records: ProfileRecord[] }>(
+  return records.reduce<{ avatar: string; banner: string; records: ProfileRecord[] }>(
     (result, record) => {
       if (record.key === 'avatar' && record.group === 'media')
         return { ...result, avatar: record.value || '' }
+      if (record.key === 'banner' && record.group === 'media')
+        return { ...result, banner: record.value || '' }
       const normalizedRecord = {
         ...record,
         value: record.value || '',
@@ -148,7 +160,7 @@ export const profileRecordsToProfileEditorForm = (records: ProfileRecord[]): Pro
         records: [...result.records, normalizedRecord],
       }
     },
-    { avatar: '', records: [] },
+    { avatar: '', banner: '', records: [] },
   )
 }
 

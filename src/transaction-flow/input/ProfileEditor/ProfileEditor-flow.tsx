@@ -10,6 +10,10 @@ import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import {
+  BannerViewManager,
+  BannerViewType,
+} from '@app/components/@molecules/ProfileEditor/Banner/BannerViewManager'
 import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
@@ -33,12 +37,22 @@ import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
+import { WrappedBannerButton } from './WrappedBannerButton'
 
 const AvatarWrapper = styled.div(
   () => css`
     display: flex;
     justify-content: center;
     width: 100%;
+  `,
+)
+
+const BannerWrapper = styled.div(
+  () => css`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
   `,
 )
 
@@ -115,7 +129,15 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const formRef = useRef<HTMLFormElement>(null)
   const [view, setView] = useState<
-    'editor' | 'upload' | 'nft' | 'manual' | 'addRecord' | 'warning'
+    | 'editor'
+    | 'upload'
+    | 'nft'
+    | 'manual'
+    | 'addRecord'
+    | 'warning'
+    | 'banner-upload'
+    | 'banner-nft'
+    | 'banner-manual'
   >('editor')
 
   const { name = '', resumable = false } = data
@@ -138,6 +160,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
+    setBanner,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
@@ -145,6 +168,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     errorForRecordAtIndex,
     isDirtyForRecordAtIndex,
     hasErrors,
+    getValues,
   } = useProfileEditorForm(existingRecords)
 
   // Update profile records if transaction data exists
@@ -159,6 +183,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       updatedRecords.forEach((record) => {
         if (record.key === 'avatar' && record.group === 'media') {
           setAvatar(record.value)
+        } else if (record.key === 'banner' && record.group === 'media') {
+          setBanner(record.value)
         } else {
           updateRecord(record)
         }
@@ -210,6 +236,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
+  const [bannerSrc, setBannerSrc] = useState<string | undefined>()
+  const [bannerFile, setBannerFile] = useState<File | undefined>()
 
   useEffect(() => {
     if (
@@ -234,6 +262,18 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const handleShowAddRecordModal = () => {
     setView('addRecord')
+  }
+
+  const handleAddRecords = (records: ProfileRecord[]) => {
+    addRecords(records)
+    // Initialize banner field if it was added
+    const bannerRecord = records.find(
+      (record) => record.key === 'banner' && record.group === 'media',
+    )
+    if (bannerRecord) {
+      setBannerSrc(bannerRecord.value)
+    }
+    setView('editor')
   }
 
   const canEditRecordsWhenWrapped = match(isWrapped)
@@ -272,6 +312,17 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                   onAvatarSrcChange={(src) => setAvatarSrc(src)}
                 />
               </AvatarWrapper>
+              <BannerWrapper>
+                <WrappedBannerButton
+                  name={name}
+                  control={control}
+                  src={bannerSrc}
+                  onSelectOption={(option) => setView(`banner-${option}`)}
+                  onBannerChange={(banner) => setBanner(banner)}
+                  onBannerFileChange={(file) => setBannerFile(file)}
+                  onBannerSrcChange={(src) => setBannerSrc(src)}
+                />
+              </BannerWrapper>
               {profileRecords.map((field, index) =>
                 field.group === 'custom' ? (
                   <CustomProfileRecordInput
@@ -302,7 +353,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                       validate: validatorForRecord(field),
                     })}
                   />
-                ) : (
+                ) : field.key !== 'banner' && field.group !== 'media' ? (
                   <ProfileRecordInput
                     key={field.id}
                     recordKey={field.key}
@@ -323,7 +374,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                       validate: validatorForRecord(field),
                     })}
                   />
-                ),
+                ) : null,
               )}
               <ButtonContainer>
                 <ButtonWrapper>
@@ -373,8 +424,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           <AddProfileRecordView
             control={control}
             onAdd={(newRecords) => {
-              addRecords(newRecords)
-              setView('editor')
+              handleAddRecords(newRecords)
             }}
             onClose={() => setView('editor')}
           />
@@ -404,6 +454,20 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             handleSubmit={(_, uri, display) => {
               setAvatar(uri)
               setAvatarSrc(display)
+              setView('editor')
+              trigger()
+            }}
+          />
+        ))
+        .with('banner-upload', 'banner-nft', 'banner-manual', (type) => (
+          <BannerViewManager
+            name={name}
+            bannerFile={bannerFile}
+            handleCancel={() => setView('editor')}
+            type={type.replace('banner-', '') as BannerViewType}
+            handleSubmit={(_, uri, display) => {
+              setBanner(uri)
+              setBannerSrc(display)
               setView('editor')
               trigger()
             }}

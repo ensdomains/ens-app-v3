@@ -2,7 +2,7 @@ import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Button, Dropdown, Input } from '@ensdomains/thorin'
+import { Button, Dropdown, Input } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
@@ -67,18 +67,42 @@ const OuterContainer = styled.div`
   width: 100%;
 `
 
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-`
+const ButtonContainer = styled.div<{ $hasImage?: boolean }>(
+  ({ $hasImage }) => css`
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    ${$hasImage &&
+    `
+      height: 100px;
+      justify-content: space-between;
+    `}
+
+    & > div {
+      gap: 0;
+    }
+  `,
+)
 
 const DropdownContainer = styled.div`
   width: fit-content;
 `
 
-export type AvatarClickType = 'upload' | 'nft' | 'manual'
+const BannerPreview = styled.div<{ $src?: string }>(
+  ({ theme, $src }) => css`
+    width: 300px;
+    height: 100px;
+    border-radius: ${theme.radii.large};
+    background-color: ${theme.colors.greyLight};
+    background-image: ${$src ? `url(${$src})` : 'none'};
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+  `,
+)
+
+export type BannerClickType = 'upload' | 'nft' | 'manual'
 
 type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
 
@@ -88,32 +112,32 @@ type Props = {
   dirty?: boolean
   error?: boolean
   src?: string
-  onSelectOption?: (value: AvatarClickType) => void
-  onAvatarChange?: (avatar?: string) => void
-  onAvatarSrcChange?: (src?: string) => void
-  onAvatarFileChange?: (file?: File) => void
+  onSelectOption?: (value: BannerClickType) => void
+  onBannerChange?: (banner?: string) => void
+  onBannerSrcChange?: (src?: string) => void
+  onBannerFileChange?: (file?: File) => void
 } & PickedDropdownProps
 
-const AvatarButton = ({
+const BannerButton = ({
   validated,
   disabledUpload,
   dirty,
   error,
   src,
   onSelectOption,
-  onAvatarChange,
-  onAvatarSrcChange,
-  onAvatarFileChange,
+  onBannerChange,
+  onBannerSrcChange,
+  onBannerFileChange,
   isOpen,
   setIsOpen,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
+  const handleSelectOption = (value: BannerClickType | 'remove') => () => {
     if (value === 'remove') {
-      onAvatarChange?.(undefined)
-      onAvatarSrcChange?.(undefined)
+      onBannerChange?.(undefined)
+      onBannerSrcChange?.(undefined)
     } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {
@@ -127,11 +151,17 @@ const AvatarButton = ({
 
   return (
     <OuterContainer>
-      <div style={{ width: '128px' }}>
-        <Avatar label="profile-button-avatar" src={src} />
-      </div>
-      <ButtonContainer>
-        {src && <Input value={src} disabled readOnly data-testid="avatar-uri-display" />}
+      <BannerPreview $src={src} />
+      <ButtonContainer $hasImage={!!src}>
+        {src && (
+          <Input
+            value={src}
+            disabled
+            readOnly
+            data-testid="banner-uri-display"
+            style={{ gap: 0 }}
+          />
+        )}
         <DropdownContainer>
           <LegacyDropdown
             items={
@@ -173,7 +203,7 @@ const AvatarButton = ({
           >
             <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
               <Button width="44" colorStyle="blueSecondary">
-                {src ? 'Change avatar' : 'Add avatar'}
+                {src ? 'Change banner' : 'Add banner'}
               </Button>
               <input
                 type="file"
@@ -183,7 +213,7 @@ const AvatarButton = ({
                 onChange={(e) => {
                   if (e.target.files?.[0]) {
                     onSelectOption?.('upload')
-                    onAvatarFileChange?.(e.target.files[0])
+                    onBannerFileChange?.(e.target.files[0])
                   }
                 }}
               />
@@ -195,4 +225,4 @@ const AvatarButton = ({
   )
 }
 
-export default AvatarButton
+export default BannerButton

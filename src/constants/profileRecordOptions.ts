@@ -4,6 +4,7 @@ import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { supportedContentHashKeys } from '@app/constants/supportedContentHashKeys'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedMediaRecordKeys } from '@app/constants/supportedMediaRecordKeys'
 import { supportedOtherRecordKeys } from '@app/constants/supportedOtherRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
@@ -28,6 +29,12 @@ export type ProfileRecord = {
 const general: ProfileRecord[] = supportedGeneralRecordKeys.map((key) => ({
   key,
   group: 'general',
+  type: 'text',
+}))
+
+const media: ProfileRecord[] = supportedMediaRecordKeys.map((key) => ({
+  key,
+  group: 'media',
   type: 'text',
 }))
 
@@ -68,11 +75,15 @@ const other: ProfileRecord[] = supportedOtherRecordKeys.map((key) => ({
   type: typeForOtherRecordKey(key),
 }))
 
-export default [...general, ...social, ...address, ...website, ...other] as const
+export default [...general, ...media, ...social, ...address, ...website, ...other] as const
 export const grouped = [
   {
     group: 'general',
     items: general,
+  },
+  {
+    group: 'media',
+    items: media,
   },
   {
     group: 'social',
@@ -93,9 +104,10 @@ export const grouped = [
 ] as const
 
 export const sortValues: { [key: string]: { [key: string]: number } } = {
-  media: {
-    avatar: 1,
-  },
+  media: supportedMediaRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
+    acc[key] = index + 1
+    return acc
+  }, {}),
   general: supportedGeneralRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
     acc[key] = index + 100
     return acc

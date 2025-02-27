@@ -28,7 +28,9 @@ const SUPPORTED_AVUP_ENDPOINTS = [
 
 export type ProfileEditorForm = {
   records: ProfileRecord[]
-} & AvatarEditorType
+} & AvatarEditorType & {
+    banner?: string
+  }
 
 export const isDirtyForRecordAtIndexCalc = (
   index: number,
@@ -176,8 +178,21 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     }
   }
 
+  const setBanner = (banner?: string) => {
+    const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'banner')
+    const bannerIsChanged = !(
+      existingRecord &&
+      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => existingRecord.value?.startsWith(endpoint)) &&
+      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => banner?.startsWith(endpoint))
+    )
+    if (bannerIsChanged) {
+      setValue('banner', banner || '', { shouldDirty: true, shouldTouch: true })
+    }
+  }
+
   const removeRecordByGroupAndKey = (group: ProfileRecordGroup, key: string) => {
     if (group === 'media' && key === 'avatar') return setAvatar('')
+    if (group === 'media' && key === 'banner') return setBanner('')
     const index = getValues('records').findIndex((r) => r.group === group && r.key === key)
     if (index >= 0) removeRecordAtIndex(index)
   }
@@ -215,6 +230,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   }
 
   const getAvatar = () => getValues('avatar')
+  const getBanner = () => getValues('banner')
 
   return {
     isDirty: formState.isDirty,
@@ -231,7 +247,9 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
+    setBanner,
     getAvatar,
+    getBanner,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
