@@ -20,7 +20,7 @@ export const PostHogProvider = ({ children }: { children: ReactNode }) => {
 
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://eu.i.posthog.com',
       // eslint-disable-next-line @typescript-eslint/naming-convention
       person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
       // Enable debug mode in development
