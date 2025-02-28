@@ -3,7 +3,6 @@ import { ComponentProps, useEffect, useState } from 'react'
 
 import { lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
-import { hslToHex } from '../utils'
 import { loadPara } from './loadPara'
 
 type RainbowKitProviderProps = ComponentProps<typeof RainbowKitProvider>
