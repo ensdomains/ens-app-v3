@@ -62,8 +62,9 @@
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-devtools": "^5.59.0",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@getpara/rainbowkit": "1.1.0",
-    "@getpara/rainbowkit-wallet": "1.1.0",
+    "@getpara/rainbowkit": "1.2.0-dev.0",
+    "@getpara/rainbowkit-wallet": "1.2.0-dev.0",
+    "@getpara/wagmi-v2-integration": "1.4.4-dev.0",
     "@wagmi/core": "2.13.3",
     "calendar-link": "^2.8.0",
     "dequal": "2.0.3",
@@ -274,7 +275,6 @@
       "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz"
     },
     "patchedDependencies": {
-      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
       "node-forge@1.3.1": "patches/node-forge@1.3.1.patch"
     }
