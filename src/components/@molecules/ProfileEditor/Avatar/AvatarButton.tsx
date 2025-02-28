@@ -8,7 +8,11 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 import CameraIcon from '@app/assets/Camera.svg'
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 
-const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
+const InicatorContainer = styled.button<{
+  $error?: boolean
+  $validated?: boolean
+  $dirty?: boolean
+}>(
   ({ theme, $validated, $dirty, $error }) => css`
     position: relative;
     background-color: ${theme.colors.backgroundPrimary};
@@ -26,7 +30,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
       border-radius: 50%;
       right: 0;
       top: 0;
-      transform: translate(-20%, 20%) scale(0.2);
+      transform: translate(-60%, 60%) scale(0.2);
       transition: all 0.3s ease-out;
     }
 
@@ -35,7 +39,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
       ::after {
         background-color: ${theme.colors.blue};
         border-color: ${theme.colors.backgroundPrimary};
-        transform: translate(-20%, 20%) scale(1);
+        transform: translate(-60%, 60%) scale(1);
       }
     `}
 
@@ -44,7 +48,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
       ::after {
         background-color: ${theme.colors.green};
         border-color: ${theme.colors.backgroundPrimary};
-        transform: translate(-20%, 20%) scale(1);
+        transform: translate(-60%, 60%) scale(1);
       }
     `}
 
@@ -53,7 +57,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty
       ::after {
         background-color: ${theme.colors.red};
         border-color: ${theme.colors.backgroundPrimary};
-        transform: translate(-20%, 20%) scale(1);
+        transform: translate(-60%, 60%) scale(1);
       }
     `}
   `,
@@ -143,7 +147,14 @@ const AvatarButton = ({
     <OuterContainer>
       <AvatarContainer>
         <AvatarLabel>Avatar</AvatarLabel>
-        <Avatar label="profile-button-avatar" src={src} />
+        <InicatorContainer
+          $validated={validated && dirty}
+          $error={error}
+          $dirty={dirty}
+          type="button"
+        >
+          <Avatar label="profile-button-avatar" src={src} />
+        </InicatorContainer>
       </AvatarContainer>
       <ButtonContainer>
         {src && <Input value={src} disabled readOnly data-testid="avatar-uri-display" />}
@@ -186,23 +197,21 @@ const AvatarButton = ({
             align="right"
             {...dropdownProps}
           >
-            <Container $validated={validated && dirty} $error={error} $dirty={dirty} type="button">
-              <Button width="44" colorStyle="blueSecondary">
-                {src ? 'Change avatar' : 'Add avatar'}
-              </Button>
-              <input
-                type="file"
-                style={{ display: 'none' }}
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    onSelectOption?.('upload')
-                    onAvatarFileChange?.(e.target.files[0])
-                  }
-                }}
-              />
-            </Container>
+            <Button width="44" colorStyle="blueSecondary">
+              {src ? 'Change avatar' : 'Add avatar'}
+            </Button>
+            <input
+              type="file"
+              style={{ display: 'none' }}
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  onSelectOption?.('upload')
+                  onAvatarFileChange?.(e.target.files[0])
+                }
+              }}
+            />
           </LegacyDropdown>
         </DropdownContainer>
       </ButtonContainer>
