@@ -1,4 +1,4 @@
-import { useConnectModal } from '@usecapsule/rainbowkit'
+import { useConnectModal } from '@getpara/rainbowkit'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
@@ -14,7 +14,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { hasCapsuleConnection } from '@app/utils/utils'
+import { hasParaConnection } from '@app/utils/utils'
 
 import { getDropdownItems } from './utils'
 
@@ -129,7 +129,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const hasPendingTransactions = useHasPendingTransactions()
 
   const connections = useConnections()
-  const isCapsuleConnected = hasCapsuleConnection(connections)
+  const isParaConnected = hasParaConnection(connections)
 
   return (
     <Profile
@@ -141,7 +141,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
         copy,
         copied,
         hasPendingTransactions,
-        isCapsuleConnected,
+        isParaConnected,
         t,
         address,
       })}

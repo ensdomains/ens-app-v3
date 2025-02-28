@@ -24,11 +24,11 @@ import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowPr
 import { setupAnalytics } from '@app/utils/analytics'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
-import { RainbowKitWithCapsuleProvider } from '@app/utils/query/RainbowKitWithCapsuleProvider'
+import { RainbowKitWithParaProvider } from '@app/utils/query/RainbowKitWithParaProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
-import '@usecapsule/rainbowkit/styles.css'
+import '@getpara/rainbowkit/styles.css'
 
 import i18n from '../i18n'
 
@@ -165,7 +165,7 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
   }
 
   return (
-    <RainbowKitWithCapsuleProvider>
+    <RainbowKitWithParaProvider>
       <TransactionStoreProvider>
         <ThemeProvider theme={themeWithCSSVars}>
           <BreakpointProvider queries={breakpoints}>
@@ -185,7 +185,7 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
           </BreakpointProvider>
         </ThemeProvider>
       </TransactionStoreProvider>
-    </RainbowKitWithCapsuleProvider>
+    </RainbowKitWithParaProvider>
   )
 }
 

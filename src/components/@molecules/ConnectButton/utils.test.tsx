@@ -12,7 +12,7 @@ describe('getDropdownItems', () => {
     copy: vi.fn(),
     copied: false,
     hasPendingTransactions: false,
-    isCapsuleConnected: false,
+    isParaConnected: false,
     t: mockT,
     address: mockAddress,
   }
@@ -69,10 +69,10 @@ describe('getDropdownItems', () => {
     expect(addressItem.icon).toBeDefined()
   })
 
-  it('should include Capsule wallet item when isCapsuleConnected is true', () => {
+  it('should include Para wallet item when isParaConnected is true', () => {
     const items = getDropdownItems({
       ...baseProps,
-      isCapsuleConnected: true,
+      isParaConnected: true,
     })
 
     expect(items).toHaveLength(5)

@@ -35,7 +35,7 @@ import {
 import { getReadableError } from '@app/utils/errors'
 import { wagmiConfig } from '@app/utils/query/wagmi'
 import { CheckIsSafeAppReturnType } from '@app/utils/safe'
-import { hasCapsuleConnection } from '@app/utils/utils'
+import { hasParaConnection } from '@app/utils/utils'
 
 type AccessListResponse = {
   accessList: {
@@ -230,10 +230,10 @@ export const createTransactionRequestUnsafe = async ({
     transactionName: params.name,
   })
 
-  const isCapsuleConnected = hasCapsuleConnection(connections)
+  const isParaConnected = hasParaConnection(connections)
 
   let largestMedianGasFee = 0n
-  if (isCapsuleConnected) {
+  if (isParaConnected) {
     largestMedianGasFee = await getLargestMedianGasFee()
   }
 
@@ -245,7 +245,7 @@ export const createTransactionRequestUnsafe = async ({
     gas: gasLimit,
     parameters: ['fees', 'nonce', 'type'],
     ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
-    ...(isCapsuleConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
+    ...(isParaConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
 
   return {
