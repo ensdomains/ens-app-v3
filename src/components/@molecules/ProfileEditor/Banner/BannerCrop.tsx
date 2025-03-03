@@ -352,10 +352,10 @@ export const CropComponent = ({
       const parent = canvas.parentElement!
 
       // Set dimensions maintaining 1:3 ratio
-      parent.style.width = `${width}px`
-      parent.style.height = `${height}px`
-      canvas.style.width = `${width}px`
-      canvas.style.height = `${height}px`
+      //   parent.style.width = `${width}px`
+      //   parent.style.height = `${height}px`
+      //   canvas.style.width = `${width}px`
+      //   canvas.style.height = `${height}px`
 
       // Update resolution multiplier
       resolutionMultiplierRef.current = canvas.width / width
