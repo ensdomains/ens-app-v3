@@ -325,19 +325,40 @@ export const CropComponent = ({
   )
 
   const handleWindowResize = useCallback(() => {
+    // Calculate available width and height
     const adjustedWidth = window.innerWidth * 0.8 - 25
     const adjustedHeight = window.innerHeight / 2
-    const minBound = Math.max(Math.min(adjustedWidth, adjustedHeight, 384), 208)
+
+    // For a 1:3 ratio (height:width), we need to ensure the width is 3 times the height
+    // First, determine if width or height is the limiting factor
+    let width, height
+
+    // If width/3 is less than available height, width is the limiting factor
+    if (adjustedWidth / 3 < adjustedHeight) {
+      width = Math.min(adjustedWidth, 384 * 3) // Cap at 384*3 for max width
+      height = width / 3
+    } else {
+      // Height is the limiting factor
+      height = Math.min(adjustedHeight, 384) // Cap at 384 for max height
+      width = height * 3
+    }
+
+    // Ensure minimum dimensions
+    width = Math.max(width, 208 * 3)
+    height = Math.max(height, 208)
+
     const canvas = canvasRef.current
     if (canvas) {
       const parent = canvas.parentElement!
-      parent.style.height =
-        parent.style.width =
-        canvas.style.height =
-        canvas.style.width =
-          `${minBound}px`
-      parent.style.width = `${minBound}px`
-      resolutionMultiplierRef.current = canvas.width / minBound
+
+      // Set dimensions maintaining 1:3 ratio
+      parent.style.width = `${width}px`
+      parent.style.height = `${height}px`
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
+
+      // Update resolution multiplier
+      resolutionMultiplierRef.current = canvas.width / width
       draw()
     }
   }, [draw])
