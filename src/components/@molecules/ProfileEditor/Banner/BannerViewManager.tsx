@@ -17,8 +17,9 @@ export const BannerViewManager = ({
   bannerFile?: File
   type: BannerViewType
 }) => {
+  console.log('BannerViewManager', bannerFile)
   return match(type)
-    .with('upload', () => <BannerUpload banner={bannerFile!} {...props} />)
+    .with('upload', () => <BannerUpload bannerFile={bannerFile!} {...props} />)
     .with('nft', () => <BannerNFT {...props} />)
     .with('manual', () => <BannerManual {...props} />)
     .exhaustive()

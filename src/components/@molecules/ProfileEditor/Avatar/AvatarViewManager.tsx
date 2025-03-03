@@ -15,7 +15,7 @@ export const AvatarViewManager = ({
   avatarFile?: File
   type: 'upload' | 'nft' | 'manual'
 }) => {
-  console.log('type', type)
+  console.log('avatarUpload', avatarFile)
   return match(type)
     .with('upload', () => <AvatarUpload avatar={avatarFile!} {...props} />)
     .with('nft', () => <AvatarNFT {...props} />)
