@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import '@ensdomains/thorin/dist/thorin.css'
 import '@splidejs/react-splide/css'
 

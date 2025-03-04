@@ -306,7 +306,6 @@ const getPreTransactionError = ({
     })
 }
 
-const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 export const handleSendTransaction = async (
   request: Awaited<ReturnType<typeof createTransactionRequestUnsafe>>,
   actionName: string,

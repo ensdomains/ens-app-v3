@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
-import { shouldOpenModal } from './utils'
-import { useChainId } from 'wagmi'
 import { getSupportedChainById } from '@app/constants/chains'
+
+import { shouldOpenModal } from './utils'
 
 const appLinks = {
   Ethereum: 'app.ens.domains',

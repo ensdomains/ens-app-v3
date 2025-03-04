@@ -60,7 +60,6 @@ export const getChainsFromUrl = () => {
   const { hostname } = window.location
   const segments = hostname.split('.')
 
-
   // Chain override
   const chain = process.env.NEXT_PUBLIC_CHAIN_NAME
   if (chain === 'holesky') return [holeskyWithEns]
@@ -84,13 +83,7 @@ export const getChainsFromUrl = () => {
   }
 
   return match(segments[0])
-    .with('sepolia', () => [
-      sepoliaWithEns,
-    ])
-    .with('holesky', () => [
-      holeskyWithEns,
-    ])
-    .otherwise(() => [
-      mainnetWithEns,
-    ])
+    .with('sepolia', () => [sepoliaWithEns])
+    .with('holesky', () => [holeskyWithEns])
+    .otherwise(() => [mainnetWithEns])
 }

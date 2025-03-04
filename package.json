@@ -56,7 +56,7 @@
     "@metamask/post-message-stream": "^6.1.2",
     "@metamask/providers": "^14.0.2",
     "@noble/hashes": "^1.3.2",
-    "@sentry/nextjs": "^7.43.0",
+    "@sentry/nextjs": "7.43.x",
     "@splidejs/react-splide": "^0.7.12",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/query-persist-client-core": "5.22.2",
@@ -84,7 +84,7 @@
     "next": "13.5.8",
     "node-fetch": "^3.3.2",
     "react": "*",
-    "react-confetti": "^6.1.0",
+    "react-confetti": "6.1.0",
     "react-dom": "*",
     "react-hook-form": "7.51.0",
     "react-i18next": "^11.18.5",
@@ -146,7 +146,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testing-library": "^6.0.2",
-    "eslint-plugin-vitest": "^0.5.4",
+    "eslint-plugin-vitest": "^0.4.x",
     "ethers": "^5.7.2",
     "hardhat": "^2.22.18",
     "hardhat-dependency-compiler": "^1.1.3",
@@ -277,7 +277,8 @@
     },
     "patchedDependencies": {
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
-      "node-forge@1.3.1": "patches/node-forge@1.3.1.patch"
+      "node-forge@1.3.1": "patches/node-forge@1.3.1.patch",
+      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch"
     }
   },
   "packageManager": "pnpm@9.3.0"
