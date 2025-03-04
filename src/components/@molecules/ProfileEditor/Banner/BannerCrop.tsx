@@ -11,6 +11,12 @@ import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { calcMomentum, getVars } from '@app/utils/avatarUpload'
+import {
+  bannerAspectRatio,
+  calcMomentumX,
+  calcMomentumY,
+  getBannerVars,
+} from '@app/utils/bannerUpload'
 
 const EditImageContainer = styled.div(
   ({ theme }) => css`
@@ -27,22 +33,24 @@ const EditImageContainer = styled.div(
 const ImageWrapper = styled.div(
   () => css`
     width: 100%;
-    height: 200px;
+    height: auto;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   `,
 )
 
 const ImageContainer = styled.div(
   ({ theme }) => css`
     margin: 0 auto;
-    aspect-ratio: 1;
     position: relative;
     width: 100%;
-    height: 100%;
+    max-width: 100%;
+    height: auto;
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    aspect-ratio: ${bannerAspectRatio};
 
     svg {
       fill: none;
@@ -66,6 +74,7 @@ const ImageCropBorder = styled.div(
       width: 100%;
       height: 100%;
       color: ${theme.colors.background};
+      aspect-ratio: ${bannerAspectRatio};
     }
   `,
 )
@@ -84,14 +93,18 @@ const ImageCropFrame = styled.div(
       width: 100%;
       height: 100%;
       color: ${theme.colors.accent};
+      aspect-ratio: ${bannerAspectRatio};
     }
   `,
 )
 
 const StyledCanvas = styled.canvas(
   ({ theme }) => css`
-    aspect-ratio: 1;
+    width: 100%;
+    height: auto;
+    display: block;
     cursor: grab;
+    aspect-ratio: ${bannerAspectRatio};
   `,
 )
 
@@ -162,7 +175,7 @@ const useCanvasDrawing = (
     const canvas = canvasRef.current
     if (!canvas || !image) return
 
-    const { max, cropSize } = getVars(canvas)
+    const { maxX, maxY, cropWidth, cropHeight } = getBannerVars(canvas)
     // eslint-disable-next-line prefer-const
     let { x, y, w, h, mx, my, moving } = coordinatesRef.current
     const ctx = canvas.getContext('2d')!
@@ -187,8 +200,8 @@ const useCanvasDrawing = (
     }
 
     if (!moving) {
-      coordinatesRef.current.mx = calcMomentum(x, max, w, cropSize)
-      coordinatesRef.current.my = calcMomentum(y, max, h, cropSize)
+      coordinatesRef.current.mx = calcMomentumX(x, maxX, w, cropWidth)
+      coordinatesRef.current.my = calcMomentumY(y, maxY, h, cropHeight)
       if (coordinatesRef.current.mx !== 0 || coordinatesRef.current.my !== 0) {
         window.requestAnimationFrame(draw)
       }
@@ -222,7 +235,9 @@ const useImageLoader = (
       const image = imageRef.current
       if (!image || !canvasRef.current) return
 
-      const { size, cropSize, max, ctx } = getVars(canvasRef.current)
+      const { canvasWidth, canvasHeight, cropWidth, cropHeight, maxX, maxY } = getBannerVars(
+        canvasRef.current,
+      )
       const { width: iw, height: ih } = image
       const ir = iw / ih
 
@@ -231,24 +246,29 @@ const useImageLoader = (
       let w: number
       let h: number
 
-      if (ir > 1) {
-        h = cropSize
+      // Calculate initial image dimensions and position based on aspect ratio
+      if (ir > bannerAspectRatio) {
+        // Image is wider than banner aspect ratio
+        h = cropHeight
         w = h * ir
-        x = (size - w) / 2
-        y = max
-      } else if (ir < 1) {
-        w = cropSize
+        x = maxX - (w - cropWidth) / 2
+        y = maxY
+      } else if (ir < bannerAspectRatio) {
+        // Image is taller than banner aspect ratio
+        w = cropWidth
         h = w / ir
-        x = max
-        y = (size - h) / 2
+        x = maxX
+        y = maxY - (h - cropHeight) / 2
       } else {
-        // eslint-disable-next-line no-multi-assign
-        w = h = cropSize
-        // eslint-disable-next-line no-multi-assign
-        x = y = max
+        // Image has same aspect ratio as banner
+        w = cropWidth
+        h = cropHeight
+        x = maxX
+        y = maxY
       }
 
-      ctx!.drawImage(image, x, y, w, h)
+      const ctx = canvasRef.current.getContext('2d')!
+      ctx.drawImage(image, x, y, w, h)
       coordinatesRef.current = {
         x,
         y,
@@ -433,25 +453,14 @@ const useWindowResize = (
   const handleWindowResize = useCallback(() => {
     // Calculate available width and height
     const adjustedWidth = window.innerWidth * 0.8 - 25
-    const adjustedHeight = window.innerHeight / 2
 
-    // For a 1:3 ratio (height:width), we need to ensure the width is 3 times the height
-    // First, determine if width or height is the limiting factor
-    let width, height
-
-    // If width/3 is less than available height, width is the limiting factor
-    if (adjustedWidth / 3 < adjustedHeight) {
-      width = Math.min(adjustedWidth, 384 * 3) // Cap at 384*3 for max width
-      height = width / 3
-    } else {
-      // Height is the limiting factor
-      height = Math.min(adjustedHeight, 384) // Cap at 384 for max height
-      width = height * 3
-    }
+    // For a 3:1 ratio (width:height), we need to ensure the height is 1/3 of the width
+    let width = Math.min(adjustedWidth, 1200) // Cap at 1200px for max width
+    let height = width / bannerAspectRatio // Maintain 3:1 aspect ratio
 
     // Ensure minimum dimensions
-    width = Math.max(width, 208 * 3)
-    height = Math.max(height, 208)
+    width = Math.max(width, 600)
+    height = Math.max(height, 200)
 
     const canvas = canvasRef.current
     if (canvas) {
@@ -554,24 +563,62 @@ const useEventListeners = (
 // Hook for handling crop submission
 const useCropSubmission = (
   canvasRef: React.RefObject<HTMLCanvasElement>,
+  coordinatesRef: React.MutableRefObject<Coordinates>,
   setDataURL: (dataURL: string) => void,
 ) => {
   const handleSubmit = useCallback(() => {
     if (!canvasRef.current) return
 
-    const { cropSize, max } = getVars(canvasRef.current)
+    const { cropWidth, cropHeight, maxX, maxY } = getBannerVars(canvasRef.current)
     const cropCanvas = document.createElement('canvas')
     const cropCtx = cropCanvas.getContext('2d')!
 
-    cropCanvas.width = cropSize
-    cropCanvas.height = cropSize
+    // Set the output dimensions for the cropped image with proper aspect ratio
+    cropCanvas.width = cropWidth
+    cropCanvas.height = cropHeight
 
+    // Fill with white background
     cropCtx.fillStyle = 'white'
-    cropCtx.fillRect(0, 0, cropSize, cropSize)
-    cropCtx.drawImage(canvasRef.current, max, max, cropSize, cropSize, 0, 0, cropSize, cropSize)
+    cropCtx.fillRect(0, 0, cropWidth, cropHeight)
 
+    // Get the current canvas and its context
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')!
+
+    // Get the current image position and dimensions from coordinatesRef
+    const { x, y, w, h } = coordinatesRef.current
+
+    // Calculate the visible portion of the image that falls within the crop area
+    // The crop area is defined by the SVG overlay, which is positioned at (maxX, maxY) with size cropWidth x cropHeight
+
+    // Calculate source coordinates (the part of the canvas we want to extract)
+    // This is the intersection of the image and the crop window
+    const sourceX = Math.max(maxX, x)
+    const sourceY = Math.max(maxY, y)
+    const sourceWidth = Math.min(maxX + cropWidth, x + w) - sourceX
+    const sourceHeight = Math.min(maxY + cropHeight, y + h) - sourceY
+
+    // Calculate destination coordinates (where to place the extracted portion in the new canvas)
+    // This maps the extracted portion to the correct position in the output
+    const destX = sourceX - maxX
+    const destY = sourceY - maxY
+
+    // Draw the visible portion of the image onto the crop canvas
+    cropCtx.drawImage(
+      canvas,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      destX,
+      destY,
+      sourceWidth,
+      sourceHeight,
+    )
+
+    // Convert the cropped canvas to a data URL and set it
     setDataURL(cropCanvas.toDataURL('image/jpeg', 0.9))
-  }, [canvasRef, setDataURL])
+  }, [canvasRef, coordinatesRef, setDataURL])
 
   return { handleSubmit }
 }
@@ -633,7 +680,7 @@ export const CropComponent = ({
   )
 
   // Initialize crop submission
-  const { handleSubmit } = useCropSubmission(canvasRef, setDataURL)
+  const { handleSubmit } = useCropSubmission(canvasRef, coordinatesRef, setDataURL)
 
   return (
     <>
@@ -644,7 +691,7 @@ export const CropComponent = ({
             <ImageContainer>
               <ImageCropBorder as={CropBorderSVG} />
               <ImageCropFrame as={CropFrameSVG} />
-              <StyledCanvas width={560} height={560} ref={canvasRef} />
+              <StyledCanvas width={1200} height={400} ref={canvasRef} />
             </ImageContainer>
           </ImageWrapper>
           <SliderContainer>
