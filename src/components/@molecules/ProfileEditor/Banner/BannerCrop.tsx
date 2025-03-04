@@ -477,8 +477,9 @@ const useZoomControl = (
   draw: () => void,
 ) => {
   useEffect(() => {
-    if (zoom) {
+    if (zoom !== undefined) {
       const { oW: originalWidth, oH: originalHeight } = coordinatesRef.current
+      // Adjust zoom factor to allow for zooming out more (50% to 200%)
       const zoomFactor = zoom / 100
       const newWidth = originalWidth * zoomFactor
       const newHeight = originalHeight * zoomFactor
@@ -588,7 +589,8 @@ export const CropComponent = ({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef(new Image())
   const resolutionMultiplierRef = useRef(1)
-  const [zoom, setZoom] = useState(100)
+  // Set default zoom to 75 (75% of original size) to allow for zooming out
+  const [zoom, setZoom] = useState(75)
 
   // Initialize canvas drawing functionality
   const { draw, coordinatesRef } = useCanvasDrawing(imageRef, canvasRef)
@@ -652,7 +654,7 @@ export const CropComponent = ({
               hideLabel
               value={zoom}
               onChange={(e) => setZoom(parseInt(e.target.value))}
-              min={100}
+              min={50}
               max={200}
             />
             <PlusCircleSVG />
