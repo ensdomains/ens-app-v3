@@ -1,4 +1,24 @@
-<svg viewBox="0 0 256 85.33" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M256 0H0V85.33H256V0ZM216 13.33H40V72H216V13.33Z" fill="black" fill-opacity="0.15"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M256 0H0V85.33H256V0ZM216 13.33H40V72H216V13.33Z" fill="currentColor" fill-opacity="0.6"/>
+<svg
+    width="220"
+    height="73.33"
+    viewBox="0 0 256 85.33"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <!-- Outer rectangle: 0..256 x 0..85.33 -->
+    <!-- Inner rectangle (letterbox): now from 20..236 x 6.665..78.665 -->
+    <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M256 0H0V85.33H256V0ZM236 6.665H20V78.665H236V6.665Z"
+        fill="black"
+        fill-opacity="0.15"
+    />
+    <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M256 0H0V85.33H256V0ZM236 6.665H20V78.665H236V6.665Z"
+        fill="currentColor"
+        fill-opacity="0.6"
+    />
 </svg>
