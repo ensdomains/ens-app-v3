@@ -140,7 +140,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testing-library": "^6.0.2",
-    "eslint-plugin-vitest": "0.5.3",
+    "eslint-plugin-vitest": "^0.4.x",
     "ethers": "^5.7.2",
     "hardhat": "^2.22.18",
     "hardhat-dependency-compiler": "^1.1.3",

@@ -381,8 +381,8 @@ importers:
         specifier: ^6.0.2
         version: 6.2.2(eslint@8.50.0)(typescript@5.4.5)
       eslint-plugin-vitest:
-        specifier: 0.5.3
-        version: 0.5.3(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@20.17.19)(jsdom@24.1.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(msw@2.7.0(@types/node@20.17.19)(typescript@5.4.5)))
+        specifier: ^0.4.x
+        version: 0.4.1(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@20.17.19)(jsdom@24.1.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(msw@2.7.0(@types/node@20.17.19)(typescript@5.4.5)))
       ethers:
         specifier: ^5.7.2
         version: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -4802,12 +4802,12 @@ packages:
     peerDependencies:
       eslint: ^7.5.0 || ^8.0.0
 
-  eslint-plugin-vitest@0.5.3:
-    resolution: {integrity: sha512-D0iu6ppP6FmNSZP4cdhEXqyI+fuW6JwwWdECRrNymd1jiVgUmDgSvtryytonNxHQQWhGNmZM3V/qvpXttH1rRQ==}
+  eslint-plugin-vitest@0.4.1:
+    resolution: {integrity: sha512-+PnZ2u/BS+f5FiuHXz4zKsHPcMKHie+K+1Uvu/x91ovkCMEOJqEI8E9Tw1Wzx2QRz4MHOBHYf1ypO8N1K0aNAA==}
     engines: {node: ^18.0.0 || >= 20.0.0}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': '*'
-      eslint: ^8.57.0 || ^9.0.0
+      eslint: '>=8.0.0'
       vitest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
@@ -13953,7 +13953,7 @@ snapshots:
       - supports-color
       - typescript
 
-  eslint-plugin-vitest@0.5.3(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@20.17.19)(jsdom@24.1.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(msw@2.7.0(@types/node@20.17.19)(typescript@5.4.5))):
+  eslint-plugin-vitest@0.4.1(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5))(eslint@8.50.0)(typescript@5.4.5)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@20.17.19)(jsdom@24.1.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(msw@2.7.0(@types/node@20.17.19)(typescript@5.4.5))):
     dependencies:
       '@typescript-eslint/utils': 7.10.0(eslint@8.50.0)(typescript@5.4.5)
       eslint: 8.50.0
