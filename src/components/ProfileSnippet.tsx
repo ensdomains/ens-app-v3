@@ -13,8 +13,8 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
 
-const Container = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) => css`
+const Container = styled.div(
+  ({ theme }) => css`
     width: 100%;
     position: relative;
     padding: ${theme.space['4']};
@@ -260,7 +260,7 @@ export const ProfileSnippet = ({
   }, [button, name, canSelfExtend])
 
   return (
-    <Container $banner={banner} data-testid="profile-snippet">
+    <Container data-testid="profile-snippet">
       {banner && <HeaderImage src={banner} />}
       <FirstItems>
         <NameAvatar
