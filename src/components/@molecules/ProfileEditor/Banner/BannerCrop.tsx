@@ -70,13 +70,7 @@ const ImageCropBorder = styled.div(
     display: flex;
     justify-content: center;
     align-items: center;
-
-    & > svg {
-      width: 100%;
-      height: 100%;
-      color: ${theme.colors.background};
-      aspect-ratio: ${bannerAspectRatio};
-    }
+    color: ${theme.colors.background};
   `,
 )
 
@@ -89,13 +83,7 @@ const ImageCropFrame = styled.div(
     display: flex;
     justify-content: center;
     align-items: center;
-
-    & > svg {
-      width: 100%;
-      height: 100%;
-      color: ${theme.colors.accent};
-      aspect-ratio: ${bannerAspectRatio};
-    }
+    color: ${theme.colors.accent};
   `,
 )
 
