@@ -66,7 +66,7 @@ type SVGProps = {
 export const IconCopyAnimated = memo(
   ({
     copied = false,
-    checkStrokeWidth = '1',
+    checkStrokeWidth = '1x',
     size = '6',
     color,
   }: {

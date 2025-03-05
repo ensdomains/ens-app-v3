@@ -1,4 +1,5 @@
 /* eslint max-classes-per-file: "off" */
+import { cspOnlyFrameAncestors, cspWithFrameAncestors } from '@app/utils/createCsp'
 
 class ContentModifier {
   private newContent: string
@@ -57,20 +58,14 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
 
   // firefox CSP exception + metamask script
   if (userAgent?.includes('gecko/20100101') && userAgent.includes('firefox/')) {
-    response.headers.set(
-      'Content-Security-Policy',
-      "frame-ancestors 'self' https://app.safe.global;",
-    )
+    response.headers.set('Content-Security-Policy', cspOnlyFrameAncestors)
     return new HTMLRewriter()
       .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
       .transform(response)
   }
 
   // default headers
-  response.headers.set(
-    'Content-Security-Policy',
-    "worker-src 'self'; script-src 'self' 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc=' plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com 'wasm-unsafe-eval'; frame-ancestors 'self' https://app.safe.global;",
-  )
+  response.headers.set('Content-Security-Policy', cspWithFrameAncestors)
   return response
 }
 

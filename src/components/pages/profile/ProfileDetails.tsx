@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, mq, RightArrowSVG, Typography } from '@ensdomains/thorin'
+import { Button, Helper, RightArrowSVG, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -114,24 +114,24 @@ const RecordsStack = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
-    `)}
+    }
   `,
 )
 
-const ActionsContainer = styled.div(({ theme }) => [
-  css`
+const ActionsContainer = styled.div(
+  ({ theme }) => css`
     border-top: ${theme.space.px} solid ${theme.colors.border};
     padding: ${theme.space['4']};
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      padding: ${theme.space['4']} ${theme.space['6']};
+    }
   `,
-  mq.sm.min(css`
-    padding: ${theme.space['4']} ${theme.space['6']};
-  `),
-])
+)
 
 const Actions = styled.div(
   ({ theme }) => css`
@@ -141,7 +141,7 @@ const Actions = styled.div(
     flex-flow: row wrap;
     gap: ${theme.space['2']};
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       & > .leading {
         flex-grow: 1;
         order: -1;
@@ -152,33 +152,33 @@ const Actions = styled.div(
           width: min-content;
         }
       }
-    `)}
+    }
   `,
 )
 
 const ActionWrapper = styled.div<{
   leading?: boolean
   fullMobileWidth?: boolean
-}>(({ leading, fullMobileWidth }) => [
-  css`
+}>(
+  ({ leading, fullMobileWidth, theme }) => css`
     ${fullMobileWidth &&
     css`
       width: 100%;
     `}
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      width: initial;
+      ${leading &&
+      css`
+        flex-grow: 1;
+        order: -1;
+        & > div,
+        button {
+          width: min-content;
+        }
+      `}
+    }
   `,
-  mq.sm.min(css`
-    width: initial;
-    ${leading &&
-    css`
-      flex-grow: 1;
-      order: -1;
-      & > div,
-      button {
-        width: min-content;
-      }
-    `}
-  `),
-])
+)
 
 type Action = NonNullable<ReturnType<typeof useProfileActions>['profileActions']>[number]
 const getAction = (action: Action, is2LDEth: boolean) => {
@@ -379,7 +379,7 @@ export const ProfileDetails = ({
             actionWarnings.length > 0 &&
             actionWarnings.map((warning) => (
               <Helper
-                type="warning"
+                alert="warning"
                 key={warning}
                 alignment={breakpoint.sm ? 'horizontal' : 'vertical'}
               >

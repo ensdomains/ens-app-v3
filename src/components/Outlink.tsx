@@ -4,8 +4,7 @@ import Link from 'next/link'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
-import { FontVariant } from '@ensdomains/thorin/dist/types/types'
+import { AsProp, Typography, type FontVariant } from '@ensdomains/thorin'
 
 import OutlinkSVG from '@app/assets/Outlink.svg'
 
@@ -48,7 +47,7 @@ export const Outlink = ({
   ComponentProps<typeof StyledAnchor> & {
     href: string | UrlObject
     fontVariant?: FontVariant
-    icon?: any
+    icon?: AsProp
     iconPosition?: 'before' | 'after'
   }) => {
   const InnerContent = (

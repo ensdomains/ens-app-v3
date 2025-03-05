@@ -1,15 +1,16 @@
 import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Input, mq } from '@ensdomains/thorin'
+import { Input } from '@ensdomains/thorin'
 
 const Wrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
+    z-index: 1;
     margin-bottom: -${theme.space['4']};
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: -${theme.space['6']};
-    `)}
+    }
   `,
 )
 

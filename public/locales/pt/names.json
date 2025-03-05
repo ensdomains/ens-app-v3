@@ -1,0 +1,19 @@
+{
+  "title": "Nomes",
+  "subtitle": {
+    "start": "Todos os nomes em posse de",
+    "this": "esta",
+    "your": "sua",
+    "wallet": "carteira"
+  },
+  "empty": "Nenhum nome encontrado para este endereço",
+  "sortTypes": {
+    "expiryDate": "Data de expiração",
+    "labelName": "Nome",
+    "createdAt": "Data de criação"
+  },
+  "offchainWarning": {
+    "title": "Alguns nomes podem não aparecer",
+    "text": "Os nomes offchain não aparecem atualmente nesta lista. Você ainda pode vê-los buscando-os diretamente. Clique para saber mais."
+  }
+}

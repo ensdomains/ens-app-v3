@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, mq, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import StarsSVG from '@app/assets/Stars.svg'
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { useProfile } from '@app/hooks/useProfile'
 
@@ -18,16 +19,16 @@ const Container = styled.div(
     gap: ${theme.space['6']};
     padding: ${theme.space['6']};
     width: 100%;
-    border: 4px solid #fff;
+    border: 4px solid ${theme.colors.background};
     border-radius: 16px;
-    background: linear-gradient(#e7f4ef 100%, #fdf0dd 100%);
+    background: linear-gradient(${theme.colors.greenLight} 100%, ${theme.colors.greenSurface} 100%);
 
-    ${mq.sm.max(css`
+    @media (max-width: ${theme.breakpoints.sm}px) {
       grid-template-columns: 1fr;
       text-align: center;
       gap: ${theme.space['4']};
       padding: ${theme.space['4']};
-    `)}
+    }
   `,
 )
 
@@ -39,14 +40,15 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
   const profileActions = useProfileActions({
     name,
   })
-
+  const abilities = useAbilities({ name })
+  const canEditRecords = abilities.data?.canEditRecords
   const records = existingRecords.filter(({ value }) => value)
 
   const action = (profileActions.profileActions ?? []).find(
     (i) => i.label === t('tabs.profile.actions.editProfile.label'),
   )
 
-  if (records.length || isProfileLoading || !action) return null
+  if (records.length || isProfileLoading || !action || !canEditRecords) return null
 
   return (
     <Container data-testid="profile-empty-banner">
@@ -54,10 +56,10 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
         <StarsSVG />
       </div>
       <div>
-        <Typography fontVariant="large" weight="bold" color="textPrimary">
+        <Typography fontVariant="large" weight="bold" color="text">
           {t('banner.empty.title')}
         </Typography>
-        <Typography color="textPrimary" fontVariant="body">
+        <Typography color="text" fontVariant="body">
           {t('banner.empty.description')}
         </Typography>
       </div>

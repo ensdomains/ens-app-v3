@@ -6,8 +6,8 @@ import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { DeepPartial } from '@app/types'
 
-import RevokePermissions, { Props } from './RevokePermissions-flow'
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
+import RevokePermissions, { Props } from './RevokePermissions-flow'
 
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 

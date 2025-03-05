@@ -13,7 +13,7 @@
       "plugins": [
         {
           "name": "typescript-styled-plugin",
-          "tags": ["styled", "css", "mq"]
+          "tags": ["styled", "css"]
         }
       ]
     }
@@ -40,12 +40,13 @@
     "paths": {
       "@app/*": ["./src/*"],
       "@public/*": ["./public/*"],
-      "@root/*": ["./*"]
+      "@root/*": ["./*"],
+      "rainbow-sprinkles": ["./node_modules/rainbow-sprinkles/"]
     },
     "plugins": [
       {
         "name": "typescript-styled-plugin",
-        "tags": ["styled", "css", "mq"],
+        "tags": ["styled", "css"],
         "validate": false,
         "lint": {
           "validProperties": ["flex-gap"]
@@ -63,13 +64,9 @@
     "test/*.mts",
     "test/**/*.ts",
     "typings-custom/generated/*.d.ts",
-    "typings-custom/local-contracts.d.ts"
+    "typings-custom/local-contracts.d.ts",
+    "./node_modules/@ensdomains/ens-contracts/artifacts",
+    "./deploy/.utils/*.ts"
   ],
-  "exclude": [
-    "**/*.ignore.ts",
-    "**/*.ignore.tsx",
-    "functions/**/*",
-    "deploy/**/*",
-    "hardhat.config.ts"
-  ]
+  "exclude": ["**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
 }

@@ -1,13 +1,12 @@
 import { act, render, screen, waitFor } from '@app/test-utils'
 
 import { QueryClientProvider } from '@tanstack/react-query'
-import { useQuery } from '@app/utils/query/useQuery'
-
 import { ReactNode, useContext, useEffect } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { WagmiProvider } from 'wagmi'
 
 import { queryClientWithRefetch as queryClient } from '@app/utils/query/reactQuery'
+import { useQuery } from '@app/utils/query/useQuery'
 import { wagmiConfig } from '@app/utils/query/wagmi'
 
 import DynamicLoadingContext from './DynamicLoadingContext'

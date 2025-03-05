@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { mq, Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 
 import FaucetBanner from '@app/components/@molecules/FaucetBanner'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
@@ -19,7 +19,7 @@ const GradientTitle = styled.h1(
     font-size: ${theme.fontSizes.headingTwo};
     text-align: center;
     font-weight: 800;
-    background-image: ${theme.colors.gradients.accent};
+    background-image: ${theme.colors.blueGradient};
     background-repeat: no-repeat;
     background-size: 110%;
     /* stylelint-disable-next-line property-no-vendor-prefix */
@@ -28,9 +28,9 @@ const GradientTitle = styled.h1(
     color: transparent;
     margin: 0;
 
-    ${mq.sm.min(css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       font-size: ${theme.fontSizes.headingOne};
-    `)}
+    }
   `,
 )
 
@@ -82,10 +82,10 @@ const LogoAndLanguage = styled.div(
 )
 
 const StyledLeadingHeading = styled(LeadingHeading)(
-  () => css`
-    ${mq.sm.min(css`
+  ({ theme }) => css`
+    @media (min-width: ${theme.breakpoints.sm}px) {
       display: none;
-    `)}
+    }
   `,
 )
 

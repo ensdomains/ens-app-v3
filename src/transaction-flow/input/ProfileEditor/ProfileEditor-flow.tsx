@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
 
-import { Button, Dialog, mq, PlusSVG } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
@@ -58,14 +58,14 @@ const ButtonContainer = styled.div(
   `,
 )
 
-const ButtonWrapper = styled.div(({ theme }) => [
-  css`
+const ButtonWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space.full};
+    @media (min-width: 360px) {
+      width: max-content;
+    }
   `,
-  mq.xs.min(css`
-    width: max-content;
-  `),
-])
+)
 
 const CloseButtonBlocker = styled.div(
   ({ theme }) => css`
@@ -472,7 +472,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     size="medium"
                     onClick={handleShowAddRecordModal}
                     data-testid="show-add-profile-records-modal-button"
-                    prefix={<PlusSVG />}
+                    prefix={PlusSVG}
                   >
                     {t('steps.profile.addMore')}
                   </Button>
