@@ -10,14 +10,15 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { bannerAspectRatio } from '@app/utils/bannerUpload'
 
 import { AvCancelButton, CropComponent } from './BannerCrop'
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
-    aspect-ratio: 1;
+    aspect-ratio: ${bannerAspectRatio};
     width: ${theme.space.full};
-    max-width: ${theme.space['72']};
+    max-width: ${theme.space['96']};
     border-radius: ${theme.radii.extraLarge};
   `,
 )
