@@ -16,6 +16,7 @@ import {
   calcMomentumX,
   calcMomentumY,
   getBannerVars,
+  speedMultiplier,
 } from '@app/utils/bannerUpload'
 
 const EditImageContainer = styled.div(
@@ -332,8 +333,8 @@ const useMouseInteractions = (
       const { movementX, movementY } = e
       coordinatesRef.current = {
         ...coordinatesRef.current,
-        mx: movementX * resolutionMultiplier,
-        my: movementY * resolutionMultiplier,
+        mx: movementX * resolutionMultiplier * speedMultiplier,
+        my: movementY * resolutionMultiplier * speedMultiplier,
       }
       window.requestAnimationFrame(draw)
     },
@@ -419,8 +420,8 @@ const useTouchInteractions = (
         const { clientX: nx, clientY: ny } = touch1
         const { x, y } = coordinatesRef.current
         const resolutionMultiplier = resolutionMultiplierRef.current
-        const mx = (ogX - nx) * -1 * resolutionMultiplier
-        const my = (ogY - ny) * -1 * resolutionMultiplier
+        const mx = (ogX - nx) * -1 * resolutionMultiplier * speedMultiplier
+        const my = (ogY - ny) * -1 * resolutionMultiplier * speedMultiplier
 
         coordinatesRef.current = {
           ...coordinatesRef.current,
@@ -701,7 +702,7 @@ export const CropComponent = ({
               hideLabel
               value={zoom}
               onChange={(e) => setZoom(parseInt(e.target.value))}
-              min={50}
+              min={100}
               max={200}
             />
             <PlusCircleSVG />

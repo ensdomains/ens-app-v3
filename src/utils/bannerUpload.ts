@@ -1,7 +1,9 @@
 // Banner aspect ratio (width:height)
 export const bannerAspectRatio = 3 // 3:1 aspect ratio for banners
 export const imagePercent = 0.8 // Increase the visible area percentage
-export const maxSpeed = 96
+export const speedMultiplier = 4 // Speed multiplier for all movement calculations
+export const baseMaxSpeed = 96 // Base maximum speed before multiplier
+export const maxSpeed = baseMaxSpeed * speedMultiplier // Apply speed multiplier to max speed
 
 export const getBannerVars = (canvas: HTMLCanvasElement) => {
   if (!canvas) {
@@ -71,7 +73,10 @@ export const calcMomentumX = (a: number, maxX: number, imgWidth: number, cropWid
     if (distance <= snapDistance && distance >= -snapDistance) {
       momentum = distance
     } else {
-      momentum = Math.round(Math.min(Math.max(distance / 16, -maxSpeed), maxSpeed))
+      // Apply speed multiplier by dividing by (16 / speedMultiplier)
+      momentum = Math.round(
+        Math.min(Math.max(distance / (16 / speedMultiplier), -maxSpeed), maxSpeed),
+      )
     }
   }
   return momentum
@@ -85,7 +90,10 @@ export const calcMomentumY = (a: number, maxY: number, imgHeight: number, cropHe
     if (distance <= snapDistance && distance >= -snapDistance) {
       momentum = distance
     } else {
-      momentum = Math.round(Math.min(Math.max(distance / 16, -maxSpeed), maxSpeed))
+      // Apply speed multiplier by dividing by (16 / speedMultiplier)
+      momentum = Math.round(
+        Math.min(Math.max(distance / (16 / speedMultiplier), -maxSpeed), maxSpeed),
+      )
     }
   }
   return momentum
