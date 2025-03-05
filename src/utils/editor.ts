@@ -64,7 +64,7 @@ export const convertProfileToProfileFormObject = async (
           avatar: record.value,
           ...map,
         }
-      if (record.key === 'banner')
+      if (record.key === 'header')
         return {
           banner: record.value,
           ...map,

@@ -134,7 +134,7 @@ export const profileEditorFormToProfileRecords = (data: ProfileEditorForm): Prof
     ...(data.banner
       ? [
           {
-            key: 'banner',
+            key: 'header',
             type: 'text',
             group: 'media',
             value: data.banner,
@@ -149,7 +149,7 @@ export const profileRecordsToProfileEditorForm = (records: ProfileRecord[]): Pro
     (result, record) => {
       if (record.key === 'avatar' && record.group === 'media')
         return { ...result, avatar: record.value || '' }
-      if (record.key === 'banner' && record.group === 'media')
+      if (record.key === 'header' && record.group === 'media')
         return { ...result, banner: record.value || '' }
       const normalizedRecord = {
         ...record,

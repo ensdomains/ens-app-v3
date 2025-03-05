@@ -1,1 +1,1 @@
-export const supportedMediaRecordKeys = ['avatar', 'banner'] as const
+export const supportedMediaRecordKeys = ['avatar', 'header'] as const

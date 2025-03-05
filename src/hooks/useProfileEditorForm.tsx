@@ -179,7 +179,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   }
 
   const setBanner = (banner?: string) => {
-    const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'banner')
+    const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'header')
     const bannerIsChanged = !(
       existingRecord &&
       SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => existingRecord.value?.startsWith(endpoint)) &&
@@ -192,7 +192,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
 
   const removeRecordByGroupAndKey = (group: ProfileRecordGroup, key: string) => {
     if (group === 'media' && key === 'avatar') return setAvatar('')
-    if (group === 'media' && key === 'banner') return setBanner('')
+    if (group === 'media' && key === 'header') return setBanner('')
     const index = getValues('records').findIndex((r) => r.group === group && r.key === key)
     if (index >= 0) removeRecordAtIndex(index)
   }

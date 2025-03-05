@@ -1,11 +1,11 @@
-// Banner aspect ratio (width:height)
-export const bannerAspectRatio = 3 // 3:1 aspect ratio for banners
+// Header aspect ratio (width:height)
+export const headerAspectRatio = 3 // 3:1 aspect ratio for headers
 export const imagePercent = 0.8 // Increase the visible area percentage
 export const speedMultiplier = 4 // Speed multiplier for all movement calculations
 export const baseMaxSpeed = 96 // Base maximum speed before multiplier
 export const maxSpeed = baseMaxSpeed * speedMultiplier // Apply speed multiplier to max speed
 
-export const getBannerVars = (canvas: HTMLCanvasElement) => {
+export const getHeaderVars = (canvas: HTMLCanvasElement) => {
   if (!canvas) {
     return {
       imagePercent: 0,
@@ -26,18 +26,13 @@ export const getBannerVars = (canvas: HTMLCanvasElement) => {
   const canvasWidth = canvas.width
   const canvasHeight = canvas.height
 
-  // Calculate crop dimensions based on the banner aspect ratio and imagePercent
-  // This ensures the crop window is exactly 80% of the canvas size
+  // Ensure we maintain the 3:1 aspect ratio
+  // Calculate crop dimensions based on the header aspect ratio
   const cropWidth = canvasWidth * imagePercent
-  const cropHeight = cropWidth / bannerAspectRatio // Maintain 3:1 aspect ratio
+  const cropHeight = cropWidth / headerAspectRatio // Maintain 3:1 aspect ratio
 
-  // Calculate the margins (the space between the edge of the canvas and the crop window)
   const inverseWidthSize = canvasWidth * (1 - imagePercent)
   const inverseHeightSize = canvasHeight - cropHeight
-
-  // maxX and maxY represent the top-left corner of the crop window
-  const maxX = inverseWidthSize / 2
-  const maxY = inverseHeightSize / 2
 
   return {
     imagePercent,
@@ -48,8 +43,8 @@ export const getBannerVars = (canvas: HTMLCanvasElement) => {
     inverseWidthSize,
     inverseHeightSize,
     ctx,
-    maxX,
-    maxY,
+    maxX: inverseWidthSize / 2,
+    maxY: inverseHeightSize / 2,
   }
 }
 
@@ -74,14 +69,18 @@ export const calcMomentumX = (a: number, maxX: number, imgWidth: number, cropWid
   let momentum = 0
   const distance = distanceFromEdgeX(a, maxX, imgWidth, cropWidth)
   if (distance > 0 || distance < 0) {
-    const snapDistance = 8
+    const snapDistance = 15
     if (distance <= snapDistance && distance >= -snapDistance) {
       momentum = distance
     } else {
-      // Apply speed multiplier by dividing by (16 / speedMultiplier)
-      momentum = Math.round(
-        Math.min(Math.max(distance / (16 / speedMultiplier), -maxSpeed), maxSpeed),
-      )
+      const direction = distance > 0 ? 1 : -1
+      const speed = Math.min(Math.abs(distance) / 10, maxSpeed / speedMultiplier) * speedMultiplier
+      momentum = speed * direction
+
+      // Special case for right edge
+      if (direction < 0 && Math.abs(distance) < snapDistance * 2) {
+        momentum = distance
+      }
     }
   }
   return momentum
@@ -91,15 +90,18 @@ export const calcMomentumY = (a: number, maxY: number, imgHeight: number, cropHe
   let momentum = 0
   const distance = distanceFromEdgeY(a, maxY, imgHeight, cropHeight)
   if (distance > 0 || distance < 0) {
-    const snapDistance = 8
+    const snapDistance = 15
     if (distance <= snapDistance && distance >= -snapDistance) {
       momentum = distance
     } else {
-      // Apply speed multiplier by dividing by (16 / speedMultiplier)
-      momentum = Math.round(
-        Math.min(Math.max(distance / (16 / speedMultiplier), -maxSpeed), maxSpeed),
-      )
+      const direction = distance > 0 ? 1 : -1
+      const speed = Math.min(Math.abs(distance) / 10, maxSpeed / speedMultiplier) * speedMultiplier
+      momentum = speed * direction
     }
   }
   return momentum
 }
+
+// For backward compatibility
+export const bannerAspectRatio = headerAspectRatio
+export const getBannerVars = getHeaderVars

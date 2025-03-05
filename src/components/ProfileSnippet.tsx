@@ -195,7 +195,7 @@ export const ProfileSnippet = ({
 
   const beautifiedName = useBeautifiedName(name)
 
-  const banner = getTextRecord?.('banner')?.value
+  const banner = getTextRecord?.('header')?.value
   const description = getTextRecord?.('description')?.value
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value

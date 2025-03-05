@@ -1,23 +1,24 @@
 <svg
-    width="220"
-    height="73.33"
-    viewBox="0 0 256 85.33"
+    width="100%"
+    height="100%"
+    viewBox="0 0 300 100"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="none"
 >
-    <!-- Outer rectangle: 0..256 x 0..85.33 -->
-    <!-- Inner rectangle: 25.6..230.4 x 8.533..76.797 (80% of width and height) -->
+    <!-- Outer rectangle: 0..300 x 0..100 -->
+    <!-- Inner rectangle: 30..270 x 10..90 (80% of width and height) -->
     <path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        d="M256 0H0V85.33H256V0ZM230.4 8.533H25.6V76.797H230.4V8.533Z"
+        d="M300 0H0V100H300V0ZM270 10H30V90H270V10Z"
         fill="black"
         fill-opacity="0.15"
     />
     <path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        d="M256 0H0V85.33H256V0ZM230.4 8.533H25.6V76.797H230.4V8.533Z"
+        d="M300 0H0V100H300V0ZM270 10H30V90H270V10Z"
         fill="currentColor"
         fill-opacity="0.6"
     />

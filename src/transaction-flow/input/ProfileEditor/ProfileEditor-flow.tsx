@@ -183,7 +183,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       updatedRecords.forEach((record) => {
         if (record.key === 'avatar' && record.group === 'media') {
           setAvatar(record.value)
-        } else if (record.key === 'banner' && record.group === 'media') {
+        } else if (record.key === 'header' && record.group === 'media') {
           setBanner(record.value)
         } else {
           updateRecord(record)
@@ -268,7 +268,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     addRecords(records)
     // Initialize banner field if it was added
     const bannerRecord = records.find(
-      (record) => record.key === 'banner' && record.group === 'media',
+      (record) => record.key === 'header' && record.group === 'media',
     )
     if (bannerRecord) {
       setBannerSrc(bannerRecord.value)
