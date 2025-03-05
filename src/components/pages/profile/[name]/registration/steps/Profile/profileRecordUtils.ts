@@ -193,6 +193,14 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
           value,
         }
       }
+      if (key === 'header') {
+        return {
+          key: key as string,
+          type: 'text',
+          group: 'media',
+          value,
+        }
+      }
       /* eslint-disable no-nested-ternary */
       const group: ProfileRecordGroup = supportedGeneralRecordKeys.includes(
         key as (typeof supportedGeneralRecordKeys)[number],
