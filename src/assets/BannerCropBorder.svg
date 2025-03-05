@@ -6,18 +6,18 @@
     xmlns="http://www.w3.org/2000/svg"
 >
     <!-- Outer rectangle: 0..256 x 0..85.33 -->
-    <!-- Inner rectangle (letterbox): now from 20..236 x 6.665..78.665 -->
+    <!-- Inner rectangle: 25.6..230.4 x 8.533..76.797 (80% of width and height) -->
     <path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        d="M256 0H0V85.33H256V0ZM236 6.665H20V78.665H236V6.665Z"
+        d="M256 0H0V85.33H256V0ZM230.4 8.533H25.6V76.797H230.4V8.533Z"
         fill="black"
         fill-opacity="0.15"
     />
     <path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        d="M256 0H0V85.33H256V0ZM236 6.665H20V78.665H236V6.665Z"
+        d="M256 0H0V85.33H256V0ZM230.4 8.533H25.6V76.797H230.4V8.533Z"
         fill="currentColor"
         fill-opacity="0.6"
     />
