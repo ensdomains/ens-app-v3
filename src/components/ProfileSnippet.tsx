@@ -16,9 +16,10 @@ import { NameAvatar } from './AvatarWithZorb'
 const Container = styled.div<{ $banner?: string }>(
   ({ theme, $banner }) => css`
     width: 100%;
+    position: relative;
     padding: ${theme.space['4']};
     padding-top: ${theme.space['18']};
-    background-image: ${$banner ? `url(${$banner})` : theme.colors.blueGradient};
+    background-image: ${theme.colors.blueGradient};
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-size: 100% ${theme.space['28']};
@@ -37,6 +38,20 @@ const Container = styled.div<{ $banner?: string }>(
       padding: ${theme.space['6']};
       padding-top: ${theme.space['12']};
     }
+  `,
+)
+
+const HeaderImage = styled.img(
+  ({ theme }) => css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: ${theme.space['28']};
+    border-radius: ${theme.radii['2xLarge']} ${theme.radii['2xLarge']} 0 0;
+    object-fit: cover;
+    width: 100%;
+    background-image: ${theme.colors.blueGradient};
   `,
 )
 
@@ -246,6 +261,7 @@ export const ProfileSnippet = ({
 
   return (
     <Container $banner={banner} data-testid="profile-snippet">
+      {banner && <HeaderImage src={banner} />}
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
