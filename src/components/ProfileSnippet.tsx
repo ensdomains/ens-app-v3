@@ -259,9 +259,11 @@ export const ProfileSnippet = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [button, name, canSelfExtend])
 
+  console.log('render')
+
   return (
     <Container data-testid="profile-snippet">
-      {banner && <HeaderImage src={banner} />}
+      {banner && <HeaderImage src={banner} id="header-image" />}
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}

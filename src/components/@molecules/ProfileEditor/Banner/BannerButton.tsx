@@ -177,7 +177,7 @@ const BannerButton = ({
           $dirty={dirty}
           type="button"
         >
-          <BannerPreview $src={src} />
+          <BannerPreview $src={src} id="header-field" />
         </IndicatorContainer>
       </BannerContainer>
       <ButtonContainer $hasImage={!!src}>
