@@ -86,10 +86,16 @@
     "back": "Back",
     "oldApp": "Old ENS App",
     "language": "Language",
+    "theme": "Theme",
     "currency": "Currency",
     "ipfsApp": "IPFS ENS App",
     "feedback": "Feedback",
-    "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet."
+    "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet.",
+    "mode": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
   },
   "wallet": {
     "myProfile": "Profile",
