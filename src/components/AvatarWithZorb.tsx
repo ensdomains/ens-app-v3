@@ -81,7 +81,12 @@ export const NameAvatar = ({
 
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} placeholder={`url(${zorb})`} src={avatar || zorb} />
+      <Avatar
+        className="avatar-image"
+        {...props}
+        placeholder={`url(${zorb})`}
+        src={avatar || zorb}
+      />
     </Wrapper>
   )
 }
