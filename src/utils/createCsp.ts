@@ -21,8 +21,9 @@ csp += '  *.ens-app-v3.pages.dev'
 csp += ' https://app.intercom.io'
 csp += ' https://widget.intercom.io'
 csp += ' https://js.intercomcdn.com'
+csp += ' https://app.beta.usecapsule.com'
 // allow inline wasm evaluation
-csp += ' wasm-unsafe-eval unsafe-eval'
+csp += ' wasm-unsafe-eval'
 // INLINE SCRIPT HASHES
 // hiddenCheckScript
 csp += " 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc='"
