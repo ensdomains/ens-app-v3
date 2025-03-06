@@ -1,8 +1,10 @@
 import { ComponentProps } from 'react'
 import { Control, useFormState } from 'react-hook-form'
+import { useEnsAvatar } from 'wagmi'
 
 import BannerButton from '@app/components/@molecules/ProfileEditor/Banner/BannerButton'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 type Props = {
   name: string
@@ -14,7 +16,13 @@ export const WrappedBannerButton = ({ control, name, src, ...props }: Props) => 
     control,
     name: 'banner',
   })
+  const { data: header } = useEnsAvatar({ ...ensAvatarConfig, name, key: 'header' })
+
   const isValidated = !!src
   const isDirty = !!formState.dirtyFields.banner
-  return <BannerButton {...props} src={src} validated={isValidated} dirty={isDirty} />
+  const currentOrUpdatedSrc = isDirty ? src : (header as string | undefined)
+
+  return (
+    <BannerButton {...props} src={currentOrUpdatedSrc} validated={isValidated} dirty={isDirty} />
+  )
 }
