@@ -1,9 +1,9 @@
+import { getTldFromName } from '@app/utils/utils'
+
 import { useDnsSecEnabled } from './dns/useDnsSecEnabled'
 
 export const useSupportsTLD = (name = '') => {
-  const labels = name?.split('.') || []
-  const tld = labels[labels.length - 1]
-
+  const tld = getTldFromName(name)
   const { data: isDnsSecEnabled, ...query } = useDnsSecEnabled({ name: tld })
   return {
     data: tld === 'eth' || tld === '[root]' || isDnsSecEnabled,
