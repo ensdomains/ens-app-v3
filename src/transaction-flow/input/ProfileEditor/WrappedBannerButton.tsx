@@ -18,7 +18,7 @@ export const WrappedBannerButton = ({ control, name, src, ...props }: Props) => 
   })
   const { data: header } = useEnsAvatar({ ...ensAvatarConfig, name, key: 'header' })
 
-  const isValidated = !!src
+  const isValidated = !!src || !!header
   const isDirty = !!formState.dirtyFields.banner
   const currentOrUpdatedSrc = isDirty ? src : (header as string | undefined)
 
