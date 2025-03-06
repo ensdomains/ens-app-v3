@@ -64,10 +64,15 @@ const UploadComponent = ({
   } = useMutation<void, Error>({
     mutationFn: async () => {
       let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
+      let endpoint
+
       if (chainName !== 'mainnet') {
-        baseURL = `${baseURL}/${chainName}`
+        // For testnets, use the format /:testnet/:name/header
+        endpoint = `${baseURL}/${chainName}/${name}/header`
+      } else {
+        // For mainnet, use the format /:name/header
+        endpoint = `${baseURL}/${name}/header`
       }
-      const endpoint = `${baseURL}/${name}`
 
       const urlHash = bytesToHex(sha256(dataURLToBytes(dataURL)))
       const expiry = `${Date.now() + 1000 * 60 * 60 * 24 * 7}`
@@ -87,7 +92,7 @@ const UploadComponent = ({
           ],
         },
         message: {
-          upload: 'avatar',
+          upload: 'header',
           expiry,
           name,
           hash: urlHash,

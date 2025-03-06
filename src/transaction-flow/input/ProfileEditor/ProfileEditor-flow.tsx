@@ -284,8 +284,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
-  console.log('avatarSrc: ', avatarSrc)
-
   return (
     <>
       {match(view)
