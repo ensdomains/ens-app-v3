@@ -92,7 +92,7 @@ const UploadComponent = ({
           ],
         },
         message: {
-          upload: 'header',
+          upload: 'avatar',
           expiry,
           name,
           hash: urlHash,
