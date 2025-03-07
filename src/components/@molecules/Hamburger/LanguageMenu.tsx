@@ -164,7 +164,7 @@ const LanguageMenu = ({
         <Heading onClick={() => setCurrentView('main')}>
           <LeftArrowSVG width={16} height={16} />
           <InnerHeading>
-            <LanguageSVG />
+            <LanguageSVG height={16} width={16} />
             <Typography weight="bold">{t('navigation.language')}</Typography>
           </InnerHeading>
         </Heading>
