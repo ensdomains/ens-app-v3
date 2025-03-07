@@ -5,9 +5,9 @@ import styled, { css } from 'styled-components'
 import {
   CurrencyToggle,
   LanguageSVG,
-  MoonSVG,
   RightChevronSVG,
   Spinner,
+  ThemeSVG,
   Typography,
   WalletSVG,
 } from '@ensdomains/thorin'
@@ -273,7 +273,7 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: HamburgerView) =>
         </HoverableSettingsItem>
         <HoverableSettingsItem onClick={() => setCurrentView('theme')}>
           <div>
-            <MoonSVG height={16} width={16} />
+            <ThemeSVG height={16} width={16} />
             <Typography weight="bold">{t('navigation.theme')}</Typography>
           </div>
         </HoverableSettingsItem>
