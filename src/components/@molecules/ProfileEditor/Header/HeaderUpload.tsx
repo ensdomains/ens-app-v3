@@ -10,13 +10,13 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
-import { bannerAspectRatio } from '@app/utils/bannerUpload'
+import { headerAspectRatio } from '@app/utils/headerUpload'
 
-import { AvCancelButton, CropComponent } from './BannerCrop'
+import { AvCancelButton, CropComponent } from './HeaderCrop'
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
-    aspect-ratio: ${bannerAspectRatio};
+    aspect-ratio: ${headerAspectRatio};
     width: ${theme.space.full};
     max-width: ${theme.space['96']};
     border-radius: ${theme.radii.extraLarge};
@@ -179,13 +179,13 @@ const UploadComponent = ({
   )
 }
 
-export const BannerUpload = ({
-  bannerFile,
+export const HeaderUpload = ({
+  headerFile,
   handleCancel,
   handleSubmit,
   name,
 }: {
-  bannerFile: File
+  headerFile: File
   handleCancel: () => void
   handleSubmit: (type: 'upload', uri: string, display?: string) => void
   name: string
@@ -193,7 +193,7 @@ export const BannerUpload = ({
   const [dataURL, setDataURL] = useState<string | null>(null)
 
   if (!dataURL) {
-    return <CropComponent {...{ avatar: bannerFile, setDataURL, handleCancel }} />
+    return <CropComponent {...{ avatar: headerFile, setDataURL, handleCancel }} />
   }
 
   return (

@@ -28,9 +28,7 @@ const SUPPORTED_AVUP_ENDPOINTS = [
 
 export type ProfileEditorForm = {
   records: ProfileRecord[]
-} & AvatarEditorType & {
-    banner?: string
-  }
+} & AvatarEditorType
 
 export const isDirtyForRecordAtIndexCalc = (
   index: number,
@@ -178,21 +176,21 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     }
   }
 
-  const setBanner = (banner?: string) => {
+  const setHeader = (header?: string) => {
     const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'header')
-    const bannerIsChanged = !(
+    const headerIsChanged = !(
       existingRecord &&
       SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => existingRecord.value?.startsWith(endpoint)) &&
-      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => banner?.startsWith(endpoint))
+      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => header?.startsWith(endpoint))
     )
-    if (bannerIsChanged) {
-      setValue('banner', banner || '', { shouldDirty: true, shouldTouch: true })
+    if (headerIsChanged) {
+      setValue('header', header || '', { shouldDirty: true, shouldTouch: true })
     }
   }
 
   const removeRecordByGroupAndKey = (group: ProfileRecordGroup, key: string) => {
     if (group === 'media' && key === 'avatar') return setAvatar('')
-    if (group === 'media' && key === 'header') return setBanner('')
+    if (group === 'media' && key === 'header') return setHeader('')
     const index = getValues('records').findIndex((r) => r.group === group && r.key === key)
     if (index >= 0) removeRecordAtIndex(index)
   }
@@ -230,7 +228,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   }
 
   const getAvatar = () => getValues('avatar')
-  const getBanner = () => getValues('banner')
+  const getHeader = () => getValues('header')
 
   return {
     isDirty: formState.isDirty,
@@ -247,9 +245,9 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
-    setBanner,
+    setHeader,
     getAvatar,
-    getBanner,
+    getHeader,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,

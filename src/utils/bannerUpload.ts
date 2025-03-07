@@ -1,11 +1,11 @@
-// Banner aspect ratio (width:height)
-export const bannerAspectRatio = 3 // 3:1 aspect ratio for banners
+// Header aspect ratio (width:height)
+export const headerAspectRatio = 3 // 3:1 aspect ratio for headers
 export const imagePercent = 0.8 // Increase the visible area percentage
 export const speedMultiplier = 4 // Speed multiplier for all movement calculations
 export const baseMaxSpeed = 96 // Base maximum speed before multiplier
 export const maxSpeed = baseMaxSpeed * speedMultiplier // Apply speed multiplier to max speed
 
-export const getBannerVars = (canvas: HTMLCanvasElement) => {
+export const getHeaderVars = (canvas: HTMLCanvasElement) => {
   if (!canvas) {
     return {
       imagePercent: 0,
@@ -26,10 +26,10 @@ export const getBannerVars = (canvas: HTMLCanvasElement) => {
   const canvasWidth = canvas.width
   const canvasHeight = canvas.height
 
-  // Calculate crop dimensions based on the banner aspect ratio and imagePercent
+  // Calculate crop dimensions based on the header aspect ratio and imagePercent
   // This ensures the crop window is exactly 80% of the canvas size
   const cropWidth = canvasWidth * imagePercent
-  const cropHeight = cropWidth / bannerAspectRatio // Maintain 3:1 aspect ratio
+  const cropHeight = cropWidth / headerAspectRatio // Maintain 3:1 aspect ratio
 
   // Calculate the margins (the space between the edge of the canvas and the crop window)
   const inverseWidthSize = canvasWidth * (1 - imagePercent)

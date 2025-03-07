@@ -11,9 +11,9 @@ import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import {
-  BannerViewManager,
-  BannerViewType,
-} from '@app/components/@molecules/ProfileEditor/Banner/BannerViewManager'
+  HeaderViewManager,
+  HeaderViewType,
+} from '@app/components/@molecules/ProfileEditor/Header/HeaderViewManager'
 import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
@@ -37,7 +37,7 @@ import { getResolverWrapperAwareness } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
-import { WrappedBannerButton } from './WrappedBannerButton'
+import { WrappedHeaderButton } from './WrappedHeaderButton'
 
 const AvatarWrapper = styled.div(
   () => css`
@@ -47,7 +47,7 @@ const AvatarWrapper = styled.div(
   `,
 )
 
-const BannerWrapper = styled.div(
+const HeaderWrapper = styled.div(
   () => css`
     display: flex;
     justify-content: center;
@@ -135,9 +135,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     | 'manual'
     | 'addRecord'
     | 'warning'
-    | 'banner-upload'
-    | 'banner-nft'
-    | 'banner-manual'
+    | 'header-upload'
+    | 'header-nft'
+    | 'header-manual'
   >('editor')
 
   const { name = '', resumable = false } = data
@@ -160,7 +160,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
-    setBanner,
+    setHeader,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
@@ -184,7 +184,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         if (record.key === 'avatar' && record.group === 'media') {
           setAvatar(record.value)
         } else if (record.key === 'header' && record.group === 'media') {
-          setBanner(record.value)
+          setHeader(record.value)
         } else {
           updateRecord(record)
         }
@@ -236,8 +236,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
-  const [bannerSrc, setBannerSrc] = useState<string | undefined>()
-  const [bannerFile, setBannerFile] = useState<File | undefined>()
+  const [headerSrc, setHeaderSrc] = useState<string | undefined>()
+  const [headerFile, setHeaderFile] = useState<File | undefined>()
 
   useEffect(() => {
     if (
@@ -266,12 +266,12 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const handleAddRecords = (records: ProfileRecord[]) => {
     addRecords(records)
-    // Initialize banner field if it was added
-    const bannerRecord = records.find(
+    // Initialize header field if it was added
+    const headerRecord = records.find(
       (record) => record.key === 'header' && record.group === 'media',
     )
-    if (bannerRecord) {
-      setBannerSrc(bannerRecord.value)
+    if (headerRecord) {
+      setHeaderSrc(headerRecord.value)
     }
     setView('editor')
   }
@@ -283,6 +283,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     .otherwise(() => true)
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
+
+  console.log('headerFile: ', headerFile)
 
   return (
     <>
@@ -310,17 +312,17 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                   onAvatarSrcChange={(src) => setAvatarSrc(src)}
                 />
               </AvatarWrapper>
-              <BannerWrapper>
-                <WrappedBannerButton
+              <HeaderWrapper>
+                <WrappedHeaderButton
                   name={name}
                   control={control}
-                  src={bannerSrc}
-                  onSelectOption={(option) => setView(`banner-${option}`)}
-                  onBannerChange={(banner) => setBanner(banner)}
-                  onBannerFileChange={(file) => setBannerFile(file)}
-                  onBannerSrcChange={(src) => setBannerSrc(src)}
+                  src={headerSrc}
+                  onSelectOption={(option) => setView(`header-${option}`)}
+                  onHeaderChange={(header) => setHeader(header)}
+                  onHeaderFileChange={(file) => setHeaderFile(file)}
+                  onHeaderSrcChange={(src) => setHeaderSrc(src)}
                 />
-              </BannerWrapper>
+              </HeaderWrapper>
               {profileRecords.map((field, index) =>
                 field.group === 'custom' ? (
                   <CustomProfileRecordInput
@@ -351,7 +353,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                       validate: validatorForRecord(field),
                     })}
                   />
-                ) : field.key !== 'banner' && field.group !== 'media' ? (
+                ) : field.key !== 'header' && field.group !== 'media' ? (
                   <ProfileRecordInput
                     key={field.id}
                     recordKey={field.key}
@@ -457,15 +459,15 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             }}
           />
         ))
-        .with('banner-upload', 'banner-nft', 'banner-manual', (type) => (
-          <BannerViewManager
+        .with('header-upload', 'header-nft', 'header-manual', (type) => (
+          <HeaderViewManager
             name={name}
-            bannerFile={bannerFile}
+            headerFile={headerFile}
             handleCancel={() => setView('editor')}
-            type={type.replace('banner-', '') as BannerViewType}
+            type={type.replace('header-', '') as HeaderViewType}
             handleSubmit={(_, uri, display) => {
-              setBanner(uri)
-              setBannerSrc(display)
+              setHeader(uri)
+              setHeaderSrc(display)
               setView('editor')
               trigger()
             }}

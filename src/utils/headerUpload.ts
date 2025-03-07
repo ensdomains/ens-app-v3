@@ -101,7 +101,3 @@ export const calcMomentumY = (a: number, maxY: number, imgHeight: number, cropHe
   }
   return momentum
 }
-
-// For backward compatibility
-export const bannerAspectRatio = headerAspectRatio
-export const getBannerVars = getHeaderVars

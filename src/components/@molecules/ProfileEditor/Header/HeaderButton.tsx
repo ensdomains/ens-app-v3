@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components'
 import { Button, Dropdown, Input, Typography } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
-import CameraIcon from '@app/assets/Camera.svg'
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 
 const IndicatorContainer = styled.button<{
@@ -93,20 +92,20 @@ const DropdownContainer = styled.div`
   width: fit-content;
 `
 
-const BannerContainer = styled.div`
+const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 300px;
 `
 
-const BannerLabel = styled(Typography)`
+const HeaderLabel = styled(Typography)`
   font-weight: 600;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textSecondary};
 `
 
-const BannerPreview = styled.div<{ $src?: string }>(
+const HeaderPreview = styled.div<{ $src?: string }>(
   ({ theme, $src }) => css`
     width: 300px;
     height: 100px;
@@ -120,7 +119,7 @@ const BannerPreview = styled.div<{ $src?: string }>(
   `,
 )
 
-export type BannerClickType = 'upload' | 'nft' | 'manual'
+export type HeaderClickType = 'upload' | 'nft' | 'manual'
 
 type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
 
@@ -130,32 +129,32 @@ type Props = {
   dirty?: boolean
   error?: boolean
   src?: string
-  onSelectOption?: (value: BannerClickType) => void
-  onBannerChange?: (banner?: string) => void
-  onBannerSrcChange?: (src?: string) => void
-  onBannerFileChange?: (file?: File) => void
+  onSelectOption?: (value: HeaderClickType) => void
+  onHeaderChange?: (header?: string) => void
+  onHeaderSrcChange?: (src?: string) => void
+  onHeaderFileChange?: (file?: File) => void
 } & PickedDropdownProps
 
-const BannerButton = ({
+const HeaderButton = ({
   validated,
   disabledUpload,
   dirty,
   error,
   src,
   onSelectOption,
-  onBannerChange,
-  onBannerSrcChange,
-  onBannerFileChange,
+  onHeaderChange,
+  onHeaderSrcChange,
+  onHeaderFileChange,
   isOpen,
   setIsOpen,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const handleSelectOption = (value: BannerClickType | 'remove') => () => {
+  const handleSelectOption = (value: HeaderClickType | 'remove') => () => {
     if (value === 'remove') {
-      onBannerChange?.(undefined)
-      onBannerSrcChange?.(undefined)
+      onHeaderChange?.(undefined)
+      onHeaderSrcChange?.(undefined)
     } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {
@@ -169,19 +168,19 @@ const BannerButton = ({
 
   return (
     <OuterContainer>
-      <BannerContainer>
-        <BannerLabel>Banner</BannerLabel>
+      <HeaderContainer>
+        <HeaderLabel>Header</HeaderLabel>
         <IndicatorContainer
           $validated={validated && dirty}
           $error={error}
           $dirty={dirty}
           type="button"
         >
-          <BannerPreview $src={src} id="header-field" />
+          <HeaderPreview $src={src} id="header-field" />
         </IndicatorContainer>
-      </BannerContainer>
+      </HeaderContainer>
       <ButtonContainer $hasImage={!!src}>
-        {src && <Input value={src} disabled readOnly data-testid="banner-uri-display" />}
+        {src && <Input value={src} disabled readOnly data-testid="header-uri-display" />}
         <DropdownContainer>
           <LegacyDropdown
             items={
@@ -222,7 +221,7 @@ const BannerButton = ({
             {...dropdownProps}
           >
             <Button width="44" colorStyle="blueSecondary">
-              {src ? 'Change banner' : 'Add banner'}
+              {src ? 'Change header' : 'Add header'}
             </Button>
             <input
               type="file"
@@ -232,7 +231,7 @@ const BannerButton = ({
               onChange={(e) => {
                 if (e.target.files?.[0]) {
                   onSelectOption?.('upload')
-                  onBannerFileChange?.(e.target.files[0])
+                  onHeaderFileChange?.(e.target.files[0])
                 }
               }}
             />
@@ -243,4 +242,4 @@ const BannerButton = ({
   )
 }
 
-export default BannerButton
+export default HeaderButton

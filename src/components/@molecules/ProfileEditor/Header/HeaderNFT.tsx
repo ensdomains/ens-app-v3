@@ -14,7 +14,7 @@ const Container = styled.div(
   `,
 )
 
-export const BannerNFT = ({
+export const HeaderNFT = ({
   handleCancel,
   handleSubmit,
   name,
@@ -28,14 +28,14 @@ export const BannerNFT = ({
   // This is a simplified version. In a real implementation, you would add NFT selection functionality
   return (
     <>
-      <Dialog.Heading title="Select NFT for Banner" />
+      <Dialog.Heading title="Select NFT for Header" />
       <Dialog.Content>
         <Container>
           <Typography>
-            NFT selection for banner is not implemented in this simplified version.
+            NFT selection for header is not implemented in this simplified version.
           </Typography>
           <Typography>
-            In a full implementation, this would allow selecting an NFT to use as a banner image.
+            In a full implementation, this would allow selecting an NFT to use as a header image.
           </Typography>
         </Container>
       </Dialog.Content>

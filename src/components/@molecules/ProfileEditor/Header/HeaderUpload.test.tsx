@@ -6,7 +6,7 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
-import { BannerUpload } from './BannerUpload'
+import { BannerUpload } from './HeaderUpload'
 
 vi.mock('wagmi')
 vi.mock('@app/hooks/chain/useChainName')

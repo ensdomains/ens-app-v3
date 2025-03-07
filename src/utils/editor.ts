@@ -17,7 +17,7 @@ export const convertFormSafeKey = (key: string) => decodeURIComponent(key)
 
 export type ProfileFormObject = {
   avatar?: string
-  banner?: string
+  header?: string
   website?: string
   general: {
     [key: string]: string
@@ -66,7 +66,7 @@ export const convertProfileToProfileFormObject = async (
         }
       if (record.key === 'header')
         return {
-          banner: record.value,
+          header: record.value,
           ...map,
         }
       const key = record.key.toString()

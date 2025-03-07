@@ -5,19 +5,18 @@ import styled, { css } from 'styled-components'
 
 import { Button, Dialog, Slider } from '@ensdomains/thorin'
 
-import CropBorderSVG from '@app/assets/BannerCropBorder.svg'
-import CropFrameSVG from '@app/assets/BannerCropFrame.svg'
+import CropBorderSVG from '@app/assets/HeaderCropBorder.svg'
+import CropFrameSVG from '@app/assets/HeaderCropFrame.svg'
 import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
-import { calcMomentum, getVars } from '@app/utils/avatarUpload'
 import {
-  bannerAspectRatio,
   calcMomentumX,
   calcMomentumY,
-  getBannerVars,
+  getHeaderVars,
+  headerAspectRatio,
   speedMultiplier,
-} from '@app/utils/bannerUpload'
+} from '@app/utils/headerUpload'
 
 const EditImageContainer = styled.div(
   ({ theme }) => css`
@@ -51,7 +50,7 @@ const ImageContainer = styled.div(
     height: auto;
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
-    aspect-ratio: ${bannerAspectRatio};
+    aspect-ratio: ${headerAspectRatio};
 
     svg {
       fill: none;
@@ -112,7 +111,7 @@ const StyledCanvas = styled.canvas(
     height: auto;
     display: block;
     cursor: grab;
-    aspect-ratio: ${bannerAspectRatio};
+    aspect-ratio: ${headerAspectRatio};
   `,
 )
 
@@ -183,7 +182,7 @@ const useCanvasDrawing = (
     const canvas = canvasRef.current
     if (!canvas || !image) return
 
-    const { maxX, maxY, cropWidth, cropHeight } = getBannerVars(canvas)
+    const { maxX, maxY, cropWidth, cropHeight } = getHeaderVars(canvas)
     // eslint-disable-next-line prefer-const
     let { x, y, w, h, mx, my, moving } = coordinatesRef.current
     const ctx = canvas.getContext('2d')!
@@ -243,7 +242,7 @@ const useImageLoader = (
       const image = imageRef.current
       if (!image || !canvasRef.current) return
 
-      const { canvasWidth, canvasHeight, cropWidth, cropHeight, maxX, maxY } = getBannerVars(
+      const { canvasWidth, canvasHeight, cropWidth, cropHeight, maxX, maxY } = getHeaderVars(
         canvasRef.current,
       )
       const { width: iw, height: ih } = image
@@ -255,20 +254,20 @@ const useImageLoader = (
       let h: number
 
       // Calculate initial image dimensions and position based on aspect ratio
-      if (ir > bannerAspectRatio) {
-        // Image is wider than banner aspect ratio
+      if (ir > headerAspectRatio) {
+        // Image is wider than header aspect ratio
         h = cropHeight
         w = h * ir
         x = maxX - (w - cropWidth) / 2
         y = maxY
-      } else if (ir < bannerAspectRatio) {
-        // Image is taller than banner aspect ratio
+      } else if (ir < headerAspectRatio) {
+        // Image is taller than header aspect ratio
         w = cropWidth
         h = w / ir
         x = maxX
         y = maxY - (h - cropHeight) / 2
       } else {
-        // Image has same aspect ratio as banner
+        // Image has same aspect ratio as header
         w = cropWidth
         h = cropHeight
         x = maxX
@@ -464,7 +463,7 @@ const useWindowResize = (
 
     // For a 3:1 ratio (width:height), we need to ensure the height is 1/3 of the width
     let width = Math.min(adjustedWidth, 1200) // Cap at 1200px for max width
-    let height = width / bannerAspectRatio // Maintain 3:1 aspect ratio
+    let height = width / headerAspectRatio // Maintain 3:1 aspect ratio
 
     // Ensure minimum dimensions
     width = Math.max(width, 600)
@@ -577,7 +576,7 @@ const useCropSubmission = (
   const handleSubmit = useCallback(() => {
     if (!canvasRef.current) return
 
-    const { cropWidth, cropHeight, maxX, maxY } = getBannerVars(canvasRef.current)
+    const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current)
     const cropCanvas = document.createElement('canvas')
     const cropCtx = cropCanvas.getContext('2d')!
 

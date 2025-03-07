@@ -15,7 +15,7 @@ const Container = styled.div(
   `,
 )
 
-const BannerPreview = styled.div<{ $src?: string }>(
+const HeaderPreview = styled.div<{ $src?: string }>(
   ({ theme, $src }) => css`
     width: 100%;
     height: 150px;
@@ -30,7 +30,7 @@ const BannerPreview = styled.div<{ $src?: string }>(
   `,
 )
 
-export const BannerManual = ({
+export const HeaderManual = ({
   handleCancel,
   handleSubmit,
 }: {
@@ -79,12 +79,12 @@ export const BannerManual = ({
 
   return (
     <>
-      <Dialog.Heading title="Enter Banner URI" />
+      <Dialog.Heading title="Enter Header URI" />
       <Dialog.Content>
         <Container>
-          <BannerPreview $src={uri} />
+          <HeaderPreview $src={uri} />
           <Input
-            label="Banner URI"
+            label="Header URI"
             placeholder="https:// or ipfs://"
             value={uri}
             onChange={handleUriChange}

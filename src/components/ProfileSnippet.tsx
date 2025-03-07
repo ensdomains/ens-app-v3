@@ -210,7 +210,7 @@ export const ProfileSnippet = ({
 
   const beautifiedName = useBeautifiedName(name)
 
-  const banner = getTextRecord?.('header')?.value
+  const header = getTextRecord?.('header')?.value
   const description = getTextRecord?.('description')?.value
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value
@@ -263,7 +263,7 @@ export const ProfileSnippet = ({
 
   return (
     <Container data-testid="profile-snippet">
-      {banner && <HeaderImage src={banner} id="header-image" />}
+      {header && <HeaderImage src={header} id="header-image" />}
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
