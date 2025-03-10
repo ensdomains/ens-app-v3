@@ -4,6 +4,8 @@ import { PostHogProvider as PostHogProviderBase } from 'posthog-js/react'
 import { ReactNode, useEffect } from 'react'
 import { useAccountEffect } from 'wagmi'
 
+import { CookieConsentBanner } from '@app/components/CookieConsentBanner'
+
 import { sendEvent } from './events'
 
 function isProduction() {
@@ -70,5 +72,10 @@ export const PostHogProvider = ({ children }: { children: ReactNode }) => {
     },
   })
 
-  return <PostHogProviderBase client={posthog}>{children}</PostHogProviderBase>
+  return (
+    <PostHogProviderBase client={posthog}>
+      {children}
+      <CookieConsentBanner />
+    </PostHogProviderBase>
+  )
 }
