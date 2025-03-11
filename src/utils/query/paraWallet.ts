@@ -33,8 +33,6 @@ const paraConstructorOpts: ConstructorOpts = {
   xUrl: ENS_LINKS.X,
   homepageUrl: ENS_LINKS.HOMEPAGE,
   supportUrl: ENS_LINKS.EMAIL,
-
-  disableWorkers: true,
 }
 
 export const paraClient = new ParaWeb(PARA_ENV, PARA_API_KEY, paraConstructorOpts)
