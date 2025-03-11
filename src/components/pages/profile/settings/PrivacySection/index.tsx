@@ -77,8 +77,9 @@ export function PrivacySection() {
                 <>Cookies declined on {formatDate(lastConsentDate)}</>
               ))
               .with(['no', P.nullish], () => <>Cookies declined</>)
-              .with(['undecided', P._], () => <>Cookie preferences not yet configured</>)
-              .exhaustive()}
+              .otherwise(() => (
+                <>Cookie preferences not yet configured</>
+              ))}
           </Typography>
         </EntryContentContainer>
         {consent === 'yes' ? (
