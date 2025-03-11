@@ -83,5 +83,3 @@ export const CookieConsentBanner = () => {
     </BannerContainer>
   )
 }
-
-export default CookieConsentBanner
