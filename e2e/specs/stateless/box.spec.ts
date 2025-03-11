@@ -23,7 +23,7 @@ test('should allow box registration with available name', async ({
   const homePage = makePageObject('HomePage')
 
   await consoleListener.initialize({
-    regex: new RegExp(`\\[Metrics\\] Event:.*?`),
+    regex: /\[Metrics\] Event:.*?/,
   })
 
   await time.sync(500)
@@ -81,7 +81,7 @@ test('should not direct to the registration page if name is not available', asyn
   const name = 'google.box'
 
   await consoleListener.initialize({
-    regex: new RegExp(`\\[Metrics\\] Event:.*?`),
+    regex: /\[Metrics\] Event:.*?/,
   })
 
   const homePage = makePageObject('HomePage')

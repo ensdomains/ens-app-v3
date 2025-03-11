@@ -51,7 +51,9 @@ export const useMoonpayRegistration = (
       setHasMoonpayModal(true)
 
       sendEvent('register:moonpay_start', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         external_transaction_id: externalTransactionId,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name: normalisedName,
         duration,
       })
@@ -85,7 +87,9 @@ export const useMoonpayRegistration = (
         })
 
         sendEvent('register:moonpay_complete', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           external_transaction_id: externalTransactionId,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           ens_name: normalisedName,
         })
       }

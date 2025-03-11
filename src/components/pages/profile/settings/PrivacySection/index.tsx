@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
-import { Button, Card, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { HistoryItem } from '@app/components/@molecules/SearchInput/types'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
@@ -69,12 +69,14 @@ export function PrivacySection() {
           <Typography fontVariant="bodyBold">Cookie Consent</Typography>
           <Typography fontVariant="small">
             {match([consent, lastConsentDate])
-              .with(['yes', P.instanceOf(Date)], ([_, lastConsentDate]) => (
-                <>Cookies accepted on {formatDate(lastConsentDate)}</>
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              .with(['yes', P.instanceOf(Date)], ([_, date]) => (
+                <>Cookies accepted on {formatDate(date)}</>
               ))
               .with(['yes', P.nullish], () => <>Cookies accepted</>)
-              .with(['no', P.instanceOf(Date)], ([_, lastConsentDate]) => (
-                <>Cookies declined on {formatDate(lastConsentDate)}</>
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              .with(['no', P.instanceOf(Date)], ([_, date]) => (
+                <>Cookies declined on {formatDate(date)}</>
               ))
               .with(['no', P.nullish], () => <>Cookies declined</>)
               .otherwise(() => (

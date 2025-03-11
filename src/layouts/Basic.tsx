@@ -95,7 +95,9 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
     if (!IS_DEV_ENVIRONMENT)
       boot({
         customAttributes: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           posthog_id: posthog.get_distinct_id(),
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           recent_replay: posthog.get_session_replay_url(),
         },
       })
@@ -106,7 +108,9 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
     update({
       name: primary?.beautifiedName,
       customAttributes: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         wallet_address: address,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         wallet_type: connector?.type,
         chain: chain?.name ?? chainId,
       },

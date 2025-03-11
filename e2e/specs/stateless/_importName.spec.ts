@@ -15,7 +15,7 @@ test('should allow claim (owned by user)', async ({
   console.log(strictModeEventCount)
   const name = 'swagabc.xyz'
   await consoleListener.initialize({
-    regex: new RegExp(`\\[Metrics\\] Event:.*?`),
+    regex: /\[Metrics\] Event:.*?/,
   })
 
   const homePage = makePageObject('HomePage')
@@ -132,7 +132,7 @@ test('should allow import (not owned by user)', async ({
   const name = 'taytems.xyz'
 
   await consoleListener.initialize({
-    regex: new RegExp(`\\[Metrics\\] Event:.*?`),
+    regex: /\[Metrics\] Event:.*?/,
   })
 
   const homePage = makePageObject('HomePage')

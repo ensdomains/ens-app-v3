@@ -44,7 +44,7 @@ test.describe.serial('normal registration', () => {
     const transactionModal = makePageObject('TransactionModal')
 
     await consoleListener.initialize({
-      regex: new RegExp(`\\[Metrics\\] Event:.*?`),
+      regex: /\[Metrics\] Event:.*?/,
     })
 
     await time.sync()
@@ -265,7 +265,7 @@ test.describe.serial('normal registration', () => {
     consoleListener,
   }) => {
     await consoleListener.initialize({
-      regex: new RegExp(`\\[Metrics\\] Event:.*?`),
+      regex: /\[Metrics\] Event:.*?/,
     })
 
     const homePage = makePageObject('HomePage')
@@ -1564,7 +1564,7 @@ test.describe('Error handling', () => {
 
     await time.sync()
     await consoleListener.initialize({
-      regex: new RegExp(`\\[Metrics\\] Event:.*?`),
+      regex: /\[Metrics\] Event:.*?/,
     })
     await homePage.goto()
     await login.connect()

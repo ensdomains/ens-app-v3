@@ -18,9 +18,9 @@ import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { sendEvent } from '@app/utils/analytics/events'
 import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
 import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
-import { sendEvent } from '@app/utils/analytics/events'
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -243,6 +243,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   useEffect(() => {
     if (canRegisterOverride) {
       sendEvent('register:transaction_override', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name: name,
       })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
@@ -299,6 +300,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     })
 
     sendEvent('register:transaction_claim', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       ens_name: name,
     })
   }, [commitKey, createTransactionFlow, name, onStart, registrationParams])
@@ -312,6 +314,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     })
 
     sendEvent('register:transaction_register', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       ens_name: name,
     })
   }

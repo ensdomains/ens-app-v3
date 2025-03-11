@@ -68,8 +68,8 @@ export const CookieConsentBanner = () => {
     <BannerContainer>
       <Card>
         <Typography>
-          ENS uses a single in-house cookie to enhance your experience. We don't use any third-party
-          tracking cookies.
+          ENS uses a single in-house cookie to enhance your experience. We don&apos;t use any
+          third-party tracking cookies.
         </Typography>
         <ButtonContainer>
           <Button size="small" colorStyle="background" onClick={handleDecline}>

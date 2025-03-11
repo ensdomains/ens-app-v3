@@ -111,8 +111,11 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     }
     case 'decreaseStep': {
       sendEvent('register:back', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name: item.name,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         from_step: item.queue[item.stepIndex],
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         to_step: item.queue[item.stepIndex - 1],
       })
 

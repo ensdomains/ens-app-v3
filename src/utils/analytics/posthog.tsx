@@ -1,5 +1,5 @@
 import { Router } from 'next/router'
-import posthog, { type PostHog } from 'posthog-js'
+import posthog from 'posthog-js'
 import { PostHogProvider as PostHogProviderBase } from 'posthog-js/react'
 import { ReactNode, useEffect } from 'react'
 import { useAccountEffect } from 'wagmi'
@@ -50,11 +50,13 @@ export const PostHogProvider = ({ children }: { children: ReactNode }) => {
           address: data.address,
         },
         {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           initial_address: data.address,
         },
       )
 
       posthog.register({
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         chain_id: data.chainId,
       })
 
@@ -63,6 +65,7 @@ export const PostHogProvider = ({ children }: { children: ReactNode }) => {
         wallet_address: data.address,
         // eslint-disable-next-line @typescript-eslint/naming-convention
         chain_id: data.chainId,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         wallet_connector: data.connector.name,
       })
     },

@@ -148,11 +148,16 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     durationType,
   }: RegistrationStepData['pricing']) => {
     sendEvent('register:pricing', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       ens_name: normalisedName,
       duration: seconds,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       estimated_total: estimatedTotal ?? 0n,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       eth_price: ethPrice ?? 0n,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       payment_method: paymentMethodChoice,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       add_reverse_record: reverseRecord,
     })
 
@@ -206,8 +211,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   }: RegistrationStepData['profile'] & BackObj) => {
     if (!back) {
       sendEvent('register:profile', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name: normalisedName,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         profile_records: records,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         resolver_address: resolverAddress,
       })
     }
@@ -223,6 +231,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const infoCallback = ({ back }: BackObj) => {
     if (!back) {
       sendEvent('register:info', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name: normalisedName,
       })
     }
@@ -243,8 +252,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const infoProfileCallback = () => {
     sendEvent('register:back', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       ens_name: normalisedName,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       from_step: 'info',
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       to_step: 'profile',
     })
     dispatch({

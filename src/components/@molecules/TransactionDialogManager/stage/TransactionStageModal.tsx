@@ -555,6 +555,7 @@ export const TransactionStageModal = ({
               ),
               (action) => {
                 sendEvent('wallet:open', {
+                  // eslint-disable-next-line @typescript-eslint/naming-convention
                   wallet_action: action,
                 })
               },

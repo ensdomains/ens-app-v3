@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import posthog from 'posthog-js'
 
-import { DnsImportType, DnsStep } from '@app/components/pages/import/[name]/useDnsImportReducer'
+import type {
+  DnsImportType,
+  DnsStep,
+} from '@app/components/pages/import/[name]/useDnsImportReducer'
 import {
   PaymentMethod,
   RegistrationStep,

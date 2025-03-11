@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { match } from 'ts-pattern'
 import { Address } from 'viem'
 import { useChainId } from 'wagmi'
 
@@ -120,8 +119,6 @@ const reducer = () => (state: DnsImportReducerData, action: DnsImportReducerActi
 
   switch (action.name) {
     case 'increaseStep': {
-      const currentStep = selectedItem.steps[selectedItem.stepIndex]
-
       selectedItem.stepIndex += 1
       return state
     }

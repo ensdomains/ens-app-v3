@@ -344,7 +344,9 @@ const createSearchHandler =
 
     if (searchType)
       sendEvent('search:select', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name_type: searchType,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name: text,
       })
 
