@@ -3,18 +3,17 @@ let csp = ''
 // worker-src
 csp += 'worker-src'
 // allow our own worker scripts
-csp += " 'self'"
+csp += " 'self' blob:"
 // allow Para (Capsule) worker scripts
 csp += ' https://app.beta.usecapsule.com'
 csp += ' https://app.usecapsule.com'
-csp += ' blob:'
 // end worker-src
 csp += ';'
 
 // script-src
 csp += ' script-src'
 // allow self
-csp += " 'self'"
+csp += " 'self' blob:"
 // allow plausible script
 csp += ' plausible.io'
 // allow cloudflare analytics script
