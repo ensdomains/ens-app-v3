@@ -13,7 +13,7 @@ csp += ';'
 // script-src
 csp += ' script-src'
 // allow self
-csp += " 'self' blob:"
+csp += " 'self'"
 // allow plausible script
 csp += ' plausible.io'
 // allow cloudflare analytics script
