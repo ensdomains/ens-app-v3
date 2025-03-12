@@ -76,14 +76,14 @@ type StateOverride<Quantity256 = bigint, Quantity = number> = {
   }
 }
 
-type TransactionItem = {
+export type TransactionItem = {
   [TName in TransactionName]: Omit<TransactionParameters<TName>, 'client' | 'connectorClient'> & {
     name: TName
     stateOverride?: UserStateOverrides
   }
 }[TransactionName]
 
-type UseEstimateGasWithStateOverrideParameters<
+export type UseEstimateGasWithStateOverrideParameters<
   TransactionItems extends TransactionItem[] | readonly TransactionItem[],
 > = {
   transactions: TransactionItems
@@ -295,9 +295,10 @@ export const useEstimateGasWithStateOverride = <
 
   const data = useMemo(() => {
     if (!gasPrice || !query.data) {
+      const transactions = params.transactions ?? []
       return {
         gasEstimate: 0n,
-        gasEstimateArray: params.transactions.map(() => 0n) as GasEstimateArray<TransactionItems>,
+        gasEstimateArray: transactions.map(() => 0n) as GasEstimateArray<TransactionItems>,
         gasCost: 0n,
         gasCostEth: '0',
       }
