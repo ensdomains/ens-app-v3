@@ -7,7 +7,6 @@ csp += " 'self' blob:"
 // allow Para (Capsule) worker scripts
 csp += ' https://app.beta.usecapsule.com'
 csp += ' https://app.usecapsule.com'
-csp += ' wasm-unsafe-eval'
 // end worker-src
 csp += ';'
 
