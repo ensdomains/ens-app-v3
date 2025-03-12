@@ -1,5 +1,5 @@
 import posthog from 'posthog-js'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { Button, Card, Typography } from '@ensdomains/thorin'
@@ -42,8 +42,10 @@ const ButtonContainer = styled.div`
 
 export const CookieConsentBanner = () => {
   const { consent, setConsent } = useCookieConsent()
+  const [showBanner, setShowBanner] = useState(false)
 
   useEffect(() => {
+    setShowBanner(consent === 'undecided')
     // Set PostHog persistence based on consent
     if (consent !== 'undecided') {
       posthog.set_config({
@@ -52,7 +54,7 @@ export const CookieConsentBanner = () => {
     }
   }, [consent])
 
-  if (consent !== 'undecided') {
+  if (!showBanner) {
     return null
   }
 
