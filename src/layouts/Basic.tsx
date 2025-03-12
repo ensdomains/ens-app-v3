@@ -1,15 +1,12 @@
-import posthog from 'posthog-js'
 import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
-import { useIntercom } from 'react-use-intercom'
 import styled, { css } from 'styled-components'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
-import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
+import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 import { Navigation } from './Navigation'
@@ -81,41 +78,13 @@ const shouldSwitchChain = ({
   !getSupportedChainById(chainId)
 
 export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
-  const { chainId, connector, isConnected, address, chain } = useAccount()
+  const { chainId, connector, isConnected } = useAccount()
   const hasProgrammaticChainSwitching = Boolean(connector?.switchChain)
   const { switchChain, isPending, isError } = useSwitchChain()
-  const { data: primary } = usePrimaryName({ address })
+  useSetupIntercom()
 
   const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
-  const { boot, update } = useIntercom()
-
-  useEffect(() => {
-    // Do not initialise with uid and email without implementing identity verification first
-    if (!IS_DEV_ENVIRONMENT)
-      boot({
-        customAttributes: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          posthog_id: posthog.get_distinct_id(),
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          recent_replay: posthog.get_session_replay_url(),
-        },
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    update({
-      name: primary?.beautifiedName,
-      customAttributes: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        wallet_address: address,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        wallet_type: connector?.type,
-        chain: chain?.name ?? chainId,
-      },
-    })
-  }, [primary, address])
 
   useEffect(() => {
     if (
