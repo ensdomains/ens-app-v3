@@ -30,7 +30,7 @@ csp += ' https://app.beta.usecapsule.com'
 csp += ' https://app.usecapsule.com'
 
 // allow inline wasm evaluation
-csp += ' wasm-unsafe-eval'
+csp += " 'wasm-unsafe-eval'"
 // INLINE SCRIPT HASHES
 // hiddenCheckScript
 csp += " 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc='"
