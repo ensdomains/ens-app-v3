@@ -7,12 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-<<<<<<< HEAD
-
-      - name: Install corepack
-        run: npm i -g corepack
-=======
->>>>>>> a87770a8fd11cef16bd907569957a24c609917ee
 
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
