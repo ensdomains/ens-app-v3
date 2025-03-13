@@ -23,12 +23,7 @@ test('should allow box registration with available name', async ({
   const homePage = makePageObject('HomePage')
 
   await consoleListener.initialize({
-    regex: new RegExp(
-      `Event triggered on local development.*?(${[
-        'search_selected_box',
-        'register_started_box',
-      ].join('|')})`,
-    ),
+    regex: /\[Metrics\] Event:.*?/,
   })
 
   await time.sync(500)
@@ -41,10 +36,10 @@ test('should allow box registration with available name', async ({
   await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
   await homePage.searchInput.press('Enter')
 
-  await test.step('should fire tracking event: search_selected_box', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(1)
+  await test.step('should fire tracking event: search:select', async () => {
+    await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
     await expect(consoleListener.getMessages().toString()).toMatch(
-      new RegExp(`search_selected_box.*?${name}`),
+      new RegExp(`search:select.*?${name}`),
     )
     consoleListener.clearMessages()
   })
@@ -65,9 +60,9 @@ test('should allow box registration with available name', async ({
     `https://my.box/search?domain=${name.replace('.box', '')}&ref=ensdomains`,
   )
 
-  await test.step('should fire tracking event: register_started_box', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(1)
-    await expect(consoleListener.getMessages().toString()).toContain('register_started_box')
+  await test.step('should fire tracking event: register:dotbox', async () => {
+    await expect(consoleListener.getMessages(/register:dotbox/)).toHaveLength(1)
+    await expect(consoleListener.getMessages().toString()).toContain('register:dotbox')
     consoleListener.clearMessages()
   })
 })
@@ -86,7 +81,7 @@ test('should not direct to the registration page if name is not available', asyn
   const name = 'google.box'
 
   await consoleListener.initialize({
-    regex: /Event triggered on local development.*?search_selected_box/,
+    regex: /\[Metrics\] Event:.*?/,
   })
 
   const homePage = makePageObject('HomePage')
@@ -101,6 +96,6 @@ test('should not direct to the registration page if name is not available', asyn
   await expect(page).toHaveURL('/')
 
   await test.step('should not fire tracking event: search_selected_box', async () => {
-    await expect(consoleListener.getMessages()).toHaveLength(0)
+    await expect(consoleListener.getMessages(/search:select/)).toHaveLength(0)
   })
 })

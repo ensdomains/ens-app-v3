@@ -14,11 +14,11 @@ import { Card } from '@app/components/Card'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { sendEvent } from '@app/utils/analytics/events'
 import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
 import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
 import { ONE_DAY } from '@app/utils/time'
@@ -207,7 +207,6 @@ type Props = {
 
 const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
-  const { trackEvent } = useEventTracker()
 
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
@@ -243,7 +242,10 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   useEffect(() => {
     if (canRegisterOverride) {
-      trackEvent({ eventName: 'register_override_triggered' })
+      sendEvent('register:transaction_override', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name: name,
+      })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -296,6 +298,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       autoClose: true,
       resumeLink: `/register/${name}`,
     })
+
+    sendEvent('register:transaction_claim', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ens_name: name,
+    })
   }, [commitKey, createTransactionFlow, name, onStart, registrationParams])
 
   const makeRegisterNameFlow = () => {
@@ -306,7 +313,10 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       resumeLink: `/register/${name}`,
     })
 
-    trackEvent({ eventName: 'register_started' })
+    sendEvent('register:transaction_register', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ens_name: name,
+    })
   }
 
   const showCommitTransaction = () => {
@@ -333,6 +343,9 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   useEffect(() => {
     if (registerTx?.stage === 'complete') {
       callback({ back: false })
+      sendEvent('register:transaction_complete', {
+        name,
+      })
     }
   }, [callback, registerTx?.stage])
 

@@ -58,6 +58,7 @@ describe('useEventTracker', () => {
         paymentMethod,
         estimatedTotal,
         ethPrice,
+        durationType: 'years',
       },
     })
 

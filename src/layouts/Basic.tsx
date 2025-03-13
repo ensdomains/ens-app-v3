@@ -1,13 +1,12 @@
 import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
-import { useIntercom } from 'react-use-intercom'
 import styled, { css } from 'styled-components'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
+import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 import { Navigation } from './Navigation'
@@ -82,16 +81,10 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { chainId, connector, isConnected } = useAccount()
   const hasProgrammaticChainSwitching = Boolean(connector?.switchChain)
   const { switchChain, isPending, isError } = useSwitchChain()
+  useSetupIntercom()
 
   const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
-  const { boot } = useIntercom()
-
-  useEffect(() => {
-    // Do not initialise with uid and email without implementing identity verification first
-    if (!IS_DEV_ENVIRONMENT) boot()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     if (
