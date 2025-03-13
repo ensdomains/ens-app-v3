@@ -12,6 +12,7 @@ import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
 import { useDnsSecEnabled } from '@app/hooks/dns/useDnsSecEnabled'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useUnmanagedTLD } from '@app/hooks/useUnmanagedTLD'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { getSupportLink } from '@app/utils/supportLinks'
 
@@ -158,6 +159,7 @@ export const SelectImportType = ({
 
   const { address } = useAccount()
   const chainId = useChainId()
+  const isUnmanaged = useUnmanagedTLD(selected.name)
   const { data: tldResolver } = useResolver({ name: selected.name.split('.')[1] })
 
   const tldResolverIsOffchainResolver = useMemo(
@@ -191,6 +193,16 @@ export const SelectImportType = ({
     })
     dispatch({ name: 'setSteps', selected, payload: steps })
     dispatch({ name: 'increaseStep', selected })
+  }
+
+  if (isUnmanaged) {
+    const tld = selected.name.split('.').pop()
+    return (
+      <DnsImportCard>
+        <DnsImportHeading>{t('title', { name: selected.name })}</DnsImportHeading>
+        <CenteredTypography>{t('customizedTld', { tld })}</CenteredTypography>
+      </DnsImportCard>
+    )
   }
 
   return (

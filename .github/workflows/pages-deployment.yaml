@@ -7,7 +7,6 @@ env:
 
 on: [push]
 jobs:
-
   deploy:
     if: ${{ always() }}
     runs-on: ubuntu-latest
