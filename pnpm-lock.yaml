@@ -146,11 +146,11 @@ importers:
         specifier: 1.0.0-beta.24
         version: 1.0.0-beta.24(@vanilla-extract/css@1.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@getpara/rainbowkit':
-        specifier: 1.2.0-dev.4
-        version: 1.2.0-dev.4(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
+        specifier: 1.2.0-dev.5
+        version: 1.2.0-dev.5(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
       '@getpara/rainbowkit-wallet':
         specifier: 1.2.0-dev.4
-        version: 1.2.0-dev.4(xsk53jsxf3smxlxet4jy3cn5ym)
+        version: 1.2.0-dev.4(t7y6jm5hf7n3vnshft5hl5vqe4)
       '@metamask/post-message-stream':
         specifier: ^6.1.2
         version: 6.2.0
@@ -1726,8 +1726,8 @@ packages:
       viem: 2.x
       wagmi: 2.x
 
-  '@getpara/rainbowkit@1.2.0-dev.4':
-    resolution: {integrity: sha512-vwRuBVmeXu5p7cZtalrnRIMLbt9SG4RRQ92AHSm06HAry3SaVFF7RenPsISVI4GZig0Bp8tlQ1W7Bf2pey/Ttw==}
+  '@getpara/rainbowkit@1.2.0-dev.5':
+    resolution: {integrity: sha512-kqqgEX1wFlGN8jKqim6ejTE1HqTFx1IX6gyXmZ6tttkzfYTuaN7hpauJD27cfGv8Vy8z31A71GJkL4VCyzQ7lQ==}
     engines: {node: '>=12.4'}
     peerDependencies:
       react: ^18.2.0
@@ -9307,9 +9307,9 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@getpara/rainbowkit-wallet@1.2.0-dev.4(xsk53jsxf3smxlxet4jy3cn5ym)':
+  '@getpara/rainbowkit-wallet@1.2.0-dev.4(t7y6jm5hf7n3vnshft5hl5vqe4)':
     dependencies:
-      '@getpara/rainbowkit': 1.2.0-dev.4(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
+      '@getpara/rainbowkit': 1.2.0-dev.5(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
       '@getpara/react-sdk': 1.5.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@getpara/wagmi-v2-integration': 1.5.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
       viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -9323,7 +9323,7 @@ snapshots:
       - react
       - react-dom
 
-  '@getpara/rainbowkit@1.2.0-dev.4(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))':
+  '@getpara/rainbowkit@1.2.0-dev.5(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))':
     dependencies:
       '@coinbase/wallet-sdk': 3.9.3
       '@getpara/react-sdk': 1.5.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
