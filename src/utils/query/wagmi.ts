@@ -13,6 +13,7 @@ import {
 
 import { WC_PROJECT_ID } from '../constants'
 import { getDefaultWallets } from '../getDefaultWallets'
+import { isInsideSafe } from '../safe'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 
@@ -107,7 +108,7 @@ const transports = {
 const wagmiConfig_ = createConfig({
   connectors,
   ssr: true,
-  multiInjectedProviderDiscovery: true,
+  multiInjectedProviderDiscovery: !isInsideSafe(),
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
   client: ({ chain }) => {
