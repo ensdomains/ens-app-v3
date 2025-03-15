@@ -1,13 +1,11 @@
 import type { ParsedUrlQuery } from 'querystring'
 import { mockFunction, renderHook, screen } from '@app/test-utils'
 
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@getpara/rainbowkit'
 import mockRouter from 'next-router-mock'
 import { useSearchParams } from 'next/navigation'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, type UseAccountReturnType } from 'wagmi'
-
-import { sc } from '@ensdomains/address-encoder/coins'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -19,14 +17,12 @@ import { calculateRenewState, removeRenewParam, useRenew } from './useRenew'
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
 vi.mock('@app/hooks/useBasicName')
 vi.mock('@app/hooks/abilities/useAbilities')
-vi.mock('@rainbow-me/rainbowkit')
 vi.mock('wagmi')
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 vi.mock('next/navigation')
 
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseAbilities = mockFunction(useAbilities)
-const mockUseConnectModal = mockFunction(useConnectModal)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 const mockUseSearchParams = mockFunction(useSearchParams)
@@ -493,11 +489,6 @@ describe('useRenew', () => {
       status: 'connected',
     })
 
-    mockUseConnectModal.mockReturnValue({
-      connectModalOpen: false,
-      openConnectModal: undefined,
-    })
-
     mockUseTransactionFlow.mockReturnValue({
       usePreparedDataInput: () => mockShowExtendNamesInput,
     })
@@ -612,14 +603,10 @@ describe('useRenew', () => {
     mockRouter.push('/test.eth?renew=123')
     const mockOpenConnectModal = vi.fn()
     mockUseAccount.mockReturnValue({ status: 'disconnected' })
-    mockUseConnectModal.mockReturnValue({
-      openConnectModal: mockOpenConnectModal,
-      connectModalOpen: false,
-    })
 
     renderHook(() => useRenew('test.eth'))
 
-    expect(mockOpenConnectModal).toHaveBeenCalled()
+    expect(useConnectModal().openConnectModal).toHaveBeenCalled()
     expect(mockShowExtendNamesInput).not.toHaveBeenCalled()
   })
 
@@ -686,11 +673,7 @@ describe('useRenew', () => {
 
   it('should do nothing when connect modal is open', () => {
     mockRouter.push('/test.eth?renew=123')
-    mockUseConnectModal.mockReturnValue({
-      openConnectModal: vi.fn(),
-      connectModalOpen: true,
-    })
-
+    useConnectModal().connectModalOpen = true
     renderHook(() => useRenew('test.eth'))
 
     expect(mockShowExtendNamesInput).not.toHaveBeenCalled()

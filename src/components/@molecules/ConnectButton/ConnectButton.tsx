@@ -1,12 +1,10 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Key, ReactNode } from 'react'
+import { useConnectModal } from '@getpara/rainbowkit'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
-import { useDisconnect, useEnsAvatar } from 'wagmi'
+import { useConnections, useDisconnect, useEnsAvatar } from 'wagmi'
 
-import { Button, CheckSVG, CogSVG, CopySVG, ExitSVG, PersonSVG, Profile } from '@ensdomains/thorin'
-import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
+import { Button, PersonSVG, Profile } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
@@ -16,9 +14,9 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { shortenAddress } from '@app/utils/utils'
+import { hasParaConnection } from '@app/utils/utils'
 
-import BaseLink from './@atoms/BaseLink'
+import { getDropdownItems } from './utils'
 
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }>(
   ({ theme, $isTabBar, $large }) => [
@@ -55,14 +53,6 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
           `}
         `,
   ],
-)
-
-const SectionDivider = styled.div(
-  ({ theme }) => css`
-    width: calc(100% + ${theme.space['4']});
-    height: 1px;
-    background-color: ${theme.colors.border};
-  `,
 )
 
 const PersonOverlay = styled.div(
@@ -106,7 +96,9 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
     <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
       <Button
         data-testid={calculateTestId(isTabBar, inHeader)}
-        onClick={() => openConnectModal?.()}
+        onClick={() => {
+          openConnectModal?.()
+        }}
         size={breakpoints.sm || large ? 'medium' : 'small'}
         width={inHeader ? '45' : undefined}
         shape="rounded"
@@ -136,54 +128,23 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const { copy, copied } = useCopied(300)
   const hasPendingTransactions = useHasPendingTransactions()
 
+  const connections = useConnections()
+  const isParaConnected = hasParaConnection(connections)
+
   return (
     <Profile
       address={address}
       ensName={primary?.beautifiedName}
-      dropdownItems={
-        [
-          ...(primary?.name
-            ? [
-                {
-                  label: t('wallet.myProfile'),
-                  wrapper: (children: ReactNode, key: Key) => (
-                    <BaseLink href="/my/profile" key={key}>
-                      {children}
-                    </BaseLink>
-                  ),
-                  as: 'a' as 'a',
-                  color: 'text',
-                  icon: PersonSVG,
-                },
-              ]
-            : []),
-          {
-            label: t('navigation.settings'),
-            color: 'text',
-            wrapper: (children: ReactNode, key: Key) => (
-              <BaseLink href="/my/settings" key={key}>
-                {children}
-              </BaseLink>
-            ),
-            as: 'a',
-            icon: CogSVG,
-            showIndicator: hasPendingTransactions,
-          },
-          <SectionDivider key="divider" />,
-          {
-            label: shortenAddress(address),
-            color: 'text',
-            onClick: () => copy(address),
-            icon: copied ? CheckSVG : CopySVG,
-          },
-          {
-            label: t('wallet.disconnect'),
-            color: 'red',
-            onClick: () => disconnect(),
-            icon: ExitSVG,
-          },
-        ] as DropdownItem[]
-      }
+      dropdownItems={getDropdownItems({
+        primary,
+        disconnect,
+        copy,
+        copied,
+        hasPendingTransactions,
+        isParaConnected,
+        t,
+        address,
+      })}
       avatar={{
         src: avatar || zorb,
         decoding: 'sync',

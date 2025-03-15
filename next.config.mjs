@@ -23,12 +23,23 @@ const babelIncludeRegexes = [
  * @type {import('next').NextConfig}
  * */
 const nextConfig = {
+  transpilePackages: [
+    '@getpara/rainbowkit',
+    '@getpara/rainbowkit-wallet',
+    '@getpara/core-components',
+    '@getpara/react-components',
+    '@getpara/react-sdk',
+    '@getpara/core-sdk',
+    '@getpara/web-sdk',
+    '@getpara/wagmi-v2-integration',
+    '@getpara/viem-v2-integration',
+  ],
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
   },
   // change to true once infinite loop is fixed
-  swcMinify: false,
+  swcMinify: true,
   images: {
     domains: ['metadata.ens.domains'],
   },
