@@ -14,8 +14,8 @@ const shouldAttemptReconnect = () => {
 
 const addParaConnector = (connector: Connector) => {
   wagmiConfig._internal.connectors.setState((existingConnectors) => [
-    ...existingConnectors.filter((c) => c.id !== paraWalletId),
     connector,
+    ...existingConnectors.filter((c) => c.id !== paraWalletId),
   ])
 }
 
