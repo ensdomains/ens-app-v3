@@ -10,6 +10,7 @@ import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 
 import LanguageMenu from './LanguageMenu'
 import MainMenu from './MainMenu'
+import { ThemeMenu } from './ThemeMenu'
 
 const Button = styled.button<{ $active: boolean }>(
   ({ theme, $active }) => css`
@@ -139,7 +140,7 @@ const SlideContainer = styled.div<{ $direction: 'backwards' | 'forwards' }>(
   `,
 )
 
-type View = 'main' | 'language'
+export type HamburgerView = 'main' | 'language' | 'theme'
 
 const Hamburger = () => {
   const breakpoints = useBreakpoint()
@@ -157,9 +158,9 @@ const Hamburger = () => {
     direction: 'backwards' | 'forwards'
   } | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [currentView, _setCurrentView] = useState<View>('main')
+  const [currentView, _setCurrentView] = useState<HamburgerView>('main')
 
-  const setCurrentView = useCallback((view: View) => {
+  const setCurrentView = useCallback((view: HamburgerView) => {
     _setCurrentView((prev) => {
       if (prev === view) return prev
       if (view === 'main') {
@@ -245,6 +246,7 @@ const Hamburger = () => {
   const currentComponent = match(currentView)
     .with('main', () => <MainMenu {...{ setCurrentView }} />)
     .with('language', () => <LanguageMenu setCurrentView={setCurrentView} />)
+    .with('theme', () => <ThemeMenu setCurrentView={setCurrentView} />)
     .exhaustive()
 
   const componentWithAnimation = (
