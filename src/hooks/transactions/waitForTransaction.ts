@@ -4,7 +4,7 @@ import type {
   EIP1193RequestFn,
   Hash,
   PublicRpcSchema,
-  WaitForTransactionReceiptParameters,
+  ReplacementReason,
   WaitForTransactionReceiptReturnType,
 } from 'viem'
 import { hexToString } from 'viem'
@@ -24,7 +24,7 @@ export type WaitForTransactionArgs = {
   /** Transaction hash to monitor */
   hash: Hash
   /** Callback to invoke when the transaction has been replaced (sped up). */
-  onReplaced?: WaitForTransactionReceiptParameters['onReplaced']
+  onReplaced?: (response: { reason: ReplacementReason; transactionHash: Hash }) => void
   /*
    * Maximum amount of time to wait before timing out in milliseconds
    * @default 0
@@ -80,7 +80,8 @@ export async function waitForTransaction(
   const receipt = await waitForTransactionReceipt(client, {
     hash,
     confirmations,
-    onReplaced,
+    onReplaced: ({ reason, transaction }) =>
+      onReplaced?.({ reason, transactionHash: transaction.hash }),
     timeout,
   })
   if (receipt.status === 'reverted') {
@@ -95,6 +96,11 @@ export async function waitForTransaction(
     } as CallParameters)) as unknown as string
     const reason = hexToString(`0x${code.substring(138)}`)
     throw new Error(reason)
+  } else if (isSafeTx) {
+    onReplaced?.({
+      reason: 'repriced',
+      transactionHash: receipt.transactionHash,
+    })
   }
   return receipt
 }
