@@ -118,6 +118,6 @@ describe('loadPara', () => {
     const setStateCallback = wagmiConfig._internal.connectors.setState.mock.calls[0][0]
     const existingConnectors = [{ id: 'para-integrated' }, { id: 'other-connector' }]
     const newConnectors = setStateCallback(existingConnectors)
-    expect(newConnectors).toEqual([{ id: 'other-connector' }, mockInitialisedConnector])
+    expect(newConnectors).toEqual([mockInitialisedConnector, { id: 'other-connector' }])
   })
 })
