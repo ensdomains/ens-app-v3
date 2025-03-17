@@ -203,13 +203,6 @@ test.describe.serial('normal registration', () => {
       await page.getByTestId('finish-button').click()
     })
 
-    await test.step('should fire tracking event: transaction:register:send', async () => {
-      await expect(consoleListener.getMessages(/transaction:register:send/)).toHaveLength(1)
-      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
-      await expect(consoleListener.getMessages().toString()).toContain('transaction:register:send')
-      consoleListener.clearMessages()
-    })
-
     await test.step('should be able to confirm registration transaction', async () => {
       await expect(page.getByText('Open Wallet')).toBeVisible()
       await transactionModal.confirm()
@@ -218,6 +211,13 @@ test.describe.serial('normal registration', () => {
     await test.step('should fire tracking event: wallet:open', async () => {
       await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
+      consoleListener.clearMessages()
+    })
+
+    await test.step('should fire tracking event: transaction:register:send', async () => {
+      await expect(consoleListener.getMessages(/transaction:register:send/)).toHaveLength(1)
+      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
+      await expect(consoleListener.getMessages().toString()).toContain('transaction:register:send')
       consoleListener.clearMessages()
     })
 
