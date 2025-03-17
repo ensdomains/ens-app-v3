@@ -213,13 +213,6 @@ test.describe.serial('normal registration', () => {
       await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
     })
 
-    await test.step('should fire tracking event: transaction:register:send', async () => {
-      await expect(consoleListener.getMessages(/transaction:register:send/)).toHaveLength(1)
-      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
-      await expect(consoleListener.getMessages().toString()).toContain('transaction:register:send')
-      consoleListener.clearMessages()
-    })
-
     await test.step('should redirect to completion page ', async () => {
       await expect(page.getByText(`You are now the owner of ${name}`)).toBeVisible()
 
@@ -240,6 +233,13 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByTestId('invoice-item-0')).toHaveText(/1 year registration/)
       await expect(page.getByTestId('invoice-item-expiry')).toHaveText(/Name expires/)
       await expect(page.getByTestId('invoice-item-expiry-date')).toHaveText(`${formattedDate}`)
+    })
+
+    await test.step('should fire tracking event: transaction:register:send', async () => {
+      await expect(consoleListener.getMessages(/transaction:register:send/)).toHaveLength(1)
+      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
+      await expect(consoleListener.getMessages().toString()).toContain('transaction:register:send')
+      consoleListener.clearMessages()
     })
 
     await test.step('confirm that the registration is successful', async () => {
