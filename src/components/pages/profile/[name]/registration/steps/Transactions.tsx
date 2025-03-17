@@ -242,7 +242,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   useEffect(() => {
     if (canRegisterOverride) {
-      sendEvent('register:transaction_override', {
+      sendEvent('transaction:register:override', {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         ens_name: name,
       })
@@ -290,6 +290,60 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     .with(PATTERNS.CommitReady, () => 'commitReady' as const)
     .exhaustive()
 
+  useEffect(() => {
+    match(transactionState)
+      .with('commitSent', () => {
+        sendEvent('transaction:commit:send', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: commitTx?.hash,
+        })
+      })
+      .with('commitFailed', () => {
+        sendEvent('transaction:commit:fail', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: commitTx?.hash,
+        })
+      })
+      .with('commitComplete', () => {
+        sendEvent('transaction:commit:complete', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: commitTx?.hash,
+        })
+      })
+      .with('registrationSent', () => {
+        sendEvent('transaction:register:send', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: registerTx?.hash,
+        })
+      })
+      .with('registrationFailed', () => {
+        sendEvent('transaction:register:fail', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: registerTx?.hash,
+        })
+      })
+      .with('registrationComplete', () => {
+        sendEvent('transaction:register:complete', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: registerTx?.hash,
+        })
+      })
+      .otherwise(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionState])
+
   const makeCommitNameFlow = useCallback(() => {
     onStart()
     createTransactionFlow(commitKey, {
@@ -297,11 +351,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       requiresManualCleanup: true,
       autoClose: true,
       resumeLink: `/register/${name}`,
-    })
-
-    sendEvent('register:transaction_claim', {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      ens_name: name,
     })
   }, [commitKey, createTransactionFlow, name, onStart, registrationParams])
 
@@ -311,11 +360,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       requiresManualCleanup: true,
       autoClose: true,
       resumeLink: `/register/${name}`,
-    })
-
-    sendEvent('register:transaction_register', {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      ens_name: name,
     })
   }
 
@@ -331,6 +375,10 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     cleanupFlow(commitKey)
     cleanupFlow(registerKey)
     callback({ back: true, resetSecret: true })
+    sendEvent('register:transaction_reset', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ens_name: name,
+    })
     setResetOpen(false)
   }
 
@@ -343,9 +391,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   useEffect(() => {
     if (registerTx?.stage === 'complete') {
       callback({ back: false })
-      sendEvent('register:transaction_complete', {
-        name,
-      })
     }
   }, [callback, registerTx?.stage])
 

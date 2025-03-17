@@ -48,6 +48,42 @@ export type EventDefs = {
     ens_name: string
   }
 
+  // Commit Transactions
+  'transaction:commit:send': {
+    ens_name: string
+    transaction_hash?: string
+  }
+
+  'transaction:commit:fail': {
+    ens_name: string
+    transaction_hash?: string
+  }
+
+  'transaction:commit:complete': {
+    ens_name: string
+    transaction_hash?: string
+  }
+
+  // Register Transactions
+  'transaction:register:send': {
+    ens_name: string
+    transaction_hash?: string
+  }
+
+  'transaction:register:fail': {
+    ens_name: string
+    transaction_hash?: string
+  }
+
+  'transaction:register:complete': {
+    ens_name: string
+    transaction_hash?: string
+  }
+
+  'transaction:register:override': {
+    ens_name: string
+  }
+
   // Register events
   'register:start': {
     ens_name: string
@@ -122,32 +158,12 @@ export type EventDefs = {
     ens_name: string
   }
 
-  'register:transaction_claim': {
-    ens_name: string
-  }
-
-  'register:transaction_claim_complete': {
-    ens_name: string
-  }
-
-  'register:transaction_register': {
-    ens_name: string
-  }
-
   'register:transaction_reset': {
     ens_name: string
   }
 
-  'register:transaction_override': {
-    ens_name: string
-  }
-
-  'register:transaction_complete': {
-    name: string
-  }
-
   'register:complete': {
-    name: string
+    ens_name: string
   }
 
   // Import events

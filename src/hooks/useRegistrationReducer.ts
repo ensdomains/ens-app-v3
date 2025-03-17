@@ -125,7 +125,8 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     case 'increaseStep': {
       if (item.queue[item.stepIndex + 1] === 'complete') {
         sendEvent('register:complete', {
-          name: item.name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: item.name,
         })
       }
 
@@ -163,7 +164,8 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       item.stepIndex = item.queue.findIndex((step) => step === 'complete')
 
       sendEvent('register:complete', {
-        name: item.name,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name: item.name,
       })
 
       break

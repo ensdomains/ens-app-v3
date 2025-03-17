@@ -203,12 +203,10 @@ test.describe.serial('normal registration', () => {
       await page.getByTestId('finish-button').click()
     })
 
-    await test.step('should fire tracking event: register:transaction_register', async () => {
-      await expect(consoleListener.getMessages(/register:transaction_register/)).toHaveLength(1)
+    await test.step('should fire tracking event: transaction:register:send', async () => {
+      await expect(consoleListener.getMessages(/transaction:register:send/)).toHaveLength(1)
       // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
-      await expect(consoleListener.getMessages().toString()).toContain(
-        'register:transaction_register',
-      )
+      await expect(consoleListener.getMessages().toString()).toContain('transaction:register:send')
       consoleListener.clearMessages()
     })
 
