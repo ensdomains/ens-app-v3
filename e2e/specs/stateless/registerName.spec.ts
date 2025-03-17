@@ -211,7 +211,6 @@ test.describe.serial('normal registration', () => {
     await test.step('should fire tracking event: wallet:open', async () => {
       await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
-      consoleListener.clearMessages()
     })
 
     await test.step('should fire tracking event: transaction:register:send', async () => {
