@@ -29,20 +29,29 @@ export const helpers = (draft: InternalTransactionFlow) => {
         !item.resumable ||
         getAllTransactionsComplete(item) ||
         getNoTransactionsStarted(item)
-
+  const getHasPendingTransactions = (item: InternalTransactionFlowItem) => !!item && 
+    item.transactions.some(({ stage }) => stage === 'sent')
   return {
     getSelectedItem,
     getCurrentTransaction,
     getAllTransactionsComplete,
     getCanRemoveItem,
+    getHasPendingTransactions,
   }
 }
 
 export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowAction) => {
-  const { getSelectedItem, getCurrentTransaction, getAllTransactionsComplete } = helpers(draft)
+  const { getSelectedItem, getCurrentTransaction, getAllTransactionsComplete, getHasPendingTransactions } = helpers(draft)
+
+  console.log('action', action)
+  console.log('draft', {...draft})
 
   switch (action.name) {
     case 'showDataInput': {
+      if (getHasPendingTransactions(draft.items[action.key])) {
+        draft.selectedKey = action.key
+        break
+      }
       draft.items[action.key] = {
         currentFlowStage: 'input',
         currentTransaction: 0,
@@ -54,6 +63,10 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'startFlow': {
+      if (getHasPendingTransactions(draft.items[action.key])) {
+        draft.selectedKey = action.key
+        break
+      }
       let currentFlowStage: TransactionFlowStage = 'transaction'
       if (action.payload.intro) {
         currentFlowStage = 'intro'
@@ -160,6 +173,8 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     case 'setTransactionStageFromUpdate': {
       const { hash, key, status, minedData, newHash } = action.payload
 
+      console.log('setTransactionStageFromUpdate', action.payload)
+
       const selectedItem = draft.items[key!]
       if (!selectedItem) break
       const transaction = selectedItem.transactions.find((x) => x.hash === hash)
@@ -184,6 +199,11 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         ) {
           draft.selectedKey = null
         }
+
+        if (!!key && key !== draft.selectedKey && getAllTransactionsComplete(selectedItem)) {
+          console.log('deleting', key)
+          delete draft.items[key]
+        }
       }
       break
     }
@@ -193,7 +213,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       if (
         selectedItem &&
         (!selectedItem.requiresManualCleanup || action.name === 'forceCleanupTransaction') &&
-        (!selectedItem.resumable || getAllTransactionsComplete(selectedItem))
+        getAllTransactionsComplete(selectedItem)
       ) {
         delete draft.items[action.payload]
       }

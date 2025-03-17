@@ -103,7 +103,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
       const introItem =
         transactions.length > 1
           ? {
-              resumeable: true,
+              resumable: true,
               intro: {
                 title: [getIntroTranslation(introType, 'title'), { ns: 'transactionFlow' }],
                 content: makeIntroItem('GenericWithDescription', {

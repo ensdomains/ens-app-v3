@@ -77,7 +77,7 @@ const verificationsButtonTooltip = ({
 
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
   const { t } = useTranslation('profile')
-  const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
+  const { createTransactionFlow, usePreparedDataInput, getResumable, resumeTransactionFlow } = useTransactionFlow()
 
   const { address } = useAccountSafely()
 
@@ -242,8 +242,13 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
         ]
         actions.push({
           ...base,
-          onClick: () =>
-            createTransactionFlow(`deleteSubname-${name}`, {
+          onClick: () => {
+            const key = `deleteSubname-${name}`
+            const resumable = getResumable(key)
+            if (resumable) {
+              return resumeTransactionFlow(key)
+            }
+            return createTransactionFlow(key, {
               transactions,
               resumable: true,
               intro: {
@@ -254,7 +259,8 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
                   }),
                 }),
               },
-            }),
+            })
+          },
         })
       } else if (abilities.isPCCBurned) {
         actions.push({
