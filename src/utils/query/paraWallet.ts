@@ -61,7 +61,7 @@ export const paraWallet = getParaWalletIntegrated(paraWalletItegratedOpts)
 export const paraWalletConnectorFn = connectorsForWallets(
   [
     {
-      groupName: 'Managed',
+      groupName: 'Sign up or log in',
       wallets: [paraWallet],
     },
   ],
