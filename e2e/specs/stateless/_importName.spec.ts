@@ -85,10 +85,10 @@ test('should allow claim (owned by user)', async ({
 
   await transactionModal.complete()
 
-  await test.step('should fire DNS import tracking event: import:transaction_start', async () => {
-    await expect(consoleListener.getMessages(/import:transaction_start/)).toHaveLength(1)
+  await test.step('should fire DNS import tracking event: transaction:import:send', async () => {
+    await expect(consoleListener.getMessages(/transaction:import:send/)).toHaveLength(1)
 
-    await expect(consoleListener.getMessages().toString()).toContain('import:transaction_start')
+    await expect(consoleListener.getMessages().toString()).toContain('transaction:import:send')
     consoleListener.clearMessages()
   })
 
