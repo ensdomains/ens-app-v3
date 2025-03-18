@@ -1604,8 +1604,8 @@ test.describe('Error handling', () => {
       )
     })
 
-    await test.step('confirm plausible event was fired once', async () => {
-      expect(consoleListener.getMessages(/register:transaction_override/)).toHaveLength(1)
+    await test.step('confirm posthog event was fired once', async () => {
+      expect(consoleListener.getMessages(/transaction:register:override/)).toHaveLength(1)
     })
   })
 })
