@@ -26,7 +26,7 @@ import {
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
 
-  test.only('should allow normal registration, if primary name is set, name is wrapped', async ({
+  test('should allow normal registration, if primary name is set, name is wrapped', async ({
     page,
     login,
     accounts,
