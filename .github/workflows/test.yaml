@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install corepack
+        run: npm i -g corepack
+
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
 
@@ -33,6 +36,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
@@ -66,6 +72,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
@@ -131,6 +140,9 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
@@ -217,7 +229,7 @@ jobs:
           "pnpm wrangle" \
           "pnpm wait-on http://127.0.0.1:8788 && pnpm playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
-          # NEXT_PUBLIC_GRAPH_URI: https://api.studio.thegraph.com/query/49574/ensholesky/version/latest
+          NEXT_PUBLIC_CHAIN_NAME: holesky
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - uses: actions/upload-artifact@v4

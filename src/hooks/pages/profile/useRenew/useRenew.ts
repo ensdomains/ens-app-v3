@@ -1,4 +1,4 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@getpara/rainbowkit'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'

@@ -685,8 +685,10 @@ test.describe('OAuth flow', () => {
       })
     })
 
-    await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
+    await page.goto('/')
     await login.connect()
+
+    await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
 
     await expect(page).toHaveURL(`/${name}`)
 
