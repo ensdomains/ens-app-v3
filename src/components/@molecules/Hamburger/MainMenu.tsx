@@ -1,13 +1,16 @@
 import ISO6391 from 'iso-639-1'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { match } from 'ts-pattern'
 
 import {
   CurrencyToggle,
   LanguageSVG,
+  MoonSVG,
   RightChevronSVG,
   Spinner,
-  ThemeToggle,
+  SunSVG,
+  ThemeSVG,
   Typography,
   useTheme,
   WalletSVG,
@@ -25,11 +28,14 @@ import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
+import { useReadLocalStorage } from '@app/hooks/useLocalStorage'
 import { routes } from '@app/routes'
 import { ENS_LINKS } from '@app/utils/constants'
 import { makeDisplay } from '@app/utils/currency'
 import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
+
+import type { HamburgerView } from './Hamburger'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -117,7 +123,6 @@ const HoverableSettingsItem = styled(SettingsItem)(
       flex-direction: row;
       align-items: center;
       justify-content: flex-end;
-      gap: ${theme.space['1']};
 
       svg {
         width: ${theme.space['3']};
@@ -216,18 +221,6 @@ const NetworkSectionRow = styled.div(
   `,
 )
 
-const DarkModeItem = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: ${theme.space['2']};
-
-    padding: ${theme.space['4']} ${theme.space['6']};
-  `,
-)
-
 const NetworkSection = () => {
   const { t } = useTranslation('common')
   const graphOutOfSync = useGraphOutOfSync()
@@ -264,11 +257,14 @@ const disconnectedRoutes = routes.filter(
   (route) => route.name !== 'search' && route.connected === false,
 )
 
-const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'language') => void }) => {
+const MainMenu = ({ setCurrentView }: { setCurrentView: (view: HamburgerView) => void }) => {
   const { t, i18n } = useTranslation('common')
   const language = i18n.resolvedLanguage || 'en'
   const { userConfig, setCurrency } = useUserConfig()
-  const { setMode, mode } = useTheme()
+
+  const { mode: theme } = useTheme()
+
+  const usingSystemTheme = useReadLocalStorage<boolean>('usingSystemTheme')
 
   return (
     <Container>
@@ -285,6 +281,16 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
             <RightChevronSVG height={16} width={16} />
           </div>
         </HoverableSettingsItem>
+        <HoverableSettingsItem onClick={() => setCurrentView('theme')}>
+          <div>
+            {match({ theme, usingSystemTheme })
+              .with({ usingSystemTheme: true }, () => <ThemeSVG height={16} width={16} />)
+              .with({ theme: 'dark' }, () => <MoonSVG height={16} width={16} />)
+              .with({ theme: 'light' }, () => <SunSVG height={16} width={16} />)
+              .run()}
+            <Typography weight="bold">{t('navigation.theme')}</Typography>
+          </div>
+        </HoverableSettingsItem>
         <SettingsItem>
           <div>
             <WalletSVG height={16} width={16} />
@@ -299,19 +305,6 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
             />
           </div>
         </SettingsItem>
-        <DarkModeItem>
-          <Typography fontWeight="bold">Theme</Typography>
-          <ThemeToggle
-            checked={mode === 'light'}
-            size="extraSmall"
-            onChange={(e) => {
-              const newValue = e.target.checked ? 'light' : 'dark'
-              if (newValue !== mode) {
-                setMode(newValue)
-              }
-            }}
-          />
-        </DarkModeItem>
       </SettingsSection>
       <RoutesSection>
         {disconnectedRoutes.map((route) => (
