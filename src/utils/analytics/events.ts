@@ -84,6 +84,25 @@ export type EventDefs = {
     ens_name: string
   }
 
+  // Import transactions
+  'transaction:import:send': {
+    ens_name: string
+    transaction_hash?: string
+    type: 'claim' | 'import'
+  }
+
+  'transaction:import:fail': {
+    ens_name: string
+    transaction_hash?: string
+    type: 'claim' | 'import'
+  }
+
+  'transaction:import:complete': {
+    ens_name: string
+    transaction_hash?: string
+    type: 'claim' | 'import'
+  }
+
   // Register events
   'register:start': {
     ens_name: string
@@ -183,14 +202,6 @@ export type EventDefs = {
   }
 
   'import:onchain_verify': {
-    name: string
-  }
-
-  'import:transaction_start': {
-    name: string
-  }
-
-  'import:transaction_complete': {
     name: string
   }
 

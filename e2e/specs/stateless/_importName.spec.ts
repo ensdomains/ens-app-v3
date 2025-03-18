@@ -73,13 +73,6 @@ test('should allow claim (owned by user)', async ({
 
   await importPage.nextButton.click()
 
-  await test.step('should fire DNS import tracking event: import:transaction_start', async () => {
-    await expect(consoleListener.getMessages(/import:transaction_start/)).toHaveLength(1)
-
-    await expect(consoleListener.getMessages().toString()).toContain('import:transaction_start')
-    consoleListener.clearMessages()
-  })
-
   // should be two steps: approve and claim
   await expect(transactionModal.getStepCount()).resolves.toEqual(2)
 
@@ -88,10 +81,16 @@ test('should allow claim (owned by user)', async ({
   await test.step('should fire DNS import tracking event: wallet:open', async () => {
     await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
     await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
-    consoleListener.clearMessages()
   })
 
   await transactionModal.complete()
+
+  await test.step('should fire DNS import tracking event: import:transaction_start', async () => {
+    await expect(consoleListener.getMessages(/import:transaction_start/)).toHaveLength(1)
+
+    await expect(consoleListener.getMessages().toString()).toContain('import:transaction_start')
+    consoleListener.clearMessages()
+  })
 
   // should save transaction status on refresh
   await page.reload()

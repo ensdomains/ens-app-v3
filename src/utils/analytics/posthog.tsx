@@ -57,7 +57,11 @@ export const PostHogProvider = ({ children }: { children: ReactNode }) => {
 
       posthog.register({
         // eslint-disable-next-line @typescript-eslint/naming-convention
+        wallet_address: data.address,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         chain_id: data.chainId,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        wallet_connector: data.connector.name,
       })
 
       sendEvent('wallet:connect', {

@@ -1,4 +1,4 @@
-import { Dispatch, useCallback, useMemo } from 'react'
+import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
@@ -173,17 +173,16 @@ export const ImportTransaction = ({
     enabled: !!dnsImportData && (!requiresApproval || isApprovalFetched),
   })
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, getLatestTransaction } =
+    useTransactionFlow()
 
   const key = `import-${selected.name}-${selected.address}`
 
   const resumable = getResumable(key)
+  const dnsTransaction = getLatestTransaction(key)
 
   const startOrResumeFlow = () => {
     if (!item.started) {
-      sendEvent('import:transaction_start', {
-        name: selected.name,
-      })
       dispatch({ name: 'setStarted', selected })
     }
 
@@ -205,14 +204,36 @@ export const ImportTransaction = ({
       if (status !== 'confirmed') return
       if (cbKey !== key) return
       dispatch({ name: 'increaseStep', selected })
-      sendEvent('import:transaction_complete', {
-        name: selected.name,
-      })
     },
     [dispatch, key, selected],
   )
 
   useCallbackOnTransaction(txCallback)
+
+  useEffect(() => {
+    /* eslint-disable @typescript-eslint/naming-convention */
+    if (dnsTransaction?.stage === 'sent') {
+      sendEvent('transaction:import:send', {
+        ens_name: selected.name,
+        type: dnsTransaction.name === 'claimDnsName' ? 'claim' : 'import',
+        transaction_hash: dnsTransaction.hash,
+      })
+    } else if (dnsTransaction?.stage === 'complete') {
+      sendEvent('transaction:import:complete', {
+        ens_name: selected.name,
+        type: dnsTransaction.name === 'claimDnsName' ? 'claim' : 'import',
+        transaction_hash: dnsTransaction.hash,
+      })
+    } else if (dnsTransaction?.stage === 'failed') {
+      sendEvent('transaction:import:fail', {
+        ens_name: selected.name,
+        type: dnsTransaction.name === 'claimDnsName' ? 'claim' : 'import',
+        transaction_hash: dnsTransaction.hash,
+      })
+    }
+    /* eslint-enable @typescript-eslint/naming-convention */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dnsTransaction?.stage])
 
   return (
     <DnsImportCard>
@@ -262,7 +283,7 @@ export const ImportTransaction = ({
           {tc('action.back')}
         </DnsImportActionButton>
         <DnsImportActionButton
-          disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
+          disabled={!dnsOwner || isLoading || isRefetching || isError}
           loading={isLoading || isEstimateLoading}
           onClick={() => startOrResumeFlow()}
           data-testid="import-next-button"
