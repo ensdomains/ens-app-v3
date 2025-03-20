@@ -97,7 +97,7 @@ export const AddressProfileButton = ({
 }) => {
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
-
+  const { t } = useTranslation()
   const [, copy] = useCopyToClipboard()
   const coinChainResults = useCoinChain({ coinName: iconKey })
   const { data } = coinChainResults
@@ -106,19 +106,19 @@ export const AddressProfileButton = ({
   const items = [
     iconKey === 'eth'
       ? {
-          icon: UpRightArrowSVG,
-          label: 'View address',
+          icon: () => <UpRightArrowSVG height={16} width={16} />,
+          label: t('address.viewAddress'),
           href: getDestination(`/${address}`) as string,
         }
       : undefined,
     {
-      icon: CopySVG,
-      label: 'Copy address',
+      icon: () => <CopySVG height={16} width={16} />,
+      label: t('address.copyAddress'),
       onClick: () => copy(address),
     },
     defaultBlockExplorer
       ? {
-          icon: UpRightArrowSVG,
+          icon: () => <UpRightArrowSVG height={16} width={16} />,
           label: `View on ${defaultBlockExplorer?.name}`,
           href: `${defaultBlockExplorer?.url}/address/${address}`,
         }
@@ -326,14 +326,14 @@ export const OwnerProfileButton = ({
   const items = [
     link
       ? {
-          icon: UpRightArrowSVG,
+          icon: () => <UpRightArrowSVG height={16} width={16} />,
           label: 'View profile',
           href: link,
         }
       : undefined,
     primary.data?.name
       ? {
-          icon: CopySVG,
+          icon: () => <CopySVG height={16} width={16} />,
           label: 'Copy name',
           onClick: () => copy(primary.data?.name!),
         }
@@ -341,18 +341,18 @@ export const OwnerProfileButton = ({
     ...(dataType === 'address'
       ? ([
           {
-            icon: UpRightArrowSVG,
+            icon: () => <UpRightArrowSVG height={16} width={16} />,
             label: 'View address',
             href: getDestination(`/${addressOrNameOrDate}`) as string,
           },
           {
-            icon: CopySVG,
-            label: 'Copy address',
+            icon: () => <CopySVG height={16} width={16} />,
+            label: t('address.copyAddress'),
             onClick: () => copy(addressOrNameOrDate),
           },
           {
-            icon: UpRightArrowSVG,
-            label: 'View on Etherscan',
+            icon: () => <UpRightArrowSVG height={16} width={16} />,
+            label: t('address.viewAddress'),
             href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
           },
         ] as DropdownItem[])
