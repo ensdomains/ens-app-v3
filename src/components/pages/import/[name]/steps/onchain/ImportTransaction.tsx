@@ -283,7 +283,7 @@ export const ImportTransaction = ({
           {tc('action.back')}
         </DnsImportActionButton>
         <DnsImportActionButton
-          disabled={!dnsOwner || isLoading || isRefetching || isError}
+          disabled={!dnsOwner || isLoading || isRefetching || isError || gasCost === 0n}
           loading={isLoading || isEstimateLoading}
           onClick={() => startOrResumeFlow()}
           data-testid="import-next-button"
