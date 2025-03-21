@@ -24,6 +24,7 @@ import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacy
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
+import { useCheckRegistered } from '@app/hooks/registration/useCheckRegistered'
 
 const PATTERNS = {
   RegistrationComplete: {
@@ -241,6 +242,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   })
   const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
 
+  const checkRegistered = useCheckRegistered({ name, ownerAddress: address, enabled: registerTx?.stage === 'sent'})
+
   useEffect(() => {
     if (canRegisterOverride) {
       trackEvent({ eventName: 'register_override_triggered' })
@@ -331,10 +334,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   }, [commitTx, makeCommitNameFlow])
 
   useEffect(() => {
-    if (registerTx?.stage === 'complete') {
+    if (registerTx?.stage === 'complete' || checkRegistered) {
+      stopCurrentFlow()
       callback({ back: false })
     }
-  }, [callback, registerTx?.stage])
+  }, [callback, registerTx?.stage, checkRegistered])
 
   const NormalBackButton = useMemo(
     () => (
