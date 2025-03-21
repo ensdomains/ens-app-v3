@@ -1,4 +1,4 @@
-import { Dispatch, useCallback, useMemo } from 'react'
+import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
@@ -15,8 +15,8 @@ import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { sendEvent } from '@app/utils/analytics/events'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
 import { shortenAddress } from '@app/utils/utils'
@@ -106,7 +106,6 @@ export const ImportTransaction = ({
   const { t } = useTranslation('dnssec', { keyPrefix: 'steps.transaction' })
   const { t: tc } = useTranslation('common')
 
-  const { trackEvent } = useEventTracker()
   const { data: gasPrice } = useGasPrice()
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
@@ -174,18 +173,16 @@ export const ImportTransaction = ({
     enabled: !!dnsImportData && (!requiresApproval || isApprovalFetched),
   })
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, getLatestTransaction } =
+    useTransactionFlow()
 
   const key = `import-${selected.name}-${selected.address}`
 
   const resumable = getResumable(key)
+  const dnsTransaction = getLatestTransaction(key)
 
   const startOrResumeFlow = () => {
     if (!item.started) {
-      trackEvent({
-        eventName: 'dns_claim_started',
-        customProperties: { name: selected.name, importType: 'onchain' },
-      })
       dispatch({ name: 'setStarted', selected })
     }
 
@@ -212,6 +209,31 @@ export const ImportTransaction = ({
   )
 
   useCallbackOnTransaction(txCallback)
+
+  useEffect(() => {
+    /* eslint-disable @typescript-eslint/naming-convention */
+    if (dnsTransaction?.stage === 'sent') {
+      sendEvent('transaction:import:send', {
+        ens_name: selected.name,
+        type: dnsTransaction.name === 'claimDnsName' ? 'claim' : 'import',
+        transaction_hash: dnsTransaction.hash,
+      })
+    } else if (dnsTransaction?.stage === 'complete') {
+      sendEvent('transaction:import:complete', {
+        ens_name: selected.name,
+        type: dnsTransaction.name === 'claimDnsName' ? 'claim' : 'import',
+        transaction_hash: dnsTransaction.hash,
+      })
+    } else if (dnsTransaction?.stage === 'failed') {
+      sendEvent('transaction:import:fail', {
+        ens_name: selected.name,
+        type: dnsTransaction.name === 'claimDnsName' ? 'claim' : 'import',
+        transaction_hash: dnsTransaction.hash,
+      })
+    }
+    /* eslint-enable @typescript-eslint/naming-convention */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dnsTransaction?.stage])
 
   return (
     <DnsImportCard>
