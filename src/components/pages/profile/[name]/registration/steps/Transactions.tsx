@@ -11,6 +11,7 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
+import { useCheckRegistered } from '@app/hooks/registration/useCheckRegistered'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
@@ -241,6 +242,12 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   })
   const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
 
+  const checkRegistered = useCheckRegistered({
+    name,
+    ownerAddress: address,
+    enabled: registerTx?.stage === 'sent',
+  })
+
   useEffect(() => {
     if (canRegisterOverride) {
       trackEvent({ eventName: 'register_override_triggered' })
@@ -331,10 +338,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   }, [commitTx, makeCommitNameFlow])
 
   useEffect(() => {
-    if (registerTx?.stage === 'complete') {
+    if (registerTx?.stage === 'complete' || checkRegistered) {
+      stopCurrentFlow()
       callback({ back: false })
     }
-  }, [callback, registerTx?.stage])
+  }, [callback, registerTx?.stage, checkRegistered])
 
   const NormalBackButton = useMemo(
     () => (
