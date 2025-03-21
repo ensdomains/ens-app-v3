@@ -11,6 +11,7 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
+import { useCheckRegistered } from '@app/hooks/registration/useCheckRegistered'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
@@ -24,7 +25,6 @@ import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacy
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
-import { useCheckRegistered } from '@app/hooks/registration/useCheckRegistered'
 
 const PATTERNS = {
   RegistrationComplete: {
@@ -242,7 +242,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   })
   const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
 
-  const checkRegistered = useCheckRegistered({ name, ownerAddress: address, enabled: registerTx?.stage === 'sent'})
+  const checkRegistered = useCheckRegistered({
+    name,
+    ownerAddress: address,
+    enabled: registerTx?.stage === 'sent',
+  })
 
   useEffect(() => {
     if (canRegisterOverride) {
