@@ -24,7 +24,6 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/chain/useInvalidateOnBlock'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import {
@@ -33,6 +32,7 @@ import {
   TransactionStage,
 } from '@app/transaction-flow/types'
 import { ConfigWithEns, TransactionDisplayItem } from '@app/types'
+import { sendEvent } from '@app/utils/analytics/events'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
@@ -309,7 +309,6 @@ const getPreTransactionError = ({
 export const handleSendTransaction = async (
   request: Awaited<ReturnType<typeof createTransactionRequestUnsafe>>,
   actionName: string,
-  trackEvent: ReturnType<typeof useEventTracker>['trackEvent'],
   sendTransaction: ReturnType<typeof useSendTransaction>['sendTransaction'],
 ) => {
   if (!request) {
@@ -318,15 +317,17 @@ export const handleSendTransaction = async (
 
   sendTransaction(request)
 
-  const eventName = match(actionName)
-    .with('commitName', () => 'commit_wallet_opened' as const)
-    .with('registerName', () => 'register_wallet_opened' as const)
-    .with('approveDnsRegistrar', () => 'dns_approve_registrar_wallet_opened' as const)
-    .with('importDnsName', () => 'dns_import_wallet_opened' as const)
-    .with('claimDnsName', () => 'dns_claim_wallet_opened' as const)
+  match(actionName)
+    .with(
+      P.union('commitName', 'registerName', 'approveDnsRegistrar', 'importDnsName', 'claimDnsName'),
+      (action) => {
+        sendEvent('wallet:open', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          wallet_action: action,
+        })
+      },
+    )
     .otherwise(() => undefined)
-
-  if (eventName) trackEvent({ eventName })
 }
 
 export const TransactionStageModal = ({
@@ -343,7 +344,6 @@ export const TransactionStageModal = ({
 }: ManagedDialogProps) => {
   const { t } = useTranslation()
   const chainName = useChainName()
-  const { trackEvent } = useEventTracker()
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
   const { data: connectorClient } = useConnectorClient<ConfigWithEns>()
   const client = useClient()
@@ -498,12 +498,6 @@ export const TransactionStageModal = ({
   const ActionButton = useMemo(() => {
     const handleCompleteTransaction = () => {
       dispatch({ name: 'incrementTransaction' })
-
-      if (actionName === 'approveDnsRegistrar') {
-        trackEvent({
-          eventName: 'register_started_dns',
-        })
-      }
     }
     if (stage === 'complete') {
       const final = currentStep + 1 === stepCount
@@ -531,7 +525,7 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
+          onClick={() => handleSendTransaction(request!, actionName, sendTransaction)}
           disabled={!canEnableTransactionRequest || requestLoading || !request}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
@@ -575,7 +569,7 @@ export const TransactionStageModal = ({
           !!requestError ||
           isTransactionRequestCachedData
         }
-        onClick={() => handleSendTransaction(request!, actionName, trackEvent, sendTransaction)}
+        onClick={() => handleSendTransaction(request!, actionName, sendTransaction)}
         data-testid="transaction-modal-confirm-button"
       >
         {isParaConnected
@@ -597,7 +591,6 @@ export const TransactionStageModal = ({
     transactionLoading,
     request,
     isTransactionRequestCachedData,
-    trackEvent,
     actionName,
     preTransactionError,
     isParaConnected,
