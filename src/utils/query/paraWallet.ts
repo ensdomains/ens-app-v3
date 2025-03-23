@@ -17,7 +17,6 @@ const prodParaApiKey = process.env.NEXT_PUBLIC_PARA_API_KEY_PROD
 
 const APP_NAME = 'ENS'
 const PARA_ENV: Environment = prodParaApiKey ? Environment.PROD : Environment.BETA
-// const DELETE_THIS_KEY = 'ea5557d8aed418b3c195f28c5a8dd3bb'
 const PARA_API_KEY = prodParaApiKey || 'de88c0d78a98dd9a3b11897893997b06'
 
 const paraConstructorOpts: ConstructorOpts = {
