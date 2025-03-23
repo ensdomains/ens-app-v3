@@ -1,5 +1,5 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { CallParameters, SendTransactionReturnType } from '@wagmi/core'
+import { CallParameters, getFeeHistory, SendTransactionReturnType } from '@wagmi/core'
 import { Dispatch } from 'react'
 import {
   Address,
@@ -12,6 +12,7 @@ import {
   TransactionRequest,
 } from 'viem'
 import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'viem/actions'
+import { useConnections } from 'wagmi'
 
 import { SupportedChain } from '@app/constants/chains'
 import { TransactionStatus } from '@app/hooks/transactions/transactionStore'
@@ -32,7 +33,9 @@ import {
   CreateQueryKey,
 } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
+import { wagmiConfig } from '@app/utils/query/wagmi'
 import { CheckIsSafeAppReturnType } from '@app/utils/safe'
+import { hasParaConnection } from '@app/utils/utils'
 
 type AccessListResponse = {
   accessList: {
@@ -161,7 +164,29 @@ export const calculateGasLimit = async ({
   }
 }
 
-type CreateTransactionRequestQueryKey = CreateQueryKey<
+const defaultMaxPriorityFeePerGas = 5000000000n
+export const getLargestMedianGasFee = async () => {
+  let feeHistory
+  try {
+    feeHistory = await getFeeHistory(wagmiConfig, {
+      blockCount: 5,
+      rewardPercentiles: [50],
+    })
+  } catch (e) {
+    console.error('Failed to get fee history')
+    return defaultMaxPriorityFeePerGas
+  }
+
+  if (!feeHistory.reward || feeHistory.reward.length === 0) return defaultMaxPriorityFeePerGas
+
+  const maxPriorityFeePerGas = feeHistory.reward
+    .map((block) => block[0])
+    .reduce((max, fee) => (fee > max ? fee : max), BigInt(0))
+
+  return maxPriorityFeePerGas
+}
+
+export type CreateTransactionRequestQueryKey = CreateQueryKey<
   UniqueTransaction,
   'createTransactionRequest',
   'standard'
@@ -173,14 +198,16 @@ type CreateTransactionRequestUnsafeParameters = {
   isSafeApp: CheckIsSafeAppReturnType | undefined
   params: UniqueTransaction
   chainId: SupportedChain['id']
+  connections: any
 }
 
-const createTransactionRequestUnsafe = async ({
+export const createTransactionRequestUnsafe = async ({
   client,
   connectorClient,
   isSafeApp,
   params,
   chainId,
+  connections,
 }: CreateTransactionRequestUnsafeParameters) => {
   const transactionRequest = await createTransactionRequest({
     name: params.name,
@@ -203,6 +230,13 @@ const createTransactionRequestUnsafe = async ({
     transactionName: params.name,
   })
 
+  const isParaConnected = hasParaConnection(connections)
+
+  let largestMedianGasFee = 0n
+  if (isParaConnected) {
+    largestMedianGasFee = await getLargestMedianGasFee()
+  }
+
   const request = await prepareTransactionRequest(client, {
     to: transactionRequest.to,
     accessList,
@@ -211,6 +245,7 @@ const createTransactionRequestUnsafe = async ({
     gas: gasLimit,
     parameters: ['fees', 'nonce', 'type'],
     ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
+    ...(isParaConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
 
   return {
@@ -227,9 +262,11 @@ export const createTransactionRequestQueryFn =
   ({
     connectorClient,
     isSafeApp,
+    connections,
   }: {
     connectorClient: ConnectorClientWithEns | undefined
     isSafeApp: CheckIsSafeAppReturnType | undefined
+    connections: ReturnType<typeof useConnections>
   }) =>
   async ({
     queryKey: [params, chainId, address],
@@ -248,6 +285,7 @@ export const createTransactionRequestQueryFn =
           isSafeApp,
           params,
           chainId,
+          connections,
         }),
         error: null,
       }
