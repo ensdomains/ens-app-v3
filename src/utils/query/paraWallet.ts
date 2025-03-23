@@ -13,7 +13,8 @@ import i18n from '../../i18n'
 import { ENS_LINKS, WC_PROJECT_ID } from '../constants'
 import { transports } from './wagmi'
 
-const prodParaApiKey = process.env.NEXT_PUBLIC_PARA_API_KEY_PROD
+// const prodParaApiKey = process.env.NEXT_PUBLIC_PARA_API_KEY_PROD
+const prodParaApiKey = 'c5695b18d016139ac4db1c7f98a87e68'
 
 const APP_NAME = 'ENS'
 const PARA_ENV: Environment = prodParaApiKey ? Environment.PROD : Environment.BETA
