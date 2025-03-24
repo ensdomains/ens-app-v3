@@ -28,6 +28,18 @@ vi.mock('@app/hooks/transactions/useAddRecentTransaction')
 vi.mock('@app/hooks/transactions/useRecentTransactions')
 vi.mock('@app/hooks/chain/useInvalidateOnBlock')
 vi.mock('@app/utils/safe')
+vi.mock('@wagmi/core', async () => {
+  const actual = await vi.importActual('@wagmi/core')
+  return {
+    ...actual,
+    getFeeHistory: vi.fn().mockResolvedValue({
+      baseFeePerGas: [],
+      gasUsedRatio: [],
+      oldestBlock: 0n,
+      reward: [],
+    }),
+  }
+})
 
 vi.mock('wagmi')
 vi.mock('viem/actions')
@@ -194,6 +206,7 @@ describe('TransactionStageModal', () => {
           expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
         )
       })
+
       it('should disable confirm button and re-estimate gas if a unique identifier is changed', async () => {
         mockEstimateGas.mockResolvedValue(1n)
         mockUseIsSafeApp.mockReturnValue({ data: false })
@@ -217,10 +230,11 @@ describe('TransactionStageModal', () => {
         )
         expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled()
         await waitFor(() =>
-          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled()
         )
         expect(mockEstimateGas).toHaveBeenCalledTimes(1)
       })
+
       it('should only show confirm button as enabled if gas is estimated and sendTransaction func is defined', async () => {
         mockEstimateGas.mockResolvedValue(1n)
         mockUseSendTransaction.mockReturnValue({

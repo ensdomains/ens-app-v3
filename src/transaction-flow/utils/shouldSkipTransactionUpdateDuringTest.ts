@@ -8,7 +8,7 @@ export const shouldSkipTransactionUpdateDuringTest = (
 ) => {
   return (
     process.env.NEXT_PUBLIC_ETH_NODE === 'anvil' &&
-    isTransaction('commitName')(transaction) &&
+    (isTransaction('commitName')(transaction) || isTransaction('registerName')(transaction)) &&
     transaction.data?.name?.startsWith('stuck-commit')
   )
 }
