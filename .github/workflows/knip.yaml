@@ -8,6 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install corepack
+        run: npm i -g corepack
+
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
 

@@ -3,6 +3,7 @@ name: Cloudflare Pages
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   NEXT_PUBLIC_INTERCOM_ID: re9q5yti
+  NEXT_PUBLIC_PARA_API_KEY_PROD: ${{ secrets.PARA_API_KEY_PROD }}
   NEXT_PUBLIC_DRPC_KEY: AnmpasF2C0JBqeAEzxVO8aTteiMlrW4R75hpDonbV6cR
 
 on: [push]
@@ -19,6 +20,9 @@ jobs:
 
       - name: Install Misc. Deps
         run: sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
