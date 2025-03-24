@@ -13,8 +13,9 @@ import {
 } from '@getpara/rainbowkit/wallets'
 
 import { WC_PROJECT_ID } from '../constants'
+import { isInsideSafe } from '../safe'
 
-export const rainbowKitWallets = [
+export const rainbowKitWallets = isInsideSafe() ? [safeWallet] : [
   // injected / not always shown
   injectedWallet,
   safeWallet,
