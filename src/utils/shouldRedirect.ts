@@ -65,12 +65,6 @@ export const shouldRedirect = (
 ) => {
   match([source, extraData])
     .with(
-      ['Basic.tsx', { isConnected: true, chainId: P.number }],
-      (_params) =>
-        !getSupportedChainById(_params[1].chainId) && router.pathname !== '/unsupportedNetwork',
-      () => router.push(destination),
-    )
-    .with(
       ['DotBoxRegistration.tsx', { isLoading: false }],
       (_params) =>
         _params[1].data?.data.status !== 'AVAILABLE' &&

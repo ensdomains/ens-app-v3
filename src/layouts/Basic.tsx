@@ -83,7 +83,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { switchChain, isPending, isError } = useSwitchChain()
   useSetupIntercom()
 
-  const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
 
   useEffect(() => {
@@ -93,10 +92,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
       switchChain({ chainId: 1 })
     }
   }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
-
-  useEffect(() => {
-    shouldRedirect(router, 'Basic.tsx', '/unsupportedNetwork', { isConnected, chainId })
-  }, [isConnected, chainId, router])
 
   return (
     <Container className="min-safe">

@@ -51,24 +51,6 @@ describe('shouldRedirect', () => {
     expect(mockRouter.pathname).toBe(`/`)
   })
 
-  it('Basic.tsx should return expected path if has valid arguments', () => {
-    const params = {
-      isConnected: true,
-      chainId: 0,
-    }
-    shouldRedirect(mockRouter as never, 'Basic.tsx', '/unsupportedNetwork', params)
-    expect(mockRouter.pathname).toBe(`/unsupportedNetwork`)
-  })
-
-  it('Basic.tsx should not return expected path if has valid arguments', () => {
-    const params = {
-      isConnected: false,
-      chainId: 0,
-    }
-    shouldRedirect(mockRouter as never, 'Basic.tsx', '/unsupportedNetwork', params)
-    expect(mockRouter.pathname).toBe(`/`)
-  })
-
   it('DnsClaim.tsx should return "/" path if has valid arguments', () => {
     const params = {
       shouldRun: true,
