@@ -26,7 +26,7 @@ describe('NetworkNotifications', () => {
   it('should show notification if shouldOpenModal sets true', () => {
     vi.mocked(shouldOpenModal).mockReturnValue(true)
     mockUseAccount.mockReturnValue({
-      chainId: 1
+      chainId: 1,
     })
     mockUseChainId.mockReturnValue(1)
     render(<NetworkNotifications />)
@@ -36,7 +36,7 @@ describe('NetworkNotifications', () => {
   it('should not show notification if shouldOpenModal sets false', () => {
     vi.mocked(shouldOpenModal).mockReturnValue(false)
     mockUseAccount.mockReturnValue({
-      chainId: 1
+      chainId: 1,
     })
     mockUseChainId.mockReturnValue(1)
 

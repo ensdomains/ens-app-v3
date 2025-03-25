@@ -1,6 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { shouldOpenModal } from './utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import * as chains from '@app/constants/chains'
+
+import { shouldOpenModal } from './utils'
 
 describe('shouldOpenModal', () => {
   beforeEach(() => {

@@ -1,7 +1,8 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
 
-import { makeLegacyRegistrationParams } from './makeLegacyRegistrationParams'
 import { RegistrationParameters } from '@ensdomains/ensjs/utils'
+
+import { makeLegacyRegistrationParams } from './makeLegacyRegistrationParams'
 
 describe('makeLegacyRegistrationParams', () => {
   it('should return owner as address if no eth record exists', () => {
@@ -32,7 +33,7 @@ describe('makeLegacyRegistrationParams', () => {
       resolverAddress: '0xresolverAddress',
       records: {
         coins: [{ coin: 'eth', value: '0xother' }],
-      }
+      },
     }
 
     expect(makeLegacyRegistrationParams(params)).toEqual({

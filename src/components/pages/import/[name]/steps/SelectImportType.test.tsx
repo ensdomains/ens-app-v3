@@ -10,8 +10,8 @@ import { useAccount } from 'wagmi'
 import { lightTheme } from '@ensdomains/thorin'
 
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
-import { useUnmanagedTLD } from '@app/hooks/useUnmanagedTLD'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useUnmanagedTLD } from '@app/hooks/useUnmanagedTLD'
 import i18n from '@app/i18n'
 
 import { calculateDnsSteps, SelectImportType } from './SelectImportType'
@@ -208,7 +208,11 @@ describe('SelectImportType component', () => {
         </ThemeProvider>
       </QueryClientProvider>,
     )
-    expect(screen.getByText("The team behind .club have customized their ENS experience, so we're unable to help you import the name at this time")).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "The team behind .club have customized their ENS experience, so we're unable to help you import the name at this time",
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should show customized TLD message for TLDs not managed by DNSRegistrar', () => {
@@ -230,7 +234,11 @@ describe('SelectImportType component', () => {
         </ThemeProvider>
       </QueryClientProvider>,
     )
-    expect(screen.getByText("The team behind .xyz have customized their ENS experience, so we're unable to help you import the name at this time")).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "The team behind .xyz have customized their ENS experience, so we're unable to help you import the name at this time",
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should show normal import options for managed TLDs', () => {

@@ -2,15 +2,14 @@
 import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import * as ReactQuery from '@tanstack/react-query'
+import React from 'react'
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 import { useAccount, useClient } from 'wagmi'
-
 
 import * as UseInfiniteQuery from '@app/utils/query/useInfiniteQuery'
 
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 import { AvatarNFT } from './AvatarNFT'
-import React from 'react'
 
 vi.mock('wagmi')
 vi.mock('@app/hooks/chain/useCurrentBlockTimestamp', () => ({
@@ -19,8 +18,6 @@ vi.mock('@app/hooks/chain/useCurrentBlockTimestamp', () => ({
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
-
-
 
 const mockUseClient = mockFunction(useClient)
 const mockUseAccount = mockFunction(useAccount)
@@ -197,7 +194,6 @@ describe('<AvatarNFT />', () => {
   it('show load more data on page load trigger', async () => {
     const useInfiniteQuerySpy = vi.spyOn(UseInfiniteQuery, 'useInfiniteQuery')
 
-
     mockFetch
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -214,15 +210,19 @@ describe('<AvatarNFT />', () => {
         }),
       )
     vi.mock('@ensdomains/thorin', async (importActual) => ({
-      ...(await importActual() as any),
-      ScrollBox: () => ({ children, onReachedBottom }: React.PropsWithChildren<{
-        onReachedBottom?: () => void;
-      }>) => {
-        onReachedBottom!()
-        return <div>{children}</div>
-      },
+      ...((await importActual()) as any),
+      ScrollBox:
+        () =>
+        ({
+          children,
+          onReachedBottom,
+        }: React.PropsWithChildren<{
+          onReachedBottom?: () => void
+        }>) => {
+          onReachedBottom!()
+          return <div>{children}</div>
+        },
     }))
-    
 
     render(<AvatarNFT {...props} />)
     await waitFor(() => expect(mockFetch).toHaveBeenCalled())
@@ -255,13 +255,18 @@ describe('<AvatarNFT />', () => {
     )
 
     vi.mock('@ensdomains/thorin', async (importActual) => ({
-      ...(await importActual() as any),
-      ScrollBox: () => ({ children, onReachedBottom }: React.PropsWithChildren<{
-        onReachedBottom?: () => void;
-      }>) => {
-        onReachedBottom!()
-        return <div>{children}</div>
-      },
+      ...((await importActual()) as any),
+      ScrollBox:
+        () =>
+        ({
+          children,
+          onReachedBottom,
+        }: React.PropsWithChildren<{
+          onReachedBottom?: () => void
+        }>) => {
+          onReachedBottom!()
+          return <div>{children}</div>
+        },
     }))
 
     render(<AvatarNFT {...props} />)

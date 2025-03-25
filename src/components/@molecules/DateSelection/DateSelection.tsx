@@ -7,6 +7,7 @@ import { Typography } from '@ensdomains/thorin'
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { roundDurationWithDay, secondsFromDateDiff } from '@app/utils/date'
+import { isInsideSafe } from '@app/utils/safe'
 import { formatDurationOfDates, secondsToYears } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
@@ -73,9 +74,11 @@ export const DateSelection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateInYears, durationType])
 
+  const isSafeApp = isInsideSafe()
+
   return (
     <Container>
-      {durationType === 'date' ? (
+      {durationType === 'date' && !isSafeApp ? (
         <Calendar
           value={currentTime + seconds}
           onChange={(e) => {
@@ -113,13 +116,15 @@ export const DateSelection = ({
           postFix: mode === 'register' ? ' registration. ' : ' extension. ',
           t,
         })}
-        <YearsViewSwitch
-          type="button"
-          data-testid="date-selection"
-          onClick={() => onChangeDurationType?.(durationType === 'years' ? 'date' : 'years')}
-        >
-          {t(`calendar.pick_by_${durationType === 'date' ? 'years' : 'date'}`, { ns: 'common' })}
-        </YearsViewSwitch>
+        {!isSafeApp && (
+          <YearsViewSwitch
+            type="button"
+            data-testid="date-selection"
+            onClick={() => onChangeDurationType?.(durationType === 'years' ? 'date' : 'years')}
+          >
+            {t(`calendar.pick_by_${durationType === 'date' ? 'years' : 'date'}`, { ns: 'common' })}
+          </YearsViewSwitch>
+        )}
       </Typography>
     </Container>
   )
