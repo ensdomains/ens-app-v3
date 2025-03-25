@@ -5,7 +5,6 @@ import {
   DnsImportReducerDataItem,
   DnsStep,
 } from '@app/components/pages/import/[name]/useDnsImportReducer'
-import { getSupportedChainById } from '@app/constants/chains'
 import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getEncodedLabelAmount } from '@app/utils/utils'

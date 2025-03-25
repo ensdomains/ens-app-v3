@@ -5,9 +5,7 @@ import { useAccount, useSwitchChain } from 'wagmi'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
-import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
-import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 import { Navigation } from './Navigation'
 
