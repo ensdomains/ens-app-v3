@@ -290,6 +290,16 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: HamburgerView) =>
               .run()}
             <Typography weight="bold">{t('navigation.theme')}</Typography>
           </div>
+          <div>
+            <Typography>
+              {match({ theme, usingSystemTheme })
+                .with({ usingSystemTheme: true }, () => t('navigation.mode.system'))
+                .with({ theme: 'dark' }, () => t('navigation.mode.dark'))
+                .with({ theme: 'light' }, () => t('navigation.mode.light'))
+                .run()}
+            </Typography>
+            <RightChevronSVG height={16} width={16} />
+          </div>
         </HoverableSettingsItem>
         <SettingsItem>
           <div>
