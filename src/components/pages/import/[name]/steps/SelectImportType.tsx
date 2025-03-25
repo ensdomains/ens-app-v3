@@ -14,6 +14,7 @@ import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import { useUnmanagedTLD } from '@app/hooks/useUnmanagedTLD'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
+import { sendEvent } from '@app/utils/analytics/events'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 import { DnsImportActionButton, DnsImportCard, DnsImportHeading } from '../shared'
@@ -191,6 +192,8 @@ export const SelectImportType = ({
       isDnsSecEnabled,
       offchainDnsStatus,
     })
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    sendEvent('import:select_type', { name: selected.name, type: item.type, next_step: steps[0] })
     dispatch({ name: 'setSteps', selected, payload: steps })
     dispatch({ name: 'increaseStep', selected })
   }

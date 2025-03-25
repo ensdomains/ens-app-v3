@@ -2,20 +2,18 @@ import { expect } from '@playwright/test'
 
 import { test } from '../../../playwright/index.js'
 
-test('should allow user to connect', async ({ page, login }) => {
+test('should allow user with primary name to connect', async ({ page, login }) => {
   test.slow()
-  await page.goto('/')
+  await page.goto('/?chain=holesky')
   await login.connect()
 
   await page.getByTestId('header-profile').click()
-  await expect(page.getByText('Profile')).toBeVisible()
-  await page.getByTestId('header-profile').click()
-  await expect(page.getByText('Profile')).not.toBeVisible()
+  await expect(page.getByText('Disconnect')).toBeVisible()
 })
 
 test('should go to the address page', async ({ page, login }) => {
   test.slow()
-  await page.goto('/')
+  await page.goto('/?chain=holesky')
   await login.connect()
 
   await page
@@ -30,7 +28,7 @@ test('should not show the profile if there is no primary name for the address', 
   login,
 }) => {
   test.slow()
-  await page.goto('/')
+  await page.goto('/?chain=holesky')
   await login.connect()
   await page
     .getByPlaceholder('Search for a name')

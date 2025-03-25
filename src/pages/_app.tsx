@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { darkTheme, lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
-
-import '@rainbow-me/rainbowkit/styles.css'
 import '@ensdomains/thorin/dist/thorin.css'
 import '@splidejs/react-splide/css'
 
@@ -17,19 +14,23 @@ import {
   modeVars,
   lightTheme as thorinLightTheme,
   ThemeProvider as ThorinThemeProvider,
-  useTheme,
 } from '@ensdomains/thorin'
 
-import { Notifications } from '@app/components/Notifications'
+import { NetworkNotifications } from '@app/components/@molecules/NetworkNotifications/NetworkNotifications'
 import { TestnetWarning } from '@app/components/TestnetWarning'
+import { TransactionNotifications } from '@app/components/TransactionNotifications'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { setupAnalytics } from '@app/utils/analytics'
+import { PostHogProvider } from '@app/utils/analytics/posthog'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
+import { RainbowKitWithParaProvider } from '@app/utils/query/RainbowKitWithParaProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
+
+import '@getpara/rainbowkit/styles.css'
 
 import i18n from '../i18n'
 
@@ -152,19 +153,6 @@ declare global {
 
 const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'router'>) => {
   const getLayout = Component.getLayout ?? ((page) => page)
-  const theme = useTheme()
-
-  const baseRainbowKitTheme = theme.mode === 'dark' ? darkTheme : lightTheme
-
-  const rainbowKitTheme: Theme = {
-    ...baseRainbowKitTheme({
-      accentColor: thorinLightTheme.colors.accent,
-      borderRadius: 'medium',
-    }),
-    fonts: {
-      body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
-    },
-  }
 
   const themeWithCSSVars = {
     ...thorinLightTheme,
@@ -179,26 +167,29 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
   }
 
   return (
-    <RainbowKitProvider theme={rainbowKitTheme}>
-      <TransactionStoreProvider>
-        <ThemeProvider theme={themeWithCSSVars}>
-          <BreakpointProvider queries={breakpoints}>
-            <IntercomProvider appId={INTERCOM_ID}>
-              <GlobalStyle />
-              <SyncProvider>
-                <TransactionFlowProvider>
-                  <SyncDroppedTransaction>
-                    <Notifications />
-                    <TestnetWarning />
-                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                  </SyncDroppedTransaction>
-                </TransactionFlowProvider>
-              </SyncProvider>
-            </IntercomProvider>
-          </BreakpointProvider>
-        </ThemeProvider>
-      </TransactionStoreProvider>
-    </RainbowKitProvider>
+    <PostHogProvider>
+      <RainbowKitWithParaProvider>
+        <TransactionStoreProvider>
+          <ThemeProvider theme={themeWithCSSVars}>
+            <BreakpointProvider queries={breakpoints}>
+              <IntercomProvider appId={INTERCOM_ID}>
+                <GlobalStyle />
+                <SyncProvider>
+                  <TransactionFlowProvider>
+                    <SyncDroppedTransaction>
+                      <NetworkNotifications />
+                      <TransactionNotifications />
+                      <TestnetWarning />
+                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                    </SyncDroppedTransaction>
+                  </TransactionFlowProvider>
+                </SyncProvider>
+              </IntercomProvider>
+            </BreakpointProvider>
+          </ThemeProvider>
+        </TransactionStoreProvider>
+      </RainbowKitWithParaProvider>
+    </PostHogProvider>
   )
 }
 
