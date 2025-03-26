@@ -1,0 +1,1 @@
+{"version":3,"file":"register.d.ts","sourceRoot":"","sources":["../../../src/errors/register.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,MAAM,CAAA;AACnC,OAAO,EAAE,SAAS,EAAE,MAAM,WAAW,CAAA;AAGrC,qBAAa,oCAAqC,SAAQ,SAAS;IACxD,IAAI,SAAyC;gBAE1C,EACV,eAAe,EACf,OAAO,GACR,EAAE;QACD,eAAe,CAAC,EAAE,OAAO,CAAA;QACzB,OAAO,CAAC,EAAE,OAAO,CAAA;KAClB;CAQF"}

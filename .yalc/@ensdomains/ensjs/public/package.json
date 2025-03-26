@@ -1,0 +1,5 @@
+{
+  "types": "../dist/types/public.d.ts",
+  "module": "../dist/esm/public.js",
+  "main": "../dist/cjs/public.js"
+}

@@ -1,0 +1,100 @@
+{
+  "name": "@ensdomains/ensjs",
+  "description": "ENS javascript library for contract interaction",
+  "dependencies": {
+    "@adraffy/ens-normalize": "1.10.1",
+    "@ensdomains/address-encoder": "1.1.1",
+    "@ensdomains/content-hash": "3.1.0-rc.1",
+    "@ensdomains/dnsprovejs": "^0.5.1",
+    "abitype": "^1.0.0",
+    "dns-packet": "^5.3.1",
+    "graphql": "^16.3.0",
+    "graphql-request": "6.1.0",
+    "pako": "^2.1.0",
+    "ts-pattern": "^5.4.0"
+  },
+  "peerDependencies": {
+    "viem": "^2.9.2"
+  },
+  "version": "4.0.3-alpha.12",
+  "files": [
+    "dist/",
+    "src/",
+    "!src/**/*.test.ts",
+    "!src/test",
+    "contracts",
+    "dns",
+    "public",
+    "subgraph",
+    "utils",
+    "wallet"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/cjs/index.js"
+    },
+    "./contracts": {
+      "types": "./dist/types/contracts/index.d.ts",
+      "import": "./dist/esm/contracts/index.js",
+      "default": "./dist/cjs/contracts/index.js"
+    },
+    "./dns": {
+      "types": "./dist/types/dns.d.ts",
+      "import": "./dist/esm/dns.js",
+      "default": "./dist/cjs/dns.js"
+    },
+    "./public": {
+      "types": "./dist/types/public.d.ts",
+      "import": "./dist/esm/public.js",
+      "default": "./dist/cjs/public.js"
+    },
+    "./subgraph": {
+      "types": "./dist/types/subgraph.d.ts",
+      "import": "./dist/esm/subgraph.js",
+      "default": "./dist/cjs/subgraph.js"
+    },
+    "./utils": {
+      "types": "./dist/types/utils/index.d.ts",
+      "import": "./dist/esm/utils/index.js",
+      "default": "./dist/cjs/utils/index.js"
+    },
+    "./wallet": {
+      "types": "./dist/types/wallet.d.ts",
+      "import": "./dist/esm/wallet.js",
+      "default": "./dist/cjs/wallet.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "typings": "./dist/types/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "contracts": [
+        "./dist/types/contracts/index.d.ts"
+      ],
+      "dns": [
+        "./dist/types/dns.d.ts"
+      ],
+      "public": [
+        "./dist/types/public.d.ts"
+      ],
+      "subgraph": [
+        "./dist/types/subgraph.d.ts"
+      ],
+      "utils": [
+        "./dist/types/utils/index.d.ts"
+      ],
+      "wallet": [
+        "./dist/types/wallet.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "repository": "git@github.com:ensdomains/ensjs.git",
+  "yalcSig": "08db8d242195310490f6553749addf10"
+}

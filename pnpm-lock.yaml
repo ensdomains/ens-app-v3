@@ -141,8 +141,8 @@ importers:
         specifier: 0.6.0
         version: 0.6.0(patch_hash=3g375zkti3ohnao75xzuai66lu)
       '@ensdomains/ensjs':
-        specifier: 4.0.3-alpha.12
-        version: 4.0.3-alpha.12(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
+        specifier: file:.yalc/@ensdomains/ensjs
+        version: file:.yalc/@ensdomains/ensjs(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
       '@ensdomains/thorin':
         specifier: 1.0.0-beta.26
         version: 1.0.0-beta.26(@vanilla-extract/css@1.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1259,8 +1259,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@ensdomains/ensjs@4.0.3-alpha.12':
-    resolution: {integrity: sha512-tJX+URJtSOtLgydE4V6uLOuG7hrMDah/ZOA2u/0hZuzhPwpVhS1jQRXU1aVnyT3klaLH5QqRL2J3SebzdxqGLQ==}
+  '@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs':
+    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
     peerDependencies:
       viem: ^2.9.2
 
@@ -8802,7 +8802,7 @@ snapshots:
       - bare-buffer
       - debug
 
-  '@ensdomains/ensjs@4.0.3-alpha.12(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)':
+  '@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)':
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
       '@ensdomains/address-encoder': 1.1.1
