@@ -1,20 +1,18 @@
 import { evmChainIdToCoinType } from '@ensdomains/address-encoder/utils';
-import { BaseError, decodeErrorResult, decodeFunctionResult, encodeFunctionData, toHex, zeroAddress, } from 'viem';
+import { BaseError, decodeErrorResult, decodeFunctionResult, encodeFunctionData, zeroAddress, } from 'viem';
 import { getChainContractAddress } from '../../contracts/getChainContractAddress.js';
 import { universalResolverReverseSnippet, universalResolverReverseWithGatewaysSnippet, } from '../../contracts/universalResolver.js';
 import { checkSafeUniversalResolverData } from '../../utils/checkSafeUniversalResolverData.js';
 import { generateFunction, } from '../../utils/generateFunction.js';
 import { getRevertErrorData } from '../../utils/getRevertErrorData.js';
-import { packetToBytes } from '../../utils/hexEncodedName.js';
 import { normalise } from '../../utils/normalise.js';
 const encode = (client, { address, coinType, chainId, gatewayUrls, }) => {
-    const reverseNode = `${address.toLowerCase().substring(2)}.addr.reverse`;
     const to = getChainContractAddress({
         client,
         contract: 'ensUniversalResolver',
     });
     const args = [
-        toHex(packetToBytes(reverseNode)),
+        address,
         chainId
             ? evmChainIdToCoinType(chainId)
             : coinType || 60n,

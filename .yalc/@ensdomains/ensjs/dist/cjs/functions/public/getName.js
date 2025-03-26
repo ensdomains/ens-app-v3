@@ -7,16 +7,14 @@ const universalResolver_js_1 = require("../../contracts/universalResolver.js");
 const checkSafeUniversalResolverData_js_1 = require("../../utils/checkSafeUniversalResolverData.js");
 const generateFunction_js_1 = require("../../utils/generateFunction.js");
 const getRevertErrorData_js_1 = require("../../utils/getRevertErrorData.js");
-const hexEncodedName_js_1 = require("../../utils/hexEncodedName.js");
 const normalise_js_1 = require("../../utils/normalise.js");
 const encode = (client, { address, coinType, chainId, gatewayUrls, }) => {
-    const reverseNode = `${address.toLowerCase().substring(2)}.addr.reverse`;
     const to = (0, getChainContractAddress_js_1.getChainContractAddress)({
         client,
         contract: 'ensUniversalResolver',
     });
     const args = [
-        (0, viem_1.toHex)((0, hexEncodedName_js_1.packetToBytes)(reverseNode)),
+        address,
         chainId
             ? (0, utils_1.evmChainIdToCoinType)(chainId)
             : coinType || 60n,

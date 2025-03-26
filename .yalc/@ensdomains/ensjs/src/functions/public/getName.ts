@@ -4,7 +4,6 @@ import {
   decodeErrorResult,
   decodeFunctionResult,
   encodeFunctionData,
-  toHex,
   zeroAddress,
   type Address,
   type Hex,
@@ -25,7 +24,6 @@ import {
   type GeneratedFunction,
 } from '../../utils/generateFunction.js'
 import { getRevertErrorData } from '../../utils/getRevertErrorData.js'
-import { packetToBytes } from '../../utils/hexEncodedName.js'
 import { normalise } from '../../utils/normalise.js'
 
 type GetNameCoinTypeParameters = {
@@ -73,13 +71,12 @@ const encode = (
     gatewayUrls,
   }: Omit<GetNameParameters, 'allowMismatch' | 'strict'>,
 ): TransactionRequestWithPassthrough => {
-  const reverseNode = `${address.toLowerCase().substring(2)}.addr.reverse`
   const to = getChainContractAddress({
     client,
     contract: 'ensUniversalResolver',
   })
   const args = [
-    toHex(packetToBytes(reverseNode)),
+    address,
     chainId
       ? evmChainIdToCoinType(chainId as unknown as number)
       : coinType || 60n,
