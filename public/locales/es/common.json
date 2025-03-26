@@ -2,7 +2,6 @@
   "title": "Tu nombre de usuario de Web3",
   "description": "Tu identidad en todo Web3, un nombre para todas tus direcciones de criptomonedas y tu sitio web descentralizado.",
   "loading": "Cargando",
-  "unsupportedNetwork": "Red no compatible",
   "notFound": "404 No encontrado",
   "etherscan": "Etherscan",
   "action": {

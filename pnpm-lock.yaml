@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  '@getpara/react-sdk': 1.6.1-dev.0
   '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
   '@wagmi/core': 2.13.3
   '@walletconnect/ethereum-provider': 2.11.1
@@ -1716,11 +1717,14 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  '@getpara/core-components@1.5.1':
-    resolution: {integrity: sha512-C8Lo1UMHnVXaKu0jcOZRS82gRd6iHKmnpzb36wIz3ESBJX28uLAEUkzEXmrIUTUbirWJ+J41puKVa3Or4UKTJw==}
+  '@getpara/core-components@1.6.0':
+    resolution: {integrity: sha512-sqt8hULrYgICMZ7+6SnGlbB2oYvPo3X3LMCTBjrxC72RzWLYcbSxK5g1G818WRlODu+dLJXIRHJvTKmhzsU4qw==}
 
   '@getpara/core-sdk@1.5.1':
     resolution: {integrity: sha512-PsuCZOMailJ3L7R7So7J5DYa+AmoNqfA6Ib8LhW1/NNinZ/e/+nObKbDg4qHtlZOKQGHpBIV4jqmopzkL1WHWg==}
+
+  '@getpara/core-sdk@1.6.0':
+    resolution: {integrity: sha512-XJP2GYLrTZITZAgcCF/WcMtyc6t79+jSi7RcRmQhR6xMTGvLgxJ2DGUASXqDWD7Nff9M3lgltRHEC5fMnZMGfA==}
 
   '@getpara/rainbowkit-wallet@1.2.0-dev.5':
     resolution: {integrity: sha512-f/1MjiN/BiAJHntYvHu7KB4+H4dNgDnux9K2rkGcXq7PlEXzQ90tGuw7zDfQKft/Cfd68eWP8WiQEHF/CXTcoA==}
@@ -1738,23 +1742,26 @@ packages:
       viem: 2.x
       wagmi: 2.x
 
-  '@getpara/react-common@1.5.1':
-    resolution: {integrity: sha512-5avqgJ4jHynnjFQrcMj4F/s94OB7aX/u8nrC1u4k8g1VzGy+v7Xzwpv3KHKAXlko7pMUHM3GrcgaZoBv2LNTow==}
+  '@getpara/react-common@1.6.0':
+    resolution: {integrity: sha512-BLW1fYFBtbTiU1EplwUfVTLH9M5hh9cHwAknOGsKYGKtxRjx7qDz5ZX+ggXvDGWiNnrzYNv8SPNvI/5/Cn7roA==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  '@getpara/react-components@1.5.1':
-    resolution: {integrity: sha512-Klc9YzGf28IBb16y4HuHzXMOFGX3Z5kfXz315c+yEAX9H2U1vpM7WmSyqMC9PpwOdbMk4IBbIiqT8ZzyGkivkw==}
+  '@getpara/react-components@1.6.0':
+    resolution: {integrity: sha512-SYfhIfoQljobNBp9IG6wE6GTpHa+6PhxuwSheqLkKN9D0alzqd+yg3xf4y56CzqvvK/JkOktmXhEaYlkA1bGrA==}
 
-  '@getpara/react-sdk@1.5.1':
-    resolution: {integrity: sha512-Z0Fo7evGBi2kU8TFVyPczbcuJuLxzdj1HnFBGYroLqxa6rDd8qBZ2/4WvUVqqPw/jsKEhTR5p84wa1Vy2YIeUg==}
+  '@getpara/react-sdk@1.6.1-dev.0':
+    resolution: {integrity: sha512-JjIoh7ITgqS3LAbujrDD5MFGloI7LS/s64BcbANAQCK1naSP8NBVliWpPv/vtUrwcCIpLGorhQHZoHkgVrxdLA==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
 
   '@getpara/user-management-client@1.5.1':
     resolution: {integrity: sha512-Vs8/jQZpUMaU/rWUw0jCd47/QNxiaONbTwCjSW8ICFMnbukIAYebuwTimodsDPBDBbQJdmthP7gv9HArciUVyg==}
+
+  '@getpara/user-management-client@1.6.0':
+    resolution: {integrity: sha512-fsoBWgB5nYOt0c2xmpb/nuvFpMEAOzsllme+m0nk+g9pshARy30SAFj1VViYBDkIBtgt/KAgxVgaJD7pMbyF5w==}
 
   '@getpara/viem-v2-integration@1.5.1':
     resolution: {integrity: sha512-u9r99GplAx67ZTh4N/bvqb+uxArsgs0mEVBTkX+1SlW0XCSZQzSR3t9BoLxo5OhDHVrwCeH23kVjeHLSm5f5fw==}
@@ -1769,8 +1776,8 @@ packages:
       viem: 2.x
       wagmi: 2.x
 
-  '@getpara/web-sdk@1.5.1':
-    resolution: {integrity: sha512-BE9yWqnory1LB9SzJPVqDU/0Fu5bxatqd2ufF0sMW/eIiUvS1u0/CZdfHO7sa2VkYC/35Wx3Dtmz7Oeyce8UtQ==}
+  '@getpara/web-sdk@1.6.0':
+    resolution: {integrity: sha512-EFcYLQs0xKv9ahRT76q0KKVURAupnkLzTK0ygM9Mh9A/GhTDmGlUbYTF4rlazk60Xz69TDTjOmA8Bk6z+9OLmg==}
 
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -9302,7 +9309,7 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@getpara/core-components@1.5.1':
+  '@getpara/core-components@1.6.0':
     dependencies:
       '@stencil/core': 4.27.0
       color-blend: 4.0.0
@@ -9325,10 +9332,24 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  '@getpara/core-sdk@1.6.0':
+    dependencies:
+      '@celo/utils': 8.0.1
+      '@cosmjs/encoding': 0.32.4
+      '@getpara/user-management-client': 1.6.0
+      '@noble/hashes': 1.7.1
+      base64url: 3.0.1
+      ethereumjs-util: 7.1.5
+      libphonenumber-js: 1.11.2
+      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
+      qs: 6.14.0
+    transitivePeerDependencies:
+      - debug
+
   '@getpara/rainbowkit-wallet@1.2.0-dev.5(uecxjdqmchnafkd3qpnnupbwoa)':
     dependencies:
       '@getpara/rainbowkit': 1.2.0-dev.6(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
-      '@getpara/react-sdk': 1.5.1(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@getpara/react-sdk': 1.6.1-dev.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@getpara/wagmi-v2-integration': 1.5.1(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
       viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       wagmi: 2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
@@ -9344,7 +9365,7 @@ snapshots:
   '@getpara/rainbowkit@1.2.0-dev.6(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))':
     dependencies:
       '@coinbase/wallet-sdk': 3.9.3
-      '@getpara/react-sdk': 1.5.1(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@getpara/react-sdk': 1.6.1-dev.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vanilla-extract/css': 1.14.0
       '@vanilla-extract/dynamic': 2.1.0
       '@vanilla-extract/sprinkles': 1.6.1(@vanilla-extract/css@1.14.0)
@@ -9364,10 +9385,10 @@ snapshots:
       - immer
       - supports-color
 
-  '@getpara/react-common@1.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@getpara/react-common@1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@getpara/react-components': 1.5.1
-      '@getpara/web-sdk': 1.5.1
+      '@getpara/react-components': 1.6.0
+      '@getpara/web-sdk': 1.6.0
       '@moonpay/moonpay-react': 1.8.10(react@18.3.1)
       '@ramp-network/ramp-instant-sdk': 4.0.7
       '@stripe/crypto': 0.0.4(@stripe/stripe-js@3.5.0)
@@ -9381,15 +9402,15 @@ snapshots:
       - debug
       - encoding
 
-  '@getpara/react-components@1.5.1':
+  '@getpara/react-components@1.6.0':
     dependencies:
-      '@getpara/core-components': 1.5.1
+      '@getpara/core-components': 1.6.0
 
-  '@getpara/react-sdk@1.5.1(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@getpara/react-sdk@1.6.1-dev.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@getpara/react-common': 1.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@getpara/react-components': 1.5.1
-      '@getpara/web-sdk': 1.5.1
+      '@getpara/react-common': 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@getpara/react-components': 1.6.0
+      '@getpara/web-sdk': 1.6.0
       '@tanstack/react-query': 5.22.2(react@18.3.1)
       date-fns: 3.6.0
       framer-motion: 11.3.28(@emotion/is-prop-valid@1.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -9414,6 +9435,14 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  '@getpara/user-management-client@1.6.0':
+    dependencies:
+      axios: 1.7.9
+      libphonenumber-js: 1.11.2
+      qs: 6.14.0
+    transitivePeerDependencies:
+      - debug
+
   '@getpara/viem-v2-integration@1.5.1(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))':
     dependencies:
       '@getpara/core-sdk': 1.5.1
@@ -9423,7 +9452,7 @@ snapshots:
 
   '@getpara/wagmi-v2-integration@1.5.1(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.12.4(@tanstack/query-core@5.22.2)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))':
     dependencies:
-      '@getpara/react-sdk': 1.5.1(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@getpara/react-sdk': 1.6.1-dev.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@getpara/viem-v2-integration': 1.5.1(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -9436,10 +9465,10 @@ snapshots:
       - encoding
       - immer
 
-  '@getpara/web-sdk@1.5.1':
+  '@getpara/web-sdk@1.6.0':
     dependencies:
-      '@getpara/core-sdk': 1.5.1
-      '@getpara/user-management-client': 1.5.1
+      '@getpara/core-sdk': 1.6.0
+      '@getpara/user-management-client': 1.6.0
       '@sentry/browser': 9.2.0
       assert: 2.1.0
       base64url: 3.0.1
