@@ -39,13 +39,7 @@ export const paraClient = new ParaWeb(PARA_ENV, PARA_API_KEY, paraConstructorOpt
 
 export const paraModalProps = {
   appName: 'ENS Manager App',
-  oAuthMethods: [
-    OAuthMethod.GOOGLE,
-    OAuthMethod.TWITTER,
-    OAuthMethod.DISCORD,
-    OAuthMethod.APPLE,
-    OAuthMethod.FACEBOOK,
-  ],
+  oAuthMethods: [OAuthMethod.GOOGLE, OAuthMethod.DISCORD, OAuthMethod.APPLE, OAuthMethod.FACEBOOK],
 } as const satisfies Partial<ParaModalProps>
 
 const paraWalletItegratedOpts: GetParaIntegratedOpts = {
