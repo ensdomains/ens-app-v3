@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -193,30 +192,6 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
     (i) => i.label === t('tabs.profile.actions.editProfile.label'),
   )
 
-  const btnRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    if (btnRef.current) {
-      const btn = btnRef.current
-      btn.style.setProperty('--x', '0px')
-      btn.style.setProperty('--y', '0px')
-      const handleMouseMove = (e: MouseEvent) => {
-        const box = btn.getBoundingClientRect()
-        if (!box) return
-        const x = e.clientX - box.left
-        const y = e.clientY - box.top
-
-        btn.style.setProperty('--x', `${x}px`)
-        btn.style.setProperty('--y', `${y}px`)
-      }
-      btn.addEventListener('mousemove', handleMouseMove)
-
-      return () => {
-        btn.removeEventListener('mousemove', handleMouseMove)
-      }
-    }
-  }, [])
-
   if (records.length || isProfileLoading || !action || !canEditRecords) return null
 
   return (
@@ -234,9 +209,25 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
       </div>
       <GradientButton
         width="auto"
-        ref={btnRef}
         colorStyle="transparent"
         onClick={() => action?.onClick()}
+        style={
+          {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            '--x': '0px',
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            '--y': '0px',
+          } as React.CSSProperties
+        }
+        onMouseMove={(e) => {
+          const box = e.currentTarget.getBoundingClientRect()
+          if (!box) return
+          const x = e.clientX - box.left
+          const y = e.clientY - box.top
+
+          e.currentTarget.style.setProperty('--x', `${x}px`)
+          e.currentTarget.style.setProperty('--y', `${y}px`)
+        }}
       >
         {t('banner.empty.action')}
       </GradientButton>
