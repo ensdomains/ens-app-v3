@@ -149,7 +149,6 @@
     "eslint-plugin-vitest": "0.4.x",
     "ethers": "^5.7.2",
     "hardhat": "^2.22.18",
-    "hardhat-dependency-compiler": "^1.1.3",
     "hardhat-deploy": "^0.12.4",
     "husky": "^7.0.4",
     "jsdom": "^24.1.0",
