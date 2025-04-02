@@ -6,6 +6,7 @@ import { ccipRequest } from '@ensdomains/ensjs/utils'
 
 import { getChainsFromUrl, SupportedChain } from '@app/constants/chains'
 
+import { isInsideSafe } from '../safe'
 import { rainbowKitConnectors } from './wallets'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
@@ -92,7 +93,7 @@ const wagmiConfig_ = createConfig({
   syncConnectedChain: false,
   connectors: rainbowKitConnectors,
   ssr: true,
-  multiInjectedProviderDiscovery: true,
+  multiInjectedProviderDiscovery: !isInsideSafe(),
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
   client: ({ chain }) => {
