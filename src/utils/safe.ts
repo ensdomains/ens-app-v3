@@ -34,8 +34,9 @@ export const checkIsSafeApp = async (
   const { session } = connectorProvider
   if (!session) return false
 
-  const { name, url } = session.peer.metadata
-  if (name.startsWith('Safe') && url === 'https://app.safe.global/') return 'walletconnect'
+  const { name: peerName, url: peerUrl } = session.peer.metadata
+  const cleanUrl = peerUrl.endsWith('/') ? peerUrl.slice(0, -1) : peerUrl
+  if (peerName.startsWith('Safe') && cleanUrl === 'https://app.safe.global') return 'walletconnect'
 
   return false
 }
@@ -81,7 +82,6 @@ type SafeTx = {
 
 type SafeError = {
   code: number
-  // JSON encoded string
   message: string
 }
 
@@ -106,7 +106,7 @@ export const fetchTxFromSafeTxHash = async ({
 
   // error
   if ('code' in data) {
-    console.error(JSON.parse(data.message))
+    console.error(data.message)
     return null
   }
 
