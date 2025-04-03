@@ -8,7 +8,10 @@ type AccessListResponse = {
   gasUsed: Hex
 }
 
-export const getAccessList = async (client: Client, tx: TransactionRequest<Hex>) => {
+export const getAccessList = async (
+  client: Client,
+  tx: TransactionRequest<Hex>,
+): Promise<AccessListResponse> => {
   const accessListResponse = await client.request<{
     Method: 'eth_createAccessList'
     Parameters: [tx: TransactionRequest<Hex>, blockTag: BlockTag]
