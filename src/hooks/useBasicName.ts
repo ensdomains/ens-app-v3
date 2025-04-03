@@ -110,16 +110,6 @@ export const useBasicName = ({
 
   const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
   const isWrapped = !!wrapperData
-  const canBeWrapped = useMemo(
-    () =>
-      !!(
-        nameWrapperAddress &&
-        !isWrapped &&
-        normalisedName?.endsWith('.eth') &&
-        !isLabelTooLong(normalisedName)
-      ),
-    [nameWrapperAddress, isWrapped, normalisedName],
-  )
 
   const registrationStatusTimestamp = useMemo(() => {
     if (!isTempPremiumDesynced) return Date.now()
@@ -141,6 +131,19 @@ export const useBasicName = ({
         name: normalisedName,
       })
     : undefined
+
+  const canBeWrapped = useMemo(
+    () =>
+      !!(
+        nameWrapperAddress &&
+        !isWrapped &&
+        normalisedName?.endsWith('.eth') &&
+        !isLabelTooLong(normalisedName) &&
+        !!registrationStatus &&
+        ['registered', 'imported', 'owned'].includes(registrationStatus)
+      ),
+    [nameWrapperAddress, isWrapped, normalisedName, registrationStatus],
+  )
 
   const { data: subgraphRegistrant } = useSubgraphRegistrant({
     name: normalisedName,

@@ -5,9 +5,7 @@ import { useAccount, useSwitchChain } from 'wagmi'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
-import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
-import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 import { Navigation } from './Navigation'
 
@@ -83,7 +81,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { switchChain, isPending, isError } = useSwitchChain()
   useSetupIntercom()
 
-  const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
 
   useEffect(() => {
@@ -93,10 +90,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
       switchChain({ chainId: 1 })
     }
   }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
-
-  useEffect(() => {
-    shouldRedirect(router, 'Basic.tsx', '/unsupportedNetwork', { isConnected, chainId })
-  }, [isConnected, chainId, router])
 
   return (
     <Container className="min-safe">
