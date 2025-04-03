@@ -2,7 +2,7 @@ import { QueryFunctionContext } from '@tanstack/react-query'
 import { CallParameters, getFeeHistory, SendTransactionReturnType } from '@wagmi/core'
 import { Dispatch } from 'react'
 import { Hash, PrepareTransactionRequestRequest, toHex, Transaction } from 'viem'
-import { call, getTransaction, prepareTransactionRequest } from 'viem/actions'
+import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'viem/actions'
 import { useConnections } from 'wagmi'
 
 import { SupportedChain } from '@app/constants/chains'
@@ -118,8 +118,14 @@ export const calculateGasLimit = async ({
     value: toHex(txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n),
   })
 
+  const gasEstimate = await estimateGas(client, {
+    ...txWithZeroGas,
+    accessList: accessListResponse.accessList,
+    account: connectorClient.account,
+  })
+
   return {
-    gasLimit: registrationGasFeeModifier(BigInt(accessListResponse.gasUsed), transactionName),
+    gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
     accessList: accessListResponse.accessList,
   }
 }
