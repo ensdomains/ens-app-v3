@@ -395,7 +395,7 @@ export const TransactionStageModal = ({
 
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
-    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp, connections }),
+    queryFn: initialOptions.queryFn({ connectorClient, connections }),
   })
 
   const transactionRequestQuery = useQuery({
