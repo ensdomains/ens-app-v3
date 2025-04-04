@@ -37,7 +37,7 @@ export const WalletSection = () => {
         gap="2"
       >
         <RecordItem type="text" itemKey="Connector" value={connector?.name} />
-        {!isParaConnected && (
+        {isParaConnected && (
           <Button
             width={{ base: 'full', sm: 'max' }}
             size="small"
