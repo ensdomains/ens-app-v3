@@ -29,14 +29,14 @@ export const WalletSection = () => {
           Disconnect
         </Button>
       </Typography>
-      <RecordItem type="address" itemKey="Address" value={address} />
+      <RecordItem type="address" itemKey="Address" value={address as string} />
       <Box
         display="flex"
         flexDirection={{ base: 'column', sm: 'row' }}
         justifyContent="space-between"
         gap="2"
       >
-        <RecordItem type="text" itemKey="Connector" value={connector?.name} />
+        <RecordItem type="text" itemKey="Connector" value={connector?.name as string} />
         {isParaConnected && (
           <Button
             width={{ base: 'full', sm: 'max' }}
