@@ -7,6 +7,7 @@ import { DevSection } from '@app/components/pages/profile/settings/DevSection'
 import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection'
 import { PrivacySection } from '@app/components/pages/profile/settings/PrivacySection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
+import { WalletSection } from '@app/components/pages/profile/settings/WalletSection'
 import { useSubgraphMeta } from '@app/hooks/ensjs/subgraph/useSubgraphMeta'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
@@ -43,6 +44,7 @@ export default function Page() {
         trailing: (
           <OtherWrapper>
             <PrimarySection />
+            <WalletSection />
             <TransactionSection />
             <PrivacySection />
             {IS_DEV_ENVIRONMENT && <DevSection />}
