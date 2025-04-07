@@ -4,22 +4,12 @@ import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
-import {
-  holeskyWithEns,
-  localhostWithEns,
-  mainnetWithEns,
-  sepoliaWithEns,
-} from '@app/constants/chains'
+import { getChainsFromUrl, SupportedChain } from '@app/constants/chains'
 
-import { WC_PROJECT_ID } from '../constants'
-import { getDefaultWallets } from '../getDefaultWallets'
+import { isInsideSafe } from '../safe'
+import { rainbowKitConnectors } from './wallets'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
-
-const connectors = getDefaultWallets({
-  appName: 'ENS',
-  projectId: WC_PROJECT_ID,
-})
 
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
@@ -49,7 +39,7 @@ const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   return fallback(transportArray)
 }
 
-const prefix = 'wagmi'
+export const prefix = 'wagmi'
 
 const localStorageWithInvertMiddleware = (): Storage | undefined => {
   if (typeof window === 'undefined') return undefined
@@ -83,14 +73,7 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
   }
 }
 
-const chains = [
-  ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-  mainnetWithEns,
-  sepoliaWithEns,
-  holeskyWithEns,
-] as const
-
-const transports = {
+export const transports = {
   ...(isLocalProvider
     ? ({
         [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
@@ -104,10 +87,13 @@ const transports = {
   [holesky.id]: initialiseTransports('holesky', [drpcUrl, tenderlyUrl]),
 } as const
 
+const chains = getChainsFromUrl() as unknown as readonly [SupportedChain, ...SupportedChain[]]
+
 const wagmiConfig_ = createConfig({
-  connectors,
+  syncConnectedChain: false,
+  connectors: rainbowKitConnectors,
   ssr: true,
-  multiInjectedProviderDiscovery: true,
+  multiInjectedProviderDiscovery: !isInsideSafe(),
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
   client: ({ chain }) => {
@@ -128,25 +114,6 @@ const wagmiConfig_ = createConfig({
     })
   },
 })
-
-const isSupportedChain = (chainId: number): chainId is (typeof chains)[number]['id'] =>
-  chains.some((c) => c.id === chainId)
-
-// hotfix for wagmi bug
-wagmiConfig_.subscribe(
-  ({ connections, current }) => (current ? connections.get(current)?.chainId : undefined),
-  (chainId_) => {
-    const chainId = chainId_ || chains[0].id
-    // If chain is not configured, then don't switch over to it.
-    const isChainConfigured = isSupportedChain(chainId)
-    if (!isChainConfigured) return
-
-    return wagmiConfig_.setState((x) => ({
-      ...x,
-      chainId: chainId ?? x.chainId,
-    }))
-  },
-)
 
 export const wagmiConfig = wagmiConfig_ as typeof wagmiConfig_ & {
   _isEns: true

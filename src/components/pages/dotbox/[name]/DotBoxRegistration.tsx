@@ -13,9 +13,9 @@ import DotBoxLogoSVG from '@app/assets/dotbox/DotBoxLogo.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { Card } from '@app/components/Card'
 import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
+import { sendEvent } from '@app/utils/analytics/events'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 
 const LEARN_MORE_URL = 'https://docs.my.box/docs/learn-more/reserved-names'
@@ -105,8 +105,6 @@ export const DotBoxRegistration = () => {
   const dotBoxResult = useDotBoxAvailabilityOffchain({ name })
   const nameStatus = dotBoxResult?.data?.data.status
 
-  const { trackEvent } = useEventTracker()
-
   shouldRedirect(router, 'DotBoxRegistration.tsx', `/profile/${name}`, dotBoxResult)
 
   const { t } = useTranslation('dnssec')
@@ -165,7 +163,13 @@ export const DotBoxRegistration = () => {
                       <Button
                         width="45"
                         size="small"
-                        onClick={() => trackEvent({ eventName: 'register_started_box' })}
+                        onClick={() =>
+                          sendEvent(
+                            'register:dotbox',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
+                            { ens_name: name },
+                          )
+                        }
                       >
                         <OutlinkInner>
                           Register on my.box

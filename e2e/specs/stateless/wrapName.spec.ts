@@ -254,8 +254,6 @@ test('should calculate needed steps without localstorage', async ({
   await morePage.goto(subname)
   await login.connect()
 
-  await expect(page.getByTestId('namewrapper-status')).toContainText('Unwrapped')
-
   await morePage.wrapButton.click()
   await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Approve NameWrapper')
   await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Migrate profile')
@@ -469,6 +467,150 @@ test('Wrapped, emancipated(NPC), 3LD Manager', async ({ login, makeName, makePag
   await expect(morePage.npcIcon).toBeVisible()
   await expect(morePage.nameWrapperLockIcon).not.toBeVisible()
 
+  await morePage.unwrapButton.click()
+  await transactionModal.autoComplete()
+  await expect(morePage.wrapButton).toBeVisible()
+})
+
+test('Should not show wrap button on unwrapped name in Grace period', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'to-be-wrapped',
+    type: 'legacy',
+    duration: -24 * 60 * 60,
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(name)
+
+  await login.connect()
+
+  await expect(morePage.wrapButton).not.toBeVisible()
+  await expect(morePage.wrapButton).toHaveCount(0)
+})
+
+test('should show wrap button on unwrapped subname in Grace period', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'to-be-wrapped',
+    type: 'legacy',
+    subnames: [
+      {
+        label: 'sub',
+      },
+    ],
+    duration: -24 * 60 * 60,
+  })
+
+  const morePage = makePageObject('MorePage')
+  const transactionModal = makePageObject('TransactionModal')
+  await morePage.goto(`sub.${name}`)
+
+  await login.connect()
+
+  await expect(morePage.wrapButton).toBeVisible()
+  await expect(morePage.wrapButton).toBeEnabled()
+
+  await morePage.wrapButton.click()
+  await transactionModal.autoComplete()
+
+  await morePage.goto(`sub.${name}`)
+  await expect(morePage.wrapButton).toHaveCount(0)
+})
+
+test('should not show unwrap button on wrapped name in Grace period', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    duration: -24 * 60 * 60,
+  })
+
+  const morePage = makePageObject('MorePage')
+  await morePage.goto(name)
+
+  await login.connect()
+
+  await expect(morePage.unwrapButton).toHaveCount(0)
+})
+
+test('should show unwrap button on wrapped subname in Grace period', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'to-be-wrapped',
+    type: 'wrapped',
+    owner: 'user',
+    subnames: [
+      {
+        label: 'sub',
+        owner: 'user',
+      },
+    ],
+    duration: -24 * 60 * 60,
+  })
+
+  const morePage = makePageObject('MorePage')
+  const transactionModal = makePageObject('TransactionModal')
+  await morePage.goto(`sub.${name}`)
+
+  await login.connect()
+
+  await expect(morePage.unwrapButton).toBeVisible()
+  await expect(morePage.unwrapButton).toBeEnabled()
+
+  await morePage.unwrapButton.click()
+  await transactionModal.autoComplete()
+
+  await morePage.goto(`sub.${name}`)
+  await expect(morePage.unwrapButton).toHaveCount(0)
+})
+
+test('Wrapped, emancipated(NPC), 3LD Manager should be able to unwrap when parent is in Grace period', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'wrapped',
+    type: 'wrapped',
+    owner: 'user2',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user',
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+        },
+      },
+    ],
+    duration: -24 * 60 * 60,
+  })
+
+  const morePage = makePageObject('MorePage')
+  const transactionModal = makePageObject('TransactionModal')
+  await morePage.goto(`test.${name}`)
+
+  await login.connect()
+
+  await expect(morePage.unwrapButton).toBeVisible()
+  await expect(morePage.unwrapButton).toBeEnabled()
   await morePage.unwrapButton.click()
   await transactionModal.autoComplete()
   await expect(morePage.wrapButton).toBeVisible()

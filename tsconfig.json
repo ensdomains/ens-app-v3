@@ -64,13 +64,9 @@
     "test/*.mts",
     "test/**/*.ts",
     "typings-custom/generated/*.d.ts",
-    "typings-custom/local-contracts.d.ts"
+    "typings-custom/local-contracts.d.ts",
+    "./node_modules/@ensdomains/ens-contracts/artifacts",
+    "./deploy/.utils/*.ts"
   ],
-  "exclude": [
-    "**/*.ignore.ts",
-    "**/*.ignore.tsx",
-    "functions/**/*",
-    "deploy/**/*",
-    "hardhat.config.ts"
-  ]
+  "exclude": ["**/*.ignore.ts", "**/*.ignore.tsx", "functions/**/*"]
 }

@@ -253,7 +253,7 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
       truncatedName: 'name.eth',
       isWrapped: false,
       pccExpired: false,
-      canBeWrapped: true,
+      canBeWrapped: false,
       registrationStatus: 'available' as const,
       isLoading: false,
       isCachedData: false,
@@ -306,7 +306,7 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
       registrationStatus: 'gracePeriod' as const,
       isWrapped: false,
       pccExpired: false,
-      canBeWrapped: true,
+      canBeWrapped: false,
       isLoading: false,
       isCachedData: false,
     }))
@@ -318,7 +318,7 @@ export const makeMockUseBasicName = (type: MockUseBasicNameType) => {
       registrationStatus: 'gracePeriod' as const,
       isWrapped: false,
       pccExpired: false,
-      canBeWrapped: true,
+      canBeWrapped: false,
       isLoading: false,
       isCachedData: false,
     }))

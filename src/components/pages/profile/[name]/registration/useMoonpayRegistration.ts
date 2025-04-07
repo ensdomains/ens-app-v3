@@ -6,6 +6,7 @@ import { useChainId } from 'wagmi'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
+import { sendEvent } from '@app/utils/analytics/events'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 import { useQuery } from '@app/utils/query/useQuery'
 import { getLabelFromName } from '@app/utils/utils'
@@ -48,6 +49,14 @@ export const useMoonpayRegistration = (
         selected,
       })
       setHasMoonpayModal(true)
+
+      sendEvent('register:moonpay_start', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        external_transaction_id: externalTransactionId,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name: normalisedName,
+        duration,
+      })
     },
   })
 
@@ -75,6 +84,13 @@ export const useMoonpayRegistration = (
         dispatch({
           name: 'moonpayTransactionCompleted',
           selected,
+        })
+
+        sendEvent('register:moonpay_complete', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          external_transaction_id: externalTransactionId,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: normalisedName,
         })
       }
 

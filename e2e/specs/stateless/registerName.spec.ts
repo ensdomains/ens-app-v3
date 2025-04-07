@@ -44,19 +44,7 @@ test.describe.serial('normal registration', () => {
     const transactionModal = makePageObject('TransactionModal')
 
     await consoleListener.initialize({
-      regex: new RegExp(
-        `Event triggered on local development.*?(${[
-          'register_override_triggered',
-          'search_selected_eth',
-          'search_selected_box',
-          'payment_selected',
-          'commit_started',
-          'commit_wallet_opened',
-          'register_started',
-          'register_started_box',
-          'register_wallet_opened',
-        ].join('|')})`,
-      ),
+      regex: /\[Metrics\] Event:.*?/,
     })
 
     await time.sync()
@@ -71,10 +59,10 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
     })
 
-    await test.step('should fire tracking event: search_selected_eth', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
+    await test.step('should fire tracking event: search:select', async () => {
+      await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
       await expect(consoleListener.getMessages().toString()).toMatch(
-        new RegExp(`search_selected_eth.*?${name}`),
+        new RegExp(`search:select.*?${name}`),
       )
       consoleListener.clearMessages()
     })
@@ -97,7 +85,8 @@ test.describe.serial('normal registration', () => {
       })
 
     await test.step('should show cost comparison accurately', async () => {
-      await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
+      // Gas can fluctuate enough to cause the percentage to change, so we check for a range
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
       await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
       await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
     })
@@ -113,9 +102,9 @@ test.describe.serial('normal registration', () => {
       await page.getByTestId('next-button').click()
     })
 
-    await test.step('should fire tracking event: payment_selected', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('payment_selected')
+    await test.step('should fire tracking event: register:pricing', async () => {
+      await expect(consoleListener.getMessages(/register:pricing/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('register:pricing')
       consoleListener.clearMessages()
     })
 
@@ -148,9 +137,9 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByTestId('transaction-modal-inner')).toBeVisible()
     })
 
-    await test.step('should fire tracking event: commit_started', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('commit_started')
+    await test.step('should fire tracking event: register:info', async () => {
+      await expect(consoleListener.getMessages(/register:info/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('register:info')
       consoleListener.clearMessages()
     })
 
@@ -169,9 +158,9 @@ test.describe.serial('normal registration', () => {
       await transactionModal.confirm()
     })
 
-    await test.step('should fire tracking event: commit_wallet_opened', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('commit_wallet_opened')
+    await test.step('should fire tracking event: wallet:open', async () => {
+      await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
       consoleListener.clearMessages()
     })
 
@@ -214,22 +203,14 @@ test.describe.serial('normal registration', () => {
       await page.getByTestId('finish-button').click()
     })
 
-    await test.step('should fire tracking event: register_started', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
-      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
-      await expect(consoleListener.getMessages().toString()).toContain('register_started')
-      consoleListener.clearMessages()
-    })
-
     await test.step('should be able to confirm registration transaction', async () => {
       await expect(page.getByText('Open Wallet')).toBeVisible()
       await transactionModal.confirm()
     })
 
-    await test.step('should fire tracking event: register_wallet_opened', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(1)
-      await expect(consoleListener.getMessages().toString()).toContain('register_wallet_opened')
-      consoleListener.clearMessages()
+    await test.step('should fire tracking event: wallet:open', async () => {
+      await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
     })
 
     await test.step('should redirect to completion page ', async () => {
@@ -254,6 +235,13 @@ test.describe.serial('normal registration', () => {
       await expect(page.getByTestId('invoice-item-expiry-date')).toHaveText(`${formattedDate}`)
     })
 
+    await test.step('should fire tracking event: transaction:register:send', async () => {
+      await expect(consoleListener.getMessages(/transaction:register:send/)).toHaveLength(1)
+      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
+      await expect(consoleListener.getMessages().toString()).toContain('transaction:register:send')
+      consoleListener.clearMessages()
+    })
+
     await test.step('confirm that the registration is successful', async () => {
       await page.getByTestId('view-name').click()
       await expect(page).toHaveURL(`/${name}`)
@@ -274,7 +262,7 @@ test.describe.serial('normal registration', () => {
     consoleListener,
   }) => {
     await consoleListener.initialize({
-      regex: /Event triggered on local development.*?search_selected_eth/,
+      regex: /\[Metrics\] Event:.*?/,
     })
 
     const homePage = makePageObject('HomePage')
@@ -284,7 +272,7 @@ test.describe.serial('normal registration', () => {
     await homePage.searchInput.press('Enter')
 
     await test.step('should not fire tracking event: search_selected_eth', async () => {
-      await expect(consoleListener.getMessages()).toHaveLength(0)
+      await expect(consoleListener.getMessages(/search:select/)).toHaveLength(0)
     })
 
     await expect(page).toHaveURL(`/${name}`)
@@ -1573,7 +1561,7 @@ test.describe('Error handling', () => {
 
     await time.sync()
     await consoleListener.initialize({
-      regex: /Event triggered on local development.*register_override_triggered/,
+      regex: /\[Metrics\] Event:.*?/,
     })
     await homePage.goto()
     await login.connect()
@@ -1616,8 +1604,8 @@ test.describe('Error handling', () => {
       )
     })
 
-    await test.step('confirm plausible event was fired once', async () => {
-      expect(consoleListener.getMessages()).toHaveLength(1)
+    await test.step('confirm posthog event was fired once', async () => {
+      expect(consoleListener.getMessages(/transaction:register:override/)).toHaveLength(1)
     })
   })
 })

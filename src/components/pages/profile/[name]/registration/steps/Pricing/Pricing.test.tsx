@@ -25,7 +25,6 @@ describe('ActionButton', () => {
     ethPrice: 1n,
     durationType: 'years',
   }
-
   it('should have disabled "Next" button if no choice has been made', () => {
     render(<ActionButton {...baseMockData} />)
     expect(screen.getByText('action.next')).toBeInTheDocument()

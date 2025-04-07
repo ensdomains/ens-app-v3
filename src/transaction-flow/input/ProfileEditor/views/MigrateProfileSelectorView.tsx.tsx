@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Address } from 'viem'
@@ -6,7 +7,7 @@ import { Button, Dialog, RadioButton, Typography } from '@ensdomains/thorin'
 
 import { CenteredTypography } from '../components/CenteredTypography'
 import { ProfileBlurb } from '../components/ProfileBlurb'
-import type { SelectedProfile } from '../ResolverWarningOverlay'
+import type { SelectedProfile } from '../ProfileEditor-flow'
 
 const RadioGroupContainer = styled.div(
   ({ theme }) => css`
@@ -38,9 +39,7 @@ type Props = {
   currentResolverAddress: Address
   latestResolverAddress: Address
   hasCurrentProfile: boolean
-  selected: SelectedProfile
-  onChangeSelected: (selected: SelectedProfile) => void
-  onNext: () => void
+  onNext: (selectedProfile: SelectedProfile) => void
   onBack: () => void
 }
 export const MigrateProfileSelectorView = ({
@@ -48,12 +47,11 @@ export const MigrateProfileSelectorView = ({
   currentResolverAddress,
   latestResolverAddress,
   hasCurrentProfile,
-  selected,
-  onChangeSelected,
   onNext,
   onBack,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
+  const [selectedProfile, setSelectedProfile] = useState<SelectedProfile>('latest')
   return (
     <>
       <Dialog.Heading
@@ -78,8 +76,8 @@ export const MigrateProfileSelectorView = ({
             }
             name="resolver-option"
             value="latest"
-            checked={selected === 'latest'}
-            onChange={() => onChangeSelected('latest')}
+            checked={selectedProfile === 'latest'}
+            onChange={() => setSelectedProfile('latest')}
           />
           {hasCurrentProfile && (
             <RadioButton
@@ -98,8 +96,8 @@ export const MigrateProfileSelectorView = ({
               }
               name="resolver-option"
               value="current"
-              checked={selected === 'current'}
-              onChange={() => onChangeSelected('current')}
+              checked={selectedProfile === 'current'}
+              onChange={() => setSelectedProfile('current')}
             />
           )}
           <RadioButton
@@ -118,8 +116,8 @@ export const MigrateProfileSelectorView = ({
             }
             name="resolver-option"
             value="reset"
-            checked={selected === 'reset'}
-            onChange={() => onChangeSelected('reset')}
+            checked={selectedProfile === 'reset'}
+            onChange={() => setSelectedProfile('reset')}
           />
         </RadioGroupContainer>
       </Dialog.Content>
@@ -134,7 +132,7 @@ export const MigrateProfileSelectorView = ({
           </Button>
         }
         trailing={
-          <Button onClick={onNext} data-testid="warning-overlay-next-button">
+          <Button onClick={() => onNext(selectedProfile)} data-testid="warning-overlay-next-button">
             {t('action.next', { ns: 'common' })}
           </Button>
         }

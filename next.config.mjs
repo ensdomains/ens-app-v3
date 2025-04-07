@@ -23,14 +23,59 @@ const babelIncludeRegexes = [
  * @type {import('next').NextConfig}
  * */
 const nextConfig = {
+  transpilePackages: [
+    '@getpara/rainbowkit',
+    '@getpara/rainbowkit-wallet',
+    '@getpara/core-components',
+    '@getpara/react-components',
+    '@getpara/react-sdk',
+    '@getpara/core-sdk',
+    '@getpara/web-sdk',
+    '@getpara/wagmi-v2-integration',
+    '@getpara/viem-v2-integration',
+  ],
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
   },
   // change to true once infinite loop is fixed
-  swcMinify: false,
+  swcMinify: true,
   images: {
     domains: ['metadata.ens.domains'],
+  },
+  async headers() {
+    // keep this in case we need to debug Safe in the future
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          source: '/manifest.json',
+          headers: [
+            {
+              key: 'Access-Control-Allow-Origin',
+              value: '*',
+            },
+            {
+              key: 'Access-Control-Allow-Methods',
+              value: 'GET, OPTIONS',
+            },
+            {
+              key: 'Access-Control-Allow-Headers',
+              value: 'X-Requested-With, content-type, Authorization',
+            },
+          ],
+        },
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'Content-Security-Policy',
+              value: "frame-ancestors 'self' https://app.safe.global;",
+            },
+          ],
+        },
+      ]
+    }
+    return []
   },
   async rewrites() {
     return [
