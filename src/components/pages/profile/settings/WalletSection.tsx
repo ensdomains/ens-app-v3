@@ -1,6 +1,6 @@
 import { useAccount, useConnections } from 'wagmi'
 
-import { Box, Button, Card, ExitSVG, Typography, WalletSVG } from '@ensdomains/thorin'
+import { Box, Button, Card, Typography, WalletSVG } from '@ensdomains/thorin'
 
 import RecordItem from '@app/components/RecordItem'
 import { hasParaConnection } from '@app/utils/utils'
@@ -20,14 +20,6 @@ export const WalletSection = () => {
         alignItems="center"
       >
         Wallet{' '}
-        <Button
-          width="max"
-          size="small"
-          prefix={() => <ExitSVG height={12} width={12} />}
-          colorStyle="redSecondary"
-        >
-          Disconnect
-        </Button>
       </Typography>
       <RecordItem type="address" itemKey="Address" value={address as string} />
       <Box
