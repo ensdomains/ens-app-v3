@@ -39,7 +39,6 @@ export const WalletSection = () => {
             href="https://connect.getpara.com/"
             target="_blank"
             rel="noreferrer noopener"
-            role="link"
           >
             Go to wallet
           </Button>
