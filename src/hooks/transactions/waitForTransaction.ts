@@ -52,10 +52,11 @@ export async function requestWithSafeOverride(
       chainId: client.chain!.id,
       safeTxHash: hash,
     })
-    if (!realTxData) return null
     return client.request({
       method: args.method,
-      params: [realTxData.transactionHash],
+      // fallback to existing hash, since if executing straight away on a 1/1 safe the tx hash returned
+      // is actually the real tx hash
+      params: [realTxData?.transactionHash ?? hash],
     })
   }
 
