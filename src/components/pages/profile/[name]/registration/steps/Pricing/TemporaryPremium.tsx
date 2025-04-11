@@ -139,8 +139,20 @@ const InnerTooltip = styled.div(
   `,
 )
 
-const ArrowContainer = styled.svg(() => css``)
-const BoxContainer = styled.svg(() => css``)
+const ArrowContainer = styled.svg(
+  ({ theme }) => css`
+    path {
+      fill: ${theme.colors.background};
+    }
+  `,
+)
+const BoxContainer = styled.svg(
+  ({ theme }) => css`
+    g > rect {
+      fill: ${theme.colors.background};
+    }
+  `,
+)
 
 const TooltipWrapper = styled.div(
   ({ theme }) => css`
@@ -184,14 +196,11 @@ const Tooltip = () => {
     <>
       <TooltipWrapper>
         <ArrowContainer viewBox="81.89 0 14.22 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M92.2 64.4C90.6 66.5333 87.4 66.5333 85.8 64.4L81 58H97L92.2 64.4Z"
-            fill="white"
-          />
+          <path d="M92.2 64.4C90.6 66.5333 87.4 66.5333 85.8 64.4L81 58H97L92.2 64.4Z" />
         </ArrowContainer>
         <BoxContainer viewBox="0 0 178 72" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g>
-            <rect x="4" y="2" width="170" height="56" rx="8" fill="white" />
+            <rect x="4" y="2" width="170" height="56" rx="8" />
             <foreignObject x="4" y="2" width="170" height="56">
               <InnerTooltip>
                 <Typography />
