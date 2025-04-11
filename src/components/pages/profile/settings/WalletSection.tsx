@@ -37,6 +37,8 @@ export const WalletSection = () => {
             prefix={() => <WalletSVG height={12} width={12} />}
             as="a"
             href="https://connect.getpara.com/"
+            target="_blank"
+            rel="noreferrer noopener"
           >
             Go to wallet
           </Button>
