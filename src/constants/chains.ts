@@ -72,7 +72,7 @@ export const getChainsFromUrl = () => {
       return [mainnetWithEns]
     }
     if (segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-      return [holeskyWithEns]
+      return [mainnetWithEns] // TODO: Change back to holeskyWithEns
     }
   }
 
