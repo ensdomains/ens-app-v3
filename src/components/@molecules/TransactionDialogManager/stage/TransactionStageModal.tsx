@@ -296,13 +296,24 @@ const getPreTransactionError = ({
   return match({ stage, err: transactionError || requestError })
     .with({ stage: P.union('complete', 'sent') }, () => null)
     .with({ err: P.nullish }, () => null)
-    .with({ err: P.not(P.instanceOf(BaseError)) }, ({ err }) => ({
-      message: 'message' in err! ? err.message : 'transaction.error.unknown',
-      type: 'unknown' as const,
-    }))
+    .with({ err: P.not(P.instanceOf(BaseError)) }, ({ err }) => {
+      return {
+        message: 'message' in err! ? err.message : 'transaction.error.unknown',
+        type: 'unknown' as const,
+      }
+    })
     .otherwise(({ err }) => {
       const readableError = getReadableError(err)
-      return readableError || { message: (err as BaseError).shortMessage, type: 'unknown' as const }
+      const error = readableError || {
+        message: (err as BaseError).shortMessage,
+        type: 'unknown' as const,
+      }
+      // Ambire smart contract wallet will sometimes throw an error when creating the transaction
+      // Origin or error is in call eth_createAccessList when `sender is not an EOA`
+      if (error.message === 'Transaction creation failed.') {
+        return null
+      }
+      return error
     })
 }
 
