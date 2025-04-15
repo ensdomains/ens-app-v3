@@ -65,8 +65,8 @@
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-devtools": "^5.59.0",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@getpara/rainbowkit": "1.2.0-dev.6",
-    "@getpara/rainbowkit-wallet": "1.2.0-dev.5",
+    "@getpara/rainbowkit": "1.2.0",
+    "@getpara/rainbowkit-wallet": "1.2.0",
     "@wagmi/core": "2.13.3",
     "calendar-link": "^2.8.0",
     "dequal": "2.0.3",
@@ -181,7 +181,6 @@
   },
   "pnpm": {
     "overrides": {
-      "@getpara/react-sdk": "1.6.1-dev.0",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@wagmi/core": "2.13.3",
       "@walletconnect/ethereum-provider": "2.11.1",
