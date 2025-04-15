@@ -14,7 +14,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { GenericTransaction } from '@app/transaction-flow/types'
-import { getAccessList } from '@app/utils/query/getAccessList'
+import { createAccessList } from '@app/utils/query/createAccessList'
 import { checkIsSafeApp } from '@app/utils/safe'
 
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
@@ -29,7 +29,7 @@ vi.mock('@app/hooks/transactions/useAddRecentTransaction')
 vi.mock('@app/hooks/transactions/useRecentTransactions')
 vi.mock('@app/hooks/chain/useInvalidateOnBlock')
 vi.mock('@app/utils/safe')
-vi.mock('@app/utils/query/getAccessList')
+vi.mock('@app/utils/query/createAccessList')
 vi.mock('@wagmi/core', async () => {
   const actual = await vi.importActual('@wagmi/core')
   return {
@@ -81,7 +81,7 @@ const mockUseClient = mockFunction(useClient)
 const mockUseConnectorClient = mockFunction(useConnectorClient)
 
 const mockEstimateGas = mockFunction(estimateGas)
-const mockGetAccessList = getAccessList as MockedFunctionDeep<typeof getAccessList>
+const mockCreateAccessList = createAccessList as MockedFunctionDeep<typeof createAccessList>
 const mockPrepareTransactionRequest = prepareTransactionRequest as MockedFunctionDeep<
   typeof prepareTransactionRequest
 >
@@ -211,7 +211,7 @@ describe('TransactionStageModal', () => {
       })
 
       it('should disable confirm button and re-estimate gas if a unique identifier is changed', async () => {
-        mockGetAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         mockUseIsSafeApp.mockReturnValue({ data: false })
         mockUseSendTransaction.mockReturnValue({
@@ -240,7 +240,7 @@ describe('TransactionStageModal', () => {
       })
 
       it('should only show confirm button as enabled if gas is estimated and sendTransaction func is defined', async () => {
-        mockGetAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: () => Promise.resolve(),
@@ -251,7 +251,7 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should run set sendTransaction on action click', async () => {
-        mockGetAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
@@ -292,7 +292,7 @@ describe('TransactionStageModal', () => {
       })
       it('should pass the request to send transaction', async () => {
         mockUseIsSafeApp.mockReturnValue({ data: false })
-        mockGetAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
@@ -525,7 +525,7 @@ describe('calculateGasLimit', () => {
 
   it('should calculate gas limit', async () => {
     mockEstimateGas.mockResolvedValueOnce(100000n)
-    mockGetAccessList.mockResolvedValueOnce(mockAccessListResponse)
+    mockCreateAccessList.mockResolvedValueOnce(mockAccessListResponse)
     const result = await calculateGasLimit({
       txWithZeroGas: mockTxWithZeroGas,
       transactionName: mockTransactionName,

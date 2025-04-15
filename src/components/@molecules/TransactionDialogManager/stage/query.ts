@@ -24,7 +24,7 @@ import {
   CreateQueryKey,
 } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
-import { getAccessList } from '@app/utils/query/getAccessList'
+import { createAccessList } from '@app/utils/query/createAccessList'
 import { wagmiConfig } from '@app/utils/query/wagmi'
 import { hasParaConnection } from '@app/utils/utils'
 
@@ -111,7 +111,7 @@ export const calculateGasLimit = async ({
   txWithZeroGas: BasicTransactionRequest
   transactionName: TransactionName
 }) => {
-  const accessListResponse = await getAccessList(client, {
+  const accessListResponse = await createAccessList(client, {
     to: txWithZeroGas.to,
     data: txWithZeroGas.data,
     from: connectorClient.account!.address,

@@ -33,7 +33,7 @@ import {
 import { emptyAddress } from '@app/utils/constants'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
-import { getAccessList } from '@app/utils/query/getAccessList'
+import { createAccessList } from '@app/utils/query/createAccessList'
 import { useQuery } from '@app/utils/query/useQuery'
 
 import { useGasPrice } from './useGasPrice'
@@ -176,7 +176,7 @@ const estimateIndividualGas = async <TName extends TransactionName>({
   // To get the access list, we're executing the bytecode of this Yul code: https://gist.github.com/TateB/777287c9a63d5f02fcd905232ce5748a
   // (note: 0xed3869F3020315C839b2f4E9a73bEbE9a9670534 is replaced with `connectorClient.account.address`)
   // It does a simple transfer, and accesses any storage slot that would be accessed by any other transfer.
-  const accessList = await getAccessList(client, {
+  const accessList = await createAccessList(client, {
     from: emptyAddress,
     data: concatHex(['0x5f808080600173', connectorClient.account.address, '0x5af100']),
     value: '0x1',
