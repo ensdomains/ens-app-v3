@@ -29,8 +29,8 @@ export const helpers = (draft: InternalTransactionFlow) => {
         !item.resumable ||
         getAllTransactionsComplete(item) ||
         getNoTransactionsStarted(item)
-  const getHasPendingTransactions = (item: InternalTransactionFlowItem) => !!item && 
-    item.transactions.some(({ stage }) => stage === 'sent')
+  const getHasPendingTransactions = (item: InternalTransactionFlowItem) =>
+    !!item && item.transactions.some(({ stage }) => stage === 'sent')
   return {
     getSelectedItem,
     getCurrentTransaction,
@@ -41,10 +41,15 @@ export const helpers = (draft: InternalTransactionFlow) => {
 }
 
 export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowAction) => {
-  const { getSelectedItem, getCurrentTransaction, getAllTransactionsComplete, getHasPendingTransactions } = helpers(draft)
+  const {
+    getSelectedItem,
+    getCurrentTransaction,
+    getAllTransactionsComplete,
+    getHasPendingTransactions,
+  } = helpers(draft)
 
   console.log('action', action)
-  console.log('draft', {...draft})
+  console.log('draft', { ...draft })
 
   switch (action.name) {
     case 'showDataInput': {
