@@ -77,7 +77,8 @@ const verificationsButtonTooltip = ({
 
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
   const { t } = useTranslation('profile')
-  const { createTransactionFlow, usePreparedDataInput, getResumable, resumeTransactionFlow } = useTransactionFlow()
+  const { createTransactionFlow, usePreparedDataInput, getResumable, resumeTransactionFlow } =
+    useTransactionFlow()
 
   const { address } = useAccountSafely()
 
@@ -356,6 +357,8 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     showDeleteEmancipatedSubnameWarningInput,
     showDeleteSubnameNotParentWarningInput,
     showVerifyProfileInput,
+    getResumable,
+    resumeTransactionFlow,
   ])
 
   return {
