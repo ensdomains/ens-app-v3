@@ -56,10 +56,8 @@ describe('transactionStore', () => {
       setTimeout(() => {
         onReplaced!({
           reason: 'repriced',
-          transaction: {
-            hash: newHash,
-          },
-        } as any)
+          transactionHash: newHash,
+        })
       }, 0)
 
       return {
