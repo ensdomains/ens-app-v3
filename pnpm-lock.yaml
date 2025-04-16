@@ -105,9 +105,6 @@ overrides:
   wrtc: https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz
 
 patchedDependencies:
-  '@ensdomains/ens-test-env@0.6.0':
-    hash: 3g375zkti3ohnao75xzuai66lu
-    path: patches/@ensdomains__ens-test-env@0.6.0.patch
   '@nomicfoundation/hardhat-viem@2.0.3':
     hash: znglrikwqnjywwr7ebopjjz3mm
     path: patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch
