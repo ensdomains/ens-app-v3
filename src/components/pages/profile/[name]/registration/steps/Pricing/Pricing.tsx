@@ -8,6 +8,7 @@ import { useBalance } from 'wagmi'
 import { GetBalanceData } from 'wagmi/query'
 
 import {
+  Box,
   Button,
   Field,
   Heading,
@@ -93,20 +94,6 @@ const gridAreaStyle = ({ $name }: { $name: string }) => css`
 
 const moonpayInfoItems = Array.from({ length: 2 }, (_, i) => `steps.info.moonpayItems.${i}`)
 
-const PaymentChoiceContainer = styled.div`
-  width: 100%;
-`
-
-const StyledRadioButtonGroup = styled(RadioButtonGroup)(
-  ({ theme }) => css`
-    border: 1px solid ${theme.colors.border};
-    border-radius: ${theme.radii.large};
-    gap: 0;
-  `,
-)
-
-const StyledRadioButton = styled(RadioButton)``
-
 const RadioButtonContainer = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']};
@@ -133,21 +120,6 @@ const MoonpayContainer = styled.div`
   justify-content: center;
   gap: 5px;
 `
-
-const InfoItems = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: ${theme.space['4']};
-
-    @media (min-width: ${theme.breakpoints.sm}px) {
-      flex-direction: row;
-      align-items: stretch;
-    }
-  `,
-)
 
 const InfoItem = styled.div(
   ({ theme }) => css`
@@ -185,11 +157,6 @@ const InfoItem = styled.div(
     }
   `,
 )
-
-const LabelContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`
 
 const CheckboxWrapper = styled.div(
   () => css`
@@ -278,24 +245,31 @@ const PaymentChoice = ({
 }) => {
   const { t } = useTranslation('register')
 
+  console.log({ paymentMethodChoice })
+
   return (
-    <PaymentChoiceContainer>
+    <Box width="full">
       <StyledTitle color="grey" weight="bold">
         {t('steps.info.paymentMethod')}
       </StyledTitle>
       <Spacer $height="2" />
-      <StyledRadioButtonGroup
+      <RadioButtonGroup
+        borderWidth="1x"
+        borderColor="border"
+        borderStyle="solid"
+        borderRadius="large"
+        gap="0"
         value={paymentMethodChoice}
-        onChange={(e) => setPaymentMethodChoice(e.target.value as PaymentMethod)}
       >
         <RadioButtonContainer>
-          <StyledRadioButton
+          <RadioButton
             data-testid="payment-choice-ethereum"
             label={<RadioLabel>{t('steps.info.ethereum')}</RadioLabel>}
             name="RadioButtonGroup"
             value={PaymentMethod.ethereum}
             disabled={hasPendingMoonpayTransaction}
-            checked={paymentMethodChoice === PaymentMethod.ethereum || undefined}
+            defaultChecked={paymentMethodChoice === PaymentMethod.ethereum || undefined}
+            onChange={(e) => setPaymentMethodChoice(e.currentTarget.value as PaymentMethod)}
           />
           {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
             <>
@@ -325,30 +299,43 @@ const PaymentChoice = ({
           )}
         </RadioButtonContainer>
         <RadioButtonContainer>
-          <StyledRadioButton
+          <RadioButton
             label={
-              <LabelContainer>
+              <Box display="flex" flexWrap="wrap">
                 <RadioLabel>{t('steps.info.creditOrDebit')}</RadioLabel>
                 <Typography color="grey" weight="light">
                   ({t('steps.info.additionalFee')})
                 </Typography>
-              </LabelContainer>
+              </Box>
             }
             name="RadioButtonGroup"
             value={PaymentMethod.moonpay}
-            checked={paymentMethodChoice === PaymentMethod.moonpay || undefined}
+            onChange={(e) => setPaymentMethodChoice(e.currentTarget.value as PaymentMethod)}
+            defaultChecked={paymentMethodChoice === PaymentMethod.moonpay || undefined}
           />
           {paymentMethodChoice === PaymentMethod.moonpay && (
             <>
               <Spacer $height="4" />
-              <InfoItems>
+              <Box
+                display="flex"
+                flexDirection={{
+                  base: 'row',
+                  sm: 'column',
+                }}
+                alignItems={{
+                  base: 'center',
+                  sm: 'stretch',
+                }}
+                justifyContent="flex-start"
+                gap="4"
+              >
                 {moonpayInfoItems.map((item, idx) => (
                   <InfoItem key={item}>
                     <Typography>{idx + 1}</Typography>
                     <Typography>{t(item)}</Typography>
                   </InfoItem>
                 ))}
-              </InfoItems>
+              </Box>
               <Spacer $height="4" />
               {hasFailedMoonpayTransaction && (
                 <Helper alert="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
@@ -361,8 +348,8 @@ const PaymentChoice = ({
             </>
           )}
         </RadioButtonContainer>
-      </StyledRadioButtonGroup>
-    </PaymentChoiceContainer>
+      </RadioButtonGroup>
+    </Box>
   )
 }
 
