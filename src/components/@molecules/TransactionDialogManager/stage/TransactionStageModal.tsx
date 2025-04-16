@@ -308,8 +308,8 @@ const getPreTransactionError = ({
         message: (err as BaseError).shortMessage,
         type: 'unknown' as const,
       }
-      // Ambire smart contract wallet will sometimes throw an error when creating the transaction
-      // Origin or error is in call eth_createAccessList when `sender is not an EOA`
+      // TODO: Remove this when the following issue is fixed: https://github.com/paradigmxyz/reth/issues/15762
+      // Cause reth throws an error on eth_createAccessList when `sender is not an EOA`
       if (error.message === 'Transaction creation failed.') {
         return null
       }
