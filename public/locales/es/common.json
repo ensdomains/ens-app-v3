@@ -419,16 +419,16 @@
     "default": "No pudimos verificar tu cuenta. Por favor, regresa a Dentity e inténtalo de nuevo."
   },
   "homoglyph": {
-  "content": "Este nombre contiene caracteres válidos en español (á, é, í, ó, ú, ü, ñ). A diferencia de otros idiomas:",
-  "points": [
-    "Son ortografía correcta (ej: «canción.eth», «México.eth»)",
-    "NO son sustitutos de caracteres ingleses",
-    "Se conservan exactamente como los escribes:",
-    "- «sótano.eth» ≠ «sotano.eth»",
-    "- «pingüino.eth» ≠ «pinguino.eth»",
-    "Algunos sistemas antiguos podrían no soportarlos"
-  ],
-  "link": "https://unicode.org/reports/tr36/",
-  "title": "Caracteres del español"
-}
+    "content": "Este nombre contiene caracteres válidos en español (á, é, í, ó, ú, ü, ñ). A diferencia de otros idiomas:",
+    "points": [
+      "Son ortografía correcta (ej: «canción.eth», «México.eth»)",
+      "NO son sustitutos de caracteres ingleses",
+      "Se conservan exactamente como los escribes:",
+      "- «sótano.eth» ≠ «sotano.eth»",
+      "- «pingüino.eth» ≠ «pinguino.eth»",
+      "Algunos sistemas antiguos podrían no soportarlos"
+    ],
+    "link": "https://unicode.org/reports/tr36/",
+    "title": "Caracteres del español"
+  }
 }
