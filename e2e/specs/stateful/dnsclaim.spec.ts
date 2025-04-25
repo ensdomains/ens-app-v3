@@ -31,8 +31,7 @@ test.describe('Import DNSSEC name', () => {
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })
 
-  // TODO: this is failing because stateful tests are still on goerli, we should switch to sepolia/holesky
-  test.skip('should not allow the user to proceed if they have not set the correct TXT record - offchain', async ({
+  test('should not allow the user to proceed if they have not set the correct TXT record - offchain', async ({
     page,
     login,
   }) => {
@@ -43,10 +42,10 @@ test.describe('Import DNSSEC name', () => {
     await page.getByTestId('import-next-button').click()
     await expect(page.getByTestId('import-heading')).toContainText('Verify Ownership')
     await expect(page.getByTestId('status-checker-message')).toContainText('No record found')
-    await expect(page.getByTestId('import-next-button')).toBeDisabled()
+    await expect(page.getByTestId('offchain-claim')).toBeDisabled()
   })
 
-  test('should not allow the use to proceed if they have not set the correct subdomain with the correct info', async ({
+  test('should not allow the user to proceed if they have not set the correct subdomain with the correct info', async ({
     page,
     login,
   }) => {
@@ -60,7 +59,8 @@ test.describe('Import DNSSEC name', () => {
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })
 
-  test('should resolve .pw domains', async ({ page, login }) => {
+  test.skip('should resolve .pw domains', async ({ page, login }) => {
+    // pw domain does not resolve on localhost
     await page.goto('/test.pw?chain=holesky')
     await login.connect()
 
