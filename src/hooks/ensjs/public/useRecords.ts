@@ -87,6 +87,8 @@ export const getRecordsQueryFn =
     if (!name) throw new Error('name is required')
 
     // TODO: Check the return value from getRecords from ponder to see if it's consistent with subgraph for when a name has no records or doesn't not exist
+    // The _importName tests are failing because an error is thrown and the error modal is blocking the ui from continuing
+    // NOTE: This will still fail the onchain test because we will not be able to get the eth record from the subgraph
     return null
     const client = config.getClient({ chainId })
     const res = await getRecords(client, {
