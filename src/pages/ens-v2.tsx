@@ -272,22 +272,6 @@ export default function ENSv2() {
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen
       />
-      <CenteredCard>
-        <Typography fontVariant="headingTwo" as="h2">
-          {t('learn-more.title')}
-        </Typography>
-        <Typography fontVariant="body">{t('learn-more.caption')}</Typography>
-        <Button
-          as="a"
-          href="https://t.me/+cx5my3EQWH8wODYx"
-          width="max"
-          colorStyle="greenPrimary"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {t('learn-more.button')}
-        </Button>
-      </CenteredCard>
       <GridOneToThree>
         <CardWithEmoji>
           <Typography fontVariant="headingTwo" as="h2">
@@ -298,7 +282,7 @@ export default function ENSv2() {
             as="a"
             href="https://roadmap.ens.domains/l2-roadmap"
             width="max"
-            colorStyle="greenSecondary"
+            colorStyle="greenPrimary"
             target="_blank"
             rel="noopener noreferrer"
           >

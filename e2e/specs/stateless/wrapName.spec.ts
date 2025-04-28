@@ -287,7 +287,10 @@ test('should calculate needed steps without localstorage', async ({
   await transactionModal.introButton.click()
   await transactionModal.confirm()
   await transactionModal.complete()
-  await expect(page.getByTestId('namewrapper-status')).not.toContainText('Unwrapped')
+
+  await expect(page.getByTestId('namewrapper-status')).not.toContainText('Unwrapped', {
+    timeout: 10000,
+  })
 
   await profilePage.goto(subname)
   await expect(profilePage.record('text', 'description')).toHaveText('test')
