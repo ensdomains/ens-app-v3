@@ -100,7 +100,7 @@ export const useMoonpayRegistration = (
     refetchOnMount: true,
     refetchInterval: 1000,
     refetchIntervalInBackground: true,
-    enabled: !!currentExternalTransactionId && !isCompleted,
+    enabled: !!currentExternalTransactionId && !isCompleted && chainId === 1,
   })
 
   return {
