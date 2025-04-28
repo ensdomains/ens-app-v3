@@ -86,6 +86,8 @@ export const getRecordsQueryFn =
   > => {
     if (!name) throw new Error('name is required')
 
+    // TODO: Check the return value from getRecords from ponder to see if it's consistent with subgraph for when a name has no records or doesn't not exist
+    return null
     const client = config.getClient({ chainId })
     const res = await getRecords(client, {
       name,
