@@ -26,7 +26,7 @@ import {
 import { getReadableError } from '@app/utils/errors'
 import { createAccessList } from '@app/utils/query/createAccessList'
 import { wagmiConfig } from '@app/utils/query/wagmi'
-import { hasParaConnection } from '@app/utils/utils'
+import { connectorIsMetaMask, hasParaConnection } from '@app/utils/utils'
 
 export const getUniqueTransaction = ({
   txKey,
@@ -210,6 +210,10 @@ export const createTransactionRequestUnsafe = async ({
     ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
     ...(isParaConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
+
+  if (connectorIsMetaMask(connections, connectorClient)) {
+    ;(request as any).__is_metamask = true
+  }
 
   return {
     ...request,
