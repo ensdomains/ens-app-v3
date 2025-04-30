@@ -52,7 +52,7 @@ const staticHandler: PagesFunction = async ({ request, next, env }) => {
   return next()
 }
 
-const firefoxRewrite: PagesFunction = async ({ request, next }) => {
+const cspRewrite: PagesFunction = async ({ request, next }) => {
   const userAgent = request.headers.get('user-agent')?.toLowerCase()
   const response = await next()
 
@@ -172,4 +172,4 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
   return next()
 }
 
-export const onRequest = [staticHandler, firefoxRewrite, pathRewriter]
+export const onRequest = [staticHandler, cspRewrite, pathRewriter]
