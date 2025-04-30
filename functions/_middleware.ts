@@ -64,6 +64,12 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
       .transform(response)
   }
 
+  // safari CSP exception
+  if (userAgent?.includes('safari/') && userAgent.includes('version/')) {
+    response.headers.set('Content-Security-Policy', cspOnlyFrameAncestors)
+    return response
+  }
+
   // default headers
   response.headers.set('Content-Security-Policy', cspWithFrameAncestors)
   return response
