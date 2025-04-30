@@ -64,6 +64,7 @@ export const getChainsFromUrl = () => {
   const chain = process.env.NEXT_PUBLIC_CHAIN_NAME
   if (chain === 'holesky') return [holeskyWithEns]
   if (chain === 'sepolia') return [sepoliaWithEns]
+  if (chain === 'mainnet') return [mainnetWithEns]
 
   // Previews
   if (segments.length === 4) {
