@@ -1,5 +1,6 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
+import { dequal } from 'dequal'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
 // import { writeFileSync} from 'fs'
@@ -20,7 +21,6 @@ import { useBasicName } from '../useBasicName'
 import { useHasSubnames } from '../useHasSubnames'
 import { useParentBasicName } from '../useParentBasicName'
 import { useAbilities } from './useAbilities'
-import { dequal } from 'dequal'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/useBasicName')

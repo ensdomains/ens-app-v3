@@ -1,4 +1,4 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@getpara/rainbowkit'
 import { Dispatch, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -8,6 +8,7 @@ import { CheckCircleSVG, Helper, Typography } from '@ensdomains/thorin'
 import RecordItem from '@app/components/RecordItem'
 import { DNS_TXT_RECORD_HELPER_LINKS } from '@app/constants/dnsLinks'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { sendEvent } from '@app/utils/analytics/events'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
@@ -97,6 +98,7 @@ export const VerifyOnchainOwnership = ({
   }, [tc, error, isLoading])
 
   const handleStartDNSImport = () => {
+    sendEvent('import:onchain_verify', { name: selected.name })
     dispatch({ name: 'increaseStep', selected })
   }
 

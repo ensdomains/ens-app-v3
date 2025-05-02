@@ -1,17 +1,9 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { CallParameters, SendTransactionReturnType } from '@wagmi/core'
+import { CallParameters, getFeeHistory, SendTransactionReturnType } from '@wagmi/core'
 import { Dispatch } from 'react'
-import {
-  Address,
-  BlockTag,
-  Hash,
-  Hex,
-  PrepareTransactionRequestRequest,
-  toHex,
-  Transaction,
-  TransactionRequest,
-} from 'viem'
+import { Hash, PrepareTransactionRequestRequest, toHex, Transaction } from 'viem'
 import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'viem/actions'
+import { useConnections } from 'wagmi'
 
 import { SupportedChain } from '@app/constants/chains'
 import { TransactionStatus } from '@app/hooks/transactions/transactionStore'
@@ -32,15 +24,9 @@ import {
   CreateQueryKey,
 } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
-import { CheckIsSafeAppReturnType } from '@app/utils/safe'
-
-type AccessListResponse = {
-  accessList: {
-    address: Address
-    storageKeys: Hex[]
-  }[]
-  gasUsed: Hex
-}
+import { createAccessList } from '@app/utils/query/createAccessList'
+import { wagmiConfig } from '@app/utils/query/wagmi'
+import { connectorIsMetaMask, hasParaConnection } from '@app/utils/utils'
 
 export const getUniqueTransaction = ({
   txKey,
@@ -117,51 +103,56 @@ export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: Tr
 export const calculateGasLimit = async ({
   client,
   connectorClient,
-  isSafeApp,
   txWithZeroGas,
   transactionName,
 }: {
   client: ClientWithEns
   connectorClient: ConnectorClientWithEns
-  isSafeApp: boolean
   txWithZeroGas: BasicTransactionRequest
   transactionName: TransactionName
 }) => {
-  if (isSafeApp) {
-    const accessListResponse = await client.request<{
-      Method: 'eth_createAccessList'
-      Parameters: [tx: TransactionRequest<Hex>, blockTag: BlockTag]
-      ReturnType: AccessListResponse
-    }>({
-      method: 'eth_createAccessList',
-      params: [
-        {
-          to: txWithZeroGas.to,
-          data: txWithZeroGas.data,
-          from: connectorClient.account!.address,
-          value: toHex(txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n),
-        },
-        'latest',
-      ],
-    })
-
-    return {
-      gasLimit: registrationGasFeeModifier(BigInt(accessListResponse.gasUsed), transactionName),
-      accessList: accessListResponse.accessList,
-    }
-  }
+  const accessListResponse = await createAccessList(client, {
+    to: txWithZeroGas.to,
+    data: txWithZeroGas.data,
+    from: connectorClient.account!.address,
+    value: toHex(txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n),
+  })
 
   const gasEstimate = await estimateGas(client, {
     ...txWithZeroGas,
-    account: connectorClient.account!,
+    accessList: accessListResponse.accessList,
+    account: connectorClient.account,
   })
+
   return {
     gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
-    accessList: undefined,
+    accessList: accessListResponse.accessList,
   }
 }
 
-type CreateTransactionRequestQueryKey = CreateQueryKey<
+const defaultMaxPriorityFeePerGas = 5000000000n
+export const getLargestMedianGasFee = async () => {
+  let feeHistory
+  try {
+    feeHistory = await getFeeHistory(wagmiConfig, {
+      blockCount: 5,
+      rewardPercentiles: [50],
+    })
+  } catch (e) {
+    console.error('Failed to get fee history')
+    return defaultMaxPriorityFeePerGas
+  }
+
+  if (!feeHistory.reward || feeHistory.reward.length === 0) return defaultMaxPriorityFeePerGas
+
+  const maxPriorityFeePerGas = feeHistory.reward
+    .map((block) => block[0])
+    .reduce((max, fee) => (fee > max ? fee : max), BigInt(0))
+
+  return maxPriorityFeePerGas
+}
+
+export type CreateTransactionRequestQueryKey = CreateQueryKey<
   UniqueTransaction,
   'createTransactionRequest',
   'standard'
@@ -170,17 +161,17 @@ type CreateTransactionRequestQueryKey = CreateQueryKey<
 type CreateTransactionRequestUnsafeParameters = {
   client: ClientWithEns
   connectorClient: ConnectorClientWithEns
-  isSafeApp: CheckIsSafeAppReturnType | undefined
   params: UniqueTransaction
   chainId: SupportedChain['id']
+  connections: any
 }
 
-const createTransactionRequestUnsafe = async ({
+export const createTransactionRequestUnsafe = async ({
   client,
   connectorClient,
-  isSafeApp,
   params,
   chainId,
+  connections,
 }: CreateTransactionRequestUnsafeParameters) => {
   const transactionRequest = await createTransactionRequest({
     name: params.name,
@@ -198,10 +189,16 @@ const createTransactionRequestUnsafe = async ({
   const { gasLimit, accessList } = await calculateGasLimit({
     client,
     connectorClient,
-    isSafeApp: !!isSafeApp,
     txWithZeroGas,
     transactionName: params.name,
   })
+
+  const isParaConnected = hasParaConnection(connections)
+
+  let largestMedianGasFee = 0n
+  if (isParaConnected) {
+    largestMedianGasFee = await getLargestMedianGasFee()
+  }
 
   const request = await prepareTransactionRequest(client, {
     to: transactionRequest.to,
@@ -211,7 +208,12 @@ const createTransactionRequestUnsafe = async ({
     gas: gasLimit,
     parameters: ['fees', 'nonce', 'type'],
     ...('value' in transactionRequest ? { value: transactionRequest.value } : {}),
+    ...(isParaConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
+
+  if (connectorIsMetaMask(connections, connectorClient)) {
+    ;(request as any).__is_metamask = true
+  }
 
   return {
     ...request,
@@ -226,10 +228,10 @@ export const createTransactionRequestQueryFn =
   (config: ConfigWithEns) =>
   ({
     connectorClient,
-    isSafeApp,
+    connections,
   }: {
     connectorClient: ConnectorClientWithEns | undefined
-    isSafeApp: CheckIsSafeAppReturnType | undefined
+    connections: ReturnType<typeof useConnections>
   }) =>
   async ({
     queryKey: [params, chainId, address],
@@ -245,9 +247,9 @@ export const createTransactionRequestQueryFn =
         data: await createTransactionRequestUnsafe({
           client,
           connectorClient,
-          isSafeApp,
           params,
           chainId,
+          connections,
         }),
         error: null,
       }

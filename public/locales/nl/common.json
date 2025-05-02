@@ -2,7 +2,6 @@
   "title": "Jouw web3 gebruikersnaam",
   "description": "Jouw web3 identiteit, een naam voor al je crypto Adressen, en je gedecentraliseerde website.",
   "loading": "Laden",
-  "unsupportedNetwork": "Netwerk niet ondersteund",
   "action": {
     "cancel": "Annuleer",
     "change": "Verander",

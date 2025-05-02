@@ -4,7 +4,6 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
-import { useChainId } from 'wagmi'
 
 import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 
@@ -30,12 +29,22 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { getResolverWrapperAwareness } from '@app/utils/utils'
 
-import ResolverWarningOverlay from './ResolverWarningOverlay'
+import { useProfileEditorReducer } from './hooks/useProfileEditorReducer'
+import { InvalidResolverView } from './views/InvalidResolverView'
+import { MigrateProfileSelectorView } from './views/MigrateProfileSelectorView.tsx'
+import { MigrateProfileWarningView } from './views/MigrateProfileWarningView'
+import { MigrateRegistryView } from './views/MigrateRegistryView'
+import { NoResolverView } from './views/NoResolverView'
+import { ResetProfileView } from './views/ResetProfileView'
+import { ResolverNotNameWrapperAwareView } from './views/ResolverNotNameWrapperAwareView'
+import { ResolverOutOfDateView } from './views/ResolverOutOfDateView'
+import { TransferOrResetProfileView } from './views/TransferOrResetProfileView'
+import { UpdateResolverOrResetProfileView } from './views/UpdateResolverOrResetProfileView'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
 import { WrappedHeaderButton } from './WrappedHeaderButton'
 
@@ -73,6 +82,18 @@ const ButtonWrapper = styled.div(
   `,
 )
 
+const CloseButtonBlocker = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: ${theme.colors.backgroundPrimary};
+    width: ${theme.space['12']};
+    height: ${theme.space['12']};
+    z-index: 1000;
+  `,
+)
+
 type Data = {
   name?: string
   resumable?: boolean
@@ -83,6 +104,8 @@ export type Props = {
   data?: Data
   onDismiss?: () => void
 } & TransactionDialogPassthrough
+
+export type SelectedProfile = 'latest' | 'current' | 'reset'
 
 const SubmitButton = ({
   control,
@@ -128,19 +151,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const { t } = useTranslation('register')
 
   const formRef = useRef<HTMLFormElement>(null)
-  const [view, setView] = useState<
-    | 'editor'
-    | 'upload'
-    | 'nft'
-    | 'manual'
-    | 'addRecord'
-    | 'warning'
-    | 'header-upload'
-    | 'header-nft'
-    | 'header-manual'
-  >('editor')
 
-  const { name = '', resumable = false } = data
+  const { name = '' } = data
 
   const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
   const { data: isWrapped = false, isLoading: isWrappedLoading } = useIsWrapped({ name })
@@ -168,7 +180,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     errorForRecordAtIndex,
     isDirtyForRecordAtIndex,
     hasErrors,
-    getValues,
   } = useProfileEditorForm(existingRecords)
 
   // Update profile records if transaction data exists
@@ -211,8 +222,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     name,
   })
 
-  const chainId = useChainId()
-
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
@@ -239,21 +248,19 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const [headerSrc, setHeaderSrc] = useState<string | undefined>()
   const [headerFile, setHeaderFile] = useState<File | undefined>()
 
-  useEffect(() => {
-    if (
-      !resolverStatus.isLoading &&
-      !resolverStatus.data?.hasLatestResolver &&
-      transactions.length === 0
-    ) {
-      setView('warning')
-    }
-  }, [resolverStatus.isLoading, resolverStatus.data?.hasLatestResolver, transactions.length])
-
-  useEffect(() => {
-    if (!isProfileLoading && profile?.isMigrated === false) {
-      setView('warning')
-    }
-  }, [isProfileLoading, profile?.isMigrated])
+  const isLoading_ = isLoading || resolverStatus.isLoading
+  const [editorState, editorDispatch] = useProfileEditorReducer(
+    {
+      profile,
+      resolverStatus: resolverStatus.data,
+      isWrapped,
+      isLoading: isLoading_,
+    },
+    {
+      onDismiss,
+    },
+  )
+  const view = editorState.stack[editorState.stack.length - 1]
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
@@ -261,26 +268,138 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   }
 
   const handleShowAddRecordModal = () => {
-    setView('addRecord')
+    editorDispatch({ type: 'pushView', payload: 'addRecord' })
   }
 
-  const handleAddRecords = (records: ProfileRecord[]) => {
-    addRecords(records)
-    // Initialize header field if it was added
-    const headerRecord = records.find(
-      (record) => record.key === 'header' && record.group === 'media',
-    )
-    if (headerRecord) {
-      setHeaderSrc(headerRecord.value)
-    }
-    setView('editor')
+  const handleUpdateResolver = () => {
+    dispatch({
+      name: 'setTransactions',
+      payload: [
+        createTransactionItem('updateResolver', {
+          name,
+          contract: isWrapped ? 'nameWrapper' : 'registry',
+          resolverAddress,
+        }),
+      ],
+    })
+    dispatch({
+      name: 'setFlowStage',
+      payload: 'transaction',
+    })
   }
 
-  const canEditRecordsWhenWrapped = match(isWrapped)
-    .with(true, () =>
-      getResolverWrapperAwareness({ chainId, resolverAddress: profile?.resolverAddress }),
-    )
-    .otherwise(() => true)
+  const handleMigrateProfile = () => {
+    dispatch({
+      name: 'startFlow',
+      key: `migrate-profile-${name}`,
+      payload: {
+        intro: {
+          title: ['input.profileEditor.intro.migrateProfile.title', { ns: 'transactionFlow' }],
+          content: makeIntroItem('GenericWithDescription', {
+            description: t('input.profileEditor.intro.migrateProfile.description', {
+              ns: 'transactionFlow',
+            }),
+          }),
+        },
+        transactions: [
+          createTransactionItem('migrateProfile', {
+            name,
+          }),
+          createTransactionItem('updateResolver', {
+            name,
+            contract: isWrapped ? 'nameWrapper' : 'registry',
+            resolverAddress,
+          }),
+        ],
+      },
+    })
+  }
+
+  const handleResetProfile = () => {
+    dispatch({
+      name: 'startFlow',
+      key: `reset-profile-${name}`,
+      payload: {
+        intro: {
+          title: ['input.profileEditor.intro.resetProfile.title', { ns: 'transactionFlow' }],
+          content: makeIntroItem('GenericWithDescription', {
+            description: t('input.profileEditor.intro.resetProfile.description', {
+              ns: 'transactionFlow',
+            }),
+          }),
+        },
+        transactions: [
+          createTransactionItem('resetProfile', {
+            name,
+            resolverAddress,
+          }),
+          createTransactionItem('updateResolver', {
+            name,
+            contract: isWrapped ? 'nameWrapper' : 'registry',
+            resolverAddress,
+          }),
+        ],
+      },
+    })
+  }
+
+  const handleMigrateCurrentProfileToLatest = async () => {
+    dispatch({
+      name: 'startFlow',
+      key: `migrate-profile-with-reset-${name}`,
+      payload: {
+        intro: {
+          title: [
+            'input.profileEditor.intro.migrateCurrentProfile.title',
+            { ns: 'transactionFlow' },
+          ],
+          content: makeIntroItem('GenericWithDescription', {
+            description: t('input.profileEditor.intro.migrateCurrentProfile.description', {
+              ns: 'transactionFlow',
+            }),
+          }),
+        },
+        transactions: [
+          createTransactionItem('migrateProfileWithReset', {
+            name,
+            resolverAddress: profile?.resolverAddress!,
+          }),
+          createTransactionItem('updateResolver', {
+            name,
+            contract: isWrapped ? 'nameWrapper' : 'registry',
+            resolverAddress,
+          }),
+        ],
+      },
+    })
+  }
+
+  const handleMigrate = () => {
+    if (resolverStatus.data?.hasMigratedProfile && resolverStatus.data?.isMigratedProfileEqual)
+      editorDispatch({ type: 'pushView', payload: 'updateResolverOrResetProfile' })
+    else if (resolverStatus.data?.hasMigratedProfile)
+      editorDispatch({ type: 'pushView', payload: 'migrateProfileSelector' })
+    else if (resolverStatus.data?.hasProfile)
+      editorDispatch({ type: 'pushView', payload: 'transferOrResetProfile' })
+    else handleUpdateResolver()
+  }
+
+  const canEditRecordsWhenWrapped = !!resolverStatus.data?.isAuthorized
+
+  const shouldInitializeEditorState = !isLoading_ && view === 'loading'
+  useEffect(() => {
+    if (shouldInitializeEditorState)
+      editorDispatch({
+        type: 'init',
+        payload: {
+          profile,
+          resolverStatus: resolverStatus.data,
+          isWrapped,
+          isLoading: isLoading_,
+        },
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldInitializeEditorState])
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
@@ -288,7 +407,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   return (
     <>
+      <CloseButtonBlocker />
       {match(view)
+        .with('loading', () => <TransactionLoader />)
         .with('editor', () => (
           <>
             <Dialog.Heading title={t('steps.profile.title2')} />
@@ -306,7 +427,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                   name={name}
                   control={control}
                   src={avatarSrc}
-                  onSelectOption={(option) => setView(option)}
+                  onSelectOption={(option) => {
+                    editorDispatch({ type: 'pushView', payload: option })
+                  }}
                   onAvatarChange={(avatar) => setAvatar(avatar)}
                   onAvatarFileChange={(file) => setAvatarFile(file)}
                   onAvatarSrcChange={(src) => setAvatarSrc(src)}
@@ -424,37 +547,22 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           <AddProfileRecordView
             control={control}
             onAdd={(newRecords) => {
-              handleAddRecords(newRecords)
+              addRecords(newRecords)
+              editorDispatch({ type: 'popView' })
             }}
-            onClose={() => setView('editor')}
-          />
-        ))
-        .with('warning', () => (
-          <ResolverWarningOverlay
-            name={name}
-            status={resolverStatus.data}
-            isWrapped={isWrapped}
-            hasOldRegistry={profile?.isMigrated === false}
-            resumable={resumable}
-            hasNoResolver={!resolverStatus.data?.hasResolver}
-            hasMigratedProfile={resolverStatus.data?.hasMigratedProfile}
-            latestResolverAddress={resolverAddress!}
-            oldResolverAddress={profile?.resolverAddress!}
-            dispatch={dispatch}
-            onDismiss={() => dispatch({ name: 'stopFlow' })}
-            onDismissOverlay={() => setView('editor')}
+            onClose={() => editorDispatch({ type: 'popView' })}
           />
         ))
         .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={name}
             avatarFile={avatarFile}
-            handleCancel={() => setView('editor')}
+            handleCancel={() => editorDispatch({ type: 'popView' })}
             type={type}
             handleSubmit={(_, uri, display) => {
               setAvatar(uri)
               setAvatarSrc(display)
-              setView('editor')
+              editorDispatch({ type: 'popView' })
               trigger()
             }}
           />
@@ -470,6 +578,89 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               setHeaderSrc(display)
               setView('editor')
               trigger()
+            }}
+          />
+        ))
+        .with('migrateRegistry', () => <MigrateRegistryView name={name} onCancel={onDismiss} />)
+        .with('invalidResolver', () => (
+          <InvalidResolverView onConfirm={() => handleUpdateResolver()} onCancel={onDismiss} />
+        ))
+        .with('migrateProfileSelector', () => (
+          <MigrateProfileSelectorView
+            name={name}
+            currentResolverAddress={profile?.resolverAddress!}
+            latestResolverAddress={resolverAddress!}
+            hasCurrentProfile={resolverStatus.data?.hasProfile!}
+            onBack={() => {
+              editorDispatch({ type: 'popView' })
+            }}
+            onNext={(selectedProfile) => {
+              if (selectedProfile === 'latest') handleUpdateResolver()
+              else if (selectedProfile === 'current')
+                editorDispatch({ type: 'pushView', payload: 'migrateProfileWarning' })
+              else editorDispatch({ type: 'pushView', payload: 'resetProfile' })
+            }}
+          />
+        ))
+        .with('migrateProfileWarning', () => (
+          <MigrateProfileWarningView
+            onBack={() => {
+              editorDispatch({ type: 'popView' })
+            }}
+            onNext={() => handleMigrateCurrentProfileToLatest()}
+          />
+        ))
+        .with('noResolver', () => (
+          <NoResolverView
+            onCancel={() => {
+              editorDispatch({ type: 'popView' })
+            }}
+            onConfirm={() => handleMigrate()}
+          />
+        ))
+        .with('resetProfile', () => (
+          <ResetProfileView
+            onBack={() => {
+              editorDispatch({ type: 'popView' })
+            }}
+            onNext={() => handleResetProfile()}
+          />
+        ))
+        .with('resolverNotNameWrapperAware', () => (
+          <ResolverNotNameWrapperAwareView
+            onCancel={onDismiss}
+            onNext={() => {
+              handleMigrate()
+            }}
+          />
+        ))
+        .with('resolverOutOfDate', () => (
+          <ResolverOutOfDateView
+            onCancel={() => {
+              editorDispatch({ type: 'popView' })
+            }}
+            onConfirm={() => {
+              handleMigrate()
+            }}
+          />
+        ))
+        .with('transferOrResetProfile', () => (
+          <TransferOrResetProfileView
+            onBack={() => {
+              editorDispatch({ type: 'popView' })
+            }}
+            onNext={(selectedProfile: SelectedProfile) => {
+              if (selectedProfile === 'reset') handleUpdateResolver()
+              else handleMigrateProfile()
+            }}
+          />
+        ))
+        .with('updateResolverOrResetProfile', () => (
+          <UpdateResolverOrResetProfileView
+            onBack={() => editorDispatch({ type: 'popView' })}
+            onNext={(selected) => {
+              if (selected === 'reset') handleResetProfile()
+              else handleUpdateResolver()
             }}
           />
         ))

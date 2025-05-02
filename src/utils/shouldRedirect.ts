@@ -5,7 +5,6 @@ import {
   DnsImportReducerDataItem,
   DnsStep,
 } from '@app/components/pages/import/[name]/useDnsImportReducer'
-import { getSupportedChainById } from '@app/constants/chains'
 import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getEncodedLabelAmount } from '@app/utils/utils'
@@ -64,12 +63,6 @@ export const shouldRedirect = (
   extraData: RouteParams[keyof RouteParams],
 ) => {
   match([source, extraData])
-    .with(
-      ['Basic.tsx', { isConnected: true, chainId: P.number }],
-      (_params) =>
-        !getSupportedChainById(_params[1].chainId) && router.pathname !== '/unsupportedNetwork',
-      () => router.push(destination),
-    )
     .with(
       ['DotBoxRegistration.tsx', { isLoading: false }],
       (_params) =>
