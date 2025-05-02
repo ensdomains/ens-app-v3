@@ -1,16 +1,7 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { CallParameters, getFeeHistory, SendTransactionReturnType } from '@wagmi/core'
 import { Dispatch } from 'react'
-import {
-  Address,
-  BlockTag,
-  Hash,
-  Hex,
-  PrepareTransactionRequestRequest,
-  toHex,
-  Transaction,
-  TransactionRequest,
-} from 'viem'
+import { Hash, PrepareTransactionRequestRequest, toHex, Transaction } from 'viem'
 import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'viem/actions'
 import { useConnections } from 'wagmi'
 
@@ -33,17 +24,9 @@ import {
   CreateQueryKey,
 } from '@app/types'
 import { getReadableError } from '@app/utils/errors'
+import { createAccessList } from '@app/utils/query/createAccessList'
 import { wagmiConfig } from '@app/utils/query/wagmi'
-import { CheckIsSafeAppReturnType } from '@app/utils/safe'
-import { hasParaConnection } from '@app/utils/utils'
-
-type AccessListResponse = {
-  accessList: {
-    address: Address
-    storageKeys: Hex[]
-  }[]
-  gasUsed: Hex
-}
+import { connectorIsMetaMask, hasParaConnection } from '@app/utils/utils'
 
 export const getUniqueTransaction = ({
   txKey,
@@ -120,47 +103,30 @@ export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: Tr
 export const calculateGasLimit = async ({
   client,
   connectorClient,
-  isSafeApp,
   txWithZeroGas,
   transactionName,
 }: {
   client: ClientWithEns
   connectorClient: ConnectorClientWithEns
-  isSafeApp: boolean
   txWithZeroGas: BasicTransactionRequest
   transactionName: TransactionName
 }) => {
-  if (isSafeApp) {
-    const accessListResponse = await client.request<{
-      Method: 'eth_createAccessList'
-      Parameters: [tx: TransactionRequest<Hex>, blockTag: BlockTag]
-      ReturnType: AccessListResponse
-    }>({
-      method: 'eth_createAccessList',
-      params: [
-        {
-          to: txWithZeroGas.to,
-          data: txWithZeroGas.data,
-          from: connectorClient.account!.address,
-          value: toHex(txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n),
-        },
-        'latest',
-      ],
-    })
-
-    return {
-      gasLimit: registrationGasFeeModifier(BigInt(accessListResponse.gasUsed), transactionName),
-      accessList: accessListResponse.accessList,
-    }
-  }
+  const accessListResponse = await createAccessList(client, {
+    to: txWithZeroGas.to,
+    data: txWithZeroGas.data,
+    from: connectorClient.account!.address,
+    value: toHex(txWithZeroGas.value ? txWithZeroGas.value + 1000000n : 0n),
+  })
 
   const gasEstimate = await estimateGas(client, {
     ...txWithZeroGas,
-    account: connectorClient.account!,
+    accessList: accessListResponse.accessList,
+    account: connectorClient.account,
   })
+
   return {
     gasLimit: registrationGasFeeModifier(gasEstimate, transactionName),
-    accessList: undefined,
+    accessList: accessListResponse.accessList,
   }
 }
 
@@ -195,7 +161,6 @@ export type CreateTransactionRequestQueryKey = CreateQueryKey<
 type CreateTransactionRequestUnsafeParameters = {
   client: ClientWithEns
   connectorClient: ConnectorClientWithEns
-  isSafeApp: CheckIsSafeAppReturnType | undefined
   params: UniqueTransaction
   chainId: SupportedChain['id']
   connections: any
@@ -204,7 +169,6 @@ type CreateTransactionRequestUnsafeParameters = {
 export const createTransactionRequestUnsafe = async ({
   client,
   connectorClient,
-  isSafeApp,
   params,
   chainId,
   connections,
@@ -225,7 +189,6 @@ export const createTransactionRequestUnsafe = async ({
   const { gasLimit, accessList } = await calculateGasLimit({
     client,
     connectorClient,
-    isSafeApp: !!isSafeApp,
     txWithZeroGas,
     transactionName: params.name,
   })
@@ -248,6 +211,10 @@ export const createTransactionRequestUnsafe = async ({
     ...(isParaConnected ? { maxPriorityFeePerGas: largestMedianGasFee } : {}),
   })
 
+  if (connectorIsMetaMask(connections, connectorClient)) {
+    ;(request as any).__is_metamask = true
+  }
+
   return {
     ...request,
     chain: request.chain!,
@@ -261,11 +228,9 @@ export const createTransactionRequestQueryFn =
   (config: ConfigWithEns) =>
   ({
     connectorClient,
-    isSafeApp,
     connections,
   }: {
     connectorClient: ConnectorClientWithEns | undefined
-    isSafeApp: CheckIsSafeAppReturnType | undefined
     connections: ReturnType<typeof useConnections>
   }) =>
   async ({
@@ -282,7 +247,6 @@ export const createTransactionRequestQueryFn =
         data: await createTransactionRequestUnsafe({
           client,
           connectorClient,
-          isSafeApp,
           params,
           chainId,
           connections,
