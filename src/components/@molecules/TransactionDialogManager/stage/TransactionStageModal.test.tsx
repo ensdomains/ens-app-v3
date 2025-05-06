@@ -14,6 +14,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { GenericTransaction } from '@app/transaction-flow/types'
+import { createAccessList } from '@app/utils/query/createAccessList'
 import { checkIsSafeApp } from '@app/utils/safe'
 
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
@@ -28,6 +29,7 @@ vi.mock('@app/hooks/transactions/useAddRecentTransaction')
 vi.mock('@app/hooks/transactions/useRecentTransactions')
 vi.mock('@app/hooks/chain/useInvalidateOnBlock')
 vi.mock('@app/utils/safe')
+vi.mock('@app/utils/query/createAccessList')
 vi.mock('@wagmi/core', async () => {
   const actual = await vi.importActual('@wagmi/core')
   return {
@@ -79,6 +81,7 @@ const mockUseClient = mockFunction(useClient)
 const mockUseConnectorClient = mockFunction(useConnectorClient)
 
 const mockEstimateGas = mockFunction(estimateGas)
+const mockCreateAccessList = createAccessList as MockedFunctionDeep<typeof createAccessList>
 const mockPrepareTransactionRequest = prepareTransactionRequest as MockedFunctionDeep<
   typeof prepareTransactionRequest
 >
@@ -208,6 +211,7 @@ describe('TransactionStageModal', () => {
       })
 
       it('should disable confirm button and re-estimate gas if a unique identifier is changed', async () => {
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         mockUseIsSafeApp.mockReturnValue({ data: false })
         mockUseSendTransaction.mockReturnValue({
@@ -236,6 +240,7 @@ describe('TransactionStageModal', () => {
       })
 
       it('should only show confirm button as enabled if gas is estimated and sendTransaction func is defined', async () => {
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         mockUseSendTransaction.mockReturnValue({
           sendTransaction: () => Promise.resolve(),
@@ -246,6 +251,7 @@ describe('TransactionStageModal', () => {
         )
       })
       it('should run set sendTransaction on action click', async () => {
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
@@ -286,6 +292,7 @@ describe('TransactionStageModal', () => {
       })
       it('should pass the request to send transaction', async () => {
         mockUseIsSafeApp.mockReturnValue({ data: false })
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         mockEstimateGas.mockResolvedValue(1n)
         const mockSendTransaction = vi.fn()
         mockUseSendTransaction.mockReturnValue({
@@ -298,7 +305,7 @@ describe('TransactionStageModal', () => {
             expect.objectContaining({
               ...mockTransactionRequest,
               gas: 1n,
-              accessList: undefined,
+              accessList: [],
             }),
           ),
         )
@@ -500,59 +507,37 @@ describe('calculateGasLimit', () => {
     data: '0x12345678',
   } as const
   const mockTransactionName = 'registerName'
-  const mockIsSafeApp = false
+  const mockAccessListResponse = {
+    accessList: [
+      {
+        address: '0x1234567890123456789012345678901234567890' as const,
+        storageKeys: [
+          '0x1234567890123456789012345678901234567890123456789012345678901234' as const,
+        ],
+      },
+    ],
+    gasUsed: '0x64' as const,
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should calculate gas limit for non-safe apps', async () => {
+  it('should calculate gas limit', async () => {
     mockEstimateGas.mockResolvedValueOnce(100000n)
+    mockCreateAccessList.mockResolvedValueOnce(mockAccessListResponse)
     const result = await calculateGasLimit({
-      isSafeApp: mockIsSafeApp,
       txWithZeroGas: mockTxWithZeroGas,
       transactionName: mockTransactionName,
       client: mockClient as any,
       connectorClient: mockConnectorClient as any,
     })
     expect(result.gasLimit).toEqual(105000n)
-    expect(result.accessList).toBeUndefined()
+    expect(result.accessList).toEqual(mockAccessListResponse.accessList)
     expect(mockEstimateGas).toHaveBeenCalledWith(mockClient, {
       ...mockTxWithZeroGas,
+      accessList: mockAccessListResponse.accessList,
       account: mockConnectorClient.account,
-    })
-  })
-
-  it('should calculate gas limit for safe apps', async () => {
-    const mockAccessListResponse = {
-      gasUsed: '0x64',
-      accessList: [
-        {
-          address: '0x1234567890123456789012345678901234567890',
-          storageKeys: ['0x1234567890123456789012345678901234567890123456789012345678901234'],
-        },
-      ],
-    }
-    mockClient.request.mockResolvedValueOnce(mockAccessListResponse)
-    const result = await calculateGasLimit({
-      isSafeApp: true,
-      txWithZeroGas: mockTxWithZeroGas,
-      transactionName: mockTransactionName,
-      client: mockClient as any,
-      connectorClient: mockConnectorClient as any,
-    })
-    expect(result.gasLimit).toEqual(5100n)
-    expect(result.accessList).toEqual(mockAccessListResponse.accessList)
-    expect(mockClient.request).toHaveBeenCalledWith({
-      method: 'eth_createAccessList',
-      params: [
-        {
-          from: mockConnectorClient.account.address,
-          ...mockTxWithZeroGas,
-          value: '0x0',
-        },
-        'latest',
-      ],
     })
   })
 })
