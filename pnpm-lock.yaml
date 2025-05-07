@@ -447,8 +447,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       permaweb-deploy:
-        specifier: ^2.0.1
-        version: 2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
+        specifier: ^2.0.2
+        version: 2.0.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
       postcss-styled-syntax:
         specifier: ^0.7.1
         version: 0.7.1(postcss@8.5.3)
@@ -6423,8 +6423,8 @@ packages:
     resolution: {integrity: sha512-iuh7L6jA7JEGu2WxDwtQP1ddOpaJNC4KlDEFfdQajSGgGPNi4OyDc2R7QnbY2bR9QjBVGwgvTdNJZoE7RaxUMA==}
     engines: {node: '>=0.12'}
 
-  permaweb-deploy@2.0.1:
-    resolution: {integrity: sha512-wBIc+4f52HJuhtUvretkJ3M/0S7jloTiBOUjDhliU5JheZMuRFR7Cbivt/8hvTcrY+o+DiuHuT4M1boh6S9amQ==}
+  permaweb-deploy@2.0.2:
+    resolution: {integrity: sha512-ZauqGQmADzzROChccFb891xQf2du/pRbhdvyfdNFJCl2EF/gY9XDsbAXdjWFnI9UJdIrs/LWtufH4y20wyFzPg==}
     hasBin: true
 
   picocolors@1.1.1:
@@ -15499,7 +15499,7 @@ snapshots:
       safe-buffer: '@socketregistry/safe-buffer@1.0.6'
       sha.js: 2.4.11
 
-  permaweb-deploy@2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10):
+  permaweb-deploy@2.0.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10):
     dependencies:
       '@ar.io/sdk': 3.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@ardrive/turbo-sdk': 1.25.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
