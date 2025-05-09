@@ -233,8 +233,8 @@ importers:
         specifier: 1.3.1
         version: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
       posthog-js:
-        specifier: ^1.217.0
-        version: 1.217.2
+        specifier: ^1.236.8
+        version: 1.236.8
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -6032,11 +6032,16 @@ packages:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
     engines: {node: ^10 || ^12 || >=14}
 
-  posthog-js@1.217.2:
-    resolution: {integrity: sha512-3KC+UjI0UT5zh8kAOVqe/AfvRjBMKynRIBQNlv0TXnfpZG0+h3r/1ONecDgCCGLs/a/55SJCExrugDlx+HPH3w==}
-
-  preact@10.23.1:
-    resolution: {integrity: sha512-O5UdRsNh4vdZaTieWe3XOgSpdMAmkIYBCT3VhQDlKrzyCm8lUYsk0fmVEvoQQifoOjFRTaHZO69ylrzTW2BH+A==}
+  posthog-js@1.236.8:
+    resolution: {integrity: sha512-Nmd1LP9lAairJ2gkIIHNHeY8c7F6nO0g6OWaAHe6MfRnKWwnzBoLkDXEX4ptvooQVKnQ3eS7UR0Q+112TAn9qw==}
+    peerDependencies:
+      '@rrweb/types': 2.0.0-alpha.17
+      rrweb-snapshot: 2.0.0-alpha.17
+    peerDependenciesMeta:
+      '@rrweb/types':
+        optional: true
+      rrweb-snapshot:
+        optional: true
 
   preact@10.26.2:
     resolution: {integrity: sha512-0gNmv4qpS9HaN3+40CLBAnKe0ZfyE4ZWo5xKlC1rVrr0ckkEvJvAQqKaHANdFKsGstoxrY4AItZ7kZSGVoVjgg==}
@@ -14258,14 +14263,12 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.217.2:
+  posthog-js@1.236.8:
     dependencies:
       core-js: 3.40.0
       fflate: 0.4.8
-      preact: 10.23.1
+      preact: 10.26.2
       web-vitals: 4.2.4
-
-  preact@10.23.1: {}
 
   preact@10.26.2: {}
 
