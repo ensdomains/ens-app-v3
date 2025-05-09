@@ -193,7 +193,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     async ({ owner, name, ...rest }: ProcessedNameData, index: number) => {
       const commitment = generateCommitment({ owner: owner.address, name, ...rest })
       const commitTxHash = await controller.write.commit([commitment], {
-        nonce: nonce + index,
+        // nonce: nonce + index,
         account: owner,
       })
       console.log(`Commiting commitment for ${name} (tx: ${commitTxHash})...`)
@@ -209,7 +209,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         {
           account: owner,
           value: price,
-          nonce: nonce + index,
+          // nonce: nonce + index,
         },
       )
       console.log(`Registering name ${name} (tx: ${registerTxHash})...`)
@@ -225,7 +225,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
           [namehash(name), label, subOwner.address, fuses, BigInt(expiry)],
           {
             account: owner,
-            nonce: nonce + index + i,
+            // nonce: nonce + index + i,
           },
         )
         console.log(`Creating subname ${label}.${name} (tx: ${subnameTxHash})...`)

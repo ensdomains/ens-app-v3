@@ -419,7 +419,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
       const commitTxHash = await controller.write.commit([commitment], {
         account: registrant,
-        nonce: nonce + index,
+        // nonce: nonce + index,
       })
       console.log(`Commiting commitment for ${label}.eth (tx: ${commitTxHash})...`)
 
@@ -439,7 +439,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         {
           account: registrant,
           value: price,
-          nonce: nonce + index,
+          // nonce: nonce + index,
         },
       )
       console.log(`Registering name ${label}.eth (tx: ${registerTxHash})...`)
@@ -463,7 +463,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         for (const { key, value } of records.text) {
           const setTextHash = await publicResolver.write.setText([hash, key, value], {
             account: registrant,
-            nonce: nonceRef,
+            // nonce: nonceRef,
           })
           console.log(` - ${key} ${value} (tx: ${setTextHash})...`)
           nonceRef += 1
@@ -474,7 +474,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         for (const { key, value } of records.addr) {
           const setAddrHash = await publicResolver.write.setAddr([hash, key, value], {
             account: registrant,
-            nonce: nonceRef,
+            // nonce: nonceRef,
           })
           console.log(` - ${key} ${value} (tx: ${setAddrHash})...`)
           nonceRef += 1
@@ -484,7 +484,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         console.log('CONTENTHASH')
         const setContenthashHash = await publicResolver.write.setContenthash(
           [hash, records.contenthash],
-          { account: registrant, nonce: nonceRef },
+          {
+            account: registrant,
+            // nonce: nonceRef
+          },
         )
         console.log(` - ${records.contenthash} (tx: ${setContenthashHash})...`)
         nonceRef += 1
@@ -501,7 +504,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
           else data_ = stringToBytes(data)
           const setAbiHash = await publicResolver.write.setABI(
             [hash, contentType, bytesToHex(data_)],
-            { account: registrant, nonce: nonceRef },
+            {
+              account: registrant,
+              // nonce: nonceRef
+            },
           )
           console.log(` - ${records.abi} (tx: ${setAbiHash})...`)
           nonceRef += 1
@@ -524,7 +530,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
           [namehash(`${label}.eth`), labelhash(subnameLabel), subOwner.address, resolver, 0n],
           {
             account: registrant,
-            nonce: nonce + index + i,
+            // nonce: nonce + index + i,
           },
         )
         console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTxHash})...`)
@@ -539,7 +545,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         [namehash(`${label}.eth`), owner!.address],
         {
           account: registrant,
-          nonce: nonce + index,
+          // nonce: nonce + index,
         },
       )
       console.log(`Setting controller for ${label}.eth to ${owner} (tx: ${setControllerTxHash})...`)
@@ -557,8 +563,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   ) => {
     const newNonceMap = nonceMap || {}
     for (const client of Object.values(allNamedClients)) {
-      const account = client.account
-      const address = account.address
+      const { account } = client
+      const { address } = account
       const namesWithAccount = allNameData.filter((data) => {
         const propertyValue = data[property]
         if (typeof propertyValue === 'string') {
