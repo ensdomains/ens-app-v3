@@ -3,7 +3,7 @@
     "title": "{{address}} в ENS",
     "description": "Все имена для {{address}} в Ethereum Name Service"
   },
-  "addressDetails": "Детали Адреса",
+  "addressDetails": "Детали адреса",
   "nameCount": "{{count}} имён",
   "filter": "Фильтр",
   "view": "Просмотр",

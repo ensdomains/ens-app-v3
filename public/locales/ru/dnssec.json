@@ -4,7 +4,7 @@
     "unknown": "Произошла неизвестная ошибка",
     "noTxtRecord": "Запись не найдена",
     "dnssecFailure": "DNSSEC не включен",
-    "invalidTxtRecord": "Найдена неверная запись",
+    "invalidTxtRecord": "Неверная TXT запись",
     "invalidAddressChecksum": "Адрес недействителен",
     "resolutionFailure": "Предоставленная запись не разрешилась"
   },
