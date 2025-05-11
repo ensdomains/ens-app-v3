@@ -108,7 +108,7 @@
           "other": {
             "label": "Другие",
             "items": {
-              "contentHash": "Content Hash",
+              "contentHash": "Content-Hash",
               "publicKey": "Публичный ключ",
               "abi": "ABI",
               "custom": "Пользовательский"
