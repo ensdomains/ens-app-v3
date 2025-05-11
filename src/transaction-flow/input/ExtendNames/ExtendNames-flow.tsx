@@ -84,7 +84,7 @@ const NamesListItemContent = styled.div(
 const NamesListItemTitle = styled.div(
   ({ theme }) => css`
     font-size: ${theme.space['5.5']};
-    background: red;
+    background: ${theme.colors.backgroundPrimary};
   `,
 )
 

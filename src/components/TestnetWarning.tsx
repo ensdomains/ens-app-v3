@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+
+import { getChainsFromUrl } from '@app/constants/chains'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -14,14 +15,14 @@ const Container = styled.div(
 )
 
 export const TestnetWarning = () => {
-  const { chain } = useAccount()
+  const chains = getChainsFromUrl()
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  if (isClient && chain && chain.id !== 1)
-    return <Container>You are viewing the ENS app on {chain.name} testnet.</Container>
+  if (isClient && chains && chains[0].id !== 1)
+    return <Container>You are viewing the ENS app on {chains[0].name} testnet.</Container>
   return null
 }

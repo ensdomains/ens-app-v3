@@ -3,7 +3,7 @@ import { mockFunction } from '@app/test-utils'
 import { expect, it, vi } from 'vitest'
 
 import { getPrice } from '@ensdomains/ensjs/public'
-import { registerName } from '@ensdomains/ensjs/wallet'
+import { legacyRegisterName, registerName } from '@ensdomains/ensjs/wallet'
 
 import registerNameFlowTransaction from './registerName'
 
@@ -12,9 +12,11 @@ vi.mock('@ensdomains/ensjs/wallet')
 
 const mockGetPrice = mockFunction(getPrice)
 const mockRegisterName = mockFunction(registerName.makeFunctionData)
+const mockLegacyRegisterName = mockFunction(legacyRegisterName.makeFunctionData)
 
 mockGetPrice.mockImplementation(async () => ({ base: 100n, premium: 0n }))
 mockRegisterName.mockImplementation((...args: any[]) => args as any)
+mockLegacyRegisterName.mockImplementation((...args: any[]) => args as any)
 
 it('adds a 2% value buffer to the transaction from the real price', async () => {
   const result = (await registerNameFlowTransaction.transaction({

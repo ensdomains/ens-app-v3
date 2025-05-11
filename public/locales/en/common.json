@@ -2,7 +2,6 @@
   "title": "Your web3 username",
   "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
   "loading": "Loading",
-  "unsupportedNetwork": "Unsupported network",
   "notFound": "404 Not Found",
   "etherscan": "Etherscan",
   "action": {
@@ -86,10 +85,16 @@
     "back": "Back",
     "oldApp": "Old ENS App",
     "language": "Language",
+    "theme": "Theme",
     "currency": "Currency",
     "ipfsApp": "IPFS ENS App",
     "feedback": "Feedback",
-    "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet."
+    "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet.",
+    "mode": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
   },
   "wallet": {
     "myProfile": "Profile",
@@ -98,7 +103,8 @@
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
     "viewDetails": "View Details",
-    "register": "Register"
+    "register": "Register",
+    "myWallet": "My Wallet"
   },
   "name": {
     "registered": "Registered",
@@ -306,6 +312,7 @@
         "message": "Double check these details before confirming in your wallet.",
         "waitingForWallet": "Waiting for Wallet",
         "openWallet": "Open Wallet",
+        "openPara": "Start",
         "insufficientFunds": "Insufficient funds"
       },
       "sent": {
@@ -418,5 +425,25 @@
     "ownerNotManager": "You must be connected as the Manager of this name to set the verification record. You can view and update the Manager under the Ownership tab.",
     "wrongAccount": "You must be connected as <strong>{{ nameOrAddress }}</strong> to set the verification record.",
     "default": "We could't verify your account. Please return to Dentity and try again."
+  },
+  "networkNotifications": {
+    "Ethereum": {
+      "title": "Switch to Ethereum?",
+      "description": "You've selected Ethereum (mainnet) in your wallet.",
+      "action": "Go to app.ens.domains"
+    },
+    "Sepolia": {
+      "title": "Switch to Sepolia?",
+      "description": "You've selected Sepolia (testnet) in your wallet.",
+      "action": "Go to sepolia.app.ens.domains"
+    },
+    "Holesky": {
+      "title": "Switch to Holesky?",
+      "description": "You've selected Holesky (testnet) in your wallet.",
+      "action": "Go to holesky.app.ens.domains"
+    }
+  },
+  "para": {
+    "signInWithPara": "Sign in with Para"
   }
 }

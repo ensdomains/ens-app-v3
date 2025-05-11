@@ -2,7 +2,6 @@
   "title": "您的 web3 用户名",
   "description": "您在 web3 上的身份，一个名称就能解析到您所有的加密地址和您的去中心化网站。",
   "loading": "加载中",
-  "unsupportedNetwork": "不支持的网络",
   "notFound": "404 未找到",
   "etherscan": "Etherscan",
   "action": {

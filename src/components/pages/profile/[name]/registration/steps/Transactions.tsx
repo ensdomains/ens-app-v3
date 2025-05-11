@@ -4,21 +4,24 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { useAccount } from 'wagmi'
 
-import { makeCommitment } from '@ensdomains/ensjs/utils'
+import { makeCommitment, makeLegacyCommitment } from '@ensdomains/ensjs/utils'
 import { Button, CountdownCircle, Dialog, Heading, Spinner } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { StatusDots } from '@app/components/@atoms/StatusDots/StatusDots'
 import { TextWithTooltip } from '@app/components/@atoms/TextWithTooltip/TextWithTooltip'
 import { Card } from '@app/components/Card'
+import { useCheckRegistered } from '@app/hooks/registration/useCheckRegistered'
 import { useExistingCommitment } from '@app/hooks/registration/useExistingCommitment'
 import { useSimulateRegistration } from '@app/hooks/registration/useSimulateRegistration'
 import { useDurationCountdown } from '@app/hooks/time/useDurationCountdown'
-import { useEventTracker } from '@app/hooks/useEventTracker'
 import useRegistrationParams from '@app/hooks/useRegistrationParams'
 import { CenteredTypography } from '@app/transaction-flow/input/ProfileEditor/components/CenteredTypography'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { sendEvent } from '@app/utils/analytics/events'
+import { isLegacyRegistration } from '@app/utils/registration/isLegacyRegistration'
+import { makeLegacyRegistrationParams } from '@app/utils/registration/makeLegacyRegistrationParams'
 import { ONE_DAY } from '@app/utils/time'
 
 import { RegistrationReducerDataItem } from '../types'
@@ -205,7 +208,6 @@ type Props = {
 
 const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
-  const { trackEvent } = useEventTracker()
 
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
@@ -239,9 +241,18 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   })
   const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
 
+  const checkRegistered = useCheckRegistered({
+    name,
+    ownerAddress: address,
+    enabled: registerTx?.stage === 'sent',
+  })
+
   useEffect(() => {
     if (canRegisterOverride) {
-      trackEvent({ eventName: 'register_override_triggered' })
+      sendEvent('transaction:register:override', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name: name,
+      })
       if (getSelectedKey() === commitKey) stopCurrentFlow()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -258,8 +269,13 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
 
   const commitCouldBeFound =
     !commitTx?.stage || commitTx.stage === 'confirm' || commitTx.stage === 'failed'
+  const isLegacyCommit = isLegacyRegistration(registrationParams)
   useExistingCommitment({
-    commitment: makeCommitment(registrationParams),
+    registrationParams,
+    commitment: isLegacyCommit
+      ? makeLegacyCommitment(makeLegacyRegistrationParams(registrationParams))
+      : makeCommitment(registrationParams),
+    isLegacyCommit,
     enabled: commitCouldBeFound,
     commitKey,
   })
@@ -281,6 +297,60 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     .with(PATTERNS.CommitReady, () => 'commitReady' as const)
     .exhaustive()
 
+  useEffect(() => {
+    match(transactionState)
+      .with('commitSent', () => {
+        sendEvent('transaction:commit:send', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: commitTx?.hash,
+        })
+      })
+      .with('commitFailed', () => {
+        sendEvent('transaction:commit:fail', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: commitTx?.hash,
+        })
+      })
+      .with('commitComplete', () => {
+        sendEvent('transaction:commit:complete', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: commitTx?.hash,
+        })
+      })
+      .with('registrationSent', () => {
+        sendEvent('transaction:register:send', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: registerTx?.hash,
+        })
+      })
+      .with('registrationFailed', () => {
+        sendEvent('transaction:register:fail', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: registerTx?.hash,
+        })
+      })
+      .with('registrationComplete', () => {
+        sendEvent('transaction:register:complete', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: name,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          transaction_hash: registerTx?.hash,
+        })
+      })
+      .otherwise(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionState])
+
   const makeCommitNameFlow = useCallback(() => {
     onStart()
     createTransactionFlow(commitKey, {
@@ -298,8 +368,6 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       autoClose: true,
       resumeLink: `/register/${name}`,
     })
-
-    trackEvent({ eventName: 'register_started' })
   }
 
   const showCommitTransaction = () => {
@@ -314,6 +382,10 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     cleanupFlow(commitKey)
     cleanupFlow(registerKey)
     callback({ back: true, resetSecret: true })
+    sendEvent('register:transaction_reset', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ens_name: name,
+    })
     setResetOpen(false)
   }
 
@@ -324,10 +396,11 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   }, [commitTx, makeCommitNameFlow])
 
   useEffect(() => {
-    if (registerTx?.stage === 'complete') {
+    if (registerTx?.stage === 'complete' || checkRegistered) {
+      stopCurrentFlow()
       callback({ back: false })
     }
-  }, [callback, registerTx?.stage])
+  }, [callback, registerTx?.stage, checkRegistered])
 
   const NormalBackButton = useMemo(
     () => (
