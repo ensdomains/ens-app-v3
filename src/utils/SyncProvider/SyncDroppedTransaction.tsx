@@ -206,6 +206,7 @@ export const findDroppedTransactions = async (
     const result = await getTransaction(client, { hash: pendingTransaction.hash })
     if (!result) {
       // If a pending transaction is not found, it has been dropped
+      console.log('Transaction dropped', pendingTransaction.hash)
       store.setFailedTransaction(address, chainId, pendingTransaction.hash)
       return
     }
