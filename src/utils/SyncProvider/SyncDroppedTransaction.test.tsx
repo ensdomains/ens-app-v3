@@ -1,3 +1,5 @@
+/* eslint-disable vitest/no-disabled-tests */
+
 import { mockFunction, render } from '@app/test-utils'
 
 import { http, HttpResponse } from 'msw'

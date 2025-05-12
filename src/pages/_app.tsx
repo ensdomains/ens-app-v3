@@ -27,7 +27,6 @@ import { PostHogProvider } from '@app/utils/analytics/posthog'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
 import { RainbowKitWithParaProvider } from '@app/utils/query/RainbowKitWithParaProvider'
-import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
 import '@getpara/rainbowkit/styles.css'
@@ -176,12 +175,10 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
                 <GlobalStyle />
                 <SyncProvider>
                   <TransactionFlowProvider>
-                    <SyncDroppedTransaction>
-                      <NetworkNotifications />
-                      <TransactionNotifications />
-                      <TestnetWarning />
-                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                    </SyncDroppedTransaction>
+                    <NetworkNotifications />
+                    <TransactionNotifications />
+                    <TestnetWarning />
+                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                   </TransactionFlowProvider>
                 </SyncProvider>
               </IntercomProvider>
