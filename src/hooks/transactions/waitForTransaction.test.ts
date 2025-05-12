@@ -1,9 +1,7 @@
-import { type PartialMockedFunction } from '@app/test-utils'
-
-import { PartiallyMockedFunction } from '@vitest/spy'
-import { WaitForTransactionReceiptReturnType } from 'viem'
+import { type MockedFunctionDeep } from '@vitest/spy'
+import { WaitForTransactionReceiptReturnType, type Transaction } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ClientWithEns, ConfigWithEns } from '@app/types'
 import { fetchTxFromSafeTxHash } from '@app/utils/safe'
@@ -14,11 +12,10 @@ vi.mock('viem/actions')
 
 vi.mock('@app/utils/safe')
 
-const mockWaitForTransactionReceipt = waitForTransactionReceipt as unknown as PartialMockedFunction<
+const mockWaitForTransactionReceipt = waitForTransactionReceipt as MockedFunctionDeep<
   typeof waitForTransactionReceipt
 >
-
-const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as unknown as PartiallyMockedFunction<
+const mockFetchTxFromSafeTxHash = fetchTxFromSafeTxHash as MockedFunctionDeep<
   typeof fetchTxFromSafeTxHash
 >
 
@@ -50,6 +47,10 @@ const mockTransactionReceiptData: WaitForTransactionReceiptReturnType = {
   type: 'legacy',
 }
 
+beforeEach(() => {
+  vi.clearAllMocks()
+})
+
 describe('waitForTransaction', () => {
   it('should wait for standard transaction', async () => {
     // @ts-ignore vi.fn is messing with types
@@ -62,7 +63,6 @@ describe('waitForTransaction', () => {
     expect(result).toStrictEqual(mockTransactionReceiptData)
   })
   it('should pass onReplaced tx to waitForTransactionReceipt', async () => {
-    // @ts-ignore vi.fn is messing with types
     mockWaitForTransactionReceipt.mockResolvedValueOnce(mockTransactionReceiptData)
 
     const onReplaced = vi.fn()
@@ -72,12 +72,22 @@ describe('waitForTransaction', () => {
       onReplaced,
     })
 
-    expect(mockWaitForTransactionReceipt).toHaveBeenCalledWith(
-      mockClient,
-      expect.objectContaining({
-        onReplaced,
-      }),
-    )
+    expect(mockWaitForTransactionReceipt).toHaveBeenCalled()
+
+    const onReplacedInternalFn = mockWaitForTransactionReceipt.mock.calls[0][1].onReplaced
+    onReplacedInternalFn!({
+      reason: 'replaced',
+      transaction: {
+        hash: '0xnewhash',
+      } as unknown as Transaction,
+      replacedTransaction: {} as unknown as Transaction,
+      transactionReceipt: {} as unknown as WaitForTransactionReceiptReturnType,
+    })
+
+    expect(onReplaced).toHaveBeenCalledWith({
+      reason: 'replaced',
+      transactionHash: '0xnewhash',
+    })
   })
 })
 

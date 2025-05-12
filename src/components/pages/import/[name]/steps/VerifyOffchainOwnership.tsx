@@ -165,6 +165,7 @@ export const VerifyOffchainOwnership = ({
         </DnsImportActionButton>
         {isConnected ? (
           <DnsImportActionButton
+            data-testid="offchain-claim"
             disabled={!dnsOffchainStatus || isLoading || isRefetching || isError || !!error}
             onClick={() => {
               sendEvent('import:offchain_verify', { name: selected.name })

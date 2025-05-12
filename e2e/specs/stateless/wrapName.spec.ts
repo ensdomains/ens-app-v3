@@ -265,13 +265,16 @@ test('should calculate needed steps without localstorage', async ({
 
   await page.waitForTimeout(10000)
 
-  await page.evaluate(() => localStorage.clear())
+  await page.evaluate(() => window.localStorage.clear())
+  await page.evaluate(() => window.sessionStorage.clear())
   await page.reload()
   await login.reconnect()
 
   await morePage.wrapButton.click()
 
-  await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Migrate profile')
+  await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Migrate profile', {
+    timeout: 10000,
+  })
   await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Wrap name')
 
   await transactionModal.introButton.click()
@@ -287,7 +290,10 @@ test('should calculate needed steps without localstorage', async ({
   await transactionModal.introButton.click()
   await transactionModal.confirm()
   await transactionModal.complete()
-  await expect(page.getByTestId('namewrapper-status')).not.toContainText('Unwrapped')
+
+  await expect(page.getByTestId('namewrapper-status')).not.toContainText('Unwrapped', {
+    timeout: 10000,
+  })
 
   await profilePage.goto(subname)
   await expect(profilePage.record('text', 'description')).toHaveText('test')

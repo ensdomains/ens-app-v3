@@ -296,13 +296,19 @@ const getPreTransactionError = ({
   return match({ stage, err: transactionError || requestError })
     .with({ stage: P.union('complete', 'sent') }, () => null)
     .with({ err: P.nullish }, () => null)
-    .with({ err: P.not(P.instanceOf(BaseError)) }, ({ err }) => ({
-      message: 'message' in err! ? err.message : 'transaction.error.unknown',
-      type: 'unknown' as const,
-    }))
+    .with({ err: P.not(P.instanceOf(BaseError)) }, ({ err }) => {
+      return {
+        message: 'message' in err! ? err.message : 'transaction.error.unknown',
+        type: 'unknown' as const,
+      }
+    })
     .otherwise(({ err }) => {
       const readableError = getReadableError(err)
-      return readableError || { message: (err as BaseError).shortMessage, type: 'unknown' as const }
+      const error = readableError || {
+        message: (err as BaseError).shortMessage,
+        type: 'unknown' as const,
+      }
+      return error
     })
 }
 
@@ -395,7 +401,7 @@ export const TransactionStageModal = ({
 
   const preparedOptions = queryOptions({
     queryKey: initialOptions.queryKey,
-    queryFn: initialOptions.queryFn({ connectorClient, isSafeApp, connections }),
+    queryFn: initialOptions.queryFn({ connectorClient, connections }),
   })
 
   const transactionRequestQuery = useQuery({
