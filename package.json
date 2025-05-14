@@ -8,6 +8,7 @@
     "dev:https": "next dev --experimental-https --port 443",
     "dev:https:holesky": "NEXT_PUBLIC_CHAIN_NAME=holesky pnpm dev:https",
     "dev:https:sepolia": "NEXT_PUBLIC_CHAIN_NAME=sepolia pnpm dev:https",
+    "dev:https:mainnet": "NEXT_PUBLIC_CHAIN_NAME=mainnet pnpm dev:https",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
     "dev:glocal": "SWC_CACHE=false rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_ETH_NODE=anvil pnpm dev:nlocal",

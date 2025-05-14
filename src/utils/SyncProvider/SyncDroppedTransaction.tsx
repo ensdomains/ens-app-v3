@@ -151,6 +151,9 @@ export const findDroppedTransactions = async (
       return
     }
 
+    // If the transaction is a safe transaction, we don't need to retry it or check for cancellations
+    if (searchingTransaction.isSafeTx) return
+
     // If there is a transaction in history with a timestamp ahead of the searching transaction
     // at this point, then we can assume the searchingTransaction was cancelled
     const cancelledTransactions = accountTransactionHistory.filter(
