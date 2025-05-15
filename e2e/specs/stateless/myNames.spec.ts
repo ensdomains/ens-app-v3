@@ -11,6 +11,20 @@ import { deleteSubname } from '@ensdomains/ensjs/wallet'
 import { test } from '../../../playwright'
 import { Name } from '../../../playwright/fixtures/makeName'
 
+const scrollToBottom = async () => {
+  let previousScrollHeight = 0
+  let { scrollHeight } = document.body
+  do {
+    window.scrollTo(0, scrollHeight)
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000)
+    })
+    previousScrollHeight = scrollHeight
+    scrollHeight = document.body.scrollHeight
+  } while (previousScrollHeight !== scrollHeight)
+}
+
 test('myNames', async ({ page, login, makeName }) => {
   await testClient.increaseTime({ seconds: 3 * 365 * 24 * 60 * 60 })
   await testClient.mine({ blocks: 1 })
@@ -27,20 +41,8 @@ test('myNames', async ({ page, login, makeName }) => {
   await login.connect('user2')
 
   await page.goto('/my/names')
-
-  await page.evaluate(async () => {
-    let previousScrollHeight = 0
-    let { scrollHeight } = document.body
-    do {
-      window.scrollTo(0, scrollHeight)
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1000)
-      })
-      previousScrollHeight = scrollHeight
-      scrollHeight = document.body.scrollHeight
-    } while (previousScrollHeight !== scrollHeight)
-  })
+  await expect(page.getByTestId('names-list')).toBeVisible({ timeout: 10000 })
+  await page.evaluate(scrollToBottom)
 
   const timestamps = await Promise.all(
     names.map(async (name) => {
@@ -142,22 +144,8 @@ test.describe.serial('myNames', () => {
     await page.goto('/')
     await login.connect('user4')
     await page.goto('/my/names')
-
     await expect(page.getByTestId('names-list')).toBeVisible({ timeout: 10000 })
-
-    await page.evaluate(async () => {
-      let previousScrollHeight = 0
-      let { scrollHeight } = document.body
-      do {
-        window.scrollTo(0, scrollHeight)
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 1000)
-        })
-        previousScrollHeight = scrollHeight
-        scrollHeight = document.body.scrollHeight
-      } while (previousScrollHeight !== scrollHeight)
-    })
+    await page.evaluate(scrollToBottom)
 
     for (const name of allNames) {
       const decryptedLocator = page.getByTestId(`name-item-${name}`)
@@ -179,20 +167,7 @@ test.describe.serial('myNames', () => {
 
     await page.getByTestId('sort-desc').click()
     await page.waitForTimeout(1000)
-
-    await page.evaluate(async () => {
-      let previousScrollHeight = 0
-      let { scrollHeight } = document.body
-      do {
-        window.scrollTo(0, scrollHeight)
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 1000)
-        })
-        previousScrollHeight = scrollHeight
-        scrollHeight = document.body.scrollHeight
-      } while (previousScrollHeight !== scrollHeight)
-    })
+    await page.evaluate(scrollToBottom)
 
     for (const name of allNames) {
       const decryptedLocator = page.getByTestId(`name-item-${name}`)
@@ -215,20 +190,7 @@ test.describe.serial('myNames', () => {
     await page.getByTestId('select-container').getByRole('button').click()
     await page.getByTestId('select-option-createdAt').click()
     await page.waitForTimeout(1000)
-
-    await page.evaluate(async () => {
-      let previousScrollHeight = 0
-      let { scrollHeight } = document.body
-      do {
-        window.scrollTo(0, scrollHeight)
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 1000)
-        })
-        previousScrollHeight = scrollHeight
-        scrollHeight = document.body.scrollHeight
-      } while (previousScrollHeight !== scrollHeight)
-    })
+    await page.evaluate(scrollToBottom)
 
     for (const name of allNames) {
       const decryptedLocator = page.getByTestId(`name-item-${name}`)
@@ -252,20 +214,7 @@ test.describe.serial('myNames', () => {
     await page.getByTestId('select-option-createdAt').click()
     await page.getByTestId('sort-desc').click()
     await page.waitForTimeout(1000)
-
-    await page.evaluate(async () => {
-      let previousScrollHeight = 0
-      let { scrollHeight } = document.body
-      do {
-        window.scrollTo(0, scrollHeight)
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 1000)
-        })
-        previousScrollHeight = scrollHeight
-        scrollHeight = document.body.scrollHeight
-      } while (previousScrollHeight !== scrollHeight)
-    })
+    await page.evaluate(scrollToBottom)
 
     for (const name of allNames) {
       const decryptedLocator = page.getByTestId(`name-item-${name}`)
