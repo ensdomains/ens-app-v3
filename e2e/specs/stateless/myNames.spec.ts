@@ -28,6 +28,20 @@ test('myNames', async ({ page, login, makeName }) => {
 
   await page.goto('/my/names')
 
+  await page.evaluate(async () => {
+    let previousScrollHeight = 0
+    let { scrollHeight } = document.body
+    do {
+      window.scrollTo(0, scrollHeight)
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000)
+      })
+      previousScrollHeight = scrollHeight
+      scrollHeight = document.body.scrollHeight
+    } while (previousScrollHeight !== scrollHeight)
+  })
+
   const timestamps = await Promise.all(
     names.map(async (name) => {
       return page
