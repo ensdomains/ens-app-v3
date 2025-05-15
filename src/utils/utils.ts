@@ -243,3 +243,14 @@ export const connectorIsMetaMask = (
       connection.accounts.some((a) => a === connectorClient.account.address),
   )
 }
+
+export const connectorIsPhantom = (
+  connections: Connection[],
+  connectorClient: ConnectorClientWithEns,
+) => {
+  return connections?.some(
+    (connection) =>
+      connection?.connector?.id === 'app.phantom' &&
+      connection.accounts.some((a) => a === connectorClient.account.address),
+  )
+}
