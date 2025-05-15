@@ -22,7 +22,7 @@
     "buildandexport": "pnpm build && pnpm export",
     "buildandstart:glocal": "pnpm build:glocal && pnpm start",
     "tenv": "ens-test-env -a",
-    "denv": "pnpm tenv start --no-scripts --no-build --extra-time 12232000 --verbosity 1",
+    "denv": "pnpm tenv start --no-scripts --no-build --extra-time 11368000 --verbosity 1",
     "lint": "next lint && stylelint \"./src/**/*.tsx\"",
     "lint:types": "tsc --noEmit",
     "lint:fix": "next lint --fix",
@@ -52,7 +52,7 @@
   "dependencies": {
     "@ensdomains/address-encoder": "1.1.1",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
-    "@ensdomains/ens-contracts": "1.4.0",
+    "@ensdomains/ens-contracts": "1.4.0-beta.2",
     "@ensdomains/ens-test-env": "github:namehash/ens-test-env",
     "@ensdomains/ensjs": "4.0.3-alpha.12",
     "@ensdomains/thorin": "1.0.0-beta.28",
