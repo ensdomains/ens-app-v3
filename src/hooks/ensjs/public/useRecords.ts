@@ -1,3 +1,5 @@
+// eslint-disable @typescript-eslint/no-unused-vars
+
 import {
   PlaceholderDataFunction,
   Query,
@@ -91,7 +93,9 @@ export const getRecordsQueryFn =
     // NOTE: This will still fail the onchain test because we will not be able to get the eth record from the subgraph
     return null
     const client = config.getClient({ chainId })
+
     const res = await getRecords(client, {
+      // @ts-ignore
       name,
       ...params,
     })
