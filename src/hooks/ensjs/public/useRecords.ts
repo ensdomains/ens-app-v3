@@ -86,21 +86,15 @@ export const getRecordsQueryFn =
   > => {
     if (!name) throw new Error('name is required')
 
-    try {
-      console.log('getRecordsQueryFn called', name)
-      const client = config.getClient({ chainId })
-      const res = await getRecords(client, {
-        // @ts-ignore
-        name,
-        ...params,
-      })
-      console.log('getRecordsQueryFn response', res)
-      if (!res) return null
-      return res as GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>
-    } catch (error) {
-      console.error('getRecordsQueryFn', error)
-      throw error
-    }
+    const client = config.getClient({ chainId })
+
+    const res = await getRecords(client, {
+      // @ts-ignore
+      name,
+      ...params,
+    })
+    if (!res) return null
+    return res as GetRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>
   }
 
 export const matchGetRecordsQueryKeyWithInternalParams =
