@@ -1,11 +1,13 @@
 import type { TFunction } from 'react-i18next'
 import { toBytes, type Address } from 'viem'
+import { Connection } from 'wagmi'
 
 import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
 import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
+import type { ConnectorClientWithEns } from '@app/types'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
 import { calculateDatesDiff } from './date'
@@ -184,6 +186,12 @@ export const createDateAndValue = <TValue extends bigint | number>(value: TValue
   value,
 })
 
+export function getTldFromName(name: string): string | undefined {
+  if (!name) return undefined
+  const labels = name.split('.')
+  return labels[labels.length - 1]
+}
+
 /*
   Following types are based on this solution: https://stackoverflow.com/questions/53173203/typescript-recursive-function-composition/53175538#53175538
   Best to just move on and not try to understand it. (This is copilot's opintion!)
@@ -205,3 +213,44 @@ export const thread = <F extends [(arg: any) => any, ...Array<(arg: any) => any>
   arg: ArgType<F[0]>,
   ...f: F & AsChain<F>
 ): LaxReturnType<Last<F>> => f.reduce((acc, fn) => fn(acc), arg) as LaxReturnType<Last<F>>
+
+// Adpated from: https://stackoverflow.com/questions/36721830/convert-hsl-to-rgb-and-hex
+export const hslToHex = (hsl: string) => {
+  const [h, s, l] = hsl.match(/\d+/g)!.map(Number)
+  const _l = l / 100
+  const a = (s * Math.min(_l, 1 - _l)) / 100
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12
+    const color = _l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, '0') // convert to Hex and prefix "0" if needed
+  }
+  return `#${f(0)}${f(8)}${f(4)}`
+}
+
+export const hasParaConnection = (connections: Connection[]) => {
+  return connections?.some((connection) => connection?.connector?.id === 'para-integrated')
+}
+
+export const connectorIsMetaMask = (
+  connections: Connection[],
+  connectorClient: ConnectorClientWithEns,
+) => {
+  return connections?.some(
+    (connection) =>
+      connection?.connector?.id === 'io.metamask' &&
+      connection.accounts.some((a) => a === connectorClient.account.address),
+  )
+}
+
+export const connectorIsPhantom = (
+  connections: Connection[],
+  connectorClient: ConnectorClientWithEns,
+) => {
+  return connections?.some(
+    (connection) =>
+      connection?.connector?.id === 'app.phantom' &&
+      connection.accounts.some((a) => a === connectorClient.account.address),
+  )
+}

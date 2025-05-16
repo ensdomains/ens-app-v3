@@ -125,6 +125,7 @@ test.describe('Select Primary Name', () => {
     login,
     makeName,
     makePageObject,
+    accounts,
   }) => {
     test.slow()
 
@@ -141,6 +142,7 @@ test.describe('Select Primary Name', () => {
     const settingsPage = makePageObject('SettingsPage')
     const selectPrimaryNameModal = makePageObject('SelectPrimaryNameModal')
     await settingsPage.goto()
+    await expect(settingsPage.walletAddress).toHaveText(new RegExp(accounts.getAddress('user')))
     await settingsPage.choosePrimaryNameButton.click()
     await selectPrimaryNameModal.waitForPageLoad()
     const nameWithoutSuffix = name.slice(0, -4)

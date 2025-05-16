@@ -1,4 +1,4 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@getpara/rainbowkit'
 import { Dispatch, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -9,6 +9,7 @@ import RecordItem from '@app/components/RecordItem'
 import { DNS_TXT_RECORD_HELPER_LINKS } from '@app/constants/dnsLinks'
 import { EXTENDED_DNS_RESOLVER_MAP } from '@app/constants/resolverAddressData'
 import { useDnsOffchainStatus } from '@app/hooks/dns/useDnsOffchainStatus'
+import { sendEvent } from '@app/utils/analytics/events'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
@@ -164,8 +165,12 @@ export const VerifyOffchainOwnership = ({
         </DnsImportActionButton>
         {isConnected ? (
           <DnsImportActionButton
+            data-testid="offchain-claim"
             disabled={!dnsOffchainStatus || isLoading || isRefetching || isError || !!error}
-            onClick={() => dispatch({ name: 'increaseStep', selected })}
+            onClick={() => {
+              sendEvent('import:offchain_verify', { name: selected.name })
+              dispatch({ name: 'increaseStep', selected })
+            }}
             {...(dnsOffchainStatus?.address?.status === 'mismatching'
               ? {
                   colorStyle: 'redPrimary',

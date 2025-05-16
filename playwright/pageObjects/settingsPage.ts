@@ -10,11 +10,14 @@ export class SettingsPage {
 
   readonly choosePrimaryNameButton: Locator
 
+  readonly walletAddress: Locator
+
   constructor(page: Page) {
     this.page = page
     this.changePrimaryNameButton = this.page.getByTestId('change-primary-name-button')
     this.removePrimaryNameButton = this.page.getByTestId('remove-primary-name-button')
     this.choosePrimaryNameButton = this.page.getByTestId('set-primary-name-button')
+    this.walletAddress = this.page.getByTestId('name-details-address-address')
   }
 
   async goto() {

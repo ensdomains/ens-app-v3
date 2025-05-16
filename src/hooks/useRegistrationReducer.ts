@@ -1,3 +1,5 @@
+import posthog from 'posthog-js'
+import { match, P } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
 import { randomSecret } from '@ensdomains/ensjs/utils'
@@ -10,7 +12,8 @@ import {
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
-import { yearsToSeconds } from '@app/utils/utils'
+import { sendEvent } from '@app/utils/analytics/events'
+import { ONE_YEAR, yearsToSeconds } from '@app/utils/utils'
 
 const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
 
@@ -40,10 +43,18 @@ const isBrowser = !!(
   window.document.createElement
 )
 
+const getDefaultRegistrationDuration = () => {
+  const payload = posthog.getFeatureFlagPayload('default_registration_duration')
+
+  return match(payload)
+    .with({ years: P.number }, ({ years }) => years * ONE_YEAR)
+    .otherwise(() => ONE_YEAR)
+}
+
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
-  seconds: yearsToSeconds(1),
+  seconds: getDefaultRegistrationDuration(),
   reverseRecord: false,
   records: [],
   resolverAddress: '0x',
@@ -99,10 +110,26 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'decreaseStep': {
+      sendEvent('register:back', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name: item.name,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        from_step: item.queue[item.stepIndex],
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        to_step: item.queue[item.stepIndex - 1],
+      })
+
       item.stepIndex -= 1
       break
     }
     case 'increaseStep': {
+      if (item.queue[item.stepIndex + 1] === 'complete') {
+        sendEvent('register:complete', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          ens_name: item.name,
+        })
+      }
+
       item.stepIndex += 1
       break
     }
@@ -135,6 +162,12 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     case 'moonpayTransactionCompleted': {
       item.externalTransactionId = ''
       item.stepIndex = item.queue.findIndex((step) => step === 'complete')
+
+      sendEvent('register:complete', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name: item.name,
+      })
+
       break
     }
     // no default
