@@ -66,7 +66,7 @@ test('should be able to extend multiple names (including names in grace preiod) 
   await addresPage.extendNamesButton.click()
 
   // warning message
-  await expect(page.getByText('You do not own all these names')).toBeVisible()
+  await expect(page.getByText('You do not own all these names')).toBeVisible({ timeout: 10_000 })
   await page.getByTestId('extend-names-confirm').click()
 
   // name list

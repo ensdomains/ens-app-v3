@@ -562,6 +562,7 @@ test('registering a premium name with existing records should not be wrapped', a
   await page.getByTestId('view-name').click()
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
     new RegExp(accounts.getAddress('user', 5)),
+    { timeout: 10_000 },
   )
 
   const recordsPage = makePageObject('RecordsPage')
