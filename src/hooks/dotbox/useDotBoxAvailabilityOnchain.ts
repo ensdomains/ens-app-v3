@@ -1,5 +1,5 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { createPublicClient, http, namehash, zeroAddress } from 'viem'
+import { createPublicClient, fallback, http, namehash, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 import { optimism } from 'viem/chains'
 
@@ -10,7 +10,6 @@ import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
-import { infuraUrl } from '@app/utils/query/wagmi'
 
 type UseDotBoxAvailabilityOnchainParameters = {
   name?: string
@@ -27,7 +26,10 @@ export type UseDotBoxAvailabilityOnchainQueryKey<
 
 const optimismPublicClient = createPublicClient({
   chain: optimism,
-  transport: http(infuraUrl('optimism-mainnet')),
+  transport: fallback([
+    http('https://optimism.drpc.org'),
+    http('https://optimism-rpc.publicnode.com'),
+  ]),
 })
 
 const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
