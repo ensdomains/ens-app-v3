@@ -1,0 +1,23 @@
+name: 'Setup Environment'
+description: 'Sets up Node.js and pnpm'
+runs:
+  using: composite
+  steps:
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9.3.0
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Install Playwright Browsers and Dependencies
+      shell: bash
+      run: pnpm exec playwright install --with-deps
