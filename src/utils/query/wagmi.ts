@@ -20,18 +20,16 @@ import { rainbowKitConnectors } from './wallets'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 
-const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
 const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY || 'AnmpasF2C0JBqeAEzxVO8aRuvzLTrWcR75hmDonbV6cR'
 
-export const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
 const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
 export const drpcUrl = (chainName: string) =>
   `https://lb.drpc.org/ogrpc?network=${
     chainName === 'mainnet' ? 'ethereum' : chainName
   }&dkey=${drpcKey}`
 
-type SupportedUrlFunc = typeof infuraUrl | typeof drpcUrl | typeof tenderlyUrl
+type SupportedUrlFunc = typeof drpcUrl | typeof tenderlyUrl
 
 const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   chainName: string,
@@ -39,11 +37,7 @@ const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
 ) => {
   const transportArray: HttpTransport[] = []
 
-  for (const urlFunc of urlFuncArray) {
-    // eslint-disable-next-line no-continue
-    if (urlFunc === infuraUrl && process.env.NEXT_PUBLIC_IPFS) continue
-    transportArray.push(http(urlFunc(chainName)))
-  }
+  for (const urlFunc of urlFuncArray) transportArray.push(http(urlFunc(chainName)))
 
   return fallback(transportArray)
 }
@@ -91,8 +85,8 @@ export const transports = {
         // this is a hack to make the types happy, dont remove pls
         [localhost.id]: HttpTransport
       })),
-  [mainnet.id]: initialiseTransports('mainnet', [drpcUrl, infuraUrl, tenderlyUrl]),
-  [sepolia.id]: initialiseTransports('sepolia', [drpcUrl, infuraUrl, tenderlyUrl]),
+  [mainnet.id]: initialiseTransports('mainnet', [drpcUrl, tenderlyUrl]),
+  [sepolia.id]: initialiseTransports('sepolia', [drpcUrl, tenderlyUrl]),
   [holesky.id]: initialiseTransports('holesky', [drpcUrl, tenderlyUrl]),
 } as const
 
