@@ -399,21 +399,15 @@ export function createTransactionStore(config_: ConfigWithEns) {
           const requestPromise = waitForTransaction(config, {
             confirmations: 1,
             hash: hash as `0x${string}`,
-            onReplaced: (replacedTransaction) => {
-              if (replacedTransaction.reason === 'repriced') {
-                setTransactionStatus(
-                  account,
-                  chainId,
-                  hash,
-                  'repriced',
-                  replacedTransaction.transaction.hash,
-                )
+            onReplaced: (response) => {
+              if (response.reason === 'repriced') {
+                setTransactionStatus(account, chainId, hash, 'repriced', response.transactionHash)
                 addTransaction(account, chainId, {
                   ...transaction,
                   isSafeTx: false,
-                  hash: replacedTransaction.transaction.hash,
+                  hash: response.transactionHash,
                 })
-                transactionRequestCache.set(replacedTransaction.transaction.hash, requestPromise)
+                transactionRequestCache.set(response.transactionHash, requestPromise)
                 transactionRequestCache.delete(hash)
               }
             },

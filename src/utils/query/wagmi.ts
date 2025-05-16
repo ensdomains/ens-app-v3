@@ -1,25 +1,24 @@
-import { createClient, type FallbackTransport, type HttpTransport, type Transport } from 'viem'
+import {
+  createClient,
+  formatTransactionRequest,
+  type ExactPartial,
+  type FallbackTransport,
+  type HttpTransport,
+  type TransactionRequest,
+  type TransactionType,
+  type Transport,
+} from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
 import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
-import {
-  holeskyWithEns,
-  localhostWithEns,
-  mainnetWithEns,
-  sepoliaWithEns,
-} from '@app/constants/chains'
+import { getChainsFromUrl, SupportedChain } from '@app/constants/chains'
 
-import { WC_PROJECT_ID } from '../constants'
-import { getDefaultWallets } from '../getDefaultWallets'
+import { isInsideSafe } from '../safe'
+import { rainbowKitConnectors } from './wallets'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
-
-const connectors = getDefaultWallets({
-  appName: 'ENS',
-  projectId: WC_PROJECT_ID,
-})
 
 const infuraKey = process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c'
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
@@ -27,7 +26,7 @@ const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY || 'AnmpasF2C0JBqeAEzxVO8aRuvzL
 
 export const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
 const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
-const drpcUrl = (chainName: string) =>
+export const drpcUrl = (chainName: string) =>
   `https://lb.drpc.org/ogrpc?network=${
     chainName === 'mainnet' ? 'ethereum' : chainName
   }&dkey=${drpcKey}`
@@ -49,7 +48,7 @@ const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
   return fallback(transportArray)
 }
 
-const prefix = 'wagmi'
+export const prefix = 'wagmi'
 
 const localStorageWithInvertMiddleware = (): Storage | undefined => {
   if (typeof window === 'undefined') return undefined
@@ -83,14 +82,7 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
   }
 }
 
-const chains = [
-  ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-  mainnetWithEns,
-  sepoliaWithEns,
-  holeskyWithEns,
-] as const
-
-const transports = {
+export const transports = {
   ...(isLocalProvider
     ? ({
         [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
@@ -104,10 +96,57 @@ const transports = {
   [holesky.id]: initialiseTransports('holesky', [drpcUrl, tenderlyUrl]),
 } as const
 
+// This is a workaround to fix MetaMask defaulting to the wrong transaction type
+// when no type is specified, but an access list is provided.
+// See: https://github.com/MetaMask/core/issues/5720
+// Viem by default doesn't include the type in a TransactionRequest, because it's generally not required.
+// To fix the MetaMask issue, we need to include it. However, we don't want to break other wallets, so we only add it
+// for MetaMask.
+// Viem will use a chain specific transactionRequest formatter if provided, so we can utilise this to
+// add `type`.
+// References to the formatter are:
+// 1. Call to `extract` with all extra parameters (i.e. unused by call by default), and the chain specific formatter
+//   a. If a formatter is not provided, the function returns `{}` (existing behaviour)
+//   b. If a formatter is provided, returns the formatted extra parameters
+// 2. Call to chain specific formatter if provided, otherwise `formatTransactionRequest`, with the request and the formatted extra parameters
+//
+// We want to capture only the first call, so `type` is added to the final request object without
+// modifying existing behaviour.
+const formatExtraTransactionRequestParameters = (
+  request:
+    | { type: TransactionType }
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    | { type: TransactionType; __is_metamask: boolean }
+    | ExactPartial<TransactionRequest>,
+) => {
+  // 1: Call will never have `from`
+  if (!('from' in request)) {
+    // 1a: Default behaviour when not MetaMask
+    if (!('__is_metamask' in request) || !request.__is_metamask) return {}
+    // 1b: Add `type` to the request
+    return {
+      type: request.type,
+    }
+  }
+  // 2: Standard call to formatter
+  return formatTransactionRequest(request)
+}
+
+const chains = getChainsFromUrl().map((c) => ({
+  ...c,
+  formatters: {
+    ...(c.formatters || {}),
+    transactionRequest: {
+      format: formatExtraTransactionRequestParameters,
+    },
+  },
+})) as unknown as readonly [SupportedChain, ...SupportedChain[]]
+
 const wagmiConfig_ = createConfig({
-  connectors,
+  syncConnectedChain: false,
+  connectors: rainbowKitConnectors,
   ssr: true,
-  multiInjectedProviderDiscovery: true,
+  multiInjectedProviderDiscovery: !isInsideSafe(),
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
   chains,
   client: ({ chain }) => {
@@ -128,25 +167,6 @@ const wagmiConfig_ = createConfig({
     })
   },
 })
-
-const isSupportedChain = (chainId: number): chainId is (typeof chains)[number]['id'] =>
-  chains.some((c) => c.id === chainId)
-
-// hotfix for wagmi bug
-wagmiConfig_.subscribe(
-  ({ connections, current }) => (current ? connections.get(current)?.chainId : undefined),
-  (chainId_) => {
-    const chainId = chainId_ || chains[0].id
-    // If chain is not configured, then don't switch over to it.
-    const isChainConfigured = isSupportedChain(chainId)
-    if (!isChainConfigured) return
-
-    return wagmiConfig_.setState((x) => ({
-      ...x,
-      chainId: chainId ?? x.chainId,
-    }))
-  },
-)
 
 export const wagmiConfig = wagmiConfig_ as typeof wagmiConfig_ & {
   _isEns: true

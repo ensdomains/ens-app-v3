@@ -1,0 +1,36 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index 27d0e3a0073c20adff764c71575e200d6ac23432..0000000000000000000000000000000000000000
+diff --git a/flash/README.md b/flash/README.md
+deleted file mode 100644
+index 1576ebf1a99dab1462caa81c14240864ed1454cb..0000000000000000000000000000000000000000
+diff --git a/flash/package.json b/flash/package.json
+deleted file mode 100644
+index 92689fa9b24e93a631d2b52572030d7e17ccb10f..0000000000000000000000000000000000000000
+diff --git a/lib/rsa.js b/lib/rsa.js
+index 5c73209f9a1c97c8f1e58bc2930426c4f580776a..fb4cdad07208d23c10dedbc1f39b1435a4539d65 100644
+--- a/lib/rsa.js
++++ b/lib/rsa.js
+@@ -1717,13 +1717,15 @@ function _generateKeyPair(state, options, callback) {
+ 
+   var opts = {
+     algorithm: {
+-      name: options.algorithm || 'PRIMEINC',
+-      options: {
+-        workers: options.workers || 2,
+-        workLoad: options.workLoad || 100,
+-        workerScript: options.workerScript
+-      }
+-    }
++      name: options.algorithm || "PRIMEINC",
++      options: options.workerScript
++        ? {
++            workers: options.workers || 2,
++            workLoad: options.workLoad || 100,
++            workerScript: options.workerScript,
++          }
++        : {},
++    },
+   };
+   if('prng' in options) {
+     opts.prng = options.prng;

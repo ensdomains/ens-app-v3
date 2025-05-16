@@ -4,7 +4,7 @@ import { Address } from 'viem'
 import { deploymentAddresses } from './chains'
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceId } from './resolverInterfaceIds'
 
-type KnownResolverItem = {
+export type KnownResolverItem = {
   address: Address
   deployer: string
   tag: 'latest' | 'outdated' | null
@@ -231,13 +231,6 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             ],
           },
           {
-            address: '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
-            deployer: 'dummy',
-            tag: null,
-            isNameWrapperAware: false,
-            supportedInterfaces: [],
-          },
-          {
             address: deploymentAddresses.LegacyPublicResolver,
             deployer: 'ENS Labs',
             tag: null,
@@ -253,6 +246,18 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
               RESOLVER_INTERFACE_IDS.InterfaceResolver,
             ],
           },
+          {
+            address: deploymentAddresses.OutdatedResolver,
+            deployer: 'ENS Labs',
+            tag: 'outdated',
+            isNameWrapperAware: false,
+            supportedInterfaces: [
+              RESOLVER_INTERFACE_IDS.AddressResolver,
+              RESOLVER_INTERFACE_IDS.NameResolver,
+              RESOLVER_INTERFACE_IDS.AbiResolver,
+              RESOLVER_INTERFACE_IDS.InterfaceResolver,
+            ],
+          },
         ],
       }
     : {}),
@@ -265,4 +270,6 @@ export const getKnownResolverData = ({
   chainId: number
   resolverAddress: string
 }): KnownResolverItem | undefined =>
-  KNOWN_RESOLVER_DATA[chainId]?.find((data) => data.address === resolverAddress)
+  KNOWN_RESOLVER_DATA[chainId]?.find(
+    (data) => data.address?.toLowerCase() === resolverAddress?.toLowerCase(),
+  )

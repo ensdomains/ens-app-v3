@@ -18,11 +18,6 @@
       "text": "Layer 2 enables seamless .eth name use across blockchains with trustless connections."
     }
   },
-  "learn-more": {
-    "title": "Want to learn more?",
-    "caption": "If you’re interested in learning more and building on Namechain, join the ENS Developer Telegram.",
-    "button": "Developer Telegram"
-  },
   "announcement": {
     "title": "Announcements",
     "l2": {
