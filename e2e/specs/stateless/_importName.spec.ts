@@ -32,13 +32,11 @@ test('should allow claim (owned by user)', async ({
   await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Not Imported' }).waitFor()
   await homePage.searchInput.press('Enter')
 
-  // TODO: Check with jakob if there has been changes to the event tracking
-  // await test.step('should fire DNS import tracking event: search:select', async () => {
-  //   await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
-
-  //   await expect(consoleListener.getMessages().toString()).toContain('search:select')
-  //   consoleListener.clearMessages()
-  // })
+  await test.step('should fire DNS import tracking event: search:select', async () => {
+    await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
+    await expect(consoleListener.getMessages().toString()).toContain('search:select')
+    consoleListener.clearMessages()
+  })
 
   await expect(importPage.heading).toHaveText(`Claim ${name}`)
 
@@ -56,17 +54,13 @@ test('should allow claim (owned by user)', async ({
   // should jump straight to transaction step
   await expect(importPage.heading).toHaveText('Claim your domain')
 
-  // TODO: Check with jakob if there has been changes to the event tracking
-  // await test.step('should fire DNS import tracking event: import:select_type', async () => {
-  //   await expect(consoleListener.getMessages(/import:select_type/)).toHaveLength(
-  //     strictModeEventCount,
-  //   )
-
-  //   await expect(consoleListener.getMessages().toString()).toMatch(
-  //     new RegExp(`import:select_type.*?${name}`),
-  //   )
-  //   consoleListener.clearMessages()
-  // })
+  await test.step('should fire DNS import tracking event: import:select_type', async () => {
+    await expect(consoleListener.getMessages(/import:select_type/)).toHaveLength(1)
+    await expect(consoleListener.getMessages().toString()).toMatch(
+      new RegExp(`import:select_type.*?${name}`),
+    )
+    consoleListener.clearMessages()
+  })
 
   // should show cost value above 0
   await expect(importPage.getCost()).resolves.toBeGreaterThan(0)
