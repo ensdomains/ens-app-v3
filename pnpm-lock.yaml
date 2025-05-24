@@ -104,9 +104,6 @@ overrides:
   wrtc: https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz
 
 patchedDependencies:
-  '@ensdomains/ens-test-env@0.6.0':
-    hash: 3g375zkti3ohnao75xzuai66lu
-    path: patches/@ensdomains__ens-test-env@0.6.0.patch
   '@nomicfoundation/hardhat-viem@2.0.3':
     hash: znglrikwqnjywwr7ebopjjz3mm
     path: patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch
@@ -137,8 +134,8 @@ importers:
         specifier: 1.4.0-beta.2
         version: 1.4.0-beta.2(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@ensdomains/ens-test-env':
-        specifier: 0.6.0
-        version: 0.6.0(patch_hash=3g375zkti3ohnao75xzuai66lu)
+        specifier: 1.0.0
+        version: 1.0.0
       '@ensdomains/ensjs':
         specifier: 4.0.3-alpha.12
         version: 4.0.3-alpha.12(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
@@ -1250,9 +1247,9 @@ packages:
   '@ensdomains/ens-contracts@1.4.0-beta.2':
     resolution: {integrity: sha512-ClaD9sLLJccQY4XS/dy9wtmVdfn2wXxvK30gVtNIAl9THHrIUqgl/vRjBn70elWV8DV5hdVP9oQZyTTTBC21vg==}
 
-  '@ensdomains/ens-test-env@0.6.0':
-    resolution: {integrity: sha512-TJm4AuURqK2d04rgoRpCbSo6LiD8bxPju2/AOqUO5Q7KbovGvN6eh3m0I5D51hQBL8T0ECiZHxGw/tf0k9FlkA==}
-    engines: {node: '>=18'}
+  '@ensdomains/ens-test-env@1.0.0':
+    resolution: {integrity: sha512-QaBI3vSCAWnj84k8Ur08b8UC5W788AZZQ219fQFGqYm2ahdmV5nU72FayHfLu+aH4pK+A2+XF2EuiPe5hpxX5Q==}
+    engines: {node: '>=20'}
     hasBin: true
 
   '@ensdomains/ensjs@4.0.3-alpha.12':
@@ -4004,9 +4001,9 @@ packages:
   command-exists@1.2.9:
     resolution: {integrity: sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==}
 
-  commander@13.1.0:
-    resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
-    engines: {node: '>=18'}
+  commander@14.0.0:
+    resolution: {integrity: sha512-2uM9rYjPvyq39NwLRqaiLtWHyDC1FvryJDa2ATTVims5YAS4PupsEQsDvP14FqhFr0P49CYDugi59xaxJlTXRA==}
+    engines: {node: '>=20'}
 
   commander@4.1.1:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
@@ -4331,8 +4328,8 @@ packages:
     resolution: {integrity: sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw==}
     engines: {node: '>=6'}
 
-  docker-compose@1.1.1:
-    resolution: {integrity: sha512-UkIUz0LtzuO17Ijm6SXMGtfZMs7IvbNwvuJBiBuN93PIhr/n9/sbJMqpvYFaCBGfwu1ZM4PPPDgQzeeke4lEoA==}
+  docker-compose@1.2.0:
+    resolution: {integrity: sha512-wIU1eHk3Op7dFgELRdmOYlPYS4gP8HhH1ZmZa13QZF59y0fblzFDFmKPhyc05phCy2hze9OEvNZAsoljrs+72w==}
     engines: {node: '>= 6.0.0'}
 
   doctrine@2.1.0:
@@ -4367,6 +4364,10 @@ packages:
 
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+
+  dotenv@16.5.0:
+    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
 
   dunai@0.0.0-dev.2:
@@ -6824,8 +6825,8 @@ packages:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
 
-  tar-fs@3.0.8:
-    resolution: {integrity: sha512-ZoROL70jptorGAlgAYiLoBLItEKw/fUxg9BSYK/dF/GAGYFJOJJJMvjPAKDJraCXFwadD456FCuvLWgfhMsPwg==}
+  tar-fs@3.0.9:
+    resolution: {integrity: sha512-XF4w9Xp+ZQgifKakjZYmFdkLoSWd34VGKcsTCwlNWM7QG3ZbaxnTsaBwnjFZqHRf/rROxaR8rXnbtwdvaDI+lA==}
 
   tar-stream@3.1.7:
     resolution: {integrity: sha512-qJj60CXt7IU1Ffyc3NJMjh6EkuCFej46zUqJ4J7pqYlThyd9bO0XBTmcOIhSzZJVWfsLks0+nle/j538YAW9RQ==}
@@ -8621,17 +8622,17 @@ snapshots:
       - hardhat
       - supports-color
 
-  '@ensdomains/ens-test-env@0.6.0(patch_hash=3g375zkti3ohnao75xzuai66lu)':
+  '@ensdomains/ens-test-env@1.0.0':
     dependencies:
       cli-progress: 3.12.0
-      commander: 13.1.0
+      commander: 14.0.0
       concurrently: 9.1.2
-      docker-compose: 1.1.1
-      dotenv: 16.4.7
+      docker-compose: 1.2.0
+      dotenv: 16.5.0
       dunai: 0.0.0-dev.2
       js-yaml: 4.1.0
       picocolors: 1.1.1
-      tar-fs: 3.0.8
+      tar-fs: 3.0.9
       wait-on: 8.0.2
     transitivePeerDependencies:
       - bare-buffer
@@ -11876,7 +11877,7 @@ snapshots:
 
   command-exists@1.2.9: {}
 
-  commander@13.1.0: {}
+  commander@14.0.0: {}
 
   commander@4.1.1: {}
 
@@ -12169,7 +12170,7 @@ snapshots:
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.5
 
-  docker-compose@1.1.1:
+  docker-compose@1.2.0:
     dependencies:
       yaml: 2.7.0
 
@@ -12209,6 +12210,8 @@ snapshots:
       tslib: 2.8.1
 
   dotenv@16.4.7: {}
+
+  dotenv@16.5.0: {}
 
   dunai@0.0.0-dev.2: {}
 
@@ -15150,7 +15153,7 @@ snapshots:
 
   tapable@2.2.1: {}
 
-  tar-fs@3.0.8:
+  tar-fs@3.0.9:
     dependencies:
       pump: 3.0.2
       tar-stream: 3.1.7
