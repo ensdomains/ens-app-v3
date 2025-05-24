@@ -27,7 +27,7 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm tenv start --no-ensnode --no-scripts --no-build --exit-after-deploy" \
+          "pnpm tenv start --no-ensnode --no-scripts --no-build --exit-after-deploy --verbosity 1" \
           "pnpm wait-on ./.env.local"'
 
       - run: pnpm test:coverage
@@ -53,7 +53,7 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm tenv start --no-ensnode --no-scripts --no-build --exit-after-deploy" \
+          "pnpm tenv start --no-ensnode --no-scripts --no-build --exit-after-deploy --verbosity 1" \
           "pnpm wait-on ./.env.local"'
 
       - name: Build stateless and export
