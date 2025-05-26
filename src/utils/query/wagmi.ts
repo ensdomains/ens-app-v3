@@ -26,7 +26,7 @@ const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY || 'AnmpasF2C0JBqeAEzxVO8aRuvzL
 
 export const infuraUrl = (chainName: string) => `https://${chainName}.infura.io/v3/${infuraKey}`
 const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
-const drpcUrl = (chainName: string) =>
+export const drpcUrl = (chainName: string) =>
   `https://lb.drpc.org/ogrpc?network=${
     chainName === 'mainnet' ? 'ethereum' : chainName
   }&dkey=${drpcKey}`

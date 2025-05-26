@@ -10,7 +10,7 @@ import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
-import { infuraUrl } from '@app/utils/query/wagmi'
+import { drpcUrl } from '@app/utils/query/wagmi'
 
 type UseDotBoxAvailabilityOnchainParameters = {
   name?: string
@@ -27,7 +27,7 @@ export type UseDotBoxAvailabilityOnchainQueryKey<
 
 const optimismPublicClient = createPublicClient({
   chain: optimism,
-  transport: http(infuraUrl('optimism-mainnet')),
+  transport: http(drpcUrl('optimism')),
 })
 
 const THREE_DNS_RESOLVER_ADDRESS = '0xF97aAc6C8dbaEBCB54ff166d79706E3AF7a813c8'
