@@ -134,8 +134,8 @@ importers:
         specifier: 1.4.0-beta.2
         version: 1.4.0-beta.2(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@ensdomains/ens-test-env':
-        specifier: 1.0.0
-        version: 1.0.0
+        specifier: 1.0.1
+        version: 1.0.1
       '@ensdomains/ensjs':
         specifier: 4.0.3-alpha.12
         version: 4.0.3-alpha.12(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
@@ -1247,8 +1247,8 @@ packages:
   '@ensdomains/ens-contracts@1.4.0-beta.2':
     resolution: {integrity: sha512-ClaD9sLLJccQY4XS/dy9wtmVdfn2wXxvK30gVtNIAl9THHrIUqgl/vRjBn70elWV8DV5hdVP9oQZyTTTBC21vg==}
 
-  '@ensdomains/ens-test-env@1.0.0':
-    resolution: {integrity: sha512-QaBI3vSCAWnj84k8Ur08b8UC5W788AZZQ219fQFGqYm2ahdmV5nU72FayHfLu+aH4pK+A2+XF2EuiPe5hpxX5Q==}
+  '@ensdomains/ens-test-env@1.0.1':
+    resolution: {integrity: sha512-it+5gN/CXCpcrhULClm/aVFoVry5MS5+xlE7g3LlTXDvGd0tBcBBF8yOMvACZRuZPljDA0CtxXngrAkwmxxp6w==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -8622,7 +8622,7 @@ snapshots:
       - hardhat
       - supports-color
 
-  '@ensdomains/ens-test-env@1.0.0':
+  '@ensdomains/ens-test-env@1.0.1':
     dependencies:
       cli-progress: 3.12.0
       commander: 14.0.0
