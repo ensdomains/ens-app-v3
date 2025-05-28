@@ -231,7 +231,7 @@
         "total": "预估总额"
       },
       "bannerMsg": "一次续期数年可以避免每年进行交易，从而节省网络成本。",
-      "gasLimitError": "资金不足"
+      "gasLimitError": "以太坊主网中的 ETH 不足"
     },
     "transferProfile": {
       "title": "转移个人资料",
