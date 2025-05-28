@@ -231,7 +231,7 @@
         "total": "Estimated total"
       },
       "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
-      "gasLimitError": "Not enough ETH in wallet"
+      "gasLimitError": "Not enough ETH on Ethereum Mainnet"
     },
     "transferProfile": {
       "title": "Transfer Profile",

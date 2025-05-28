@@ -169,7 +169,7 @@
       ],
       "setupProfile": "Deseo configurar mi perfil primero",
       "paymentMethod": "Método de pago",
-      "notEnoughEth": "No hay suficiente ETH en la billetera",
+      "notEnoughEth": "No hay suficiente ETH en Ethereum Mainnet",
       "creditOrDebit": "Tarjeta de crédito o débito",
       "additionalFee": "Tarifa de procesamiento adicional",
       "pendingMoonpayTransaction": "Tu transacción con MoonPay se está procesando. Esto puede tardar hasta dos minutos. Puedes revisar el progreso en el correo de confirmación que recibiste.",
