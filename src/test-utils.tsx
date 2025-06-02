@@ -87,7 +87,6 @@ const wagmiConfig = {
 
 vi.mock('@app/utils/query/wagmi', () => ({
   wagmiConfig,
-  infuraUrl: () => 'http://infura.io',
   drpcUrl: () => 'http://drpc.org',
 }))
 
