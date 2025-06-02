@@ -1,0 +1,8 @@
+name: "Setup Playwright"
+description: "Setup Playwright with pnpm (should already be installed)"
+runs:
+  using: "composite"
+  steps:
+    - name: Install Playwright
+      shell: bash
+      run: pnpm exec playwright install --with-deps chromium 
