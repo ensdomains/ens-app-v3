@@ -26,7 +26,7 @@ export const waitForSubgraph = () => async () => {
   const anvilBlockNumbers: number[] = []
   do {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
+    const client = new GraphQLClient('http://localhost:42069/subgraph')
     const res = await client.request<{_meta: {block: {number: number}}}>(query)
 
     anvilBlockNumbers.push(res._meta.block.number)

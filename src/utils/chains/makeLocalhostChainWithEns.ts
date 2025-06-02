@@ -52,7 +52,7 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
     },
     subgraphs: {
       ens: {
-        url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
+        url: 'http://localhost:42069/subgraph',
       },
     },
   } as const
