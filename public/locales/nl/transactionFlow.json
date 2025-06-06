@@ -136,7 +136,7 @@
         "total": "Geschatte kosten"
       },
       "bannerMsg": "Verlengen voor meerdere jaren scheelt netwerk kosten door jaarlijke transacties te voorkomen.",
-      "gasLimitError": "Onvoldoende balans"
+      "gasLimitError": "Niet genoeg ETH op Ethereum Mainnet"
     },
     "transferProfile": {
       "title": "Transfer Profiel",

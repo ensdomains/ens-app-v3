@@ -231,7 +231,7 @@
         "total": "Total estimado"
       },
       "bannerMsg": "Extender por varios años ahorra dinero en costos de red al evitar transacciones anuales.",
-      "gasLimitError": "No hay suficiente ETH en la billetera"
+      "gasLimitError": "No hay suficiente ETH en Ethereum Mainnet"
     },
     "transferProfile": {
       "title": "Transferir perfil",

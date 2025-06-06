@@ -169,7 +169,7 @@
       ],
       "setupProfile": "我希望先创建我的个人资料",
       "paymentMethod": "支付方式",
-      "notEnoughEth": "钱包中的 ETH 不足",
+      "notEnoughEth": "以太坊主网中的 ETH 不足",
       "creditOrDebit": "信用卡或借记卡",
       "additionalFee": "附加手续费",
       "pendingMoonpayTransaction": "您的 Moonpay 交易正在处理中，这可能需要两分钟。您可以从收到的确认邮件中查看当前进度。",
