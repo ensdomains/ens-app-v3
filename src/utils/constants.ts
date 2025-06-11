@@ -33,3 +33,6 @@ export const ENS_LINKS = {
   HOMEPAGE: 'https://ens.domains/',
   YOUTUBE: 'https://www.youtube.com/ensdomains',
 }
+
+export const DISCONNECTED_PLACEHOLDER_ADDRESS =
+  '0x0000000000000000000000000000000000001234' as const
