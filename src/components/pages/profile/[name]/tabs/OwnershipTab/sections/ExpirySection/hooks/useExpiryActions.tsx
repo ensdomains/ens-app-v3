@@ -34,7 +34,7 @@ export const useExpiryActions = ({
   wrapperData?: GetWrapperDataReturnType
 }) => {
   const { t } = useTranslation('common')
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
@@ -51,17 +51,21 @@ export const useExpiryActions = ({
       primary: false,
       expiryDate,
     },
-    {
-      label: t('action.extend'),
-      type: 'extend',
-      icon: FastForwardSVG,
-      primary: true,
-      onClick: () => {
-        showExtendNamesInput(`extend-names-${name}`, {
-          names: [name],
-          isSelf: isSelfExtendable({ ownerData, wrapperData, address }),
-        })
-      },
-    },
+    ...(isConnected
+      ? [
+          {
+            label: t('action.extend'),
+            type: 'extend',
+            icon: FastForwardSVG,
+            primary: true,
+            onClick: () => {
+              showExtendNamesInput(`extend-names-${name}`, {
+                names: [name],
+                isSelf: isSelfExtendable({ ownerData, wrapperData, address }),
+              })
+            },
+          },
+        ]
+      : []),
   ] as const
 }
