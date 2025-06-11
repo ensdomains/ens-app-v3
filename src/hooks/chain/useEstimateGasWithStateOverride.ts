@@ -30,7 +30,7 @@ import {
   Prettify,
   QueryConfig,
 } from '@app/types'
-import { emptyAddress } from '@app/utils/constants'
+import { DISCONNECTED_PLACEHOLDER_ADDRESS, emptyAddress } from '@app/utils/constants'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { createAccessList } from '@app/utils/query/createAccessList'
@@ -251,7 +251,7 @@ export const estimateGasWithStateOverrideQueryFn =
         ? {}
         : {
             account: {
-              address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+              address: DISCONNECTED_PLACEHOLDER_ADDRESS,
               type: 'json-rpc',
             },
           }),
