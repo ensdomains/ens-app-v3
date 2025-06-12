@@ -26,6 +26,64 @@ import {
 test.describe.serial('normal registration', () => {
   const name = `registration-normal-${Date.now()}.eth`
 
+  test('should return price and gas estimate when not logged in', async ({
+    page,
+    time,
+    makePageObject,
+    consoleListener,
+  }) => {
+    await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+
+    const homePage = makePageObject('HomePage')
+    const registrationPage = makePageObject('RegistrationPage')
+
+    await consoleListener.initialize({
+      regex: /\[Metrics\] Event:.*?/,
+    })
+
+    await time.sync()
+    await homePage.goto()
+
+    await test.step('should redirect to registration page', async () => {
+      await homePage.searchInput.fill(name)
+      await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
+      await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
+      await homePage.searchInput.press('Enter')
+      await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+    })
+
+    await test.step('should fire tracking event: search:select', async () => {
+      await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toMatch(
+        new RegExp(`search:select.*?${name}`),
+      )
+      consoleListener.clearMessages()
+    })
+
+    await test.step('should show cost comparison accurately', async () => {
+      // Gas can fluctuate enough to cause the percentage to change, so we check for a range
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
+      await expect(registrationPage.yearMarker(1)).toHaveText(/8% gas/)
+      await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+    })
+
+    await test.step('should show correct price and gas estimate for yearly registration', async () => {
+      await expect(registrationPage.fee).toHaveText(/0.0033/)
+      const estimate1 = await registrationPage.getGas()
+      expect(estimate1).toBeGreaterThan(0)
+      await registrationPage.plusYearButton.click()
+      await expect(registrationPage.fee).toHaveText(/0.0065/)
+      const estimate2 = await registrationPage.getGas()
+      expect(estimate2).toEqual(estimate1)
+      await registrationPage.minusYearButton.click()
+      const estimate3 = await registrationPage.getGas()
+      expect(estimate3).toEqual(estimate1)
+    })
+  })
+
   test('should allow normal registration, if primary name is set, name is wrapped', async ({
     page,
     login,
@@ -1607,5 +1665,141 @@ test.describe('Error handling', () => {
     await test.step('confirm posthog event was fired once', async () => {
       expect(consoleListener.getMessages(/transaction:register:override/)).toHaveLength(1)
     })
+  })
+})
+
+test('should display correct price and gas estimate when registering a premium name when not logged in', async ({
+  page,
+  makeName,
+  makePageObject,
+}) => {
+  const registrationPage = makePageObject('RegistrationPage')
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  await page.goto(`/${premiumName}/register`)
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+
+  const calendar = page.getByTestId('calendar')
+
+  await test.step('should set a date', async () => {
+    const twoMonthsLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setMonth(_date.getMonth() + 2)
+      return _date
+    }, browserTime * 1000)
+
+    await calendar.fill(dateToDateInput(twoMonthsLater))
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(twoMonthsLater))
+
+    expect(page.getByText(/2 months .* registration/)).toBeVisible()
+  })
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+  const estimate = await registrationPage.getGas()
+  expect(estimate).toBeGreaterThan(0)
+
+  await page.getByTestId('date-selection').click()
+
+  await test.step('should show correct price and gas estimate for yearly registration', async () => {
+    await expect(registrationPage.fee).toHaveText(/0.0033/)
+    const estimate1 = await registrationPage.getGas()
+    expect(estimate1).toBeGreaterThan(0)
+    await registrationPage.plusYearButton.click()
+    await expect(registrationPage.fee).toHaveText(/0.0065/)
+    const estimate2 = await registrationPage.getGas()
+    expect(estimate2).toEqual(estimate1)
+    await registrationPage.minusYearButton.click()
+    const estimate3 = await registrationPage.getGas()
+    expect(estimate3).toEqual(estimate1)
+  })
+})
+
+test('should allow registering a premium name for two months, user should connect from a not-logged in state', async ({
+  page,
+  login,
+  accounts,
+  makeName,
+  makePageObject,
+}) => {
+  const premiumName = await makeName(
+    {
+      label: 'premium',
+      owner: 'user2',
+      type: 'legacy',
+      duration: -7890000 - 4 * 345600, // 3 months 4 days
+    },
+    { timeOffset: 500 },
+  )
+
+  const transactionModal = makePageObject('TransactionModal')
+
+  await page.goto(`/${premiumName}/register`)
+
+  await test.step('should be able to pick by date', async () => {
+    const dateSelection = page.getByTestId('date-selection')
+    await expect(dateSelection).toHaveText('Pick by date')
+
+    await dateSelection.click()
+  })
+
+  const browserTime = await page.evaluate(() => Math.floor(Date.now() / 1000))
+
+  const calendar = page.getByTestId('calendar')
+
+  await test.step('should set a date', async () => {
+    const twoMonthsLater = await page.evaluate((timestamp) => {
+      const _date = new Date(timestamp)
+      _date.setMonth(_date.getMonth() + 2)
+      return _date
+    }, browserTime * 1000)
+
+    await calendar.fill(dateToDateInput(twoMonthsLater))
+
+    await expect(page.getByTestId('calendar-date')).toHaveValue(dateToDateInput(twoMonthsLater))
+
+    expect(page.getByText(/2 months .* registration/)).toBeVisible()
+  })
+
+  await login.connect()
+
+  await page.getByTestId('payment-choice-ethereum').click()
+  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
+
+  await page.getByTestId('next-button').click()
+  if (await page.getByTestId('profile-submit-button').isVisible()) {
+    await page.getByTestId('profile-submit-button').click()
+  }
+
+  await page.getByTestId('next-button').click()
+  await transactionModal.confirm()
+
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await testClient.increaseTime({ seconds: 120 })
+  await page.getByTestId('finish-button').click()
+  await transactionModal.confirm()
+
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    new RegExp(accounts.getAddress('user', 5)),
+  )
+
+  await test.step('confirm name is unwrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
