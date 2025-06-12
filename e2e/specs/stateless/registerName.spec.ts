@@ -313,6 +313,256 @@ test.describe.serial('normal registration', () => {
     })
   })
 
+  test('should allow normal registration, from disconnected to connected state', async ({
+    page,
+    login,
+    accounts,
+    time,
+    makePageObject,
+    consoleListener,
+  }) => {
+    await setPrimaryName(walletClient, {
+      name: '',
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+
+    const homePage = makePageObject('HomePage')
+    const registrationPage = makePageObject('RegistrationPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await consoleListener.initialize({
+      regex: /\[Metrics\] Event:.*?/,
+    })
+
+    await time.sync()
+    await homePage.goto()
+
+    await test.step('should redirect to registration page', async () => {
+      await homePage.searchInput.fill(name)
+      await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
+      await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
+      await homePage.searchInput.press('Enter')
+      await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
+    })
+
+    await test.step('should fire tracking event: search:select', async () => {
+      await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toMatch(
+        new RegExp(`search:select.*?${name}`),
+      )
+      consoleListener.clearMessages()
+    })
+
+    await test.step('should show cost comparison accurately', async () => {
+      // Gas can fluctuate enough to cause the percentage to change, so we check for a range
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
+      await expect(registrationPage.yearMarker(1)).toHaveText(/8% gas/)
+      await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+    })
+
+    await test.step('should show correct price and gas estimate for yearly registration', async () => {
+      await expect(registrationPage.fee).toHaveText(/0.0033/)
+      const estimate1 = await registrationPage.getGas()
+      expect(estimate1).toBeGreaterThan(0)
+      await registrationPage.plusYearButton.click()
+      await expect(registrationPage.fee).toHaveText(/0.0065/)
+      const estimate2 = await registrationPage.getGas()
+      expect(estimate2).toEqual(estimate1)
+      await registrationPage.minusYearButton.click()
+      const estimate3 = await registrationPage.getGas()
+      expect(estimate3).toEqual(estimate1)
+    })
+
+    await login.connect()
+
+    await test.step('should have payment choice ethereum checked and show primary name setting as checked', async () => {
+      await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
+      await expect(registrationPage.primaryNameToggle).toBeChecked()
+    })
+
+    const estimate =
+      await test.step('should show adjusted gas estimate when primary name setting checked', async () => {
+        const estimate1 = await registrationPage.getGas()
+        expect(estimate1).toBeGreaterThan(0)
+        await registrationPage.primaryNameToggle.click()
+        const estimate2 = await registrationPage.getGas()
+        await expect(estimate2).toBeGreaterThan(0)
+        expect(estimate2).toBeLessThan(estimate1)
+        await registrationPage.primaryNameToggle.click()
+        return estimate1
+      })
+
+    await test.step('should show cost comparison accurately', async () => {
+      // Gas can fluctuate enough to cause the percentage to change, so we check for a range
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
+      await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
+      await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+    })
+
+    await test.step('should show correct price for yearly registration', async () => {
+      await expect(registrationPage.fee).toHaveText(/0.0033/)
+      await registrationPage.plusYearButton.click()
+      await expect(registrationPage.fee).toHaveText(/0.0065/)
+      await registrationPage.minusYearButton.click()
+    })
+
+    await test.step('should go to profile editor step', async () => {
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('should fire tracking event: register:pricing', async () => {
+      await expect(consoleListener.getMessages(/register:pricing/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('register:pricing')
+      consoleListener.clearMessages()
+    })
+
+    await test.step('should show a confirmation dialog that records are public', async () => {
+      await page.getByTestId('show-add-profile-records-modal-button').click()
+      await page.getByTestId('confirmation-dialog-confirm-button').click()
+    })
+
+    await test.step('should allow setting a general text record', async () => {
+      await page.getByTestId('profile-record-option-name').click()
+      await page.getByTestId('add-profile-records-button').click()
+      await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+    })
+
+    await test.step('should show ETH record by default', async () => {
+      await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+        accounts.getAddress('user'),
+      )
+    })
+
+    await test.step('should show go to info step and show updated estimate', async () => {
+      await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+      await page.getByTestId('profile-submit-button').click()
+      await expect(registrationPage.gas).not.toHaveText(new RegExp(`${estimate} ETH`))
+    })
+
+    await test.step('should go to transactions step and open commit transaction immediately', async () => {
+      await expect(page.getByTestId('next-button')).toHaveText('Begin')
+      await page.getByTestId('next-button').click()
+      await expect(page.getByTestId('transaction-modal-inner')).toBeVisible()
+    })
+
+    await test.step('should fire tracking event: register:info', async () => {
+      await expect(consoleListener.getMessages(/register:info/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('register:info')
+      consoleListener.clearMessages()
+    })
+
+    await test.step('should display the correct message in the registration page', async () => {
+      await transactionModal.closeButton.click()
+      await expect(
+        page.getByText(
+          'You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.',
+        ),
+      ).toBeVisible()
+    })
+
+    await test.step('should be able to confirm commit transaction', async () => {
+      await page.getByTestId('start-timer-button').click()
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+    })
+
+    await test.step('should fire tracking event: wallet:open', async () => {
+      await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
+      consoleListener.clearMessages()
+    })
+
+    await test.step('should show countdown text', async () => {
+      await expect(
+        page.getByText(
+          'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+        ),
+      ).toBeVisible()
+    })
+
+    await test.step('should show countdown', async () => {
+      await time.sync()
+      await expect(page.getByTestId('countdown-circle')).toBeVisible()
+      await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
+      const waitButton = page.getByTestId('wait-button')
+      await expect(waitButton).toBeVisible()
+      await expect(waitButton).toBeDisabled()
+    })
+
+    await test.step('should show checkmark and registration ready state after countdown is finished', async () => {
+      await time.increaseTime({ seconds: 60 })
+      await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+      await expect(page.getByTestId('transactions-subheading')).toHaveText(
+        /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+      )
+      await expect(page.getByTestId('finish-button')).toBeEnabled()
+    })
+
+    await test.step('should save the registration state and the transaction status', async () => {
+      await page.reload()
+      await expect(page.getByTestId('finish-button')).toBeEnabled()
+    })
+
+    await test.step('should be able to start registration step', async () => {
+      await expect(page.getByTestId('transactions-subheading')).toBeVisible()
+      await expect(page.getByTestId('transactions-subheading')).toHaveText(
+        /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+      )
+      await page.getByTestId('finish-button').click()
+    })
+
+    await test.step('should be able to confirm registration transaction', async () => {
+      await expect(page.getByText('Open Wallet')).toBeVisible()
+      await transactionModal.confirm()
+    })
+
+    await test.step('should fire tracking event: wallet:open', async () => {
+      await expect(consoleListener.getMessages(/wallet:open/)).toHaveLength(1)
+      await expect(consoleListener.getMessages().toString()).toContain('wallet:open')
+    })
+
+    await test.step('should redirect to completion page ', async () => {
+      await expect(page.getByText(`You are now the owner of ${name}`)).toBeVisible()
+
+      // calculate date one year from now
+      const date = await page.evaluate(() => {
+        const _date = new Date()
+        _date.setFullYear(_date.getFullYear() + 1)
+        return _date
+      })
+      const formattedDate = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+
+      // should show the correct details on completion
+      await expect(page.getByTestId('invoice-item-0-amount')).toHaveText(/0.0032 ETH/)
+      await expect(page.getByTestId('invoice-item-0')).toHaveText(/1 year registration/)
+      await expect(page.getByTestId('invoice-item-expiry')).toHaveText(/Name expires/)
+      await expect(page.getByTestId('invoice-item-expiry-date')).toHaveText(`${formattedDate}`)
+    })
+
+    await test.step('should fire tracking event: transaction:register:send', async () => {
+      await expect(consoleListener.getMessages(/transaction:register:send/)).toHaveLength(1)
+      // We can assume that 'register_override_triggered' was not called because the consoleListener only has one message
+      await expect(consoleListener.getMessages().toString()).toContain('transaction:register:send')
+      consoleListener.clearMessages()
+    })
+
+    await test.step('confirm that the registration is successful', async () => {
+      await page.getByTestId('view-name').click()
+      await expect(page).toHaveURL(`/${name}`)
+      await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+        accounts.getAddress('user', 5),
+      )
+    })
+
+    await test.step('confirm name is wrapped', async () => {
+      await expect(page.getByTestId('permissions-tab')).toBeVisible()
+    })
+  })
+
   test('should not direct to the registration page on search, and show all records from registration', async ({
     page,
     accounts,
