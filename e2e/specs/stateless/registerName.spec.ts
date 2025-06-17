@@ -340,7 +340,7 @@ test.describe.serial('normal registration', () => {
     await test.step('should redirect to registration page', async () => {
       await homePage.searchInput.fill(name)
       await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
-      await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
+      await page.getByText('Available').waitFor()
       await homePage.searchInput.press('Enter')
       await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
     })
