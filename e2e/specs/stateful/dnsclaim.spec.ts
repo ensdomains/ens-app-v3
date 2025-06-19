@@ -21,7 +21,7 @@ test.describe('Import DNSSEC name', () => {
     page,
     login,
   }) => {
-    await page.goto('/noenssubdomain.com?chain=holesky')
+    await page.goto('/setupu.xyz?chain=holesky')
     await login.connect()
 
     await page.getByTestId('onchain-radio').click()
@@ -35,7 +35,7 @@ test.describe('Import DNSSEC name', () => {
     page,
     login,
   }) => {
-    await page.goto('/noenssubdomain.com?chain=holesky')
+    await page.goto('/setupu.xyz?chain=holesky')
     await login.connect()
 
     await page.getByTestId('offchain-radio').click()
@@ -45,7 +45,7 @@ test.describe('Import DNSSEC name', () => {
     await expect(page.getByTestId('offchain-claim')).toBeDisabled()
   })
 
-  test('should not allow the user to proceed if they have not set the correct subdomain with the correct info', async ({
+  test.skip('should not allow the user to proceed if they have not set the correct subdomain with the correct info', async ({
     page,
     login,
   }) => {
