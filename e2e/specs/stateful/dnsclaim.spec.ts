@@ -7,7 +7,7 @@ test.describe('Import DNSSEC name', () => {
     page,
     login,
   }) => {
-    await page.goto('/notdnssec.com?chain=holesky')
+    await page.goto('/notdnssec.com')
     await login.connect()
 
     await page.getByTestId('onchain-radio').click()
@@ -21,7 +21,7 @@ test.describe('Import DNSSEC name', () => {
     page,
     login,
   }) => {
-    await page.goto('/setupu.xyz?chain=holesky')
+    await page.goto('/setupu.xyz?chain=sepolia')
     await login.connect()
 
     await page.getByTestId('onchain-radio').click()
@@ -35,7 +35,7 @@ test.describe('Import DNSSEC name', () => {
     page,
     login,
   }) => {
-    await page.goto('/setupu.xyz?chain=holesky')
+    await page.goto('/setupu.xyz?chain=sepolia')
     await login.connect()
 
     await page.getByTestId('offchain-radio').click()
@@ -49,7 +49,7 @@ test.describe('Import DNSSEC name', () => {
     page,
     login,
   }) => {
-    await page.goto('/invalidensrecord.com?chain=holesky')
+    await page.goto('/invalidensrecord.com?chain=sepolia')
     await login.connect()
 
     await page.getByTestId('onchain-radio').click()
@@ -61,7 +61,7 @@ test.describe('Import DNSSEC name', () => {
 
   test.skip('should resolve .pw domains', async ({ page, login }) => {
     // pw domain does not resolve on localhost
-    await page.goto('/test.pw?chain=holesky')
+    await page.goto('/test.pw?chain=sepolia')
     await login.connect()
 
     await page.getByTestId('onchain-radio').click()
