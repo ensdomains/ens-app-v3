@@ -83,7 +83,7 @@ export const getChainsFromUrl = () => {
   // Dev environment
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     if (isLocalProvider) return [localhostWithEns]
-    return [holeskyWithEns]
+    return [sepoliaWithEns]
   }
 
   return match(segments[0])
