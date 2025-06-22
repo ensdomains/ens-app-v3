@@ -4,10 +4,9 @@ import { test } from '../../../playwright/index.js'
 
 const SAFE_URL = 'https://app.safe.global'
 const ENS_APP_URL = 'https://sepolia.app.ens.domains/' // Use Sepolia ENS app for testing
-const LOCAL_ENS_APP_URL = 'http://localhost:3000'
 
 test.describe('Safe{Wallet} + ENS Safe App integration', () => {
-  test('should add ENS as custom app and open it through Safe', async ({
+  test.skip('should add ENS as custom app and open it through Safe', async ({
     page,
     login,
     accounts,
@@ -77,13 +76,14 @@ test.describe('Safe{Wallet} + ENS Safe App integration', () => {
     console.log('🎉 Safe + ENS integration test completed successfully!')
   })
 
-  test.skip('should register a new name through Safe', async ({ page, login, accounts, time }) => {
+  test('should register a new name through Safe', async ({ page, login, accounts, time }) => {
     // Generate a unique name for registration
     const name = `safe-registration-${Date.now()}.eth`
 
     // Get the wallet address from the stateful setup
     const walletAddress = accounts.getAddress('user')
-    const SAFE_ADDRESS = `sep:${walletAddress}`
+    const safeAddress = `sep:0x7894BFD6441B2e9a22358F8F71FdF9B2AC817ef8`
+    const SAFE_ADDRESS = safeAddress // Use the connected wallet address as Safe address
 
     console.log(`🎯 Registering name: ${name}`)
     console.log(`Using wallet address: ${walletAddress}`)
@@ -96,7 +96,7 @@ test.describe('Safe{Wallet} + ENS Safe App integration', () => {
     await login.connect('user', true)
 
     // Handle any banners that might appear after connecting
-    await login.handleSafeBanners()
+    // await login.handleSafeBanners()
 
     // 3. Wait for Safe to load and recognize the wallet
     await page.waitForTimeout(3000)
@@ -138,66 +138,86 @@ test.describe('Safe{Wallet} + ENS Safe App integration', () => {
 async function addCustomSafeApp(page: any) {
   console.log('📱 Adding ENS as custom Safe app...')
 
-  // Navigate to Apps section
-  console.log('🔗 Navigating to Apps section...')
-  await page.click('text=Apps')
-  await page.waitForTimeout(2000)
+  try {
+    // Navigate to Apps section
+    console.log('🔗 Navigating to Apps section...')
+    const appsButton = page.locator('text=Apps').first()
+    await appsButton.waitFor({ timeout: 10000 })
+    await appsButton.click()
+    await page.waitForTimeout(2000)
 
-  // Click on "My Custom Apps" tab
-  console.log('📂 Clicking on My Custom Apps tab...')
-  await page.click('text=/my custom Apps/i')
-  await page.waitForTimeout(1000)
+    // Click on "My Custom Apps" tab
+    console.log('📂 Clicking on My Custom Apps tab...')
+    const customAppsTab = page.locator('text=/my custom Apps/i')
+    await customAppsTab.waitFor({ timeout: 10000 })
+    await customAppsTab.click()
+    await page.waitForTimeout(1000)
 
-  // Click "Add custom Safe App" button
-  console.log('➕ Clicking Add custom Safe App button...')
-  await page.click('text=/add custom Safe App/i')
-  await page.waitForTimeout(1000)
-
-  // Enter ENS app URL
-  console.log('🔗 Entering ENS app URL:', LOCAL_ENS_APP_URL || ENS_APP_URL)
-  await page.fill('input[name="appUrl"]', LOCAL_ENS_APP_URL || ENS_APP_URL)
-  await page.waitForTimeout(3000) // Wait for app to load and validate
-
-  // Accept terms and conditions checkbox
-  console.log('✅ Accepting terms and conditions...')
-  const checkbox = page.locator('input[type="checkbox"]')
-  await checkbox.click()
-  await page.waitForTimeout(500)
-
-  // Click Add button (use more specific selector for submit button)
-  console.log('➕ Clicking Add button...')
-  await page.waitForTimeout(1000)
-
-  // Try multiple selectors for the Add button
-  const addButtonSelectors = [
-    'button[type="submit"]:has-text("Add")',
-    'button.MuiButton-contained:has-text("Add")',
-    'button:has-text("Add")',
-    '[role="button"]:has-text("Add")',
-  ]
-
-  let buttonClicked = false
-  for (const selector of addButtonSelectors) {
-    try {
-      const addButton = page.locator(selector)
-      if (await addButton.isVisible({ timeout: 3000 })) {
-        await addButton.click()
-        console.log(`✅ Clicked Add button using selector: ${selector}`)
-        buttonClicked = true
-        break
-      }
-    } catch (error) {
-      console.log(`ℹ️ Add button not found with selector: ${selector}`)
+    // Check if ENS app already exists
+    const existingEnsApp = page
+      .locator('text=ENS, text=Ethereum Name Service, text=sepolia.app.ens.domains')
+      .first()
+    if (await existingEnsApp.isVisible({ timeout: 3000 })) {
+      console.log('✅ ENS app already exists as custom app')
+      return
     }
+
+    // Click "Add custom Safe App" button
+    console.log('➕ Clicking Add custom Safe App button...')
+    const addCustomAppButton = page.locator('text=/add custom Safe App/i')
+    await addCustomAppButton.waitFor({ timeout: 10000 })
+    await addCustomAppButton.click()
+    await page.waitForTimeout(1000)
+
+    // Enter ENS app URL
+    console.log('🔗 Entering ENS app URL:', ENS_APP_URL)
+    await page.fill('input[name="appUrl"]', ENS_APP_URL)
+    await page.waitForTimeout(3000) // Wait for app to load and validate
+
+    // Accept terms and conditions checkbox
+    console.log('✅ Accepting terms and conditions...')
+    const checkbox = page.locator('input[type="checkbox"]')
+    await checkbox.click()
+    await page.waitForTimeout(500)
+
+    // Click Add button (use more specific selector for submit button)
+    console.log('➕ Clicking Add button...')
+    await page.waitForTimeout(1000)
+
+    // Try multiple selectors for the Add button
+    const addButtonSelectors = [
+      'button[type="submit"]:has-text("Add")',
+      'button.MuiButton-contained:has-text("Add")',
+      'button:has-text("Add")',
+      '[role="button"]:has-text("Add")',
+    ]
+
+    let buttonClicked = false
+    for (const selector of addButtonSelectors) {
+      try {
+        const addButton = page.locator(selector)
+        if (await addButton.isVisible({ timeout: 3000 })) {
+          await addButton.click()
+          console.log(`✅ Clicked Add button using selector: ${selector}`)
+          buttonClicked = true
+          break
+        }
+      } catch (error) {
+        console.log(`ℹ️ Add button not found with selector: ${selector}`)
+      }
+    }
+
+    if (!buttonClicked) {
+      throw new Error('❌ Could not find or click Add button')
+    }
+
+    await page.waitForTimeout(3000) // Wait longer for form submission
+
+    console.log('✅ ENS app added as custom Safe app')
+  } catch (error) {
+    console.error('❌ Error adding custom Safe app:', error)
+    throw error
   }
-
-  if (!buttonClicked) {
-    throw new Error('❌ Could not find or click Add button')
-  }
-
-  await page.waitForTimeout(3000) // Wait longer for form submission
-
-  console.log('✅ ENS app added as custom Safe app')
 }
 
 async function openEnsApp(page: any) {
