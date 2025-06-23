@@ -76,7 +76,17 @@ test.describe('Safe{Wallet} + ENS Safe App integration', () => {
     console.log('🎉 Safe + ENS integration test completed successfully!')
   })
 
-  test('should register a new name through Safe', async ({ page, login, accounts, time }) => {
+  test('should register a new name through Safe', async ({
+    page,
+    login,
+    accounts,
+    time,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    const transationModal = makePageObject('TransactionModal')
+
     // Generate a unique name for registration
     const name = `safe-registration-${Date.now()}.eth`
 
@@ -129,7 +139,7 @@ test.describe('Safe{Wallet} + ENS Safe App integration', () => {
     console.log('✅ ENS app loaded in Safe iframe')
 
     // 8. Perform registration inside the iframe
-    await performRegistration(iframeLocator, name, time)
+    await performRegistration(iframeLocator, name, time, login, page, transationModal)
 
     console.log('🎉 Safe + ENS registration test completed successfully!')
   })
@@ -322,7 +332,14 @@ async function handleDisclaimer(page: any) {
   }
 }
 
-async function performRegistration(iframeLocator: any, name: string, time: any) {
+async function performRegistration(
+  iframeLocator: any,
+  name: string,
+  time: any,
+  login: any,
+  page: any,
+  tmodal: any,
+) {
   console.log(`🎯 Starting registration for ${name}`)
 
   try {
@@ -357,46 +374,19 @@ async function performRegistration(iframeLocator: any, name: string, time: any) 
 
     // Go to info/transaction step
     await iframeLocator.getByTestId('next-button').click()
-    console.log('✅ Moved to transaction step')
+    console.log('✅ Moved to start timer step')
 
-    // Start the registration process (commit transaction)
-    await iframeLocator.getByTestId('next-button').click()
-    console.log('✅ Started commit transaction')
+    // Start the registration process (commit transaction) - this should show "Begin"
+    // await iframeLocator.getByTestId('start-timer-button').click()
+    // console.log('✅ Started start timer')
 
-    // Define confirm button selectors
-    const confirmSelectors = [
-      '[data-testid="transaction-modal-confirm-button"]',
-      'button:has-text("Confirm")',
-      'button:has-text("Sign")',
-      '[data-testid="confirm-button"]',
-    ]
+    // Wait for transaction modal to appear and confirm it
+    console.log('🔄 Waiting for transaction modal...')
+    await iframeLocator.getByText('Open Wallet').waitFor({ timeout: 10000 })
 
-    // Handle transaction modal - confirm the commit transaction
-    try {
-      // Wait for transaction modal to appear
-      await iframeLocator.getByText('Open Wallet').waitFor({ timeout: 10000 })
-
-      let confirmed = false
-      for (const selector of confirmSelectors) {
-        try {
-          const confirmButton = iframeLocator.locator(selector)
-          if (await confirmButton.isVisible({ timeout: 3000 })) {
-            await confirmButton.click()
-            console.log(`✅ Confirmed commit transaction using: ${selector}`)
-            confirmed = true
-            break
-          }
-        } catch (error) {
-          console.log(`ℹ️ Confirm button not found with: ${selector}`)
-        }
-      }
-
-      if (!confirmed) {
-        console.log('⚠️ Could not find confirm button, transaction may need manual confirmation')
-      }
-    } catch (error) {
-      console.log('⚠️ Transaction modal handling failed:', error)
-    }
+    // Use Safe-specific transaction confirmation
+    await confirmTransactionInSafe(iframeLocator, login, page, tmodal)
+    console.log('✅ Confirmed commit transaction')
 
     // Wait for countdown to appear
     try {
@@ -417,25 +407,8 @@ async function performRegistration(iframeLocator: any, name: string, time: any) 
       // Handle second transaction confirmation
       try {
         await iframeLocator.getByText('Open Wallet').waitFor({ timeout: 10000 })
-
-        let confirmed = false
-        for (const selector of confirmSelectors) {
-          try {
-            const confirmButton = iframeLocator.locator(selector)
-            if (await confirmButton.isVisible({ timeout: 3000 })) {
-              await confirmButton.click()
-              console.log(`✅ Confirmed registration transaction using: ${selector}`)
-              confirmed = true
-              break
-            }
-          } catch (error) {
-            console.log(`ℹ️ Confirm button not found with: ${selector}`)
-          }
-        }
-
-        if (!confirmed) {
-          console.log('⚠️ Could not find confirm button for registration transaction')
-        }
+        await confirmTransactionInSafe(iframeLocator, login, page, tmodal)
+        console.log('✅ Confirmed registration transaction')
       } catch (error) {
         console.log('⚠️ Registration transaction modal handling failed:', error)
       }
@@ -455,5 +428,88 @@ async function performRegistration(iframeLocator: any, name: string, time: any) 
   } catch (error) {
     console.error('❌ Registration failed:', error)
     // Don't throw error to allow test to continue
+  }
+}
+
+async function confirmTransactionInSafe(iframeLocator: any, login: any, page: any, tmodal: any) {
+  console.log('🔄 Confirming transaction in Safe...')
+
+  try {
+    // Step 1: Click the confirm button in the ENS app (inside iframe)
+    console.log('🔘 Clicking confirm button in ENS app...')
+    const confirmSelectors = [
+      '[data-testid="transaction-modal-confirm-button"]',
+      'button:has-text("Confirm")',
+      'button:has-text("Sign")',
+      '[data-testid="confirm-button"]',
+    ]
+
+    let confirmClicked = false
+    for (const selector of confirmSelectors) {
+      try {
+        const confirmButton = iframeLocator.locator(selector)
+        if (await confirmButton.isVisible({ timeout: 3000 })) {
+          await confirmButton.click({ timeout: 10000 })
+          console.log(`✅ Clicked confirm button using: ${selector}`)
+          confirmClicked = true
+          break
+        }
+      } catch (error) {
+        console.log(`ℹ️ Confirm button not found with: ${selector}`)
+      }
+    }
+
+    if (!confirmClicked) {
+      console.log('⚠️ Could not find confirm button in ENS app')
+      return
+    }
+
+    page.waitForTimeout(20000)
+    await login.connect('user', true)
+
+    // Step 2: Handle Safe's "Continue" button (outside iframe, in Safe UI)
+    // console.log('🔘 Looking for Safe Continue button...')
+    // await iframeLocator.page().waitForTimeout(2000) // Wait for Safe UI to appear
+    page.waitForTimeout(20000)
+
+    // Look for Continue button in the main page (outside iframe)
+    const continueSelectors = ['button:has-text("Continue")']
+
+    let continueClicked = false
+    for (const selector of continueSelectors) {
+      try {
+        const continueButton = page.locator(selector)
+        if (await continueButton.isVisible({ timeout: 5000 })) {
+          await continueButton.click()
+          console.log(`✅ Clicked Safe Continue button using: ${selector}`)
+          continueClicked = true
+          break
+        }
+      } catch (error) {
+        console.log(`ℹ️ Continue button not found with: ${selector}`)
+      }
+    }
+
+    if (!continueClicked) {
+      console.log('⚠️ Could not find Safe Continue button')
+    }
+
+    // Click on the Sign Button, use text locator
+    // await page.getByTestId('combo-submit-dropdown').first().click()
+    // await page.getByText('Execute').first().click()
+    // await page.getByText('Execute').first().click()
+    await page.getByTestId('combo-submit-sign').first().click()
+
+    // Step 3: Authorize the transaction using the wallet
+    console.log('🔐 Authorizing transaction...')
+
+    await tmodal.authorize()
+    console.log('✅ Transaction authorized')
+
+    // Wait for transaction to be processed
+    await iframeLocator.page().waitForTimeout(3000)
+  } catch (error) {
+    console.error('❌ Error confirming transaction in Safe:', error)
+    throw error
   }
 }
