@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
+import { DISCONNECTED_PLACEHOLDER_ADDRESS } from '@app/utils/constants'
 import { deriveYearlyFee } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
@@ -26,7 +27,7 @@ export const useEstimateFullRegistration = ({
 
   const registrationParams = useRegistrationParams({
     name,
-    owner: address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+    owner: address || DISCONNECTED_PLACEHOLDER_ADDRESS,
     registrationData,
   })
 
