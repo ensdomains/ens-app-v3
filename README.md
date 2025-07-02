@@ -558,3 +558,16 @@ pnpm test:coverage
 ```bash
 pnpm e2e
 ```
+
+## Deploy to Arweave
+
+Uses [permaweb-deploy](https://github.com/permaweb/permaweb-deploy) to deploy the app to Arweave and update the ArNS name to point to the new version of the app. Requires:
+
+* ARNS_NAME environment variable to be set for what ArNS name to update
+* DEPLOY_KEY environment variable to be set (base64 encoded version of Arweave wallet that is the owner of the ArNS name)
+
+```bash
+pnpm deploy:arweave
+```
+
+After deployment, will have to wait TTL seconds before updates appear on Arweave gateways (TTL configured on ArNS name).
