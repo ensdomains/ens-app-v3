@@ -420,26 +420,18 @@ test('should allow normal registration, from disconnected to connected state', a
     await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
     await page.waitForTimeout(2000)
     // await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor() (note - flaky step which keeps failing within CI, need to look into but skipping for now)
-
     await homePage.searchInput.press('Enter')
-    await page.waitForTimeout(10000)
-    console.log('Current URL:', page.url())
-    console.log(await page.getByRole('heading').textContent())
-    console.log(`Register ${name}`)
-    // await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible({
-    //   timeout: 10000,
-    // })
-    await page.goto(`/${name}`)
+    await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
   })
 
-  // await test.step('should fire tracking event: search:select', async () => {
-  //   console.log(consoleListener.getMessages())
-  //   await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
-  //   await expect(consoleListener.getMessages().toString()).toMatch(
-  //     new RegExp(`search:select.*?${name}`),
-  //   )
-  //   consoleListener.clearMessages()
-  // })
+  await test.step('should fire tracking event: search:select', async () => {
+    console.log(consoleListener.getMessages())
+    await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
+    await expect(consoleListener.getMessages().toString()).toMatch(
+      new RegExp(`search:select.*?${name}`),
+    )
+    consoleListener.clearMessages()
+  })
 
   await test.step('should show cost comparison accurately', async () => {
     // Gas can fluctuate enough to cause the percentage to change, so we check for a range
