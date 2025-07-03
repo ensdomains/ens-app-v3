@@ -425,7 +425,6 @@ test('should allow normal registration, from disconnected to connected state', a
   })
 
   await test.step('should fire tracking event: search:select', async () => {
-    console.log(consoleListener.getMessages())
     await expect(consoleListener.getMessages(/search:select/)).toHaveLength(1)
     await expect(consoleListener.getMessages().toString()).toMatch(
       new RegExp(`search:select.*?${name}`),
