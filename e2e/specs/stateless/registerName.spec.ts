@@ -343,6 +343,8 @@ test.describe.serial('normal registration', () => {
       await page.waitForTimeout(2000)
       // await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor() (note - flaky step which keeps failing within CI, need to look into but skipping for now)
       await homePage.searchInput.press('Enter')
+      await page.waitForTimeout(10000)
+      console.log('Current URL:', page.url())
       await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible({
         timeout: 10000,
       })
