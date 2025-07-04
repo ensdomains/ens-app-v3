@@ -419,7 +419,7 @@ test('should allow normal registration, from disconnected to connected state', a
     await homePage.searchInput.fill(name)
     await page.locator(`[data-testid="search-result-name"]`, { hasText: name }).waitFor()
     await page.waitForTimeout(2000)
-    // await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor() (note - flaky step which keeps failing within CI, need to look into but skipping for now)
+    await page.locator(`[data-testid="search-result-name"]`, { hasText: 'Available' }).waitFor()
     await homePage.searchInput.press('Enter')
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
   })
