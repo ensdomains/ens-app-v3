@@ -79,7 +79,12 @@ export const getRegistrationStatus = ({
       if (expiry.getTime() + gracePeriod * 1000 > timestamp) {
         // Will need to rethink this when we add multiple chains to manager app.
         const chain = getChainsFromUrl()[0]
-        if (chain && ownerData && ownerData.owner === chain.contracts.ensNameWrapper.address) {
+        if (
+          chain &&
+          ownerData &&
+          ownerData.owner === chain.contracts.ensNameWrapper.address &&
+          wrapperData === null
+        ) {
           return 'desynced:gracePeriod'
         }
         return 'gracePeriod'
