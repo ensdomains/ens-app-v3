@@ -7,6 +7,8 @@ import {
 } from '@ensdomains/ensjs/public'
 import { ParsedInputResult } from '@ensdomains/ensjs/utils'
 
+import { getChainsFromUrl } from '@app/constants/chains'
+
 import { emptyAddress } from './constants'
 
 export type RegistrationStatus =
@@ -75,8 +77,9 @@ export const getRegistrationStatus = ({
         return 'registered'
       }
       if (expiry.getTime() + gracePeriod * 1000 > timestamp) {
-        // TODO: change this to get the name wrapper address from the client
-        if (ownerData && ownerData.owner === '0x998abeb3E57409262aE5b751f60747921B33613E') {
+        // Will need to rethink this when we add multiple chains to manager app.
+        const chain = getChainsFromUrl()[0]
+        if (chain && ownerData && ownerData.owner === chain.contracts.ensNameWrapper.address) {
           return 'desynced:gracePeriod'
         }
         return 'gracePeriod'
