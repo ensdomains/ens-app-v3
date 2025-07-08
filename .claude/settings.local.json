@@ -4,7 +4,9 @@
       "Bash(rg:*)",
       "Bash(pnpm lint:types:*)",
       "Bash(npx eslint:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
