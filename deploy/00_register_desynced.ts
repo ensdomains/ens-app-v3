@@ -11,10 +11,10 @@ import {
   RegistrationParameters,
 } from '@ensdomains/ensjs/utils'
 
+import { ONE_YEAR } from '../src/utils/time'
 import { nonceManager } from './.utils/nonceManager'
 
 const MIN_REGISTRATION_DURATION = 28 * 24 * 60 * 60 // 28 Days
-const YEAR_IN_SECONDS = 365 * 24 * 60 * 60
 
 type Name = {
   name: string
@@ -39,11 +39,11 @@ type ProcessedNameData = Omit<RegistrationParameters, 'owner'> & {
 
 const names: Name[] = [
   {
-    name: 'desynced-wrapper.eth',
+    name: 'desynced-wrapped.eth',
     namedOwner: 'owner',
     reverseRecord: false,
     customDuration: MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
-    renewalDuration: YEAR_IN_SECONDS, // 1 year renewal via legacy controller
+    renewalDuration: ONE_YEAR, // 1 year renewal via legacy controller
     records: {
       texts: [
         {
@@ -54,6 +54,13 @@ const names: Name[] = [
       ],
       coins: [{ coin: 'ETH', value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' }],
     },
+  },
+  {
+    name: 'desynced-wrapped-grace-period.eth',
+    namedOwner: 'owner',
+    reverseRecord: false,
+    customDuration: MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
+    renewalDuration: 5011200 - MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
   },
 ]
 

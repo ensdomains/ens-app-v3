@@ -1,6 +1,7 @@
 import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { DesyncedMessage } from '@app/components/@molecules/DesyncedMessage/DesyncedMessage'
 import { formatFullExpiry } from '@app/utils/utils'
 
 import { useDnsOwner } from './ensjs/dns/useDnsOwner'
@@ -44,28 +45,40 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     isCachedData: isDnsOwnerCachedData,
     refetchIfEnabled: refetchDnsOwner,
   } = useDnsOwner({ name: normalisedName, enabled: isValid })
-  const error: string | ReactNode | null = useMemo(() => {
+  const error: { content: string | ReactNode; action?: string } | null = useMemo(() => {
     if (isValid === false) {
-      return t('errors.invalidName')
+      return { content: t('errors.invalidName') }
     }
     if (registrationStatus === 'unsupportedTLD') {
-      return t('errors.unsupportedTLD')
+      return { content: t('errors.unsupportedTLD') }
     }
     if (profile && !profile.isMigrated && typeof profile.isMigrated === 'boolean') {
-      return (
-        <>
-          {t('errors.migrationNotAvailable')}
-          <a href={`https://legacy.ens.domains/name/${normalisedName}`}>
-            {t('errors.migrationNotAvailableLink')}
-          </a>
-        </>
-      )
+      return {
+        content: (
+          <>
+            {t('errors.migrationNotAvailable')}
+            <a href={`https://legacy.ens.domains/name/${normalisedName}`}>
+              {t('errors.migrationNotAvailableLink')}
+            </a>
+          </>
+        ),
+      }
     }
     if (registrationStatus === 'invalid') {
-      return t('errors.invalidName')
+      return { content: t('errors.invalidName') }
+    }
+    if (registrationStatus && ['desynced', 'desynced:gracePeriod'].includes(registrationStatus)) {
+      return {
+        title: t('banner.desynced.title'),
+        content: <DesyncedMessage name={normalisedName} expiryDate={expiryDate} />,
+        type: 'error',
+      }
     }
     if (registrationStatus === 'gracePeriod') {
-      return `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`
+      return {
+        title: t('errors.hasExpired', { name: normalisedName }),
+        content: t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) }),
+      }
     }
     if (
       // bypass unknown error for root name
@@ -74,7 +87,10 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
       !profile &&
       !isProfileLoading
     ) {
-      return t('errors.networkError.message', { ns: 'common' })
+      return {
+        title: t('errors.networkError.title', { ns: 'common' }),
+        content: t('errors.networkError.message', { ns: 'common' }),
+      }
     }
     return null
   }, [
@@ -87,22 +103,12 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     isValid,
   ])
 
-  const errorTitle = useMemo(() => {
-    if (registrationStatus === 'gracePeriod') {
-      return t('errors.hasExpired', { name: normalisedName })
-    }
-    if (normalisedName !== '[root]' && !profile && !isProfileLoading) {
-      return t('errors.networkError.title', { ns: 'common' })
-    }
-  }, [registrationStatus, t, profile, isProfileLoading, normalisedName])
-
   const isLoading = isProfileLoading || isBasicLoading || isDnsOwnerLoading
   const isCachedData = isBasicCachedData || isProfileCachedData || isDnsOwnerCachedData
 
   return {
     error,
     unsupported: registrationStatus === 'unsupportedTLD',
-    errorTitle,
     normalisedName,
     isValid,
     profile,

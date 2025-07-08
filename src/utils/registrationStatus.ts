@@ -22,6 +22,8 @@ export type RegistrationStatus =
   | 'notOwned'
   | 'unsupportedTLD'
   | 'offChain'
+  | 'desynced'
+  | 'desynced:gracePeriod'
 
 export const getRegistrationStatus = ({
   timestamp,
@@ -61,10 +63,22 @@ export const getRegistrationStatus = ({
     if (expiryData && expiryData.expiry) {
       const { expiry: _expiry, gracePeriod } = expiryData
       const expiry = new Date(_expiry.date)
+
       if (expiry.getTime() > timestamp) {
+        if (
+          ownerData &&
+          ownerData.owner === emptyAddress &&
+          ownerData.ownershipLevel === 'nameWrapper'
+        ) {
+          return 'desynced'
+        }
         return 'registered'
       }
       if (expiry.getTime() + gracePeriod * 1000 > timestamp) {
+        // TODO: change this to get the name wrapper address from the client
+        if (ownerData && ownerData.owner === '0x998abeb3E57409262aE5b751f60747921B33613E') {
+          return 'desynced:gracePeriod'
+        }
         return 'gracePeriod'
       }
       const { premium } = priceData || { premium: 0n }
