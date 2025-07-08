@@ -26,13 +26,35 @@ export const mainnetWithEns = addEnsContractsWithSubgraph({
   apiKey: ENS_SUBGRAPH_API_KEY,
 })
 
-export const sepoliaWithEns = addEnsContractsWithSubgraph({
+export const sepoliaWithEnsBase = addEnsContractsWithSubgraph({
   chain: sepolia,
   subgraphId: 'G1SxZs317YUb9nQX3CC98hDyvxfMJNZH5pPRGpNrtvwN',
   apiKey: ENS_SUBGRAPH_API_KEY,
 })
 
-export const holeskyWithEns = addEnsContracts(holesky)
+export const sepoliaWithEns = {
+  ...sepoliaWithEnsBase,
+  contracts: {
+    ...sepoliaWithEnsBase.contracts,
+    ensEthRegistrarController: { address: '0xFED6a969AaA60E4961FCD3EBF1A2e8913ac65B72' as const },
+    ensPublicResolver: { address: '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD' as const },
+    ensReverseRegistrar: { address: '0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6' as const },
+  },
+} as unknown as typeof sepoliaWithEnsBase
+
+console.log('sepoliaWithEns', sepoliaWithEns)
+
+export const holeskyWithEnsBase = addEnsContracts(holesky)
+
+export const holeskyWithEns = {
+  ...holeskyWithEnsBase,
+  contracts: {
+    ...holeskyWithEnsBase.contracts,
+    ensEthRegistrarController: { address: '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583' as const },
+    ensPublicResolver: { address: '0x9010A27463717360cAD99CEA8bD39b8705CCA238' as const },
+    ensReverseRegistrar: { address: '0x132AC0B116a73add4225029D1951A9A707Ef673f ' as const },
+  },
+} as unknown as typeof holeskyWithEnsBase
 
 export const chainsWithEns = [
   mainnetWithEns,
