@@ -114,7 +114,6 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   const {
     unsupported,
     error,
-    errorTitle,
     profile,
     gracePeriodEndDate,
     expiryDate,

@@ -45,7 +45,12 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     isCachedData: isDnsOwnerCachedData,
     refetchIfEnabled: refetchDnsOwner,
   } = useDnsOwner({ name: normalisedName, enabled: isValid })
-  const error: { content: string | ReactNode; action?: string } | null = useMemo(() => {
+  const error: {
+    title?: string
+    content: string | ReactNode
+    action?: string
+    type?: 'error' | 'warning'
+  } | null = useMemo(() => {
     if (isValid === false) {
       return { content: t('errors.invalidName') }
     }
