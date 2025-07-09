@@ -42,8 +42,6 @@ export const sepoliaWithEns = {
   },
 } as unknown as typeof sepoliaWithEnsBase
 
-console.log('sepoliaWithEns', sepoliaWithEns)
-
 export const holeskyWithEnsBase = addEnsContracts(holesky)
 
 export const holeskyWithEns = {
