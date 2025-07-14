@@ -4,6 +4,7 @@ import {
   EstimateGasExecutionError,
   formatEther,
   RawContractError,
+  RpcRequestError,
   TransactionRejectedRpcError,
 } from 'viem'
 
@@ -42,7 +43,9 @@ const getEstimateGasExecutionErrorMessage = (err: EstimateGasExecutionError) => 
   return null
 }
 
-const getTransactionRejectedRpcErrorMessage = (err: TransactionRejectedRpcError) => {
+const getTransactionRejectedRpcErrorMessage = (
+  err: TransactionRejectedRpcError | RpcRequestError,
+) => {
   if (err.details.toLowerCase().includes('insufficient funds'))
     return {
       message: 'Not enough ETH on Ethereum Mainnet',
@@ -58,6 +61,7 @@ const getTransactionRejectedRpcErrorMessage = (err: TransactionRejectedRpcError)
 export const getReadableError = (err: unknown): ReadableError | null => {
   if (err instanceof EstimateGasExecutionError) return getEstimateGasExecutionErrorMessage(err)
   if (err instanceof TransactionRejectedRpcError) return getTransactionRejectedRpcErrorMessage(err)
+  if (err instanceof RpcRequestError) return getTransactionRejectedRpcErrorMessage(err)
   const data = getViemRevertErrorData(err)
   if (!data) return null
   const decodedError = decodeErrorResult({
