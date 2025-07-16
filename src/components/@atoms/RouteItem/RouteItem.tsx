@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useDisconnect } from 'wagmi'
 
 import { ExitSVG } from '@ensdomains/thorin'
 
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
+import { useDisconnectWithReset } from '@app/hooks/useDisconnectWithReset'
 import { RouteItemObj } from '@app/routes'
 
 import BaseLink from '../BaseLink'
@@ -123,7 +123,7 @@ export const RouteItem = ({
 }
 
 export const DisconnectButton = () => {
-  const { disconnect } = useDisconnect()
+  const disconnect = useDisconnectWithReset()
 
   return (
     <LinkWrapper $isActive={false} as="button" onClick={() => disconnect()} type="button">
