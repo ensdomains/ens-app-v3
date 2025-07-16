@@ -12,7 +12,9 @@ it('should have the most recent resolver as the first address', async () => {
   expect(KNOWN_RESOLVER_DATA['1']![0].address).toEqual(
     getChainContractAddress({ chain: mainnetWithEns, contract: 'ensPublicResolver' }),
   )
-  expect(KNOWN_RESOLVER_DATA['11155111']![0].address).toEqual(
+
+  // TODO: Switch back to the first address after the next release of ens-contracts (1.6.0)
+  expect(KNOWN_RESOLVER_DATA['11155111']![1].address).toEqual(
     getChainContractAddress({ chain: sepoliaWithEns, contract: 'ensPublicResolver' }),
   )
   // localhost is not included by default in the resolver data
