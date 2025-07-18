@@ -2,7 +2,7 @@ import { useConnectModal } from '@getpara/rainbowkit'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
-import { useConnections, useDisconnect, useEnsAvatar } from 'wagmi'
+import { useConnections, useEnsAvatar } from 'wagmi'
 
 import { Button, PersonSVG, Profile } from '@ensdomains/thorin'
 
@@ -10,6 +10,7 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useCopied } from '@app/hooks/useCopied'
+import { useDisconnectWithReset } from '@app/hooks/useDisconnectWithReset'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -118,7 +119,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
 
   const router = useRouterWithHistory()
 
-  const { disconnect } = useDisconnect({
+  const disconnect = useDisconnectWithReset({
     mutation: {
       onSuccess: () => {
         router.push('/')
