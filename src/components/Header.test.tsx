@@ -68,7 +68,7 @@ describe('Header', () => {
       expect(screen.getByTestId('search-wrapper')).toHaveStyle('margin-right: 0px')
       checkRoutesPlacement(false)
     })
-    it('should not not hide route items if larger than md breakpoint', () => {
+    it('should not hide route items if larger than md breakpoint', () => {
       mockUseBreakpoint.mockReturnValue({ ...baseBreakpoints, lg: true, xl: true })
       render(<Header />)
       checkRoutesPlacement(true)
