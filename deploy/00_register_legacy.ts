@@ -557,8 +557,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   ) => {
     const newNonceMap = nonceMap || {}
     for (const client of Object.values(allNamedClients)) {
-      const account = client.account
-      const address = account.address
+      const { account } = client
+      const { address } = account
       const namesWithAccount = allNameData.filter((data) => {
         const propertyValue = data[property]
         if (typeof propertyValue === 'string') {
@@ -605,9 +605,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await getNonceAndApply('registrant', makeSubnames, (data) => !!data.subnames, tempNonces2)
   await network.provider.send('evm_mine')
 
-  // Skip forward 28 + 90 days so that minimum exp names go into premium
-  await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
-  await network.provider.send('evm_mine')
+  // // Skip forward 28 + 90 days so that minimum exp names go into premium
+  // await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
+  // await network.provider.send('evm_mine')
 
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
