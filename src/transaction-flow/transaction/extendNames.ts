@@ -1,4 +1,5 @@
 import type { TFunction } from 'react-i18next'
+import { estimateGas, getGasPrice } from 'viem/actions'
 
 import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
@@ -64,7 +65,20 @@ const transaction = async ({
   })
   if (!price) throw new Error('No price found')
 
-  const priceWithBuffer = calculateValueWithBuffer(price.base)
+  const gasEstimate = await estimateGas(client, {
+    ...renewNames.makeFunctionData(connectorClient, {
+      nameOrNames: names,
+      duration,
+      value: price.base,
+    }),
+  })
+
+  const gasPrice = await getGasPrice(client)
+  const gasCost = gasEstimate * gasPrice
+
+  const totalCost = price.base + price.premium + gasCost
+  const priceWithBuffer = calculateValueWithBuffer(totalCost)
+
   return renewNames.makeFunctionData(connectorClient, {
     nameOrNames: names,
     duration,
