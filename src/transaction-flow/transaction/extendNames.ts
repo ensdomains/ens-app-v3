@@ -1,4 +1,5 @@
 import type { TFunction } from 'react-i18next'
+import { estimateFeesPerGas, estimateGas, getGasPrice } from 'viem/actions'
 
 import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
@@ -10,6 +11,7 @@ import { calculateValueWithBuffer, formatDurationOfDates, formatExpiry } from '.
 type Data = {
   names: string[]
   duration: number
+  multiplier?: number
   startDateTimestamp?: number
   displayPrice?: string
 }
@@ -57,14 +59,35 @@ const transaction = async ({
   connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const { names, duration } = data
+  const { names, duration, multiplier = 1 } = data
   const price = await getPrice(client, {
     nameOrNames: names,
     duration,
   })
   if (!price) throw new Error('No price found')
 
-  const priceWithBuffer = calculateValueWithBuffer(price.base)
+  const gasEstimate = await estimateGas(client, {
+    ...renewNames.makeFunctionData(connectorClient, {
+      nameOrNames: names,
+      duration,
+      value: price.base,
+    }),
+  })
+
+  const safeMultiplier = parseInt(multiplier.toFixed(0))
+  console.log('multiplier', multiplier)
+  const gasPrice = await getGasPrice(client)
+  console.log('gasPrice', gasPrice)
+  const gasCost = ((gasEstimate * BigInt(safeMultiplier * 100)) / 100n) * gasPrice
+
+  const gaseFees = await estimateFeesPerGas(client)
+
+  const totalCost = price.base + price.premium + gasCost
+  const priceWithBuffer = calculateValueWithBuffer(totalCost)
+
+  console.log('priceWithBuffer', priceWithBuffer)
+  console.log('priceWithMaxFee', price.base + price.premium + gaseFees.maxFeePerGas * gasEstimate)
+
   return renewNames.makeFunctionData(connectorClient, {
     nameOrNames: names,
     duration,
