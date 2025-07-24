@@ -1,5 +1,5 @@
 import type { TFunction } from 'react-i18next'
-import { estimateGas, getGasPrice } from 'viem/actions'
+import { estimateFeesPerGas, estimateGas, getCode, getGasPrice } from 'viem/actions'
 
 import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
@@ -73,11 +73,21 @@ const transaction = async ({
     }),
   })
 
+  const code = await getCode(client, { address: connectorClient.account.address })
+  console.log('code', code)
+
   const gasPrice = await getGasPrice(client)
-  const gasCost = gasEstimate * gasPrice
+  console.log('gasPrice', gasPrice)
+  const gasCost = ((gasEstimate * 150n) / 100n) * gasPrice
+
+  const gaseFees = await estimateFeesPerGas(client)
+  console.log('gaseFees', gaseFees)
 
   const totalCost = price.base + price.premium + gasCost
   const priceWithBuffer = calculateValueWithBuffer(totalCost)
+
+  console.log('priceWithBuffer', priceWithBuffer)
+  console.log('priceWithMaxFee', price.base + price.premium + gaseFees.maxFeePerGas * gasEstimate)
 
   return renewNames.makeFunctionData(connectorClient, {
     nameOrNames: names,
