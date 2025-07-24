@@ -190,6 +190,20 @@ const ExtendNames = ({
     address,
   })
 
+  const [multiplier, setMultiplier] = useState(
+    parseFloat(localStorage.getItem('multiplier') || '1.5'),
+  )
+  const incrementMultiplier = () =>
+    setMultiplier((prev) => {
+      localStorage.setItem('multiplier', (prev + 0.1).toString())
+      return prev + 0.1
+    })
+  const decrementMultiplier = () =>
+    setMultiplier((prev) => {
+      localStorage.setItem('multiplier', (prev - 0.1).toString())
+      return prev - 0.1
+    })
+
   const { userConfig, setCurrency } = useUserConfig()
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
@@ -316,6 +330,7 @@ const ExtendNames = ({
               bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
               currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
             }),
+            multiplier,
           })
           dispatch({ name: 'setTransactions', payload: [transactions] })
           dispatch({ name: 'setFlowStage', payload: 'transaction' })
@@ -387,6 +402,15 @@ const ExtendNames = ({
                   <Helper alert="warning">{t('input.extendNames.gasLimitError')}</Helper>
                 )}
               </GasEstimationCacheableComponent>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button type="button" onClick={decrementMultiplier}>
+                  -
+                </button>
+                <div>{multiplier.toFixed(1)}</div>
+                <button type="button" onClick={incrementMultiplier}>
+                  +
+                </button>
+              </div>
             </>
           ))}
       </Dialog.Content>
