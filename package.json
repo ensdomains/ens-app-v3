@@ -70,7 +70,7 @@
     "@tanstack/react-query-persist-client": "5.22.2",
     "@getpara/rainbowkit": "1.4.0",
     "@getpara/rainbowkit-wallet": "1.4.0",
-    "@wagmi/core": "2.13.3",
+    "@wagmi/core": "2.18.0",
     "calendar-link": "^2.8.0",
     "dequal": "2.0.3",
     "dns-packet": "^5.4.0",
@@ -101,8 +101,8 @@
     "tinyglobby": "^0.2.6",
     "ts-pattern": "^4.3.0",
     "use-immer": "^0.7.0",
-    "viem": "2.19.4",
-    "wagmi": "2.12.4"
+    "viem": "2.33.1",
+    "wagmi": "2.16.0"
   },
   "peerDependencies": {
     "react": "*",
@@ -185,7 +185,7 @@
   "pnpm": {
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
-      "@wagmi/core": "2.13.3",
+      "@wagmi/core": "2.18.0",
       "@walletconnect/ethereum-provider": "2.11.1",
       "@walletconnect/modal": "2.6.2",
       "aggregate-error": "npm:@socketregistry/aggregate-error@^1",
