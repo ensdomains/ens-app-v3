@@ -6,7 +6,10 @@
       "Bash(npx eslint:*)",
       "Bash(sed:*)",
       "Bash(grep:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm view:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm run lint:types:*)"
     ],
     "deny": []
   }
