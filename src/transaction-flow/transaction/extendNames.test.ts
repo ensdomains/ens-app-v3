@@ -1,6 +1,7 @@
 import { mockFunction } from '@app/test-utils'
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { type Address, type Hex } from 'viem'
 
 import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'

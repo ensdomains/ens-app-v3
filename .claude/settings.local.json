@@ -9,7 +9,9 @@
       "Bash(find:*)",
       "Bash(npm view:*)",
       "Bash(pnpm install:*)",
-      "Bash(pnpm run lint:types:*)"
+      "Bash(pnpm run lint:types:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm lint:types:*)"
     ],
     "deny": []
   }
