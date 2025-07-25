@@ -51,7 +51,7 @@ export const AnnouncementBanner = () => {
   const { t } = useTranslation('ensv2')
 
   return (
-    <Link href="/ens-v2" legacyBehavior passHref>
+    <Link href="https://ens.domains/ensv2" legacyBehavior passHref>
       <Container>
         <TextContainer>
           <img src="/migrate/confetti.png" alt="" height={33} width={33} />
@@ -62,7 +62,7 @@ export const AnnouncementBanner = () => {
             </Typography>
           </Text>
         </TextContainer>
-        <Button as="a" href="/ens-v2" colorStyle="greenPrimary" width="max">
+        <Button as="a" href="https://ens.domains/ensv2" colorStyle="greenPrimary" width="max">
           {t('banner.cta')}
         </Button>
       </Container>
