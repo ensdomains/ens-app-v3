@@ -18,9 +18,11 @@ vi.mock('@wagmi/core', async () => {
   }
 })
 
+const mockedGetFeeHistory = vi.mocked(getFeeHistory)
+
 describe('getLargestMedianGasFee', () => {
   it('should return the largest median gas fee from the reward array', async () => {
-    getFeeHistory.mockReturnValue({
+    mockedGetFeeHistory.mockResolvedValue({
       baseFeePerGas: [],
       gasUsedRatio: [],
       oldestBlock: 0n,
@@ -35,20 +37,20 @@ describe('getLargestMedianGasFee', () => {
 
     const result = await getLargestMedianGasFee()
     expect(result).toBe(3000n)
-    expect(getFeeHistory).toHaveBeenCalledWith(expect.anything(), {
+    expect(mockedGetFeeHistory).toHaveBeenCalledWith(expect.anything(), {
       blockCount: 5,
       rewardPercentiles: [50],
     })
   })
 
   it('should return the default max priority fee per gas if getFeeHistory fails', async () => {
-    getFeeHistory.mockRejectedValue(new Error('Failed to get fee history'))
+    mockedGetFeeHistory.mockRejectedValue(new Error('Failed to get fee history'))
     const result = await getLargestMedianGasFee()
     expect(result).toBe(5000000000n)
   })
 
   it('should return the default max priority fee per gas if getFeeHistory returns an empty reward array', async () => {
-    getFeeHistory.mockResolvedValue({
+    mockedGetFeeHistory.mockResolvedValue({
       baseFeePerGas: [],
       gasUsedRatio: [],
       oldestBlock: 0n,
