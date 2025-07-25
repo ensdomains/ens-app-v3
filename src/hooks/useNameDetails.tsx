@@ -75,7 +75,13 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     if (registrationStatus && ['desynced', 'desynced:gracePeriod'].includes(registrationStatus)) {
       return {
         title: t('banner.desynced.title'),
-        content: <DesyncedMessage name={normalisedName} expiryDate={expiryDate} />,
+        content: (
+          <DesyncedMessage
+            name={normalisedName}
+            expiryDate={expiryDate}
+            isGracePeriod={registrationStatus === 'desynced:gracePeriod'}
+          />
+        ),
         type: 'error',
       }
     }
