@@ -25,7 +25,8 @@
     },
     "desynced": {
       "title": "Name misconfigured",
-      "description": "A transaction is required to repair this name. Ownership data displayed may be inaccurate.",
+      "description": "A transaction is required to repair this name. Extending the name – even by a single day – will restore accurate ownership display.",
+      "descriptionGracePeriod": "A transaction is required to repair this name. Extending the name past the grace period will restore accurate ownership display.",
       "action": "Repair"
     }
   },
