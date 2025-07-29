@@ -170,7 +170,7 @@ export const getUserDefinedUrl = (url?: string) => {
   return ``
 }
 
-const isValidBanner = (s: string) => /^https:\/\/[a-z0-9._\-\/%+]+$/i.test(s) // simple allow-list: https only, no quotes/paren
+const isValidBanner = (s: string) => /^https:\/\/[a-z0-9._\-/%+]+$/i.test(s) // simple allow-list: https only, no quotes/paren
 
 export const ProfileSnippet = ({
   name,
