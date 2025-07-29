@@ -47,7 +47,11 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
         `}
 
     & > div {
-      background: none;
+      background: radial-gradient(
+        circle closest-side,
+        ${theme.colors.backgroundSecondary} 0 calc(100% - 2px),
+        transparent calc(100% - 2px) 100%
+      );
     }
   `,
 )
