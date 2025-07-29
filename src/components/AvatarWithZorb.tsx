@@ -45,9 +45,9 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
                 : null
             })}
         `}
-    
-    img {
-      display: block;
+
+    & > div {
+      background: none;
     }
   `,
 )
