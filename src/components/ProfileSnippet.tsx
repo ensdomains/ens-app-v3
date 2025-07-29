@@ -18,7 +18,7 @@ const Container = styled.div<{ $banner?: string }>(
     width: 100%;
     padding: ${theme.space['4']};
     padding-top: ${theme.space['18']};
-    background-image: ${$banner ? `url(${$banner})` : theme.colors.blueGradient};
+    background-image: ${$banner ? `url("${encodeURI($banner)}")` : theme.colors.blueGradient};
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-size: 100% ${theme.space['28']};
@@ -170,6 +170,8 @@ export const getUserDefinedUrl = (url?: string) => {
   return ``
 }
 
+const isValidBanner = (s: string) => /^https:\/\/[a-z0-9._\-\/%+]+$/i.test(s) // simple allow-list: https only, no quotes/paren
+
 export const ProfileSnippet = ({
   name,
   getTextRecord,
@@ -195,7 +197,10 @@ export const ProfileSnippet = ({
 
   const beautifiedName = useBeautifiedName(name)
 
-  const banner = getTextRecord?.('banner')?.value
+  const bannerUrl = isValidBanner(getTextRecord?.('banner')?.value ?? '')
+    ? getTextRecord?.('banner')?.value
+    : undefined
+
   const description = getTextRecord?.('description')?.value
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value
@@ -245,7 +250,7 @@ export const ProfileSnippet = ({
   }, [button, name, canSelfExtend])
 
   return (
-    <Container $banner={banner} data-testid="profile-snippet">
+    <Container $banner={bannerUrl} data-testid="profile-snippet">
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
