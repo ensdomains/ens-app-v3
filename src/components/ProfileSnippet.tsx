@@ -9,6 +9,7 @@ import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { isValidBanner } from '@app/validators/validateBanner'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -169,8 +170,6 @@ export const getUserDefinedUrl = (url?: string) => {
   }
   return ``
 }
-
-const isValidBanner = (s: string) => /^https:\/\/[a-z0-9._\-/%+]+$/i.test(s) // simple allow-list: https only, no quotes/paren
 
 export const ProfileSnippet = ({
   name,
