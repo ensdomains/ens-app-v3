@@ -14,16 +14,12 @@ import { isValidBanner } from '@app/validators/validateBanner'
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
 
-const Container = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) => css`
+const Container = styled.div(
+  ({ theme }) => css`
+    position: relative;
     width: 100%;
     padding: ${theme.space['4']};
     padding-top: ${theme.space['18']};
-    background-image: ${$banner ? `url("${encodeURI($banner)}")` : theme.colors.blueGradient};
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-size: 100% ${theme.space['28']};
-    background-position-y: -1px; /* for overlap with border i think */
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.border};
@@ -33,11 +29,27 @@ const Container = styled.div<{ $banner?: string }>(
     justify-content: center;
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
+    overflow: hidden;
 
     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
       padding-top: ${theme.space['12']};
     }
+  `,
+)
+
+const BannerContainer = styled.div<{ $banner?: string }>(
+  ({ theme, $banner }) => css`
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: ${theme.space['28']};
+    background-image: ${$banner ? `url("${encodeURI($banner)}")` : theme.colors.blueGradient};
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
   `,
 )
 
@@ -249,7 +261,8 @@ export const ProfileSnippet = ({
   }, [button, name, canSelfExtend])
 
   return (
-    <Container $banner={bannerUrl} data-testid="profile-snippet">
+    <Container data-testid="profile-snippet">
+      <BannerContainer $banner={bannerUrl} />
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
