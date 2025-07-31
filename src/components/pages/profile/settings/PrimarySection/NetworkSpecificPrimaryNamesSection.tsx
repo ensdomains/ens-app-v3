@@ -54,7 +54,11 @@ const mockNetworkPrimaryNames = [
   },
 ]
 
-export const NetworkSpecificPrimaryNamesSection = () => {
+interface NetworkSpecificPrimaryNamesSectionProps {
+  address?: string
+}
+
+export const NetworkSpecificPrimaryNamesSection = ({ address }: NetworkSpecificPrimaryNamesSectionProps) => {
   const { t } = useTranslation('settings')
 
   const handleNetworkManage = () => {

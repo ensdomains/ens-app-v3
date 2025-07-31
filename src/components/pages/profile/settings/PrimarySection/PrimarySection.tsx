@@ -262,7 +262,7 @@ export const PrimarySection = () => {
           </NoNameContainer>
         )}
 
-        <NetworkSpecificPrimaryNamesSection />
+        <NetworkSpecificPrimaryNamesSection address={address} />
       </Card>
     </Skeleton>
   )
