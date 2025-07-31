@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Card, Helper, InfoSVG, Typography } from '@ensdomains/thorin'
+import { Button, Card, Helper, Typography } from '@ensdomains/thorin'
 
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 
@@ -131,8 +131,9 @@ export const NetworkSpecificPrimaryNamesSection = () => {
       <SectionHeader>
         <TitleRow>
           <Typography fontVariant="headingFour">Network-specific primary names</Typography>
-          <Helper>
-            <InfoSVG />
+          <Helper type="info">
+            Network-specific primary names will override your default primary name on their specific
+            network.
           </Helper>
         </TitleRow>
         <Button size="small" colorStyle="accentSecondary" onClick={handleManage}>
