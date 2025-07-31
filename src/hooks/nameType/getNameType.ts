@@ -11,6 +11,8 @@ export type NameType =
   | 'tld'
   | 'eth-unwrapped-2ld'
   | 'eth-unwrapped-2ld:grace-period'
+  | 'eth-desynced-2ld'
+  | 'eth-desynced-2ld:grace-period'
   | 'eth-emancipated-2ld'
   | 'eth-emancipated-2ld:grace-period'
   | 'eth-locked-2ld'
@@ -75,6 +77,11 @@ export const getNameType = ({
         return 'eth-emancipated-2ld:grace-period' as const
       return 'eth-unwrapped-2ld:grace-period' as const
     })
+    .with(['eth', P._, '2ld', 'desynced'], () => 'eth-desynced-2ld' as const)
+    .with(
+      ['eth', P._, '2ld', 'desynced:gracePeriod'],
+      () => 'eth-desynced-2ld:grace-period' as const,
+    )
     .with(
       ['eth', P._, '2ld', P._],
       ([_tldType, _wrapLevel]: [

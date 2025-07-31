@@ -223,6 +223,7 @@ describe('TransactionStageModal', () => {
         )
         expect(mockEstimateGas).toHaveBeenCalledTimes(1)
         mockEstimateGas.mockReset()
+        mockEstimateGas.mockResolvedValue(2n)
         rerender(
           <ComponentWithDefaultProps
             transaction={{
@@ -283,6 +284,8 @@ describe('TransactionStageModal', () => {
           sendTransaction: mockSendTransaction,
           error: new Error('error123') as any,
         })
+        mockEstimateGas.mockResolvedValue(1n)
+        mockCreateAccessList.mockResolvedValue({ accessList: [], gasUsed: '0x64' })
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
         await waitFor(() => expect(screen.getByText('error123')).toBeVisible())
