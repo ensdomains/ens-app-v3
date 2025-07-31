@@ -1,20 +1,23 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Card, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
-import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 
-const StyledCard = styled(Card)(
+const NetworkSpecificSection = styled.div(
   ({ theme }) => css`
+    border-top: 1px solid ${theme.colors.border};
+    padding-top: ${theme.space['4']};
+    margin-top: ${theme.space['4']};
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
-    padding: ${theme.space['4']};
   `,
 )
 
-const SectionHeader = styled.div(
+const NetworkSectionHeader = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: row;
@@ -24,7 +27,7 @@ const SectionHeader = styled.div(
   `,
 )
 
-const TitleRow = styled.div(
+const NetworkTitleRow = styled.div(
   ({ theme }) => css`
     display: flex;
     align-items: center;
@@ -112,8 +115,10 @@ const mockNetworkPrimaryNames = [
 ]
 
 export const NetworkSpecificPrimaryNamesSection = () => {
-  const handleManage = () => {
-    // TODO: Implement manage functionality
+  const { t } = useTranslation('settings')
+
+  const handleNetworkManage = () => {
+    // TODO: Implement network-specific manage functionality
     console.log('Manage network-specific primary names')
   }
 
@@ -128,16 +133,16 @@ export const NetworkSpecificPrimaryNamesSection = () => {
   }
 
   return (
-    <StyledCard>
-      <SectionHeader>
-        <TitleRow>
+    <NetworkSpecificSection>
+      <NetworkSectionHeader>
+        <NetworkTitleRow>
           <Typography fontVariant="headingFour">Network-specific primary names</Typography>
           <QuestionTooltip content="Network-specific primary names will override your default primary name on their specific network." />
-        </TitleRow>
-        <Button size="small" colorStyle="accentSecondary" onClick={handleManage}>
+        </NetworkTitleRow>
+        <Button size="small" colorStyle="accentSecondary" onClick={handleNetworkManage}>
           Manage
         </Button>
-      </SectionHeader>
+      </NetworkSectionHeader>
 
       <Typography color="textSecondary" fontVariant="small">
         Network-specific primary names will override your default primary name on their specific
@@ -177,6 +182,6 @@ export const NetworkSpecificPrimaryNamesSection = () => {
           </NetworkRow>
         ))}
       </div>
-    </StyledCard>
+    </NetworkSpecificSection>
   )
 }

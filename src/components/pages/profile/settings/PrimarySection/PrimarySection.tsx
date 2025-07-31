@@ -5,6 +5,7 @@ import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography } from '@en
 
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { NetworkSpecificPrimaryNamesSection } from './NetworkSpecificPrimaryNamesSection'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -130,6 +131,7 @@ const ActionsContainer = styled.div(
   `,
 )
 
+
 export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
@@ -162,6 +164,7 @@ export const PrimarySection = () => {
       address,
     })
   }
+
 
   return (
     <Skeleton loading={isLoading} as={SkeletonFiller as any}>
@@ -258,6 +261,8 @@ export const PrimarySection = () => {
             <NoNameDescription>{t('section.primary.noNameDescription')}</NoNameDescription>
           </NoNameContainer>
         )}
+
+        <NetworkSpecificPrimaryNamesSection />
       </Card>
     </Skeleton>
   )

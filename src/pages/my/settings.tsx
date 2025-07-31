@@ -4,8 +4,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { DevSection } from '@app/components/pages/profile/settings/DevSection'
-import { NetworkSpecificPrimaryNamesSection } from '@app/components/pages/profile/settings/NetworkSpecificPrimaryNamesSection'
-import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection'
+import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection/PrimarySection'
 import { PrivacySection } from '@app/components/pages/profile/settings/PrivacySection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
 import { WalletSection } from '@app/components/pages/profile/settings/WalletSection'
@@ -45,7 +44,6 @@ export default function Page() {
         trailing: (
           <OtherWrapper>
             <PrimarySection />
-            <NetworkSpecificPrimaryNamesSection />
             <TransactionSection />
             <WalletSection />
             <PrivacySection />
