@@ -1,8 +1,9 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Card, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Card, Typography } from '@ensdomains/thorin'
 
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -131,10 +132,7 @@ export const NetworkSpecificPrimaryNamesSection = () => {
       <SectionHeader>
         <TitleRow>
           <Typography fontVariant="headingFour">Network-specific primary names</Typography>
-          <Helper type="info">
-            Network-specific primary names will override your default primary name on their specific
-            network.
-          </Helper>
+          <QuestionTooltip content="Network-specific primary names will override your default primary name on their specific network." />
         </TitleRow>
         <Button size="small" colorStyle="accentSecondary" onClick={handleManage}>
           Manage
