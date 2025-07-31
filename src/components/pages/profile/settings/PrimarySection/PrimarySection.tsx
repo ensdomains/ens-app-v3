@@ -5,12 +5,13 @@ import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography } from '@en
 
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
-import { NetworkSpecificPrimaryNamesSection } from './NetworkSpecificPrimaryNamesSection'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
+
+import { NetworkSpecificPrimaryNamesSection } from './NetworkSpecificPrimaryNamesSection'
 
 const SkeletonFiller = styled.div(
   ({ theme }) => css`
@@ -131,7 +132,6 @@ const ActionsContainer = styled.div(
   `,
 )
 
-
 export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
@@ -164,7 +164,6 @@ export const PrimarySection = () => {
       address,
     })
   }
-
 
   return (
     <Skeleton loading={isLoading} as={SkeletonFiller as any}>

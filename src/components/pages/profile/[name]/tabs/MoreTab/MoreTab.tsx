@@ -7,6 +7,7 @@ import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import { NameWrapper } from './NameWrapper'
+import { PrimaryName } from './PrimaryName'
 import Resolver from './Resolver'
 import Token from './Token/Token'
 
@@ -41,6 +42,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   return (
     <MoreContainer>
       <Token isWrapped={isWrapped} name={name} />
+      <PrimaryName name={name} />
       {(isConnected || isWrapped) && !isOffchainImport && (
         <NameWrapper
           {...{

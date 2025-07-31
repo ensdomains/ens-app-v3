@@ -58,7 +58,9 @@ interface NetworkSpecificPrimaryNamesSectionProps {
   address?: string
 }
 
-export const NetworkSpecificPrimaryNamesSection = ({ address }: NetworkSpecificPrimaryNamesSectionProps) => {
+export const NetworkSpecificPrimaryNamesSection = ({
+  address,
+}: NetworkSpecificPrimaryNamesSectionProps) => {
   const { t } = useTranslation('settings')
 
   const handleNetworkManage = () => {
@@ -95,10 +97,7 @@ export const NetworkSpecificPrimaryNamesSection = ({ address }: NetworkSpecificP
 
       <div>
         {mockNetworkPrimaryNames.map((network) => (
-          <NetworkRowComponent
-            key={network.id}
-            network={network}
-          />
+          <NetworkRowComponent key={network.id} network={network} />
         ))}
       </div>
     </NetworkSpecificSection>
