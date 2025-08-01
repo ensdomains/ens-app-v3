@@ -1,8 +1,9 @@
 import styled, { css } from 'styled-components'
 
-import { Button, Card, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Card, NametagSVG, RecordItem, Tag, Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { getL2PrimarySiteUrl } from '@app/utils/urls'
 
 const PrimaryNameCard = styled(Card)(
   ({ theme }) => css`
@@ -36,36 +37,20 @@ const TagContainer = styled.div(
     display: flex;
     align-items: center;
     gap: ${theme.space['2']};
-  `,
-)
 
-const NetworkRow = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: ${theme.space['3']} 0;
-    border-bottom: 1px solid ${theme.colors.border};
-
-    &:last-child {
-      border-bottom: none;
+    svg {
+      width: ${theme.space['4']};
+      height: ${theme.space['4']};
+      margin-right: ${theme.space['1']};
     }
   `,
 )
 
-const NetworkInfo = styled.div(
+const RecordItemsContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    gap: ${theme.space['1']};
-    flex: 1;
-  `,
-)
-
-const Address = styled(Typography)(
-  ({ theme }) => css`
-    font-family: ${theme.fonts.mono};
-    word-break: break-all;
+    gap: ${theme.space['2']};
   `,
 )
 
@@ -84,7 +69,7 @@ const mockPrimaryNames = [
     address: '0x0b08dA70688b73A579Bd5E8a290ff8afd37bc32A',
   },
   {
-    network: 'base', 
+    network: 'base',
     address: '0x866B3c4994e1416B7C738B9818b31dC246b95eEE',
   },
 ]
@@ -94,11 +79,6 @@ interface PrimaryNameProps {
 }
 
 export const PrimaryName = ({ name }: PrimaryNameProps) => {
-  const handleManage = () => {
-    // TODO: Implement manage functionality
-    console.log('Manage primary names')
-  }
-
   return (
     <PrimaryNameCard>
       <SectionHeader>
@@ -107,33 +87,36 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
           <QuestionTooltip content="A primary name links this name to an address, allowing apps to display a name and profile when looking up the address. Each address can only have a single primary name per network." />
         </TitleRow>
         <TagContainer>
-          <Tag colorStyle="greenPrimary" size="small">
+          <Tag colorStyle="greenSecondary" size="small">
+            <NametagSVG />
             Your primary name
           </Tag>
         </TagContainer>
       </SectionHeader>
 
       <Typography color="textSecondary" fontVariant="small">
-        A primary name links this name to an address, allowing apps to display a name and profile when looking up the address. Each address can only have a single primary name per network.
+        A primary name links this name to an address, allowing apps to display a name and profile
+        when looking up the address. Each address can only have a single primary name per network.
       </Typography>
 
-      <div>
+      <RecordItemsContainer>
         {mockPrimaryNames.map((item) => (
-          <NetworkRow key={item.network}>
-            <NetworkInfo>
-              <Typography fontVariant="bodyBold" color="textSecondary">
-                {item.network}
-              </Typography>
-              <Address fontVariant="small" color="text">
-                {item.address}
-              </Address>
-            </NetworkInfo>
-          </NetworkRow>
+          <RecordItem key={item.network} keyLabel={item.network} value={item.address}>
+            {item.address}
+          </RecordItem>
         ))}
-      </div>
+      </RecordItemsContainer>
 
       <ButtonContainer>
-        <Button size="small" colorStyle="accentSecondary" onClick={handleManage}>
+        <Button
+          as="a"
+          href={getL2PrimarySiteUrl(name)}
+          size="small"
+          colorStyle="accentSecondary"
+          width="fit"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Manage
         </Button>
       </ButtonContainer>

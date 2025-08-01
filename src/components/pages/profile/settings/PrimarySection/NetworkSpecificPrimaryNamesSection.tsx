@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { getL2PrimarySiteUrl } from '@app/utils/urls'
 
 import { NetworkRowComponent } from './NetworkRow'
 
@@ -85,7 +86,15 @@ export const NetworkSpecificPrimaryNamesSection = ({
           <Typography fontVariant="headingFour">Network-specific primary names</Typography>
           <QuestionTooltip content="Network-specific primary names will override your default primary name on their specific network." />
         </NetworkTitleRow>
-        <Button size="small" colorStyle="accentSecondary" onClick={handleNetworkManage} width="fit">
+        <Button
+          as="a"
+          href={getL2PrimarySiteUrl(address || '')}
+          size="small"
+          colorStyle="accentSecondary"
+          width="fit"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Manage
         </Button>
       </NetworkSectionHeader>
