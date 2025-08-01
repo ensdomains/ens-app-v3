@@ -45,9 +45,13 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
                 : null
             })}
         `}
-    
-    img {
-      display: block;
+
+    & > div {
+      background: radial-gradient(
+        circle closest-side,
+        ${theme.colors.backgroundSecondary} 0 calc(100% - 2px),
+        transparent calc(100% - 2px) 100%
+      );
     }
   `,
 )
@@ -81,7 +85,7 @@ export const NameAvatar = ({
 
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} placeholder={`url(${zorb})`} src={avatar || zorb} />
+      <Avatar {...props} placeholder={zorb} src={avatar || zorb} />
     </Wrapper>
   )
 }
@@ -102,7 +106,7 @@ export const AvatarWithZorb = ({
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
     <Wrapper $size={size}>
-      <Avatar {...props} placeholder={`url(${zorb})`} src={avatar || zorb} />
+      <Avatar {...props} placeholder={zorb} src={avatar || zorb} />
     </Wrapper>
   )
 }

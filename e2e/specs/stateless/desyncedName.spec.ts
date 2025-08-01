@@ -23,7 +23,11 @@ test.describe('Desynced Name Repair', () => {
       await test.step('should show desynced banner with repair button', async () => {
         // Look for the desynced banner with repair functionality
         await expect(page.getByText('Name misconfigured')).toBeVisible()
-        await expect(page.getByText('A transaction is required to repair this name')).toBeVisible()
+        await expect(
+          page.getByText(
+            'Extending the expiry – even by a single day – will restore accurate ownership information.',
+          ),
+        ).toBeVisible()
         await expect(page.getByRole('button', { name: 'Repair' })).toBeVisible()
       })
 
@@ -72,7 +76,11 @@ test.describe('Desynced Name Repair', () => {
       await test.step('should show desynced banner with repair button', async () => {
         // Look for the desynced banner with repair functionality
         await expect(page.getByText('Name misconfigured')).toBeVisible()
-        await expect(page.getByText('A transaction is required to repair this name')).toBeVisible()
+        await expect(
+          page.getByText(
+            'Extending the name past the grace period will restore accurate ownership information.',
+          ),
+        ).toBeVisible()
         await expect(page.getByRole('button', { name: 'Repair' })).toBeVisible()
       })
 
