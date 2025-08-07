@@ -1,0 +1,35 @@
+diff --git a/core/Authorization.ts b/core/Authorization.ts
+index b5807b5235191dfcc45bccdca87e497bd36b309c..98f596483bb5db1eccaa2345ef02ae8b2d84db7b 100644
+--- a/core/Authorization.ts
++++ b/core/Authorization.ts
+@@ -267,14 +267,22 @@ export function fromTuple<const tuple extends Tuple>(
+   tuple: tuple,
+ ): fromTuple.ReturnType<tuple> {
+   const [chainId, address, nonce, yParity, r, s] = tuple
+-  const signature =
+-    yParity && r && s ? Signature.fromTuple([yParity, r, s]) : undefined
+-  return from({
+-    address,
+-    chainId: chainId === '0x' ? 0 : Number(chainId),
+-    nonce: nonce === '0x' ? 0n : BigInt(nonce),
+-    ...signature,
+-  }) as never
++
++  if (yParity && r && s) {
++    const signature = Signature.fromTuple([yParity, r, s])
++    return from({
++      address,
++      chainId: chainId === '0x' ? 0 : Number(chainId),
++      nonce: nonce === '0x' ? 0n : BigInt(nonce),
++      ...signature,
++    }) as never
++  } else {
++    return from({
++      address,
++      chainId: chainId === '0x' ? 0 : Number(chainId),
++      nonce: nonce === '0x' ? 0n : BigInt(nonce),
++    }) as never
++  }
+ }
+ 
+ export declare namespace fromTuple {
