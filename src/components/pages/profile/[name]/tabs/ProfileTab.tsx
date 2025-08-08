@@ -129,7 +129,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
             />
           </Helper>
         )}
-        {nameDetails.isNonASCII && (
+        {nameDetails.isNonASCII && nameDetails.isLatinOnly && !nameDetails.hasMixedScripts && (
           <Helper alert="info" alignment="horizontal">
             <Trans
               i18nKey="tabs.profile.warnings.homoglyph"
@@ -138,6 +138,11 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
                 a: <Outlink href="https://unicode.org/reports/tr36/" />,
               }}
             />
+          </Helper>
+        )}
+        {(nameDetails.isNonASCII && nameDetails.hasMixedScripts) && (
+          <Helper alert="warning" alignment="horizontal">
+            {t('tabs.profile.warnings.homoglyph')}
           </Helper>
         )}
         {isWrapped && !normalisedName.endsWith('.eth') && (
