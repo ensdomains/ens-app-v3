@@ -159,7 +159,7 @@
     "hardhat-deploy": "^0.12.4",
     "husky": "^7.0.4",
     "jsdom": "^24.1.0",
-    "knip": "^5.44.0",
+    "knip": "^5.62.0",
     "msw": "^2.7.0",
     "next-dev-https": "^0.1.2",
     "next-router-mock": "^0.9.10",
