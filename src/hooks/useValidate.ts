@@ -10,6 +10,9 @@ export type ValidationResult = Prettify<
     isNonASCII: boolean | undefined
     labelCount: number
     labelDataArray: ParsedInputResult['labelDataArray']
+    hasEmoji?: boolean
+    hasMixedScripts?: boolean
+    isLatinOnly?: boolean
   }
 >
 
@@ -25,6 +28,10 @@ export const validate = (input: string) => {
   const decodedInput = tryDecodeURIComponent(input)
   const { normalised: name, ...parsedInput } = parseInput(decodedInput)
   const isNonASCII = parsedInput.labelDataArray.some((dataItem) => dataItem.type !== 'ASCII')
+  const scriptTypes = new Set(parsedInput.labelDataArray.map((d) => d.type).filter((t) => t && t !== 'ASCII'))
+  const hasMixedScripts = scriptTypes.size > 1
+  const isLatinOnly = scriptTypes.size === 1 && scriptTypes.has('Latin')
+  const hasEmoji = parsedInput.labelDataArray.some((d) => Boolean((d as any).emoji))
   const outputName = name || input
 
   return {
@@ -33,6 +40,9 @@ export const validate = (input: string) => {
     beautifiedName: tryBeautify(outputName),
     isNonASCII,
     labelCount: parsedInput.labelDataArray.length,
+    hasEmoji,
+    hasMixedScripts,
+    isLatinOnly,
   }
 }
 
@@ -47,6 +57,9 @@ const defaultData = Object.freeze({
   is2LD: undefined,
   isETH: undefined,
   labelDataArray: [],
+  hasEmoji: undefined as boolean | undefined,
+  hasMixedScripts: undefined as boolean | undefined,
+  isLatinOnly: undefined as boolean | undefined,
 })
 
 type UseValidateParameters = {

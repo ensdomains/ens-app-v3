@@ -129,15 +129,20 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
             />
           </Helper>
         )}
-        {nameDetails.isNonASCII && (
-          <Helper alert="warning" alignment="horizontal">
+        {nameDetails.isNonASCII && nameDetails.isLatinOnly && !nameDetails.hasMixedScripts && (
+          <Helper alert="info" alignment="horizontal">
             <Trans
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
               components={{
-                a: <Outlink href={getSupportLink('homoglyphs')} />,
+                a: <Outlink href="https://unicode.org/reports/tr36/" />,
               }}
             />
+          </Helper>
+        )}
+        {(nameDetails.isNonASCII && nameDetails.hasMixedScripts) && (
+          <Helper alert="warning" alignment="horizontal">
+            {t('tabs.profile.warnings.homoglyph')}
           </Helper>
         )}
         {isWrapped && !normalisedName.endsWith('.eth') && (
