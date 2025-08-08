@@ -130,12 +130,12 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           </Helper>
         )}
         {nameDetails.isNonASCII && (
-          <Helper alert="warning" alignment="horizontal">
+          <Helper alert="info" alignment="horizontal">
             <Trans
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
               components={{
-                a: <Outlink href={getSupportLink('homoglyphs')} />,
+                a: <Outlink href="https://unicode.org/reports/tr36/" />,
               }}
             />
           </Helper>
