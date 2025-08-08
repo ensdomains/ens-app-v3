@@ -43,10 +43,16 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
       ensDnssecImpl: {
         address: deploymentAddresses_.DNSSECImpl,
       },
+      legacyEthRegistrarController: {
+        address: deploymentAddresses_.LegacyETHRegistrarController,
+      },
+      legacyPublicResolver: {
+        address: deploymentAddresses_.LegacyPublicResolver,
+      },
     },
     subgraphs: {
       ens: {
-        url: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
+        url: 'http://localhost:42069/subgraph',
       },
     },
   } as const

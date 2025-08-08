@@ -1,14 +1,11 @@
 import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
-import { useIntercom } from 'react-use-intercom'
 import styled, { css } from 'styled-components'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
-import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
-import { shouldRedirect } from '@app/utils/shouldRedirect'
+import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
 
 import { Navigation } from './Navigation'
 
@@ -22,8 +19,10 @@ const Container = styled.div(
     flex-direction: column;
     align-items: stretch;
     @supports (-webkit-touch-callout: none) {
-      // hack for iOS/iPadOS Safari
-      // width should always be 100% - total padding
+      /*
+        hack for iOS/iPadOS Safari
+        width should always be 100% - total padding
+       */
       width: calc(100% - calc(var(--padding-size) * 2));
       box-sizing: content-box;
     }
@@ -80,16 +79,9 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { chainId, connector, isConnected } = useAccount()
   const hasProgrammaticChainSwitching = Boolean(connector?.switchChain)
   const { switchChain, isPending, isError } = useSwitchChain()
+  useSetupIntercom()
 
-  const router = useRouterWithHistory()
   const [error] = useErrorBoundary()
-  const { boot } = useIntercom()
-
-  useEffect(() => {
-    // Do not initialise with uid and email without implementing identity verification first
-    if (!IS_DEV_ENVIRONMENT) boot()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     if (
@@ -98,10 +90,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
       switchChain({ chainId: 1 })
     }
   }, [isConnected, hasProgrammaticChainSwitching, isPending, isError, chainId, switchChain])
-
-  useEffect(() => {
-    shouldRedirect(router, 'Basic.tsx', '/unsupportedNetwork', { isConnected, chainId })
-  }, [isConnected, chainId, router])
 
   return (
     <Container className="min-safe">

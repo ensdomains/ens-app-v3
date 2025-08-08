@@ -1,15 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import '@nomiclabs/hardhat-ethers'
+
+import '@ensdomains/hardhat-toolbox-viem-extended'
+import '@nomicfoundation/hardhat-viem'
 import 'dotenv/config'
 import 'hardhat-deploy'
 
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 
 import { HardhatUserConfig } from 'hardhat/config'
 
 const ensContractsPath = './node_modules/@ensdomains/ens-contracts'
-
-console.log(resolve(ensContractsPath, 'artifacts'))
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -74,6 +74,15 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  paths: {
+    artifacts: resolve(ensContractsPath, 'artifacts'),
+  },
+}
+
+declare module '@nomicfoundation/hardhat-viem/types.js' {
+  interface Register {
+    config: typeof config
+  }
 }
 
 export default config

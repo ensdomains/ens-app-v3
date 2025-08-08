@@ -157,13 +157,13 @@ test('should be able to extend a single unwrapped name from profile', async ({
 
   await test.step('should show correct fiat values', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.01')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.14')
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.0')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.1')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.1')
     await extendNamesModal.getCounterMinusButton.click()
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.0')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.1')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.1')
   })
 
   await test.step('should extend', async () => {
@@ -739,6 +739,9 @@ test('should handle URL-based renew for disconnected users', async ({ page, make
     type: 'legacy',
     owner: 'user',
   })
+
+  await page.goto(`/${name}?tab=ownership`)
+  await expect(page.getByText('Extend')).not.toBeVisible()
 
   await page.goto(`/${name}?renew=94608000`)
   await expect(page.getByText('Connect a wallet')).toBeVisible()

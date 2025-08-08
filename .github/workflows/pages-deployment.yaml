@@ -3,11 +3,11 @@ name: Cloudflare Pages
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   NEXT_PUBLIC_INTERCOM_ID: re9q5yti
+  NEXT_PUBLIC_PARA_API_KEY_PROD: ${{ github.ref == 'refs/heads/main' && secrets.NEXT_PUBLIC_PARA_API_KEY_PROD || '' }}
   NEXT_PUBLIC_DRPC_KEY: AnmpasF2C0JBqeAEzxVO8aTteiMlrW4R75hpDonbV6cR
 
 on: [push]
 jobs:
-
   deploy:
     if: ${{ always() }}
     runs-on: ubuntu-latest
@@ -16,16 +16,22 @@ jobs:
       deployments: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Update apt-get
+        run: sudo apt-get update
 
       - name: Install Misc. Deps
         run: sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+
+      - name: Install corepack
+        run: npm i -g corepack
 
       - name: Install pnpm
         run: npm i -g --force corepack && corepack enable pnpm
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'

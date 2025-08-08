@@ -84,7 +84,7 @@ const NamesListItemContent = styled.div(
 const NamesListItemTitle = styled.div(
   ({ theme }) => css`
     font-size: ${theme.space['5.5']};
-    background: 'red';
+    background: ${theme.colors.backgroundPrimary};
   `,
 )
 
@@ -164,16 +164,15 @@ type Data = {
   names: string[]
   seconds?: number
   isSelf?: boolean
+  minSeconds?: number
 }
 
 export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const minSeconds = ONE_DAY
-
 const ExtendNames = ({
-  data: { seconds: defaultSeconds, names, isSelf },
+  data: { seconds: defaultSeconds, names, isSelf, minSeconds = ONE_DAY },
   dispatch,
   onDismiss,
 }: Props) => {

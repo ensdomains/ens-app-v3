@@ -22,6 +22,12 @@
     "available": {
       "title": "{{name}} is available",
       "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
+    },
+    "desynced": {
+      "title": "Name misconfigured",
+      "description": "This name is already owned, but a transaction is required to repair the ownership display. Extending the expiry – even by a single day – will restore accurate ownership information.",
+      "descriptionGracePeriod": "This name is already owned, but a transaction is required to repair the ownership display. Extending the name past the grace period will restore accurate ownership information.",
+      "action": "Repair"
     }
   },
   "tabs": {

@@ -21,7 +21,6 @@ const LogoAndLanguage = styled.div(
     align-items: center;
     justify-content: flex-start;
     gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
   `,
 )
 

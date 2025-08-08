@@ -36,13 +36,13 @@ import { UseExpiryQueryKey } from '@app/hooks/ensjs/public/useExpiry'
 import { UseOwnerQueryKey, UseOwnerReturnType } from '@app/hooks/ensjs/public/useOwner'
 import { UsePriceQueryKey } from '@app/hooks/ensjs/public/usePrice'
 import { UseWrapperDataQueryKey } from '@app/hooks/ensjs/public/useWrapperData'
-import { TrackEventParameters, useEventTracker } from '@app/hooks/useEventTracker'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate } from '@app/hooks/useValidate'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { CreateQueryKey, GenericQueryKey } from '@app/types'
+import { sendEvent } from '@app/utils/analytics/events'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { thread, yearsToSeconds } from '@app/utils/utils'
@@ -93,7 +93,7 @@ const SearchResultsContainer = styled.div<{
     ${$state === 'entered'
       ? css`
           opacity: 1;
-          transform: translateY(0px);
+          transform: translateY(0);
         `
       : css`
           & > div {
@@ -307,7 +307,6 @@ type CreateSearchHandlerProps = {
   setHistory: Dispatch<SetStateAction<HistoryItem[]>>
   setInputVal: Dispatch<SetStateAction<string>>
   queryClient: QueryClient
-  trackEvent: (props: TrackEventParameters) => void
 }
 
 const createSearchHandler =
@@ -320,7 +319,6 @@ const createSearchHandler =
     setHistory,
     setInputVal,
     queryClient,
-    trackEvent,
   }: CreateSearchHandlerProps): SearchHandler =>
   (index: number) => {
     if (index === -1) return
@@ -338,12 +336,19 @@ const createSearchHandler =
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
 
-    const eventName = match(path)
-      .with(`/register/${text}`, () => 'search_selected_eth' as const)
-      .with(`/dotbox/${text}`, () => 'search_selected_box' as const)
-      .with(`/import/${text}`, () => 'search_selected_dns' as const)
+    const searchType = match(path)
+      .with(`/register/${text}`, () => 'eth' as const)
+      .with(`/dotbox/${text}`, () => 'box' as const)
+      .with(`/import/${text}`, () => 'dns' as const)
       .otherwise(() => undefined)
-    if (eventName) trackEvent({ eventName, customProperties: { name: text } })
+
+    if (searchType)
+      sendEvent('search:select', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name_type: searchType,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ens_name: text,
+      })
 
     setInputVal('')
     searchInputRef.current?.blur()
@@ -673,7 +678,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
   const dropdownItems = useBuildDropdownItems(inputVal, history)
-  const { trackEvent } = useEventTracker()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearch = useCallback(
@@ -686,7 +690,6 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       searchInputRef,
       setHistory,
       setInputVal,
-      trackEvent,
     }),
     [address, chainId, dropdownItems, queryClient, router, searchInputRef, setHistory, setInputVal],
   )

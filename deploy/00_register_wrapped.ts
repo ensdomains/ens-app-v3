@@ -1,10 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-
 /* eslint-disable no-await-in-loop */
-import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { Address, namehash } from 'viem'
+import { namehash, type Account } from 'viem'
 
 import {
   encodeFuses,
@@ -33,9 +31,24 @@ type Name = {
 
 type ProcessedSubname = {
   label: string
-  owner: Address
+  owner: Account
   expiry: number
   fuses: number
+}
+
+type ProcessedNameData = Omit<RegistrationParameters, 'owner'> & {
+  label: string
+  subnames: ProcessedSubname[]
+  resolverAddress: string
+  secret: string
+  duration: number
+  owner: Account
+  name: string
+  fuses?: RegistrationParameters['fuses']
+}
+
+const adjustTime = (time: number) => {
+  return time + 2419200 + 7776000 // 28 days + 90 days
 }
 
 const names: Name[] = [
@@ -139,35 +152,28 @@ const names: Name[] = [
   },
 ]
 
-type ProcessedNameData = RegistrationParameters & {
-  label: string
-  subnames: ProcessedSubname[]
-}
-
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network } = hre
-  const allNamedAccts = (await getNamedAccounts()) as Record<string, Address>
+  const { network, viem } = hre
+  const allNamedClients = await viem.getNamedClients()
+  const publicClient = await viem.getPublicClient()
 
-  const controller = await ethers.getContract('ETHRegistrarController')
-  const publicResolver = await ethers.getContract('PublicResolver')
-  const nameWrapper = await ethers.getContract('NameWrapper')
+  const controller = await viem.getContract('ETHRegistrarController')
+  const publicResolver = await viem.getContract('PublicResolver')
+  const nameWrapper = await viem.getContract('NameWrapper')
 
   const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
-    const resolverAddress = publicResolver.address as Address
-
-    const secret =
-      // eslint-disable-next-line no-restricted-syntax
-      '0x0000000000000000000000000000000000000000000000000000000000000000' as Address
+    const resolverAddress = publicResolver.address
+    const secret = '0x0000000000000000000000000000000000000000000000000000000000000000' as const
     const duration = customDuration || 31536000
-    // 1659467455 is the approximate time of the transaction, this is for keeping block hashes the same
-    const wrapperExpiry = 1659467455 + duration
-    const owner = allNamedAccts[namedOwner]
+    // 1659467455 is an approximate base timestamp; adding duration to it gives the wrapper expiry
+    const wrapperExpiry = 1659467455 + adjustTime(duration)
+    const owner = allNamedClients[namedOwner].account
 
     const processedSubnames: ProcessedSubname[] =
       subnames?.map(
         ({ label, namedOwner: subNamedOwner, fuses: subnameFuses, expiry: subnameExpiry }) => ({
           label,
-          owner: allNamedAccts[subNamedOwner],
+          owner: allNamedClients[subNamedOwner].account,
           expiry: subnameExpiry || wrapperExpiry,
           fuses: subnameFuses || 0,
         }),
@@ -189,30 +195,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const makeCommitment =
     (nonce: number) =>
     async ({ owner, name, ...rest }: ProcessedNameData, index: number) => {
-      const commitment = generateCommitment({ owner, name, ...rest })
-
-      const _controller = controller.connect(await ethers.getSigner(owner))
-      const commitTx = await _controller.commit(commitment, { nonce: nonce + index })
-      console.log(`Commiting commitment for ${name} (tx: ${commitTx.hash})...`)
+      const commitment = generateCommitment({ owner: owner.address, name, ...rest })
+      const commitTxHash = await controller.write.commit([commitment], {
+        nonce: nonce + index,
+        account: owner,
+      })
+      console.log(`Commiting commitment for ${name} (tx: ${commitTxHash})...`)
       return 1
     }
 
   const makeRegistration =
     (nonce: number) =>
     async ({ owner, name, duration, label, ...rest }: ProcessedNameData, index: number) => {
-      const [price] = await controller.rentPrice(label, duration)
-
-      const _controller = controller.connect(await ethers.getSigner(owner))
-
-      const registerTx = await _controller.register(
-        ...makeRegistrationTuple({ owner, name, duration, ...rest }),
+      const { base: price } = await controller.read.rentPrice([label, BigInt(duration)])
+      const registerTxHash = await controller.write.register(
+        makeRegistrationTuple({ owner: owner.address, name, duration, ...rest }),
         {
+          account: owner,
           value: price,
           nonce: nonce + index,
         },
       )
-      console.log(`Registering name ${name} (tx: ${registerTx.hash})...`)
-
+      console.log(`Registering name ${name} (tx: ${registerTxHash})...`)
       return 1
     }
 
@@ -221,30 +225,26 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     async ({ name, subnames, owner }: ProcessedNameData, index: number) => {
       for (let i = 0; i < subnames.length; i += 1) {
         const { label, owner: subOwner, fuses, expiry } = subnames[i]
-        const _nameWrapper = nameWrapper.connect(await ethers.getSigner(owner))
-        const subnameTx = await _nameWrapper.setSubnodeOwner(
-          namehash(name),
-          label,
-          subOwner,
-          fuses,
-          expiry,
+        const subnameTxHash = await nameWrapper.write.setSubnodeOwner(
+          [namehash(name), label, subOwner.address, fuses, BigInt(expiry)],
           {
+            account: owner,
             nonce: nonce + index + i,
           },
         )
-        console.log(`Creating subname ${label}.${name} (tx: ${subnameTx.hash})...`)
+        console.log(`Creating subname ${label}.${name} (tx: ${subnameTxHash})...`)
       }
       return subnames.length
     }
 
   const allNameData = names.map(makeData)
 
-  const getNonceAndApply = nonceManager(ethers, allNamedAccts, allNameData)
+  const getNonceAndApply = nonceManager(allNamedClients, allNameData)
 
   await network.provider.send('evm_setAutomine', [false])
   await getNonceAndApply('owner', makeCommitment)
   await network.provider.send('evm_mine')
-  const oldTimestamp = (await ethers.provider.getBlock('latest')).timestamp
+  const oldTimestamp = await publicClient.getBlock().then((b) => Number(b.timestamp))
   await network.provider.send('evm_setNextBlockTimestamp', [oldTimestamp + 60])
   await network.provider.send('evm_mine')
   await getNonceAndApply('owner', makeRegistration)

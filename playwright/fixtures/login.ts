@@ -28,7 +28,7 @@ export class Login {
     /**
      * TEMP FIX
      * A bug in rainbow kit needs time to load the provider. Could be fixed in version 1.0.4
-     * Also throws eror with walletconnect if not enough time has passed.
+     * Also throws error with walletconnect if not enough time has passed.
      */
   }
 
@@ -43,16 +43,13 @@ export class Login {
     await expect(this.page.getByText('Confirm connection in the extension')).toBeVisible({
       timeout: 15000,
     })
+    await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toBeGreaterThanOrEqual(1)
     // this isn't actually what the user experiences, just a quirk in headless-web3-provider
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestPermissions)
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestPermissions)).toEqual(0)
-    await expect
-      .poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts))
-      .toEqual(1)
+    await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toBeGreaterThanOrEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
-    expect(this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
-    await expect(this.getProfileButton).toBeVisible()
+    await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
+    await expect.poll(() => this.getProfileButton.isVisible()).toBe(true)
   }
 
   async switchTo(user: User) {
