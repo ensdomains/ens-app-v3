@@ -80,7 +80,7 @@ const profiles = [
 
 test.describe('Profile', () => {
   test('should allow user to connect', async ({ page, login }) => {
-    await page.goto('/')
+    await page.goto('/?chain=sepolia')
     await login.connect()
 
     await page.getByTestId('header-profile').click()
@@ -90,19 +90,19 @@ test.describe('Profile', () => {
   })
 
   test('should show a warning if name is not supported', async ({ page }) => {
-    await page.goto('/name.nottld')
+    await page.goto('/name.nottld/?chain=sepolia')
     await expect(page.getByText('This TLD is not supported')).toBeVisible({ timeout: 25000 })
   })
 
   test('should load emoji domain pages', async ({ page }) => {
-    await page.goto('/%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F.eth')
+    await page.goto('/%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F.eth/?chain=sepolia')
     await expect(page.getByTestId('profile-snippet-name')).toContainText('❤️❤️❤️.eth', {
       timeout: 25000,
     })
   })
 
   test('should allow searching for emoji domain', async ({ page, login }) => {
-    await page.goto('/')
+    await page.goto('/?chain=sepolia')
     await login.connect()
 
     await page.getByPlaceholder('Search for a name').fill('❤️❤️❤️❤️❤️❤️.eth')
@@ -114,7 +114,7 @@ test.describe('Profile', () => {
 
   for (const profile of profiles) {
     test(`should load profile for: ${profile.name}`, async ({ page, login }) => {
-      await page.goto('/')
+      await page.goto('/?chain=sepolia')
       await login.connect()
 
       await page.getByPlaceholder('Search for a name').fill(profile.name)
@@ -233,7 +233,7 @@ test.describe('Profile', () => {
   }
 
   test('should decode an unknown label', async ({ page, login }) => {
-    await page.goto('/')
+    await page.goto('/?chain=sepolia')
     await login.connect()
     await page.goto(
       // eslint-disable-next-line no-restricted-syntax
@@ -245,10 +245,10 @@ test.describe('Profile', () => {
   })
 
   test('should show wrapped DNS name warning', async ({ page, login }) => {
-    await page.goto('/')
+    await page.goto('/?chain=sepolia')
     await login.connect()
 
-    await page.goto('/wrappeddnsname.com')
+    await page.goto('/wrappeddnsname.com/?chain=sepolia')
     await expect(page.getByTestId('profile-snippet')).toContainText('wrappeddnsname.com')
   })
 })
