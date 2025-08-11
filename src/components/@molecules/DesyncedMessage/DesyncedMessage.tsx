@@ -21,9 +21,11 @@ const calculateMinSeconds = (date?: Date) => {
 export const DesyncedMessage = ({
   name,
   expiryDate,
+  isGracePeriod,
 }: {
   name: string
   expiryDate: Date | undefined
+  isGracePeriod: boolean
 }) => {
   const { t } = useTranslation('profile')
   const { isConnected } = useAccount()
@@ -32,7 +34,11 @@ export const DesyncedMessage = ({
 
   return (
     <BannerMessageWithAction
-      content={t('banner.desynced.description')}
+      content={
+        isGracePeriod
+          ? t('banner.desynced.descriptionGracePeriod')
+          : t('banner.desynced.description')
+      }
       button={match(isConnected)
         .with(
           true,
