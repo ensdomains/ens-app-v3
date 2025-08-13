@@ -49,7 +49,9 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Build stateful and export
-        run: pnpm build && pnpm export
+        run: |
+          export NEXT_PUBLIC_CHAIN_NAME=sepolia
+          pnpm build && pnpm export
 
       - name: Tar stateful files
         run: tar -cvf stateful-build.tar out
@@ -98,8 +100,8 @@ jobs:
             27,
             28,
             29,
-            30, 
-            31
+            30,
+            31,
           ]
     steps:
       - uses: actions/checkout@v4
