@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { getNetworkFromUrl } from '@app/constants/chains'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -42,7 +43,7 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
   return (
     <MoreContainer>
       <Token isWrapped={isWrapped} name={name} />
-      <PrimaryName name={name} />
+      {['mainnet', 'sepolia'].includes(getNetworkFromUrl() || '') && <PrimaryName name={name} />}
       {(isConnected || isWrapped) && !isOffchainImport && (
         <NameWrapper
           {...{

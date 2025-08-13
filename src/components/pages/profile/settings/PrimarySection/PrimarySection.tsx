@@ -5,6 +5,7 @@ import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography } from '@en
 
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { getNetworkFromUrl } from '@app/constants/chains'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -261,7 +262,9 @@ export const PrimarySection = () => {
           </NoNameContainer>
         )}
 
-        <NetworkSpecificPrimaryNamesSection address={address} />
+        {['mainnet', 'sepolia'].includes(getNetworkFromUrl() || '') && (
+          <NetworkSpecificPrimaryNamesSection address={address} />
+        )}
       </Card>
     </Skeleton>
   )
