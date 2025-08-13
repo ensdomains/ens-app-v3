@@ -27,7 +27,7 @@ export type Network = {
   coinType: number
 }
 
-const defaultNetwork = {
+export const defaultNetwork = {
   name: 'default',
   chainId: 0,
   coinType: evmChainIdToCoinType(0),
@@ -113,8 +113,3 @@ export const networks = match(network)
     ...testnetNetworks,
   ])
   .otherwise(() => [defaultNetwork, { name: 'eth', chainId: holesky.id, coinType: 60 }])
-
-// NOTE: Remove and switch to testNetworks when address encoder has been updated to support default coin
-export const defaultAndTestNetworks = [defaultNetwork, ...testnetNetworks]
-
-console.log(networks)

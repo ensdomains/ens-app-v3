@@ -9,7 +9,7 @@ import {
   RecordOptions,
 } from '@ensdomains/ensjs/utils'
 
-import { defaultAndTestNetworks } from '@app/constants/networks'
+import { defaultNetwork, testnetNetworks } from '@app/constants/networks'
 import { AddressRecord, Profile, TextRecord } from '@app/types'
 
 import { contentHashToString } from './contenthash'
@@ -191,7 +191,8 @@ export const addTestnetRecords = (records: unknown) => {
         return {
           ...coin,
           name:
-            defaultAndTestNetworks.find(({ coinType }) => coinType === coin.id)?.name || coin.name,
+            [defaultNetwork, ...testnetNetworks].find(({ coinType }) => coinType === coin.id)
+              ?.name || coin.name,
         }
       }),
     }
@@ -200,7 +201,7 @@ export const addTestnetRecords = (records: unknown) => {
 }
 
 export const getCoderByCoinNameWithTestnetSupport = (coinName: string) => {
-  const extendedCoin = defaultAndTestNetworks.find(({ name }) => name === coinName)
+  const extendedCoin = testnetNetworks.find(({ name }) => name === coinName)
   if (extendedCoin) {
     const evmCoder = getCoderByCoinName('eth')
     return {
@@ -217,9 +218,7 @@ export const getCoinTypeByCoinNameWithTestnetSupport = (coinName: string) => {
 }
 
 export const getCoderByCoinTypeWithTestnetSupport = (coinType: number) => {
-  const extendedCoin = defaultAndTestNetworks.find(
-    ({ coinType: coinType2 }) => coinType === coinType2,
-  )
+  const extendedCoin = testnetNetworks.find(({ coinType: coinType2 }) => coinType === coinType2)
   if (extendedCoin) {
     return {
       ...getCoderByCoinType(60),
