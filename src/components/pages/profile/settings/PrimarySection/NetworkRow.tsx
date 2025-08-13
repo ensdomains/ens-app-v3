@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
 
+import { DynamicNetworkIcon } from '@app/assets/network/DynamicNetworkIcon'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 
 const NetworkRow = styled.div(
   ({ theme }) => css`
@@ -28,6 +28,7 @@ const NetworkInfo = styled.div(
     align-items: center;
     gap: ${theme.space['3']};
     flex: 1;
+    min-width: 0;
   `,
 )
 
@@ -41,44 +42,62 @@ const ZorbContainer = styled.div(
   `,
 )
 
-const NetworkIcon = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['8']};
-    height: ${theme.space['8']};
+const NetworkIcons = styled.div(
+  () => css`
     display: flex;
     align-items: center;
     justify-content: center;
   `,
 )
 
+const NetworkIcon = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['8']};
+    height: ${theme.space['8']};
+    margin-left: -${theme.space['2']};
+  `,
+)
+
+const NameText = styled.div(
+  () => css`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  `,
+)
+
 interface NetworkData {
-  id: string
-  name: string
-  network: string
-  icon: string
-  isSet: boolean
+  coinName: string
+  coinType: number
+  address: string
 }
 
 interface NetworkRowProps {
-  network: NetworkData
-  onSetPrimary?: (networkId: string) => void
-  onRemovePrimary?: (networkId: string) => void
+  name: string
+  networks: NetworkData[]
 }
 
-export const NetworkRowComponent = ({ network }: NetworkRowProps) => {
+export const NetworkRowComponent = ({ name, networks }: NetworkRowProps) => {
   return (
     <NetworkRow>
       <NetworkInfo>
         <ZorbContainer>
-          <AvatarWithZorb name={network.name} label={`${network.name} avatar`} size="8" />
+          <AvatarWithZorb name={name} label={`${name} avatar`} size="8" />
         </ZorbContainer>
-        <Typography fontVariant="body" weight="bold">
-          {network.name}
-        </Typography>
+        <NameText>
+          <Typography as="span" fontVariant="body" weight="bold">
+            {name}
+          </Typography>
+        </NameText>
       </NetworkInfo>
-      <NetworkIcon>
-        <DynamicAddressIcon name={network.icon} size="8" />
-      </NetworkIcon>
+      <NetworkIcons>
+        {networks.map((network) => (
+          <NetworkIcon>
+            <DynamicNetworkIcon name={network.coinName?.replace(/-sep$/, '')} />
+          </NetworkIcon>
+        ))}
+      </NetworkIcons>
     </NetworkRow>
   )
 }
