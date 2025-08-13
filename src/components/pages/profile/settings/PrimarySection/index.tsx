@@ -1,1 +1,0 @@
-export { PrimarySection } from './PrimarySection'

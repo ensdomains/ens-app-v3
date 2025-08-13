@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Typography } from '@ensdomains/thorin'
@@ -61,7 +60,7 @@ interface NetworkSpecificPrimaryNamesSectionProps {
 export const NetworkSpecificPrimaryNamesSection = ({
   address,
 }: NetworkSpecificPrimaryNamesSectionProps) => {
-  const { t } = useTranslation('settings')
+  // const { t } = useTranslation('settings')
 
   const primaryNames = usePrimaryNames({
     chainAddresses: networks.map(({ coinType, name }) => ({
