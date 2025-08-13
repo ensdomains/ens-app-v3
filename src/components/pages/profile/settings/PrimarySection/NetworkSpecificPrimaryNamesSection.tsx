@@ -4,18 +4,35 @@ import styled, { css } from 'styled-components'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { networks } from '@app/constants/networks'
+import { usePrimaryNames } from '@app/hooks/primary/usePrimaryNames'
 import { getL2PrimarySiteUrl } from '@app/utils/urls'
 
 import { NetworkRowComponent } from './NetworkRow'
 
 const NetworkSpecificSection = styled.div(
   ({ theme }) => css`
-    border-top: 1px solid ${theme.colors.border};
+    position: relative;
     padding-top: ${theme.space['4']};
     margin-top: ${theme.space['4']};
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
+  `,
+)
+
+const ResposiveDivider = styled.div(
+  ({ theme }) => css`
+    border-top: 1px solid ${theme.colors.border};
+    position: absolute;
+    top: 0;
+    left: -${theme.space['4']};
+    width: calc(100% + 2 * ${theme.space['4']});
+
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      left: -${theme.space['6']};
+      width: calc(100% + 2 * ${theme.space['6']});
+    }
   `,
 )
 
@@ -37,24 +54,6 @@ const NetworkTitleRow = styled.div(
   `,
 )
 
-// Mock data for network-specific primary names
-const mockNetworkPrimaryNames = [
-  {
-    id: 'eth',
-    name: 'domico.eth',
-    network: 'Ethereum',
-    icon: 'eth',
-    isSet: true,
-  },
-  {
-    id: 'base',
-    name: 'domico.base.eth',
-    network: 'Base',
-    icon: 'base',
-    isSet: false,
-  },
-]
-
 interface NetworkSpecificPrimaryNamesSectionProps {
   address?: string
 }
@@ -64,23 +63,51 @@ export const NetworkSpecificPrimaryNamesSection = ({
 }: NetworkSpecificPrimaryNamesSectionProps) => {
   const { t } = useTranslation('settings')
 
-  const handleNetworkManage = () => {
-    // TODO: Implement network-specific manage functionality
-    console.log('Manage network-specific primary names')
-  }
+  const primaryNames = usePrimaryNames({
+    chainAddresses: networks.map(({ coinType, name }) => ({
+      name,
+      id: coinType,
+      value: address!,
+    })),
+  })
 
-  const handleSetPrimary = (networkId: string) => {
-    // TODO: Implement set primary functionality
-    console.log(`Set primary name for ${networkId}`)
-  }
+  const groupedPrimaryNames = Object.values(
+    primaryNames.data.reduce(
+      (acc, curr) => {
+        const key = curr.name
+        return {
+          ...acc,
+          [key]: {
+            name: curr.name,
+            networks: [
+              ...(acc[key]?.networks || []),
+              {
+                coinType: curr.coinType,
+                coinName: curr.coinName,
+                address: curr.address,
+              },
+            ],
+          },
+        }
+      },
+      {} as Record<
+        string,
+        {
+          name: string
+          networks: Array<{
+            coinType: number
+            coinName: string
+            address: string
+          }>
+        }
+      >,
+    ),
+  )
 
-  const handleRemovePrimary = (networkId: string) => {
-    // TODO: Implement remove primary functionality
-    console.log(`Remove primary name for ${networkId}`)
-  }
-
+  console.log('groupedPrimaryNames', groupedPrimaryNames)
   return (
     <NetworkSpecificSection>
+      <ResposiveDivider />
       <NetworkSectionHeader>
         <NetworkTitleRow>
           <Typography fontVariant="headingFour">Network-specific primary names</Typography>
@@ -105,8 +132,8 @@ export const NetworkSpecificPrimaryNamesSection = ({
       </Typography>
 
       <div>
-        {mockNetworkPrimaryNames.map((network) => (
-          <NetworkRowComponent key={network.id} network={network} />
+        {groupedPrimaryNames.map((group) => (
+          <NetworkRowComponent key={group.name} name={group.name} networks={group.networks} />
         ))}
       </div>
     </NetworkSpecificSection>

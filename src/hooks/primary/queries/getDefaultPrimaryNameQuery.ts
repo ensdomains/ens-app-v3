@@ -1,3 +1,5 @@
+// Don't think this is needed
+
 import { readContract } from '@wagmi/core'
 import { Address, getChainContractAddress } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
@@ -65,23 +67,29 @@ export const getPrimaryNameQuery =
   (config: ConfigWithEns) =>
   async ({
     address,
-    coinType = 60,
   }: {
     address: Address
     coinType?: number
   }): Promise<GetPrimaryNameQueryReturnType> => {
-    const client = config.getClient()
-    const result = await readContract(config, {
-      address: getUniversalResolverAddress(client.chain),
-      abi: newUniversalResolverAbiReverseSnippet,
-      functionName: 'reverse',
-      args: [address, BigInt(coinType)],
-    })
+    try {
+      const {
+        queryKey: [{ address }],
+      } = params
+      if (!address) throw new Error('address is required')
+      const client = config.getClient()
+      const { chain } = client
 
-    return {
-      name: result[0],
-      address,
-      coinType,
-      coinName: getCoderByCoinTypeWithTestnetSupport(coinType).name,
+      const name = await readContract(client, {
+        address: '0x'
+        abi: standaloneReverseRegistrarAbi,
+        functionName: 'nameForAddr',
+        args: [address],
+      })
+      return name
+    } catch (error) {
+      console.error(error)
+      return {
+
+      }
     }
   }

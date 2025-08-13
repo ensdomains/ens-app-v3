@@ -1,8 +1,12 @@
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button, Card, NametagSVG, RecordItem, Tag, Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { usePrimaryNames } from '@app/hooks/primary/usePrimaryNames'
+import { useProfile } from '@app/hooks/useProfile'
 import { getL2PrimarySiteUrl } from '@app/utils/urls'
 
 const PrimaryNameCard = styled(Card)(
@@ -62,23 +66,20 @@ const ButtonContainer = styled.div(
   `,
 )
 
-// Mock data for network-specific primary names
-const mockPrimaryNames = [
-  {
-    network: 'default',
-    address: '0x0b08dA70688b73A579Bd5E8a290ff8afd37bc32A',
-  },
-  {
-    network: 'base',
-    address: '0x866B3c4994e1416B7C738B9818b31dC246b95eEE',
-  },
-]
-
 interface PrimaryNameProps {
   name: string
 }
 
 export const PrimaryName = ({ name }: PrimaryNameProps) => {
+  const { address } = useAccount()
+  const { data: walletPrimaryname } = usePrimaryName({ address })
+  const { data: profile } = useProfile({ name })
+
+  const primaryNames = usePrimaryNames({
+    chainAddresses: profile?.coins,
+  })
+  const filteredPrimaryNames = primaryNames.data?.filter((primaryName) => primaryName.name === name)
+
   return (
     <PrimaryNameCard>
       <SectionHeader>
@@ -86,12 +87,14 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
           <Typography fontVariant="headingFour">Primary name</Typography>
           <QuestionTooltip content="A primary name links this name to an address, allowing apps to display a name and profile when looking up the address. Each address can only have a single primary name per network." />
         </TitleRow>
-        <TagContainer>
-          <Tag colorStyle="greenSecondary" size="small">
-            <NametagSVG />
-            Your primary name
-          </Tag>
-        </TagContainer>
+        {walletPrimaryname?.name === name && (
+          <TagContainer>
+            <Tag colorStyle="greenSecondary" size="small">
+              <NametagSVG />
+              Your primary name
+            </Tag>
+          </TagContainer>
+        )}
       </SectionHeader>
 
       <Typography color="textSecondary" fontVariant="small">
@@ -99,13 +102,19 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
         when looking up the address. Each address can only have a single primary name per network.
       </Typography>
 
-      <RecordItemsContainer>
-        {mockPrimaryNames.map((item) => (
-          <RecordItem key={item.network} keyLabel={item.network} value={item.address}>
-            {item.address}
-          </RecordItem>
-        ))}
-      </RecordItemsContainer>
+      {filteredPrimaryNames?.length > 0 && (
+        <RecordItemsContainer>
+          {filteredPrimaryNames?.map((primaryName) => (
+            <RecordItem
+              key={primaryName?.coinName}
+              keyLabel={primaryName?.coinName}
+              value={primaryName?.address}
+            >
+              {primaryName?.address}
+            </RecordItem>
+          ))}
+        </RecordItemsContainer>
+      )}
 
       <ButtonContainer>
         <Button

@@ -3522,17 +3522,6 @@ packages:
       zod:
         optional: true
 
-  abitype@1.0.8:
-    resolution: {integrity: sha512-ZeiI6h3GnW06uYDLx0etQtX/p8E24UaHHBj57RSjK7YBFe7iuVn07EDpOeP451D06sF27VOz9JJPlIKJmXgkEg==}
-    peerDependencies:
-      typescript: '>=5.0.4'
-      zod: ^3 >=3.22.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-      zod:
-        optional: true
-
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
@@ -8644,7 +8633,7 @@ snapshots:
       '@ensdomains/address-encoder': 1.1.1
       '@ensdomains/content-hash': 3.1.0-rc.1
       '@ensdomains/dnsprovejs': 0.5.1
-      abitype: 1.0.8(typescript@5.7.3)(zod@3.24.2)
+      abitype: 1.0.5(typescript@5.7.3)(zod@3.24.2)
       dns-packet: 5.6.1
       graphql: 16.10.0
       graphql-request: 6.1.0(graphql@16.10.0)
@@ -11385,11 +11374,6 @@ snapshots:
       zod: 3.24.2
 
   abitype@1.0.5(typescript@5.7.3)(zod@3.24.2):
-    optionalDependencies:
-      typescript: 5.7.3
-      zod: 3.24.2
-
-  abitype@1.0.8(typescript@5.7.3)(zod@3.24.2):
     optionalDependencies:
       typescript: 5.7.3
       zod: 3.24.2

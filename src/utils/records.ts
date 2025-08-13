@@ -1,5 +1,7 @@
 import { Address, hexToString } from 'viem'
 
+import { getCoderByCoinName, getCoderByCoinType } from '@ensdomains/address-encoder'
+import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import {
   contentTypeToEncodeAs,
   DecodedContentHash,
@@ -7,6 +9,7 @@ import {
   RecordOptions,
 } from '@ensdomains/ensjs/utils'
 
+import { defaultAndTestNetworks } from '@app/constants/networks'
 import { AddressRecord, Profile, TextRecord } from '@app/types'
 
 import { contentHashToString } from './contenthash'
@@ -169,4 +172,75 @@ export const checkProfileRecordsContains = ({
   if (type === 'address')
     return !!profile?.coins?.some((coin) => coin.id === match.id && coin.value === match.value)
   return false
+}
+
+/* NOTE: These functions are used to add default and testnet support. References to default will
+be moved to ensjs in the future. */
+
+const hasCoins = (
+  records: unknown,
+): records is GetRecordsReturnType<any, (string | number)[], any, any> => {
+  return typeof records === 'object' && !!records && 'coins' in records
+}
+
+export const addTestnetRecords = (records: unknown) => {
+  if (hasCoins(records)) {
+    return {
+      ...records,
+      coins: records.coins.map((coin) => {
+        return {
+          ...coin,
+          name:
+            defaultAndTestNetworks.find(({ coinType }) => coinType === coin.id)?.name || coin.name,
+        }
+      }),
+    }
+  }
+  return records
+}
+
+export const getCoderByCoinNameWithTestnetSupport = (coinName: string) => {
+  const extendedCoin = defaultAndTestNetworks.find(({ name }) => name === coinName)
+  if (extendedCoin) {
+    const evmCoder = getCoderByCoinName('eth')
+    return {
+      ...evmCoder,
+      name: extendedCoin.name,
+      coinType: extendedCoin.coinType,
+    }
+  }
+  return getCoderByCoinName(coinName)
+}
+
+export const getCoinTypeByCoinNameWithTestnetSupport = (coinName: string) => {
+  return getCoderByCoinNameWithTestnetSupport(coinName).coinType
+}
+
+export const getCoderByCoinTypeWithTestnetSupport = (coinType: number) => {
+  const extendedCoin = defaultAndTestNetworks.find(
+    ({ coinType: coinType2 }) => coinType === coinType2,
+  )
+  if (extendedCoin) {
+    return {
+      ...getCoderByCoinType(60),
+      name: extendedCoin.name,
+      coinType: extendedCoin.coinType,
+    }
+  }
+  return getCoderByCoinType(coinType)
+}
+
+export const recordsWithCointypeCoins = (records: RecordOptions): RecordOptions => {
+  return {
+    ...records,
+    coins: records.coins?.map((coin) => {
+      if (typeof coin.coin === 'string') {
+        return {
+          ...coin,
+          coin: getCoinTypeByCoinNameWithTestnetSupport(coin.coin),
+        }
+      }
+      return coin
+    }),
+  }
 }

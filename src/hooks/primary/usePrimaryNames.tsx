@@ -1,29 +1,49 @@
 import { useQueries } from '@tanstack/react-query'
-import { Address } from 'viem'
+import { Address, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
 
-import { getCoinTypeByCoinNameWithTestnetSupport } from '@app/utils/records'
+import { networks } from '@app/constants/networks'
 
-import { getPrimaryNameQuery } from './queries/getPrimaryNameQuery'
+import { getPrimaryNameQuery, GetPrimaryNameQueryReturnType } from './queries/getPrimaryNameQuery'
+
+const filterForNetworks = ({ id, name, value }: { name: string; id?: number; value: string }) => {
+  return networks.find(
+    (network) => (network.coinType === id || network.name === name) && isAddress(value),
+  )
+}
+
+const sortByNetwork = (a: GetPrimaryNameQueryReturnType, b: GetPrimaryNameQueryReturnType) => {
+  return (
+    networks.findIndex((network) => network.coinType === a.coinType) -
+    networks.findIndex((network) => network.coinType === b.coinType)
+  )
+}
 
 export const usePrimaryNames = ({
-  chainAddresses,
+  chainAddresses = [],
 }: {
-  chainAddresses: { name: string; value: Address }[]
+  chainAddresses?: { name: string; id?: number; value: string }[]
 }) => {
   const config = useConfig()
+
+  console.log('networks', networks)
+  console.log('chainAddresses', chainAddresses)
+
   return useQueries({
-    queries: chainAddresses.map(({ name, value }) => ({
+    queries: chainAddresses.filter(filterForNetworks).map(({ id, name, value }) => ({
       queryKey: ['getPrimaryNames', name, value],
       queryFn: () =>
         getPrimaryNameQuery(config)({
-          coinType: getCoinTypeByCoinNameWithTestnetSupport(name),
-          address: value,
+          coinType: id,
+          address: value as Address,
         }),
     })),
     combine: (results) => {
       return {
-        data: results.map((result) => result?.data?.[0]),
+        data: results
+          .map((result) => result?.data)
+          .filter((result): result is GetPrimaryNameQueryReturnType => result !== undefined)
+          .sort(sortByNetwork),
         isLoading: results.some((result) => result?.isLoading || result?.isFetching),
         isError: results.some((result) => result?.isError),
       }

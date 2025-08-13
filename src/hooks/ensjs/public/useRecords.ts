@@ -26,6 +26,7 @@ import {
   queryKeyToInternalParams,
 } from '@app/utils/query/match/queryKeyToInternalParams'
 import { useQuery } from '@app/utils/query/useQuery'
+import { addTestnetRecords } from '@app/utils/records'
 
 type UseRecordsParameters<
   TTexts extends readonly string[] | undefined = undefined,
@@ -34,7 +35,7 @@ type UseRecordsParameters<
   TAbi extends boolean | undefined = undefined,
 > = PartialBy<GetRecordsParameters<TTexts, TCoins, TContentHash, TAbi>, 'name'>
 
-type UseRecordsReturnType<
+export type UseRecordsReturnType<
   TTexts extends readonly string[] | undefined,
   TCoins extends readonly (string | number)[] | undefined,
   TContentHash extends boolean | undefined,
@@ -87,6 +88,10 @@ export const getRecordsQueryFn =
     if (!name) throw new Error('name is required')
 
     const client = config.getClient({ chainId })
+    console.log('client', client)
+    console.log('chainId', chainId)
+    console.log('params', params)
+    console.log('name', name)
     const res = await getRecords(client, {
       name,
       ...params,
@@ -237,6 +242,8 @@ export const useRecords = <
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
     enabled: enabled && !!params.name,
+    select: (data) =>
+      addTestnetRecords(data) as UseRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>,
     gcTime,
     staleTime,
     refetchOnMount: 'always',
@@ -246,6 +253,7 @@ export const useRecords = <
     ...preparedOptions,
     placeholderData,
   })
+  console.log('query', query)
 
   return {
     ...query,
@@ -262,6 +270,8 @@ export const usePrefetchRecords = <
 >(
   params: UseRecordsParameters<TTexts, TCoins, TContentHash, TAbi>,
 ) => {
+  console.error('PREFETCH PARAMS', params)
+
   const initialOptions = useQueryOptions({
     params,
     functionName: 'getRecords',
