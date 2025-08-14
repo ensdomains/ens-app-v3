@@ -209,6 +209,10 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
     case 'notImported':
       return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
     case 'short':
+      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
+    case 'desynced':
+    case 'desynced:gracePeriod':
+      return <StyledTag colorStyle="redSecondary">{t(`search.status.desynced`)}</StyledTag>
     default:
       return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
   }

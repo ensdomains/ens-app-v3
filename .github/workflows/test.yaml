@@ -7,23 +7,10 @@ env:
 
 jobs:
   coverage:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install corepack
-        run: npm i -g corepack
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -33,23 +20,10 @@ jobs:
       - run: pnpm test:coverage
 
   build-stateless:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install corepack
-        run: npm i -g corepack
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -69,26 +43,15 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install corepack
-        run: npm i -g corepack
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
 
       - name: Build stateful and export
-        run: pnpm build && pnpm export
+        run: |
+          export NEXT_PUBLIC_CHAIN_NAME=sepolia
+          pnpm build && pnpm export
 
       - name: Tar stateful files
         run: tar -cvf stateful-build.tar out
@@ -103,7 +66,7 @@ jobs:
     name: stateless (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     strategy:
       matrix:
         shard:
@@ -137,23 +100,13 @@ jobs:
             27,
             28,
             29,
+            30,
+            31,
           ]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install corepack
-        run: npm i -g corepack
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-playwright
 
       - run: pnpm rebuild -r
 
@@ -166,9 +119,6 @@ jobs:
 
       - name: Untar files
         run: tar -xvf stateless-build.tar
-
-      - name: Install playwright
-        run: pnpm playwright install chromium
 
       - name: Run tests
         run: |
@@ -186,28 +136,14 @@ jobs:
     name: stateful (${{matrix.shard}})
     needs: build-stateful
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     strategy:
       matrix:
         shard: [1, 2, 3]
-
     steps:
       - uses: actions/checkout@v4
-      - run: ./scripts/check-chrome.sh
-
-      - name: Install corepack
-        run: npm i -g corepack
-
-      - name: Install pnpm
-        run: npm i -g --force corepack && corepack enable pnpm
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-playwright
 
       - run: pnpm rebuild -r
 
@@ -220,16 +156,12 @@ jobs:
       - name: Untar files
         run: tar -xvf stateful-build.tar
 
-      - name: Install playwright
-        run: pnpm playwright install chromium
-
       - name: Run tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on http://127.0.0.1:8788 && pnpm playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
+          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
-          NEXT_PUBLIC_CHAIN_NAME: holesky
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - uses: actions/upload-artifact@v4
