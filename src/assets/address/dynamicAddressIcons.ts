@@ -108,4 +108,5 @@ export const dynamicAddressIcons = {
   zksync: dynamic(() => import('./ZkSyncIcon.svg')),
   metis: dynamic(() => import('./MetisIcon.svg')),
   scr: dynamic(() => import('./ScrollIcon.svg')),
+  sui: dynamic(() => import('./SuiIcon.svg')),
 }
