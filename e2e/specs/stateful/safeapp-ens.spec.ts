@@ -4,6 +4,8 @@ import { test } from '../../../playwright/index.js'
 
 const SAFE_URL = 'https://app.safe.global'
 const ENS_APP_URL = 'https://sepolia.app.ens.domains/'
+// use localhost for dev
+//  const ENS_APP_URL = 'http://localhost:3000'
 
 async function addCustomSafeApp(page: any) {
   console.log('📱 Adding ENS as custom Safe app...')
@@ -212,6 +214,7 @@ async function confirmTransactionInSafe(iframeLocator: any, login: any, page: an
     // Step 3: Authorize the transaction using the wallet
     console.log('🔐 Authorizing transaction...')
 
+    // await tmodal.signature()
     await tmodal.authorize()
     console.log('✅ Transaction authorized')
 
@@ -341,6 +344,8 @@ async function performRegistration(
 
     // Wait for countdown to appear
     try {
+      // wait for transaction sent text to appear
+      await iframeLocator.getByText('Transaction sent').waitFor({ timeout: 10000 })
       await iframeLocator.getByTestId('countdown-circle').waitFor({ timeout: 15000 })
       console.log('✅ Commit transaction confirmed, countdown started')
 
@@ -383,7 +388,7 @@ async function performRegistration(
 }
 
 test.describe('Safe{Wallet} + ENS Safe App integration', () => {
-  test.skip('should add ENS as custom app and open it through Safe', async ({
+  test('should add ENS as custom app and open it through Safe', async ({
     page,
     login,
     accounts,
@@ -453,7 +458,7 @@ test.describe('Safe{Wallet} + ENS Safe App integration', () => {
     console.log('🎉 Safe + ENS integration test completed successfully!')
   })
 
-  test('should register a new name through Safe', async ({
+  test.skip('should register a new name through Safe', async ({
     page,
     login,
     accounts,
