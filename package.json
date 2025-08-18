@@ -70,7 +70,7 @@
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-devtools": "^5.59.0",
     "@tanstack/react-query-persist-client": "5.22.2",
-    "@wagmi/core": "2.18.1",
+    "@wagmi/core": "2.19.0",
     "calendar-link": "^2.8.0",
     "dequal": "2.0.3",
     "dns-packet": "^5.4.0",
@@ -101,8 +101,8 @@
     "tinyglobby": "^0.2.6",
     "ts-pattern": "^4.3.0",
     "use-immer": "^0.7.0",
-    "viem": "2.33.3",
-    "wagmi": "2.16.1"
+    "viem": "2.34.0",
+    "wagmi": "2.16.3"
   },
   "peerDependencies": {
     "react": "*",
