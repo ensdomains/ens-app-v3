@@ -202,7 +202,6 @@ test.describe('Desynced Name Repair', () => {
       })
 
       await test.step('check for extend button on the profile page', async () => {
-        const extendButton = page.locator('[data-testid="extend-button"]')
         await expect(extendButton).toBeVisible()
         await expect(extendButton).toHaveText('Extend')
       })
@@ -302,7 +301,6 @@ test.describe('Desynced Name Repair', () => {
       })
 
       await test.step('check for extend button on the profile page', async () => {
-        const extendButton = page.locator('[data-testid="extend-button"]')
         await expect(extendButton).toBeVisible()
         await expect(extendButton).toHaveText('Extend')
       })
