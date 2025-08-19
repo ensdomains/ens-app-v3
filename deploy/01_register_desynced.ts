@@ -196,8 +196,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   return true
 }
 
-func.id = 'register-desynced-names'
-func.tags = ['register-desynced-names']
+func.id = 'register-desynced-names-1'
+func.tags = ['register-desynced-names-1']
 func.dependencies = ['register-wrapped-names', 'register-unwrapped-names']
 func.runAtTheEnd = true
 
