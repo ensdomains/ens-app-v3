@@ -131,14 +131,14 @@ importers:
         specifier: ^3.0.0-beta.5
         version: 3.0.0
       '@ensdomains/ens-contracts':
-        specifier: 1.4.0-beta.2
-        version: 1.4.0-beta.2(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
+        specifier: 1.5.2
+        version: 1.5.2
       '@ensdomains/ens-test-env':
         specifier: 1.0.1
         version: 1.0.1
       '@ensdomains/ensjs':
-        specifier: 4.0.3-alpha.12
-        version: 4.0.3-alpha.12(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
+        specifier: https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@a16cb1d
+        version: https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@a16cb1d(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
       '@ensdomains/thorin':
         specifier: 1.0.0-beta.28
         version: 1.0.0-beta.28(@vanilla-extract/css@1.15.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -198,7 +198,7 @@ importers:
         version: 8.1.0
       graphql-request:
         specifier: 6.1.0
-        version: 6.1.0(graphql@16.10.0)
+        version: 6.1.0(graphql@16.11.0)
       i18next:
         specifier: ^21.9.1
         version: 21.10.0
@@ -298,7 +298,7 @@ importers:
         version: 13.5.8(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@nomicfoundation/hardhat-toolbox-viem':
         specifier: ^3.0.0
-        version: 3.0.0(@nomicfoundation/hardhat-verify@2.0.13(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)))(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))
+        version: 3.0.0(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))
       '@nomicfoundation/hardhat-viem':
         specifier: 2.0.3
         version: 2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
@@ -1228,8 +1228,8 @@ packages:
   '@ensdomains/address-encoder@1.0.0-rc.3':
     resolution: {integrity: sha512-8o6zH69rObIqDY4PusEWuN9jvVOct+9jj9AOPO7ifc3ev8nmsly0e8TE1sHkhk0iKFbd3DlSsUnJ+yuRWmdLCQ==}
 
-  '@ensdomains/address-encoder@1.1.1':
-    resolution: {integrity: sha512-yg7s+suCuKRhaGsgLu57W/jxIs/Lnqs/SU7jT7UwS4ATSnW94jbUCbmyyZ82CQwKsmwaUE8uYvvVb4N6lfz29A==}
+  '@ensdomains/address-encoder@1.1.3':
+    resolution: {integrity: sha512-QS4ax0YkA8tsbQcWgBNmLLtb3aG0jsOQtED9SRyX9Ixflt1jDMuC/0i3ONMnNJNG5HTIko0Te4Y1JIGXjNcnUg==}
 
   '@ensdomains/address-encoder@1.1.3':
     resolution: {integrity: sha512-QS4ax0YkA8tsbQcWgBNmLLtb3aG0jsOQtED9SRyX9Ixflt1jDMuC/0i3ONMnNJNG5HTIko0Te4Y1JIGXjNcnUg==}
@@ -1247,16 +1247,18 @@ packages:
     resolution: {integrity: sha512-nfm4ggpK5YBVwVwLZKF9WPjRGRTL9aUxX2O4pqv/AnQCz3WeGHsW7VhVFLj2s4EoWSzCXwR1E6nuqgUwnH692w==}
     engines: {node: '>=16.8'}
 
-  '@ensdomains/ens-contracts@1.4.0-beta.2':
-    resolution: {integrity: sha512-ClaD9sLLJccQY4XS/dy9wtmVdfn2wXxvK30gVtNIAl9THHrIUqgl/vRjBn70elWV8DV5hdVP9oQZyTTTBC21vg==}
+  '@ensdomains/ens-contracts@1.5.2':
+    resolution: {integrity: sha512-AdHgy3Qd6iCaQC6ruWTIhI6RjQdLR1F1m4mmORijLL+gUB0260IY6dsNEXk5NJdv2yvjzb2E5Rc/zsN+QY4hGA==}
 
   '@ensdomains/ens-test-env@1.0.1':
     resolution: {integrity: sha512-it+5gN/CXCpcrhULClm/aVFoVry5MS5+xlE7g3LlTXDvGd0tBcBBF8yOMvACZRuZPljDA0CtxXngrAkwmxxp6w==}
     engines: {node: '>=20'}
     hasBin: true
 
-  '@ensdomains/ensjs@4.0.3-alpha.12':
-    resolution: {integrity: sha512-tJX+URJtSOtLgydE4V6uLOuG7hrMDah/ZOA2u/0hZuzhPwpVhS1jQRXU1aVnyT3klaLH5QqRL2J3SebzdxqGLQ==}
+  '@ensdomains/ensjs@https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@a16cb1d':
+    resolution: {tarball: https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@a16cb1d}
+    version: 4.0.3-alpha.12
+    engines: {node: '>=22'}
     peerDependencies:
       viem: ^2.9.2
 
@@ -2345,11 +2347,6 @@ packages:
       typescript: ^5.0.4
       viem: ^2.7.6
 
-  '@nomicfoundation/hardhat-verify@2.0.13':
-    resolution: {integrity: sha512-i57GX1sC0kYGyRVnbQrjjyBTpWTKgrvKC+jH8CMKV6gHp959Upb8lKaZ58WRHIU0espkulTxLnacYeUDirwJ2g==}
-    peerDependencies:
-      hardhat: ^2.0.4
-
   '@nomicfoundation/hardhat-viem@2.0.3':
     resolution: {integrity: sha512-y2eYaHtpshiGrhU2L5My4zYrj/vxxRdCIqbTsg9YP7AjKWhJGvKPkVRYaPTosW68nYlNtkns/+Eb25aXACHd9Q==}
     peerDependencies:
@@ -2398,14 +2395,8 @@ packages:
   '@open-draft/until@2.1.0':
     resolution: {integrity: sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg==}
 
-  '@openzeppelin/contracts@4.9.3':
-    resolution: {integrity: sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==}
-
   '@openzeppelin/contracts@4.9.6':
     resolution: {integrity: sha512-xSmezSupL+y9VkHZJGDoCBpmnB2ogM13ccaYDWqJTfS3dbuHkgjuwDFUmaFauBCboQMGB/S5UqUl2y54X99BmA==}
-
-  '@openzeppelin/contracts@5.1.0':
-    resolution: {integrity: sha512-p1ULhl7BXzjjbha5aqst+QMLY+4/LCWADXOCsmLHRM77AqiPjnd9vvUN9sosUfhL9JGKpZ0TjEGxgvnizmWGSA==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -3870,10 +3861,6 @@ packages:
     resolution: {integrity: sha512-72Jnj81xMsqepqdcSdf2+fflz/UDsThOHy5hj2MW5F5xzHL8Oa0KQ6I6V9CwVUPxg5pf+W9xp6W2KilaRXWWtw==}
     engines: {node: '>=18'}
 
-  cbor@8.1.0:
-    resolution: {integrity: sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg==}
-    engines: {node: '>=12.19'}
-
   chai-as-promised@7.1.2:
     resolution: {integrity: sha512-aBDHZxRzYnUYuIAIPBH2s511DjlKPzXNlXSGFC8CwmroWQLfrW0LtE1nK3MAwwNhJPa9raEjNCmRoFpG0Hurdw==}
     peerDependencies:
@@ -3949,10 +3936,6 @@ packages:
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
-
-  clones-with-immutable-args@https://codeload.github.com/Arachnid/clones-with-immutable-args/tar.gz/23768824cdc037f361f7065538b8f949cae9d3d1:
-    resolution: {tarball: https://codeload.github.com/Arachnid/clones-with-immutable-args/tar.gz/23768824cdc037f361f7065538b8f949cae9d3d1}
-    version: 1.1.0
 
   clsx@1.2.1:
     resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
@@ -4991,8 +4974,17 @@ packages:
     peerDependencies:
       graphql: 14 - 16
 
+  graphql-request@7.1.2:
+    resolution: {integrity: sha512-+XE3iuC55C2di5ZUrB4pjgwe+nIQBuXVIK9J98wrVwojzDW3GMdSBZfxUk8l4j9TieIpjpggclxhNEU9ebGF8w==}
+    peerDependencies:
+      graphql: 14 - 16
+
   graphql@16.10.0:
     resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
+    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+
+  graphql@16.11.0:
+    resolution: {integrity: sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   gsap@3.12.7:
@@ -5461,9 +5453,6 @@ packages:
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
-
-  lodash.clonedeep@4.5.0:
-    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
 
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
@@ -8576,7 +8565,7 @@ snapshots:
       '@noble/hashes': 1.7.1
       '@scure/base': 1.2.4
 
-  '@ensdomains/address-encoder@1.1.1':
+  '@ensdomains/address-encoder@1.1.3':
     dependencies:
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
@@ -8607,18 +8596,12 @@ snapshots:
       dns-packet: 5.6.1
       typescript-logging: 1.0.1
 
-  '@ensdomains/ens-contracts@1.4.0-beta.2(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))':
+  '@ensdomains/ens-contracts@1.5.2':
     dependencies:
       '@ensdomains/buffer': 0.1.1
       '@ensdomains/solsha1': 0.0.3
-      '@nomicfoundation/hardhat-verify': 2.0.13(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
-      '@openzeppelin/contracts': 4.9.3
-      '@openzeppelin/contracts-v5': '@openzeppelin/contracts@5.1.0'
-      clones-with-immutable-args: https://codeload.github.com/Arachnid/clones-with-immutable-args/tar.gz/23768824cdc037f361f7065538b8f949cae9d3d1
+      '@openzeppelin/contracts': 4.9.6
       dns-packet: 5.6.1
-    transitivePeerDependencies:
-      - hardhat
-      - supports-color
 
   '@ensdomains/ens-test-env@1.0.1':
     dependencies:
@@ -8636,21 +8619,20 @@ snapshots:
       - bare-buffer
       - debug
 
-  '@ensdomains/ensjs@4.0.3-alpha.12(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)':
+  '@ensdomains/ensjs@https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@a16cb1d(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)':
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
-      '@ensdomains/address-encoder': 1.1.1
+      '@ensdomains/address-encoder': 1.1.3
       '@ensdomains/content-hash': 3.1.0-rc.1
       '@ensdomains/dnsprovejs': 0.5.1
       abitype: 1.0.5(typescript@5.7.3)(zod@3.24.2)
       dns-packet: 5.6.1
-      graphql: 16.10.0
-      graphql-request: 6.1.0(graphql@16.10.0)
+      graphql: 16.11.0
+      graphql-request: 7.1.2(graphql@16.11.0)
       pako: 2.1.0
       ts-pattern: 5.6.2
       viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
     transitivePeerDependencies:
-      - encoding
       - typescript
       - zod
 
@@ -9292,9 +9274,9 @@ snapshots:
       - debug
       - encoding
 
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
+  '@graphql-typed-document-node/core@3.2.0(graphql@16.11.0)':
     dependencies:
-      graphql: 16.10.0
+      graphql: 16.11.0
 
   '@hapi/hoek@9.3.0': {}
 
@@ -9900,9 +9882,8 @@ snapshots:
       '@nomicfoundation/ethereumjs-rlp': 5.0.4
       ethereum-cryptography: 0.1.3
 
-  '@nomicfoundation/hardhat-toolbox-viem@3.0.0(@nomicfoundation/hardhat-verify@2.0.13(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)))(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))':
+  '@nomicfoundation/hardhat-toolbox-viem@3.0.0(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))':
     dependencies:
-      '@nomicfoundation/hardhat-verify': 2.0.13(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       '@nomicfoundation/hardhat-viem': 2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
       '@types/node': 20.17.19
       chai: 4.5.0
@@ -9911,21 +9892,6 @@ snapshots:
       ts-node: 10.9.2(@types/node@20.17.19)(typescript@5.7.3)
       typescript: 5.7.3
       viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
-
-  '@nomicfoundation/hardhat-verify@2.0.13(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      cbor: 8.1.0
-      debug: 4.4.0(supports-color@5.5.0)
-      hardhat: 2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
-      lodash.clonedeep: 4.5.0
-      picocolors: 1.1.1
-      semver: 6.3.1
-      table: 6.9.0
-      undici: 5.28.5
-    transitivePeerDependencies:
-      - supports-color
 
   '@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)':
     dependencies:
@@ -9977,11 +9943,7 @@ snapshots:
 
   '@open-draft/until@2.1.0': {}
 
-  '@openzeppelin/contracts@4.9.3': {}
-
   '@openzeppelin/contracts@4.9.6': {}
-
-  '@openzeppelin/contracts@5.1.0': {}
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -11735,10 +11697,6 @@ snapshots:
     dependencies:
       nofilter: 3.1.0
 
-  cbor@8.1.0:
-    dependencies:
-      nofilter: 3.1.0
-
   chai-as-promised@7.1.2(chai@4.5.0):
     dependencies:
       chai: 4.5.0
@@ -11833,8 +11791,6 @@ snapshots:
 
   clone@1.0.4:
     optional: true
-
-  clones-with-immutable-args@https://codeload.github.com/Arachnid/clones-with-immutable-args/tar.gz/23768824cdc037f361f7065538b8f949cae9d3d1: {}
 
   clsx@1.2.1: {}
 
@@ -13105,15 +13061,22 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-request@6.1.0(graphql@16.10.0):
+  graphql-request@6.1.0(graphql@16.11.0):
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
       cross-fetch: 3.2.0
-      graphql: 16.10.0
+      graphql: 16.11.0
     transitivePeerDependencies:
       - encoding
 
+  graphql-request@7.1.2(graphql@16.11.0):
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
+      graphql: 16.11.0
+
   graphql@16.10.0: {}
+
+  graphql@16.11.0: {}
 
   gsap@3.12.7: {}
 
@@ -13685,8 +13648,6 @@ snapshots:
   locate-path@6.0.0:
     dependencies:
       p-locate: 5.0.0
-
-  lodash.clonedeep@4.5.0: {}
 
   lodash.debounce@4.0.8: {}
 

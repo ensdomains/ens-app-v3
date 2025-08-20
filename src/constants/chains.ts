@@ -109,7 +109,7 @@ export const getNetworkFromUrl = ():
   // Dev environment
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     if (process.env.NEXT_PUBLIC_PROVIDER) return 'localhost' as const
-    return 'holesky' as const
+    return 'sepolia' as const
   }
 
   return match(segments[0])

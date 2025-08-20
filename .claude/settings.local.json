@@ -20,7 +20,8 @@
       "Bash(pnpm unlink:*)",
       "Bash(pnpm test:*)",
       "Bash(timeout 60 pnpm lint:types:*)",
-      "Bash(gh pr list:*)"
+      "Bash(gh pr list:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
