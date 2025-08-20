@@ -6,7 +6,8 @@
       "Bash(npx eslint:*)",
       "Bash(sed:*)",
       "Bash(grep:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
