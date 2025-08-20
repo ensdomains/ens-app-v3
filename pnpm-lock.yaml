@@ -1231,9 +1231,6 @@ packages:
   '@ensdomains/address-encoder@1.1.3':
     resolution: {integrity: sha512-QS4ax0YkA8tsbQcWgBNmLLtb3aG0jsOQtED9SRyX9Ixflt1jDMuC/0i3ONMnNJNG5HTIko0Te4Y1JIGXjNcnUg==}
 
-  '@ensdomains/address-encoder@1.1.3':
-    resolution: {integrity: sha512-QS4ax0YkA8tsbQcWgBNmLLtb3aG0jsOQtED9SRyX9Ixflt1jDMuC/0i3ONMnNJNG5HTIko0Te4Y1JIGXjNcnUg==}
-
   '@ensdomains/buffer@0.1.1':
     resolution: {integrity: sha512-92SfSiNS8XorgU7OUBHo/i1ZU7JV7iz/6bKuLPNVsMxV79/eI7fJR6jfJJc40zAHjs3ha+Xo965Idomlq3rqnw==}
 
@@ -8560,12 +8557,6 @@ snapshots:
   '@emotion/unitless@0.8.1': {}
 
   '@ensdomains/address-encoder@1.0.0-rc.3':
-    dependencies:
-      '@noble/curves': 1.8.1
-      '@noble/hashes': 1.7.1
-      '@scure/base': 1.2.4
-
-  '@ensdomains/address-encoder@1.1.3':
     dependencies:
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
