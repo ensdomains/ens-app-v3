@@ -178,12 +178,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_mine')
 
   console.log('Phase 2 complete: Name renewed via legacy controller - desync created!')
-
-  // Re-enable automine
-  await network.provider.send('evm_setAutomine', [true])
-  await network.provider.send('anvil_setBlockTimestampInterval', [1])
-  await network.provider.send('evm_mine')
-
   console.log('=== Desynced Name Registration Complete ===')
   console.log('Result: Registry expiry extended, wrapper expiry unchanged - names are now desynced')
 
@@ -191,6 +185,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Move forward some time to simulate normal usage
   const currentTimestamp1 = await publicClient.getBlock().then((b) => Number(b.timestamp))
   await network.provider.send('evm_setNextBlockTimestamp', [currentTimestamp1 + 86400 * 30]) // 30 days later
+  await network.provider.send('evm_mine')
+
+  // Re-enable automine
+  await network.provider.send('evm_setAutomine', [true])
+  await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
 
   return true
