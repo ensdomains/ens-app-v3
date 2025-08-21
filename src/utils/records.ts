@@ -200,8 +200,14 @@ export const addTestnetRecords = (records: unknown) => {
   return records
 }
 
+// coinNames are all lowercase except for legacy names which end with Legacy
+export const normalizeCoinName = (coinName: string) => {
+  if (/.+legacy$/i.test(coinName)) return `${coinName.replace(/legacy$/i, '').toLowerCase()}Legacy`
+  return coinName.toLowerCase()
+}
+
 export const getCoderByCoinNameWithTestnetSupport = (_coinName: string) => {
-  const coinName = _coinName.toLowerCase()
+  const coinName = normalizeCoinName(_coinName)
   const extendedCoin = testnetNetworks.find(({ name }) => name === coinName)
   if (extendedCoin) {
     const evmCoder = getCoderByCoinName('eth')

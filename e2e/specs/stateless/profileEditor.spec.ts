@@ -2,7 +2,7 @@
 
 import { expect } from '@playwright/test'
 import dotenv from 'dotenv'
-import { Address } from 'viem'
+import { type Address } from 'viem'
 
 import { encodeAbi, RecordOptions } from '@ensdomains/ensjs/utils'
 import { wrapName } from '@ensdomains/ensjs/wallet'
@@ -538,6 +538,7 @@ test.describe('namewrapper aware resolver', () => {
 
     await profilePage.profileEditor.getByTestId('profile-submit-button').click()
 
+    await page.pause()
     await transactionModal.autoComplete()
 
     await recordsPage.goto(name)
