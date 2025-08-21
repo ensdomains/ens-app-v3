@@ -49,7 +49,8 @@
     "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES",
     "knip": "knip",
     "knip:fix": "knip --fix --allow-remove-files",
-    "hh": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only' hardhat"
+    "hh": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only' hardhat",
+    "deploy:arweave": "pnpm buildandexport && permaweb-deploy -d out --arns-name $ARNS_NAME"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "1.1.1",
@@ -165,6 +166,7 @@
     "next-dev-https": "^0.1.2",
     "next-router-mock": "^0.9.10",
     "pako": "^2.1.0",
+    "permaweb-deploy": "^2.0.2",
     "postcss-styled-syntax": "^0.7.1",
     "prettier": "3.0.3",
     "sitemap": "^7.1.1",
