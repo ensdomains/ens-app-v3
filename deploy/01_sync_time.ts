@@ -23,7 +23,6 @@ func.dependencies = [
   'register-unwrapped-names',
   'register-wrapped-names',
   'register-desynced-names',
-  'register-desynced-names-1',
 ]
 func.runAtTheEnd = true
 
