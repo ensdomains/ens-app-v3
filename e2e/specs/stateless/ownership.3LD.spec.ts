@@ -1462,7 +1462,6 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
     const transactionModal = makePageObject('TransactionModal')
 
     await ownershipPage.goto(subname)
-    await page.pause()
     await login.connect()
 
     await ownershipPage.sendNameButton.click()
@@ -1489,6 +1488,7 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
     await sendNameModal.sendButton.click()
     await sendNameModal.confirmButton.click()
 
+    await page.pause()
     await transactionModal.autoComplete()
 
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('owner', {
