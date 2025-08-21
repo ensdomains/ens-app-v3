@@ -200,7 +200,8 @@ export const addTestnetRecords = (records: unknown) => {
   return records
 }
 
-export const getCoderByCoinNameWithTestnetSupport = (coinName: string) => {
+export const getCoderByCoinNameWithTestnetSupport = (_coinName: string) => {
+  const coinName = _coinName.toLowerCase()
   const extendedCoin = testnetNetworks.find(({ name }) => name === coinName)
   if (extendedCoin) {
     const evmCoder = getCoderByCoinName('eth')
