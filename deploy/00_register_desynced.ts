@@ -94,6 +94,22 @@ const names: Name[] = [
       ],
     },
   },
+  {
+    name: 'desynced-normal-1-day-test.eth', // normal desync name, for 1 day extend test
+    namedOwner: 'owner',
+    reverseRecord: false,
+    customDuration: MIN_REGISTRATION_DURATION,
+    renewalDuration: ONE_YEAR,
+    records: {
+      texts: [
+        {
+          key: 'description',
+          value: 'A normal desynced name used for testing 1 day extension',
+        },
+        { key: 'url', value: 'https://ens.domains' },
+      ],
+    },
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
