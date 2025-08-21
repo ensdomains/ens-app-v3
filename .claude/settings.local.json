@@ -21,7 +21,11 @@
       "Bash(pnpm test:*)",
       "Bash(timeout 60 pnpm lint:types:*)",
       "Bash(gh pr list:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "mcp__github__list_workflow_runs",
+      "mcp__github__list_workflows",
+      "mcp__github__list_workflow_jobs",
+      "mcp__github__get_job_logs"
     ],
     "deny": []
   }
