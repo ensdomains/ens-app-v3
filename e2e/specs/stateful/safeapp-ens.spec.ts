@@ -3,9 +3,9 @@ import { expect } from '@playwright/test'
 import { test } from '../../../playwright/index.js'
 
 const SAFE_URL = 'https://app.safe.global'
-// const ENS_APP_URL = 'https://sepolia.app.ens.domains/'
+const ENS_APP_URL = 'https://sepolia.app.ens.domains/'
 // use localhost for dev
-const ENS_APP_URL = process.env.CI ? 'http://localhost:5173' : 'http://localhost:3000'
+// const ENS_APP_URL = process.env.CI ? 'http://localhost:5173' : 'http://localhost:3000'
 
 async function addCustomSafeApp(page: any) {
   console.log('📱 Adding ENS as custom Safe app...')
