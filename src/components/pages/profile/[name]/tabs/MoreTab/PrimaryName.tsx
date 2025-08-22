@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -71,6 +72,7 @@ interface PrimaryNameProps {
 }
 
 export const PrimaryName = ({ name }: PrimaryNameProps) => {
+  const { t } = useTranslation('profile')
   const { address } = useAccount()
   const { data: walletPrimaryname } = usePrimaryName({ address })
   const { data: profile } = useProfile({ name })
@@ -84,22 +86,21 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
     <PrimaryNameCard>
       <SectionHeader>
         <TitleRow>
-          <Typography fontVariant="headingFour">Primary name</Typography>
-          <QuestionTooltip content="A primary name links this name to an address, allowing apps to display a name and profile when looking up the address. Each address can only have a single primary name per network." />
+          <Typography fontVariant="headingFour">{t('tabs.more.primaryName.title')}</Typography>
+          <QuestionTooltip content={t('tabs.more.primaryName.tooltip')} />
         </TitleRow>
         {walletPrimaryname?.name === name && (
           <TagContainer>
             <Tag colorStyle="greenSecondary" size="small">
               <NametagSVG />
-              Your primary name
+              {t('tabs.more.primaryName.yourPrimaryName')}
             </Tag>
           </TagContainer>
         )}
       </SectionHeader>
 
       <Typography color="textSecondary" fontVariant="small">
-        A primary name links this name to an address, allowing apps to display a name and profile
-        when looking up the address. Each address can only have a single primary name per network.
+        {t('tabs.more.primaryName.description')}
       </Typography>
 
       {filteredPrimaryNames?.length > 0 && (
@@ -126,7 +127,7 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Manage
+          {t('action.manage', { ns: 'common' })}
         </Button>
       </ButtonContainer>
     </PrimaryNameCard>

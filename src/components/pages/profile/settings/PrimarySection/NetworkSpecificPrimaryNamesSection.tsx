@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Typography } from '@ensdomains/thorin'
@@ -60,7 +61,7 @@ interface NetworkSpecificPrimaryNamesSectionProps {
 export const NetworkSpecificPrimaryNamesSection = ({
   address,
 }: NetworkSpecificPrimaryNamesSectionProps) => {
-  // const { t } = useTranslation('settings')
+  const { t } = useTranslation('settings')
 
   const primaryNames = usePrimaryNames({
     chainAddresses: networks.map(({ coinType, name }) => ({
@@ -108,8 +109,10 @@ export const NetworkSpecificPrimaryNamesSection = ({
       <ResposiveDivider />
       <NetworkSectionHeader>
         <NetworkTitleRow>
-          <Typography fontVariant="headingFour">Network-specific primary names</Typography>
-          <QuestionTooltip content="Network-specific primary names will override your default primary name on their specific network." />
+          <Typography fontVariant="headingFour">
+            {t('section.primary.networkSpecificPrimaryNames.title')}
+          </Typography>
+          <QuestionTooltip content={t('section.primary.networkSpecificPrimaryNames.tooltip')} />
         </NetworkTitleRow>
         <Button
           as="a"
@@ -120,13 +123,12 @@ export const NetworkSpecificPrimaryNamesSection = ({
           target="_blank"
           rel="noopener noreferrer"
         >
-          Manage
+          {t('action.manage', { ns: 'common' })}
         </Button>
       </NetworkSectionHeader>
 
       <Typography color="textSecondary" fontVariant="small">
-        Network-specific primary names will override your default primary name on their specific
-        network.
+        {t('section.primary.networkSpecificPrimaryNames.description')}
       </Typography>
 
       <div>
