@@ -26,7 +26,7 @@
     "tenv": "ens-test-env -a",
     "denv": "pnpm tenv start --no-scripts --no-build --extra-time 11368000 --verbosity 1",
     "lint": "next lint && stylelint \"./src/**/*.tsx\"",
-    "lint:types": "tsc --noEmit --project tsconfig.typecheck.json",
+    "lint:types": "tsc --noEmit",
     "lint:fix": "next lint --fix",
     "export": "next export",
     "compare-locales": "node ./scripts/compare-locales.mjs",
