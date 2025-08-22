@@ -21,7 +21,7 @@ import { rainbowKitConnectors } from './wallets'
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
 
 const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
-const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY || 'AnmpasF2C0JBqeAEzxVO8aQ9AA4SVmoR8JVZrqRhf0fE'
+const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY || 'AnmpasF2C0JBqeAEzxVO8aRuvzLTrWcR75hmDonbV6cR'
 
 const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
 export const drpcUrl = (chainName: string) =>

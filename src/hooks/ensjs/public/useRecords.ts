@@ -265,8 +265,6 @@ export const usePrefetchRecords = <
 >(
   params: UseRecordsParameters<TTexts, TCoins, TContentHash, TAbi>,
 ) => {
-  console.error('PREFETCH PARAMS', params)
-
   const initialOptions = useQueryOptions({
     params,
     functionName: 'getRecords',
