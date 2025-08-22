@@ -103,7 +103,6 @@ export const NetworkSpecificPrimaryNamesSection = ({
     ),
   )
 
-  console.log('groupedPrimaryNames', groupedPrimaryNames)
   return (
     <NetworkSpecificSection>
       <ResposiveDivider />

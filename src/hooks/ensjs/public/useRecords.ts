@@ -88,10 +88,6 @@ export const getRecordsQueryFn =
     if (!name) throw new Error('name is required')
 
     const client = config.getClient({ chainId })
-    console.log('client', client)
-    console.log('chainId', chainId)
-    console.log('params', params)
-    console.log('name', name)
     const res = await getRecords(client, {
       name,
       ...params,
@@ -253,7 +249,6 @@ export const useRecords = <
     ...preparedOptions,
     placeholderData,
   })
-  console.log('query', query)
 
   return {
     ...query,

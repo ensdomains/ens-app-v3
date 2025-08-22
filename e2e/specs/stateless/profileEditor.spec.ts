@@ -538,7 +538,6 @@ test.describe('namewrapper aware resolver', () => {
 
     await profilePage.profileEditor.getByTestId('profile-submit-button').click()
 
-    await page.pause()
     await transactionModal.autoComplete()
 
     await recordsPage.goto(name)

@@ -26,9 +26,6 @@ export const usePrimaryNames = ({
 }) => {
   const config = useConfig()
 
-  console.log('networks', networks)
-  console.log('chainAddresses', chainAddresses)
-
   return useQueries({
     queries: chainAddresses.filter(filterForNetworks).map(({ id, name, value }) => ({
       queryKey: ['getPrimaryNames', name, value],
