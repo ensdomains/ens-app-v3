@@ -1,8 +1,5 @@
 import { readContract } from '@wagmi/core'
 import { Address, getChainContractAddress } from 'viem'
-import { mainnet, sepolia } from 'viem/chains'
-
-import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 
 import { ConfigWithEns } from '@app/types'
 import { getCoderByCoinTypeWithTestnetSupport } from '@app/utils/records'
@@ -44,16 +41,6 @@ const newUniversalResolverAbiReverseSnippet = [
   },
 ] as const
 
-// TODO: Remove when ensjs has been updated to use updated UniversalResolver address
-const getUniversalResolverAddress = (chain: ChainWithEns) => {
-  if (chain.id === mainnet.id) return '0xaBd80E8a13596fEeA40Fd26fD6a24c3fe76F05fB'
-  if (chain.id === sepolia.id) return '0xb7B7DAdF4D42a08B3eC1d3A1079959Dfbc8CFfCC'
-  return getChainContractAddress({
-    chain,
-    contract: 'ensUniversalResolver',
-  })
-}
-
 export type GetPrimaryNameQueryReturnType = {
   name: string
   address: Address
@@ -72,7 +59,7 @@ export const getPrimaryNameQuery =
   }): Promise<GetPrimaryNameQueryReturnType> => {
     const client = config.getClient()
     const result = await readContract(config, {
-      address: getUniversalResolverAddress(client.chain),
+      address: getChainContractAddress({ chain: client.chain, contract: 'ensUniversalResolver' }),
       abi: newUniversalResolverAbiReverseSnippet,
       functionName: 'reverse',
       args: [address, BigInt(coinType)],

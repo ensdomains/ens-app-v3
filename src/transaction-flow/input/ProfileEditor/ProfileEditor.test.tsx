@@ -208,8 +208,7 @@ describe('ProfileEditor', () => {
     vi.resetAllMocks()
   })
 
-  // NOTE: Unskip when ensjs is updated
-  it.skip('should have use the same version of address-encoder as ensjs', () => {
+  it('should have use the same version of address-encoder as ensjs', () => {
     expect(appPackage.dependencies['@ensdomains/address-encoder']).toEqual(
       ensjsPackage.dependencies['@ensdomains/address-encoder'],
     )

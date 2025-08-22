@@ -1435,7 +1435,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Parent only', () => {
 })
 
 test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager', () => {
-  test('Send feature', async ({ login, page, accounts, makeName, makePageObject }) => {
+  test('Send feature', async ({ login, accounts, makeName, makePageObject }) => {
     const name = await makeName({
       label: 'wrapped',
       type: 'wrapped',
@@ -1488,7 +1488,6 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
     await sendNameModal.sendButton.click()
     await sendNameModal.confirmButton.click()
 
-    await page.pause()
     await transactionModal.autoComplete()
 
     await expect(ownershipPage.roleRow(accounts.getAddress('user3'))).toContainText('owner', {

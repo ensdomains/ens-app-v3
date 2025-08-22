@@ -18,19 +18,11 @@ export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
 
 const ENS_SUBGRAPH_API_KEY = '9ad5cff64d93ed2c33d1a57b3ec03ea9'
 
-const mainnetWithEnsBase = addEnsContractsWithSubgraph({
+export const mainnetWithEns = addEnsContractsWithSubgraph({
   chain: mainnet,
   subgraphId: '5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH',
   apiKey: ENS_SUBGRAPH_API_KEY,
 })
-
-export const mainnetWithEns = {
-  ...mainnetWithEnsBase,
-  contracts: {
-    ...mainnetWithEnsBase.contracts,
-    ensUniversalResolver: { address: '0xaBd80E8a13596fEeA40Fd26fD6a24c3fe76F05fB' as const },
-  },
-} as unknown as typeof mainnetWithEnsBase
 
 export const sepoliaWithEnsBase = addEnsContractsWithSubgraph({
   chain: sepolia,
@@ -45,8 +37,6 @@ export const sepoliaWithEns = {
     ensEthRegistrarController: { address: '0xFED6a969AaA60E4961FCD3EBF1A2e8913ac65B72' as const },
     ensPublicResolver: { address: '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD' as const },
     ensReverseRegistrar: { address: '0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6' as const },
-    /* Temporary until ensjs updates */
-    // ensUniversalResolver: { address: '0xb7B7DAdF4D42a08B3eC1d3A1079959Dfbc8CFfCC' as const },
   },
 } as unknown as typeof sepoliaWithEnsBase
 

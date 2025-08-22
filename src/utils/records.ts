@@ -9,7 +9,7 @@ import {
   RecordOptions,
 } from '@ensdomains/ensjs/utils'
 
-import { defaultNetwork, testnetNetworks } from '@app/constants/networks'
+import { testnetNetworks } from '@app/constants/networks'
 import { AddressRecord, Profile, TextRecord } from '@app/types'
 
 import { contentHashToString } from './contenthash'
@@ -174,8 +174,7 @@ export const checkProfileRecordsContains = ({
   return false
 }
 
-/* NOTE: These functions are used to add default and testnet support. References to default will
-be moved to ensjs in the future. */
+/* NOTE: These functions are used to add testnet support. */
 
 const hasCoins = (
   records: unknown,
@@ -190,9 +189,7 @@ export const addTestnetRecords = (records: unknown) => {
       coins: records.coins.map((coin) => {
         return {
           ...coin,
-          name:
-            [defaultNetwork, ...testnetNetworks].find(({ coinType }) => coinType === coin.id)
-              ?.name || coin.name,
+          name: testnetNetworks.find(({ coinType }) => coinType === coin.id)?.name || coin.name,
         }
       }),
     }

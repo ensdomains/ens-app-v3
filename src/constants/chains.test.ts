@@ -236,14 +236,13 @@ describe('chains', () => {
       expect(result).toEqual([localhostWithEnsFresh])
     })
 
-    // NOTE: Update when ensjs is updated
-    it.skip('should return mainnet for undefined network', () => {
+    it('should return mainnet for undefined network', () => {
       Object.defineProperty(global, 'window', {
         value: undefined,
         writable: true,
       })
       const result = getChainsFromUrl()
-      expect(result).toMatchObject([mainnet])
+      expect(result).toMatchObject([mainnetWithEns])
     })
   })
 
