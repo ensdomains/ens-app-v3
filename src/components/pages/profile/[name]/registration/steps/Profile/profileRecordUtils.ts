@@ -1,6 +1,6 @@
 import { hexToString, stringToHex } from 'viem'
 
-import { ClientWithEns } from '@ensdomains/ensjs/dist/types/contracts/consts'
+import { ClientWithEns } from '@ensdomains/ensjs/contracts'
 import { encodeAbi, EncodedAbi, getProtocolType, RecordOptions } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
