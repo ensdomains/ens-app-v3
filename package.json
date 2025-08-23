@@ -42,6 +42,7 @@
     "postinstall": "husky install",
     "wrangle": "wrangler pages dev ./out --local --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
+    "wrangle:dev:https": "wrangler pages dev --local-protocol=https ./next",
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
     "generate:coinMapper": "ts-node ./scripts/coin-mapper.ts",

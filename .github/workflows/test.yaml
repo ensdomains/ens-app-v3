@@ -159,8 +159,8 @@ jobs:
       - name: Run tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm wrangle" \
-          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
+          "pnpm wrangle:dev:https" \
+          "pnpm wait-on https://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
