@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run StoryCheck
         id: storycheck      
-        uses: GuardianUI/storycheck@v0.1.4
+        uses: GuardianUI/storycheck@v0.1.7
         env: 
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}        
         with:
