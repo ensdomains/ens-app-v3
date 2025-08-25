@@ -1,0 +1,27 @@
+# File: .github/workflows/storycheck-example.yml
+name: StoryCheck Example - ENS Registration Commit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run StoryCheck
+        id: storycheck      
+        uses: GuardianUI/storycheck@v0.1.4
+        env: 
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}        
+        with:
+          storypath: 'user-stories/ens_reg_commit'
+      - name: Check if passed
+        if: ${{ steps.storycheck.outputs.passed != 'true' }}
+        run: echo "StoryCheck failed!" && exit 1
