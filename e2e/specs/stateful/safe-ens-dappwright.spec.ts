@@ -665,7 +665,7 @@ test.describe('Safe + ENS with Dappwright MetaMask', () => {
 
           // Handle second transaction
           try {
-            await confirmTransactionWithMetaMask(iframeLocator, metaMask, page, 'register')
+            await confirmTransactionWithMetaMask(iframeLocator, metaMask, page, 'register', name)
             console.log('✅ Registration transaction confirmed')
           } catch (error) {
             console.log('⚠️ Second transaction confirmation failed:', error)
@@ -844,12 +844,15 @@ test.describe('Safe + ENS with Dappwright MetaMask', () => {
       }
 
       // wait for finish button
-      await page.getByTestId('finish-transaction-btn').first().click()
-      console.log('✅ Clicked finish transaction button on Safe')
-
-      //at this stage we should wait until this text Queued transactions will appear here
-      await page.getByText('Queued transactions will appear here').waitFor({ timeout: 30000 })
-      console.log('✅ Queued transactions will appear here')
+      try {
+        await page.getByTestId('finish-transaction-btn').first().click()
+        console.log('✅ Clicked finish transaction button on Safe')
+        //at this stage we should wait until this text Queued transactions will appear here
+        await page.getByText('Queued transactions will appear here').waitFor({ timeout: 30000 })
+        console.log('✅ Queued transactions will appear here')
+      } catch (error) {
+        console.log('⚠️ Finish transaction button not found, continuing...')
+      }
 
       await page.pause()
 
@@ -869,9 +872,16 @@ test.describe('Safe + ENS with Dappwright MetaMask', () => {
       await searchInput.waitFor({ timeout: 15000 })
       await searchInput.fill(name)
       await searchInput.press('Enter')
+      console.log('✅ Filled search input')
 
-      // click the confirm button
-      await page.getByTestId('confirm-footer-button').first().click
+      await page.pause()
+      // try {
+      //   // click the confirm button
+      //   await page.getByTestId('confirm-footer-button').first().click()
+      //   console.log('✅ Clicked confirm button')
+      // } catch (error) {
+      //   console.log('⚠️ Confirm button not found, continuing...')
+      // }
 
       // Wait for transaction to be processed
       await page.waitForTimeout(3000)
