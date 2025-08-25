@@ -14,6 +14,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Set up pnpm # Setup pnpm to use the ENS dApp specificed packageManager version in package.json
         uses: pnpm/action-setup@v4
       - name: Run StoryCheck
