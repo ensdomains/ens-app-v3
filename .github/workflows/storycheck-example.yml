@@ -18,12 +18,13 @@ jobs:
       - name: Set up pnpm # Setup pnpm to use the ENS dApp specificed packageManager version in package.json
         uses: pnpm/action-setup@v4
       - name: Run StoryCheck
-        id: storycheck      
-        uses: GuardianUI/storycheck@v0.1.9
+        id: storycheck
+        uses: GuardianUI/storycheck@v0.1.10
         env: 
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}        
         with:
           storypath: 'user-stories/ens_reg_commit'
+          output-dir: 'results'
       - name: Check if passed
         if: ${{ steps.storycheck.outputs.passed != 'true' }}
         run: echo "StoryCheck failed!" && exit 1
