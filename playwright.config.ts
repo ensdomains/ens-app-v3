@@ -24,5 +24,10 @@ export default defineConfig({
   ],
   use: {
     baseURL: process.env.CI ? 'http://127.0.0.1:8788' : 'http://localhost:3000',
+    // Keep browser open when DEBUG_BROWSER is set
+    headless: process.env.CI ? true : !process.env.DEBUG_BROWSER,
+    launchOptions: {
+      slowMo: process.env.DEBUG_BROWSER ? 100 : 0,
+    },
   },
 })
