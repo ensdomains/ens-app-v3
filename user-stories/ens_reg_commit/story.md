@@ -33,4 +33,3 @@ This use story walks through an initial domain name search "storychecktest" and 
 
 - Verify commitment transaction succeeded [verifier](verifiers/tx_success.py)
 - Verify commitment timestamp set [verifier](verifiers/commitment_timestamp.py)
-- App should display 'Transaction Successful' [verifier](verifiers/ui_start_timer_ok.py)
