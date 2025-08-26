@@ -27,7 +27,7 @@ This use story walks through an initial domain name search "storychecktest" and 
 1. Scroll down
 1. Click Begin
 1. Click "Open Wallet"
-1. Wait 5 seconds
+1. Wait 10 seconds
 
 ## Expected Results
 
