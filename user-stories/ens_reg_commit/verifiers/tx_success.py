@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 def verify(results_dir):
+    logger.info(f"results_dir: {results_dir}")
     manifest_path = Path(results_dir) / "manifest.json"
     with open(manifest_path, 'r') as f:
         manifest = json.load(f)
