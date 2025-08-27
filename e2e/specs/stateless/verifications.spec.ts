@@ -358,7 +358,7 @@ test.describe('Verified records', () => {
     await expect(profilePage.record('verification', 'dentity')).toBeVisible()
   })
 
-  test('Should show error icon on verication button if VerifiedENS credential is not validated', async ({
+  test('Should show error icon on verification button if VerifiedENS credential is not validated', async ({
     page,
     login,
     makePageObject,
