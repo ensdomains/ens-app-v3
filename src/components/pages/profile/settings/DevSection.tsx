@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { createTestClient, http } from 'viem'
 import {
   revert as evmRevert,
   snapshot as evmSnapshot,
@@ -40,7 +41,15 @@ type TestConfig = Config<[typeof localhostWithEns]>
 
 export const DevSection = () => {
   const client = useClient<TestConfig>()
-  const testClient = useMemo(() => ({ ...client, mode: 'anvil' }) as const, [client])
+  const testClient = useMemo(
+    () =>
+      createTestClient({
+        chain: client?.chain,
+        mode: 'anvil',
+        transport: http('http://localhost:8545'),
+      }),
+    [client],
+  )
 
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
