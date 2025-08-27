@@ -13,6 +13,7 @@ const filterForNetworks = ({ id, name, value }: { name: string; id?: number; val
 }
 
 const sortByNetwork = (a: GetPrimaryNameQueryReturnType, b: GetPrimaryNameQueryReturnType) => {
+  if (!a || !b) return 0
   return (
     networks.findIndex((network) => network.coinType === a.coinType) -
     networks.findIndex((network) => network.coinType === b.coinType)
@@ -39,7 +40,7 @@ export const usePrimaryNames = ({
       return {
         data: results
           .map((result) => result?.data)
-          .filter((result): result is GetPrimaryNameQueryReturnType => result !== undefined)
+          .filter((result): result is GetPrimaryNameQueryReturnType => !!result)
           .sort(sortByNetwork),
         isLoading: results.some((result) => result?.isLoading || result?.isFetching),
         isError: results.some((result) => result?.isError),

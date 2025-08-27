@@ -11,7 +11,7 @@ export type GetPrimaryNameQueryReturnType = {
   address: Address
   coinType: number
   coinName: string
-}
+} | null
 
 export const getPrimaryNameQuery =
   (config: ConfigWithEns) =>
@@ -22,18 +22,21 @@ export const getPrimaryNameQuery =
     address: Address
     coinType?: number
   }): Promise<GetPrimaryNameQueryReturnType> => {
-    const client = config.getClient()
-    const result = await readContract(config, {
-      address: getChainContractAddress({ chain: client.chain, contract: 'ensUniversalResolver' }),
-      abi: universalResolverReverseSnippet,
-      functionName: 'reverse',
-      args: [address, BigInt(coinType)],
-    })
-
-    return {
-      name: result[0],
-      address,
-      coinType,
-      coinName: getCoderByCoinTypeWithTestnetSupport(coinType).name,
+    try {
+      const client = config.getClient()
+      const result = await readContract(config, {
+        address: getChainContractAddress({ chain: client.chain, contract: 'ensUniversalResolver' }),
+        abi: universalResolverReverseSnippet,
+        functionName: 'reverse',
+        args: [address, BigInt(coinType)],
+      })
+      return {
+        name: result[0],
+        address,
+        coinType,
+        coinName: getCoderByCoinTypeWithTestnetSupport(coinType).name,
+      }
+    } catch (error) {
+      return null
     }
   }
