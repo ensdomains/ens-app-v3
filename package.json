@@ -52,7 +52,7 @@
     "hh": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only' hardhat"
   },
   "dependencies": {
-    "@ensdomains/address-encoder": "1.1.1",
+    "@ensdomains/address-encoder": "1.1.4",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.4.0-beta.2",
     "@ensdomains/ens-test-env": "1.0.1",
