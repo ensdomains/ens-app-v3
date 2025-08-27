@@ -23,6 +23,7 @@
       "title": "Primary Name",
       "noNameDescription": "A primary name links your address to a name, allowing dApps to display a name as your profile when connected to them. Learn about primary names",
       "choosePrimaryName": "Choose primary name",
+      "inheritedFromDefault": "Inherited from default",
       "networkSpecificPrimaryNames": {
         "title": "Network-specific primary names",
         "tooltip": "Network-specific primary names will override your default primary name on their specific network.",

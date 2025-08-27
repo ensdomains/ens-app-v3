@@ -72,6 +72,8 @@ export const useReverseRegistryName = <TParams extends UseReverseRegistryNamePar
     },
   })
 
+  console.log('query', query)
+
   const data = useMemo(
     () =>
       query.data

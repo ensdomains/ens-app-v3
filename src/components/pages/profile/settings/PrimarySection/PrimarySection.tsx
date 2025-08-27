@@ -8,6 +8,7 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import { getNetworkFromUrl } from '@app/constants/chains'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegistryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
@@ -142,6 +143,10 @@ export const PrimarySection = () => {
   const showResetPrimaryNameInput = usePreparedDataInput('ResetPrimaryName')
 
   const primary = usePrimaryName({ address })
+  const reverseRegistryName = useReverseRegistryName({ address })
+
+  const isHeritedName =
+    primary.data?.name && !reverseRegistryName.data && reverseRegistryName.isSuccess
 
   const { truncatedName, isLoading: basicLoading } = useBasicName({
     name: primary.data?.name,
@@ -178,6 +183,11 @@ export const PrimarySection = () => {
               <Typography data-testid="primary-name-label" fontVariant="headingTwo" ellipsis>
                 {truncatedName}
               </Typography>
+              {isHeritedName && (
+                <Typography data-testid="reverse-name-label" fontVariant="small" color="grey">
+                  {t('section.primary.inheritedFromDefault')}
+                </Typography>
+              )}
             </PrimaryNameInfo>
             <AvatarContainer>
               <AvatarWithLink name={primary.data?.name} label="primary name avatar" />
@@ -206,16 +216,18 @@ export const PrimarySection = () => {
                 </>
               ) : (
                 <>
-                  <Button
-                    data-testid="reset-primary-name-button"
-                    prefix={CrossSVG}
-                    colorStyle="redSecondary"
-                    disabled={hasGraphErrorLoading}
-                    loading={hasGraphErrorLoading}
-                    onClick={resetPrimary}
-                  >
-                    {t('action.remove', { ns: 'common' })}
-                  </Button>
+                  {!isHeritedName && (
+                    <Button
+                      data-testid="reset-primary-name-button"
+                      prefix={CrossSVG}
+                      colorStyle="redSecondary"
+                      disabled={hasGraphErrorLoading}
+                      loading={hasGraphErrorLoading}
+                      onClick={resetPrimary}
+                    >
+                      {t('action.remove', { ns: 'common' })}
+                    </Button>
+                  )}
                   <Button
                     data-testid="change-primary-name-button"
                     prefix={PersonPlusSVG}
