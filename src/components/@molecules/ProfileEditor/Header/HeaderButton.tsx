@@ -129,6 +129,7 @@ type Props = {
   dirty?: boolean
   error?: boolean
   src?: string
+  headerValue?: string
   onSelectOption?: (value: HeaderClickType) => void
   onHeaderChange?: (header?: string) => void
   onHeaderSrcChange?: (src?: string) => void
@@ -141,6 +142,7 @@ const HeaderButton = ({
   dirty,
   error,
   src,
+  headerValue,
   onSelectOption,
   onHeaderChange,
   onHeaderSrcChange,
@@ -180,7 +182,7 @@ const HeaderButton = ({
         </IndicatorContainer>
       </HeaderContainer>
       <ButtonContainer $hasImage={!!src}>
-        {src && <Input value={src} disabled readOnly data-testid="header-uri-display" />}
+        {headerValue && <Input value={headerValue} disabled readOnly data-testid="header-uri-display" />}
         <DropdownContainer>
           <LegacyDropdown
             items={

@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react'
-import { Control, useFormState } from 'react-hook-form'
+import { Control, useFormState, useWatch } from 'react-hook-form'
 import { useEnsAvatar } from 'wagmi'
 
 import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
@@ -17,10 +17,14 @@ export const WrappedAvatarButton = ({ control, name, src, ...props }: Props) => 
     control,
     name: 'avatar',
   })
+  const avatarValue = useWatch({
+    control,
+    name: 'avatar',
+  })
   const isValidated = !!src || !!avatar
   const isDirty = !!formState.dirtyFields.avatar
   const currentOrUpdatedSrc = isDirty ? src : (avatar as string | undefined)
   return (
-    <AvatarButton {...props} src={currentOrUpdatedSrc} validated={isValidated} dirty={isDirty} />
+    <AvatarButton {...props} src={currentOrUpdatedSrc} avatarValue={avatarValue} validated={isValidated} dirty={isDirty} />
   )
 }

@@ -106,6 +106,7 @@ type Props = {
   dirty?: boolean
   error?: boolean
   src?: string
+  avatarValue?: string
   onSelectOption?: (value: AvatarClickType) => void
   onAvatarChange?: (avatar?: string) => void
   onAvatarSrcChange?: (src?: string) => void
@@ -118,6 +119,7 @@ const AvatarButton = ({
   dirty,
   error,
   src,
+  avatarValue,
   onSelectOption,
   onAvatarChange,
   onAvatarSrcChange,
@@ -157,7 +159,7 @@ const AvatarButton = ({
         </InicatorContainer>
       </AvatarContainer>
       <ButtonContainer>
-        {src && <Input value={src} disabled readOnly data-testid="avatar-uri-display" />}
+        {avatarValue && <Input label="" value={avatarValue} disabled readOnly data-testid="avatar-uri-display" />}
         <DropdownContainer>
           <LegacyDropdown
             items={

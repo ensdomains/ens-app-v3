@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
     "dev:holesky": "NEXT_PUBLIC_CHAIN_NAME=holesky pnpm dev",
-    "dev:sepolia": "NEXT_PUBLIC_CHAIN_NAME=sepolia pnpm dev",
+    "dev:sepolia": "NEXT_PUBLIC_CHAIN_NAME=sepolia NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:https": "next dev --experimental-https --port 443",
     "dev:https:holesky": "NEXT_PUBLIC_CHAIN_NAME=holesky pnpm dev:https",
     "dev:https:sepolia": "NEXT_PUBLIC_CHAIN_NAME=sepolia pnpm dev:https",

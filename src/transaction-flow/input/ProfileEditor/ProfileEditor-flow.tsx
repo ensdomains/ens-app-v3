@@ -403,8 +403,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   if (isLoading || resolverStatus.isLoading || !isRecordsUpdated) return <TransactionLoader />
 
-  console.log('headerFile: ', headerFile)
-
   return (
     <>
       <CloseButtonBlocker />
@@ -440,7 +438,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                   name={name}
                   control={control}
                   src={headerSrc}
-                  onSelectOption={(option) => setView(`header-${option}`)}
+                  onSelectOption={(option) =>
+                    editorDispatch({ type: 'pushView', payload: `header-${option}` as any })
+                  }
                   onHeaderChange={(header) => setHeader(header)}
                   onHeaderFileChange={(file) => setHeaderFile(file)}
                   onHeaderSrcChange={(src) => setHeaderSrc(src)}
@@ -567,16 +567,16 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             }}
           />
         ))
-        .with('header-upload', 'header-nft', 'header-manual', (type) => (
+        .with('header-upload', 'header-nft', (type) => (
           <HeaderViewManager
             name={name}
             headerFile={headerFile}
-            handleCancel={() => setView('editor')}
+            handleCancel={() => editorDispatch({ type: 'popView' })}
             type={type.replace('header-', '') as HeaderViewType}
             handleSubmit={(_, uri, display) => {
               setHeader(uri)
               setHeaderSrc(display)
-              setView('editor')
+              editorDispatch({ type: 'popView' })
               trigger()
             }}
           />

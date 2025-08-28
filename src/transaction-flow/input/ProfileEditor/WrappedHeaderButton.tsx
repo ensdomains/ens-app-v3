@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react'
-import { Control, useFormState } from 'react-hook-form'
+import { Control, useFormState, useWatch } from 'react-hook-form'
 import { useEnsAvatar } from 'wagmi'
 
 import HeaderButton from '@app/components/@molecules/ProfileEditor/Header/HeaderButton'
@@ -18,10 +18,14 @@ export const WrappedHeaderButton = ({ control, name, src, ...props }: Props) => 
     control,
     name: 'header',
   })
+  const headerValue = useWatch({
+    control,
+    name: 'header',
+  })
   const isValidated = !!src || !!header
   const isDirty = !!formState.dirtyFields.header
   const currentOrUpdatedSrc = isDirty ? src : (header as string | undefined)
   return (
-    <HeaderButton {...props} src={currentOrUpdatedSrc} validated={isValidated} dirty={isDirty} />
+    <HeaderButton {...props} src={currentOrUpdatedSrc} headerValue={headerValue} validated={isValidated} dirty={isDirty} />
   )
 }

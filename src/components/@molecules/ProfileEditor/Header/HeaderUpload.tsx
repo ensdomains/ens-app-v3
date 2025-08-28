@@ -62,15 +62,15 @@ const UploadComponent = ({
     error,
   } = useMutation<void, Error>({
     mutationFn: async () => {
-      let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
+      const baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
       let endpoint
 
       if (chainName !== 'mainnet') {
-        // For testnets, use the format /:testnet/:name/header
-        endpoint = `${baseURL}/${chainName}/${name}/header`
+        // For testnets, use the format /:testnet/:name/h
+        endpoint = `${baseURL}/${chainName}/${name}/h`
       } else {
         // For mainnet, use the format /:name/header
-        endpoint = `${baseURL}/${name}/header`
+        endpoint = `${baseURL}/${name}/h`
       }
 
       const urlHash = bytesToHex(sha256(dataURLToBytes(dataURL)))
@@ -91,7 +91,7 @@ const UploadComponent = ({
           ],
         },
         message: {
-          upload: 'avatar',
+          upload: 'header',
           expiry,
           name,
           hash: urlHash,
@@ -112,7 +112,7 @@ const UploadComponent = ({
       }).then((res) => res.json())) as AvatarUploadResult
 
       if ('message' in fetched && fetched.message === 'uploaded') {
-        //Ensure images are updated even if the url hasn't changed
+        // Ensure images are updated even if the url hasn't changed
         const headerImage = document.getElementById('header-image') as HTMLImageElement
         if (headerImage) {
           headerImage.src = dataURL

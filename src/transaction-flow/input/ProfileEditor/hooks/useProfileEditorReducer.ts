@@ -20,6 +20,8 @@ export type View =
   | 'migrateProfileWarning'
   | 'resetProfile'
   | 'updateResolverOrResetProfile'
+  | 'header-upload'
+  | 'header-nft'
 
 type State = {
   stack: View[]
