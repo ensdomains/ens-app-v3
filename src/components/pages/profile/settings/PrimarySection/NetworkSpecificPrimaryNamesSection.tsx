@@ -71,6 +71,8 @@ export const NetworkSpecificPrimaryNamesSection = ({
     })),
   })
 
+  console.log('primaryNames', primaryNames)
+
   const groupedPrimaryNames = Object.values(
     primaryNames.data.reduce(
       (acc, curr) => {
