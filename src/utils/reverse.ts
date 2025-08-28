@@ -44,7 +44,7 @@ export function encodeLabelhash(hash: string) {
 
 export function packetToBytes(packet: string): ByteArray {
   // strip leading and trailing `.`
-  const value = packet.replace(/^\.|\.$/gm, '')
+  const value = packet.replace(/^\./, '').replace(/\.$/, '')
   if (value.length === 0) return new Uint8Array(1)
 
   const bytes = new Uint8Array(stringToBytes(value).byteLength + 2)

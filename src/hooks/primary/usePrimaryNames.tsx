@@ -40,7 +40,7 @@ export const usePrimaryNames = ({
       return {
         data: results
           .map((result) => result?.data)
-          .filter((result): result is GetPrimaryNameQueryReturnType => !!result)
+          .filter((result): result is NonNullable<GetPrimaryNameQueryReturnType> => !!result)
           .sort(sortByNetwork),
         isLoading: results.some((result) => result?.isLoading || result?.isFetching),
         isError: results.some((result) => result?.isError),

@@ -107,11 +107,11 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
         <RecordItemsContainer>
           {filteredPrimaryNames?.map((primaryName) => (
             <RecordItem
-              key={primaryName?.coinName}
-              keyLabel={primaryName?.coinName}
-              value={primaryName?.address}
+              key={primaryName.coinName}
+              keyLabel={primaryName.coinName}
+              value={primaryName.address}
             >
-              {primaryName?.address}
+              {primaryName.address}
             </RecordItem>
           ))}
         </RecordItemsContainer>
