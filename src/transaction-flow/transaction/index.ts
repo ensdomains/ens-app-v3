@@ -12,6 +12,7 @@ import migrateProfile from './migrateProfile'
 import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
 import removeVerificationRecord from './removeVerificationRecord'
+import repairDesyncedName from './repairDesyncedName'
 import resetPrimaryName from './resetPrimaryName'
 import resetProfile from './resetProfile'
 import resetProfileWithRecords from './resetProfileWithRecords'
@@ -43,6 +44,7 @@ export const transactions = {
   migrateProfile,
   migrateProfileWithReset,
   registerName,
+  repairDesyncedName,
   resetPrimaryName,
   resetProfile,
   resetProfileWithRecords,

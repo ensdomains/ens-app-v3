@@ -114,7 +114,6 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   const {
     unsupported,
     error,
-    errorTitle,
     profile,
     gracePeriodEndDate,
     expiryDate,
@@ -218,12 +217,12 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   const warning: ContentWarning = useMemo(() => {
     if (error)
       return {
-        type: 'warning',
-        message: error,
-        title: errorTitle,
+        type: error.type || 'warning',
+        message: error.content,
+        title: error.title,
       }
     return undefined
-  }, [error, errorTitle])
+  }, [error])
 
   const ogImageUrl = `${OG_IMAGE_URL}/name/${normalisedName || name}`
 

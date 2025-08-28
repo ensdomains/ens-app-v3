@@ -30,6 +30,8 @@ export const checkCanSyncManager = ({
         P.nullish,
         'root',
         'tld',
+        'eth-desynced-2ld',
+        'eth-desynced-2ld:grace-period',
         'eth-emancipated-2ld',
         'eth-emancipated-2ld:grace-period',
         'eth-locked-2ld',

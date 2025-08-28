@@ -9,21 +9,17 @@ import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { isValidBanner } from '@app/validators/validateBanner'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
 
 const Container = styled.div(
   ({ theme }) => css`
-    width: 100%;
     position: relative;
+    width: 100%;
     padding: ${theme.space['4']};
     padding-top: ${theme.space['18']};
-    background-image: ${theme.colors.blueGradient};
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-size: 100% ${theme.space['28']};
-    background-position-y: -1px; /* for overlap with border i think */
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.border};
@@ -33,6 +29,7 @@ const Container = styled.div(
     justify-content: center;
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
+    overflow: hidden;
 
     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
@@ -41,17 +38,18 @@ const Container = styled.div(
   `,
 )
 
-const HeaderImage = styled.img(
-  ({ theme }) => css`
+const BannerContainer = styled.div<{ $banner?: string }>(
+  ({ theme, $banner }) => css`
     position: absolute;
-    top: 0;
+    top: -1px;
     left: 0;
-    right: 0;
-    height: ${theme.space['28']};
-    border-radius: ${theme.radii['2xLarge']} ${theme.radii['2xLarge']} 0 0;
-    object-fit: cover;
     width: 100%;
-    background-image: ${theme.colors.blueGradient};
+    height: ${theme.space['28']};
+    background-image: ${$banner ? `url("${encodeURI($banner)}")` : theme.colors.blueGradient};
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
   `,
 )
 
@@ -210,7 +208,10 @@ export const ProfileSnippet = ({
 
   const beautifiedName = useBeautifiedName(name)
 
-  const header = getTextRecord?.('header')?.value
+  const bannerUrl = isValidBanner(getTextRecord?.('banner')?.value ?? '')
+    ? getTextRecord?.('banner')?.value
+    : undefined
+
   const description = getTextRecord?.('description')?.value
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value
@@ -259,11 +260,9 @@ export const ProfileSnippet = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [button, name, canSelfExtend])
 
-  console.log('render')
-
   return (
     <Container data-testid="profile-snippet">
-      {header && <HeaderImage src={header} id="header-image" />}
+      <BannerContainer $banner={bannerUrl} />
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}

@@ -23,10 +23,11 @@ import {
   ConnectorClientWithEns,
   CreateQueryKey,
 } from '@app/types'
+import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import { getReadableError } from '@app/utils/errors'
 import { createAccessList } from '@app/utils/query/createAccessList'
 import { wagmiConfig } from '@app/utils/query/wagmi'
-import { connectorIsMetaMask, hasParaConnection } from '@app/utils/utils'
+import { connectorIsMetaMask, connectorIsPhantom, hasParaConnection } from '@app/utils/utils'
 
 export const getUniqueTransaction = ({
   txKey,
@@ -98,7 +99,9 @@ export const transactionSuccessHandler =
 
 export const registrationGasFeeModifier = (gasLimit: bigint, transactionName: TransactionName) =>
   // this addition is arbitrary, something to do with a gas refund but not 100% sure
-  transactionName === 'registerName' ? gasLimit + 5000n : gasLimit
+  transactionName === 'registerName'
+    ? gasLimit + 5000n
+    : (gasLimit * CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE) / 100n
 
 export const calculateGasLimit = async ({
   client,
@@ -213,6 +216,8 @@ export const createTransactionRequestUnsafe = async ({
 
   if (connectorIsMetaMask(connections, connectorClient)) {
     ;(request as any).__is_metamask = true
+  } else if (connectorIsPhantom(connections, connectorClient)) {
+    request.accessList = request.accessList?.map((v) => [v.address, v.storageKeys]) as any
   }
 
   return {
