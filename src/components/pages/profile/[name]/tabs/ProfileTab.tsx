@@ -140,7 +140,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
             />
           </Helper>
         )}
-        {(nameDetails.isNonASCII && nameDetails.hasMixedScripts) && (
+        {nameDetails.isNonASCII && nameDetails.hasMixedScripts && (
           <Helper alert="warning" alignment="horizontal">
             {t('tabs.profile.warnings.homoglyph')}
           </Helper>
