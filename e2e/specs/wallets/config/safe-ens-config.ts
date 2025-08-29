@@ -52,13 +52,13 @@ export function getSafeAddress(network: string = SafeEnsConfig.NETWORK): string 
 
 // Log test configuration
 export function logTestConfig(): void {
-  console.log('🔧 Safe-ENS Test Configuration:')
-  console.log(`   Network: ${SafeEnsConfig.NETWORK}`)
-  console.log(`   Safe URL: ${SafeEnsConfig.SAFE_URL}`)
-  console.log(`   ENS App URL: ${SafeEnsConfig.ENS_APP_URL}`)
-  console.log(`   Safe Address: ${getSafeAddress()}`)
-  console.log(`   MetaMask Version: ${SafeEnsConfig.METAMASK.VERSION}`)
-  console.log(`   Headless: ${SafeEnsConfig.BROWSER.HEADLESS}`)
+  console.log('Safe-ENS Test Configuration:')
+  console.log(`Network: ${SafeEnsConfig.NETWORK}`)
+  console.log(`Safe URL: ${SafeEnsConfig.SAFE_URL}`)
+  console.log(`ENS App URL: ${SafeEnsConfig.ENS_APP_URL}`)
+  console.log(`Safe Address: ${getSafeAddress()}`)
+  console.log(`MetaMask Version: ${SafeEnsConfig.METAMASK.VERSION}`)
+  console.log(`Headless: ${SafeEnsConfig.BROWSER.HEADLESS}`)
   console.log(
     `   Using Custom Seed: ${
       SafeEnsConfig.SEED_PHRASE !== 'test test test test test test test test test test test junk'

@@ -3,7 +3,7 @@ import dappwright from '@tenkeylabs/dappwright'
 import type { Dappwright } from '@tenkeylabs/dappwright'
 import type { BrowserContext, Page } from 'playwright-core'
 
-import { getSafeAddress, logTestConfig, SafeEnsConfig } from '../../config/safe-ens-config'
+import { getSafeAddress, logTestConfig, SafeEnsConfig } from './config/safe-ens-config'
 
 // Log test configuration
 logTestConfig()
@@ -385,6 +385,289 @@ async function openEnsApp(page: Page): Promise<void> {
   }
 }
 
+async function confirmTransactionWithMetaMask(
+  iframeLocator: any,
+  metaMask: any,
+  page: any,
+  transactionType: string,
+  name: string,
+) {
+  console.log(`🔐 Confirming ${transactionType} transaction with MetaMask...`)
+
+  try {
+    // Click the "Open Wallet" or "Sign" button in Safe
+    const openWalletButton = iframeLocator.getByText('Open Wallet')
+    if (await openWalletButton.isVisible({ timeout: 5000 })) {
+      await openWalletButton.click()
+      console.log('✅ Clicked Open Wallet button')
+    }
+
+    // Look for Safe's transaction signing interface
+    await page.waitForTimeout(2000)
+
+    await page.getByTestId('continue-sign-btn').first().click()
+    console.log('✅ Clicked Safe continue sign button')
+    await page.getByTestId('combo-submit-sign').first().click()
+    console.log('✅ Clicked Safe sign button')
+
+    // Wait for MetaMask extension window to appear
+    await page.waitForTimeout(3000)
+
+    // Handle MetaMask extension window for transaction approval
+    try {
+      console.log('🔍 Looking for MetaMask extension window...')
+
+      // Get all pages in the browser context
+      const allPages = page.context().pages()
+      console.log(`📍 Found ${allPages.length} pages in context`)
+
+      // Find the MetaMask extension page
+      let metaMaskPage = null
+      for (const contextPage of allPages) {
+        const url = contextPage.url()
+        console.log(`📍 Page URL: ${url}`)
+
+        if (url.includes('chrome-extension://') && url.includes('notification.html')) {
+          metaMaskPage = contextPage
+          console.log('✅ Found MetaMask extension page for transaction!')
+          break
+        }
+      }
+
+      if (metaMaskPage) {
+        // Bring MetaMask page to front
+        await metaMaskPage.bringToFront()
+        await metaMaskPage.waitForLoadState('domcontentloaded')
+        await page.waitForTimeout(2000)
+
+        // Click the confirm button in MetaMask extension
+        console.log('🔘 Looking for confirm button in MetaMask extension...')
+
+        const confirmButton = metaMaskPage.getByTestId('confirm-footer-button')
+        if (await confirmButton.isVisible({ timeout: 5000 })) {
+          await confirmButton.click()
+          console.log('✅ Clicked MetaMask confirm-footer-button')
+
+          // Wait for transaction to be confirmed
+          await page.waitForTimeout(3000)
+          console.log('✅ MetaMask transaction approved')
+        } else {
+          console.log('⚠️ Confirm button not found, trying fallback...')
+          // Fallback to dappwright approve
+          await metaMask.approve()
+          console.log('✅ Used dappwright approve as fallback')
+        }
+      } else {
+        console.log('⚠️ MetaMask extension window not found, trying dappwright approve...')
+        await metaMask.approve()
+        console.log('✅ Used dappwright approve as fallback')
+      }
+    } catch (error: any) {
+      console.log('⚠️ MetaMask approval failed:', error.message)
+      console.log('🔄 Transaction may still process...')
+    }
+
+    // await page.getByLabel('collapse sidebar').first().click()
+    const safeAddress = getSafeAddress()
+    await page.goto(`${SafeEnsConfig.SAFE_URL}/home?safe=${safeAddress}`)
+    await page.waitForTimeout(3000)
+
+    await page.getByText('Transactions').first().click()
+    // click the second execute button
+    await page.getByText('Execute').nth(1).click()
+    console.log('✅ Clicked second execute button')
+    await page.getByTestId('continue-sign-btn').first().click()
+    console.log('✅ Clicked Safe continue sign button')
+    await page.getByTestId('combo-submit-execute').first().click()
+    console.log('✅ Clicked Safe continue execute button')
+
+    // Wait for MetaMask extension window to appear for execution
+    await page.waitForTimeout(3000)
+
+    // Handle MetaMask extension window for transaction execution
+    try {
+      console.log('🔍 Looking for MetaMask extension window for execution...')
+
+      // Get all pages in the browser context
+      const allPages = page.context().pages()
+      console.log(`📍 Found ${allPages.length} pages in context`)
+
+      // Find the MetaMask extension page
+      let metaMaskPage = null
+      for (const contextPage of allPages) {
+        const url = contextPage.url()
+        console.log(`📍 Page URL: ${url}`)
+
+        if (url.includes('chrome-extension://') && url.includes('notification.html')) {
+          metaMaskPage = contextPage
+          console.log('✅ Found MetaMask extension page for execution!')
+          break
+        }
+      }
+
+      if (metaMaskPage) {
+        // Bring MetaMask page to front
+        await metaMaskPage.bringToFront()
+        await metaMaskPage.waitForLoadState('domcontentloaded')
+        await page.waitForTimeout(2000)
+
+        // Click the confirm button in MetaMask extension
+        console.log('🔘 Looking for confirm button in MetaMask extension...')
+
+        const confirmButton = metaMaskPage.getByTestId('confirm-footer-button')
+        if (await confirmButton.isVisible({ timeout: 5000 })) {
+          await confirmButton.click()
+          console.log('✅ Clicked MetaMask confirm-footer-button for execution')
+
+          // Wait for transaction to be executed
+          await page.waitForTimeout(3000)
+          console.log('✅ MetaMask execution approved')
+        } else {
+          console.log('⚠️ Confirm button not found, trying fallback...')
+          // Fallback to dappwright approve
+          await metaMask.approve()
+          console.log('✅ Used dappwright approve as fallback')
+        }
+      } else {
+        console.log('⚠️ MetaMask extension window not found, trying dappwright approve...')
+        await metaMask.approve()
+        console.log('✅ Used dappwright approve as fallback')
+      }
+    } catch (error: any) {
+      console.log('⚠️ MetaMask execution approval failed:', error.message)
+      console.log('🔄 Transaction may still process...')
+    }
+
+    // wait for finish button
+    try {
+      await page.getByTestId('finish-transaction-btn').first().click()
+      console.log('✅ Clicked finish transaction button on Safe')
+      // at this stage we should wait until this text Queued transactions will appear here
+      await page.getByText('Queued transactions will appear here').waitFor({ timeout: 30000 })
+      console.log('✅ Queued transactions will appear here')
+    } catch (error) {
+      console.log('⚠️ Finish transaction button not found, continuing...')
+    }
+
+    // await page.pause()
+
+    // navigate back to the ENS app
+    // url is https://app.safe.global/apps/open?safe=sep:0x7894BFD6441B2e9a22358F8F71FdF9B2AC817ef8&appUrl=https%3A%2F%2Fsepolia.app.ens.domains
+
+    const appUrl = `${SafeEnsConfig.ENS_APP_URL}/`
+    const url = `${
+      SafeEnsConfig.SAFE_URL
+    }/apps/open?safe=${safeAddress}&appUrl=${encodeURIComponent(appUrl)}`
+    console.log('✅ Navigating to URL:', url)
+    await page.goto(url)
+
+    await page.waitForTimeout(3000)
+
+    const searchInput = iframeLocator.getByPlaceholder('Search for a name')
+    await searchInput.waitFor({ timeout: 15000 })
+    await searchInput.fill(name)
+    await searchInput.press('Enter')
+    console.log('✅ Filled search input')
+
+    // await page.pause()
+
+    // Wait for transaction to be processed
+    await page.waitForTimeout(3000)
+    console.log('✅ Transaction confirmation completed')
+  } catch (error) {
+    console.error('❌ Transaction confirmation failed:', error)
+    throw error
+  }
+}
+
+async function performRegistrationWithMetaMask(
+  iframeLocator: any,
+  name: string,
+  metaMask: any,
+  page: any,
+) {
+  console.log(`🎯 Starting registration for ${name}`)
+
+  try {
+    // Search for the name
+    console.log('🔍 Searching for name...')
+    const searchInput = iframeLocator.getByPlaceholder('Search for a name')
+    await searchInput.waitFor({ timeout: 15000 })
+    await searchInput.fill(name)
+    await searchInput.press('Enter')
+
+    // Wait for registration page to load
+    await iframeLocator
+      .getByRole('heading', { name: `Register ${name}` })
+      .waitFor({ timeout: 15000 })
+    console.log('✅ Registration page loaded')
+
+    // Ensure Ethereum payment is selected and primary name is checked
+    await iframeLocator.getByTestId('payment-choice-ethereum').check()
+    await iframeLocator.getByTestId('primary-name-toggle').check()
+    console.log('✅ Payment method and primary name configured')
+
+    // Go to profile step
+    await iframeLocator.getByTestId('next-button').click()
+    console.log('✅ Moved to profile step')
+
+    // Skip profile setup (use default ETH address)
+    const profileSubmitButton = iframeLocator.getByTestId('profile-submit-button')
+    if (await profileSubmitButton.isVisible({ timeout: 5000 })) {
+      await profileSubmitButton.click()
+      console.log('✅ Profile step completed')
+    }
+
+    // Go to transaction step
+    await iframeLocator.getByTestId('next-button').click()
+    console.log('✅ Moved to transaction step')
+
+    // Start first transaction (commit)
+    console.log('🔄 Starting commit transaction...')
+    await iframeLocator.getByText('Open Wallet').waitFor({ timeout: 10000 })
+
+    // Confirm first transaction with MetaMask
+    await confirmTransactionWithMetaMask(iframeLocator, metaMask, page, 'commit', name)
+    console.log('✅ Commit transaction confirmed')
+
+    // Wait for 60 seconds
+    await page.waitForTimeout(60000)
+    console.log('✅ 60 seconds passed')
+
+    try {
+      // Look for finish button or completion indicator
+      const finishButton = iframeLocator.getByTestId('finish-button')
+      if (await finishButton.isVisible({ timeout: 60000 })) {
+        await finishButton.click()
+        console.log('✅ Started registration transaction')
+
+        // Handle second transaction
+        try {
+          await confirmTransactionWithMetaMask(iframeLocator, metaMask, page, 'register', name)
+          console.log('✅ Registration transaction confirmed')
+        } catch (error) {
+          console.log('⚠️ Second transaction confirmation failed:', error)
+        }
+
+        // Wait for completion
+        // try {
+        //   await iframeLocator
+        //     .getByText(`You are now the owner of ${name}`)
+        //     .waitFor({ timeout: 30000 })
+        //   console.log('🎉 Registration completed successfully!')
+        // } catch (error) {
+        //   console.log('⚠️ Registration completion not detected, but may have succeeded')
+        // }
+      }
+    } catch (error) {
+      console.log('⚠️ Countdown process failed:', error)
+    }
+  } catch (error) {
+    console.error('❌ Registration failed:', error)
+    throw error
+  }
+}
+
 test.describe('Safe + ENS with Dappwright MetaMask', () => {
   let metaMask: Dappwright
   let page: Page
@@ -568,19 +851,12 @@ test.describe('Safe + ENS with Dappwright MetaMask', () => {
         await connectButton.click()
 
         // Select wallet option (should use connected Safe/MetaMask)
-        const walletOptions = [
-          iframeLocator.getByText('Browser Wallet'),
-          iframeLocator.getByText('MetaMask'),
-          iframeLocator.getByText('Safe'),
-          iframeLocator.getByText('Headless Web3 Provider'),
-        ]
-
-        for (const option of walletOptions) {
-          if (await option.isVisible({ timeout: 3000 })) {
-            await option.click()
-            console.log('✅ Selected wallet option')
-            break
-          }
+        const metamaskOption = iframeLocator.getByText('MetaMask')
+        if (await metamaskOption.isVisible({ timeout: 3000 })) {
+          await metamaskOption.click()
+          console.log('✅ Selected MetaMask option')
+        } else {
+          console.log('⚠️ MetaMask option not found')
         }
 
         // Wait for connection to complete
@@ -604,291 +880,4 @@ test.describe('Safe + ENS with Dappwright MetaMask', () => {
       throw error
     }
   })
-
-  async function performRegistrationWithMetaMask(
-    iframeLocator: any,
-    name: string,
-    metaMask: any,
-    page: any,
-  ) {
-    console.log(`🎯 Starting registration for ${name}`)
-
-    try {
-      // Search for the name
-      console.log('🔍 Searching for name...')
-      const searchInput = iframeLocator.getByPlaceholder('Search for a name')
-      await searchInput.waitFor({ timeout: 15000 })
-      await searchInput.fill(name)
-      await searchInput.press('Enter')
-
-      // Wait for registration page to load
-      await iframeLocator
-        .getByRole('heading', { name: `Register ${name}` })
-        .waitFor({ timeout: 15000 })
-      console.log('✅ Registration page loaded')
-
-      // Ensure Ethereum payment is selected and primary name is checked
-      await iframeLocator.getByTestId('payment-choice-ethereum').check()
-      await iframeLocator.getByTestId('primary-name-toggle').check()
-      console.log('✅ Payment method and primary name configured')
-
-      // Go to profile step
-      await iframeLocator.getByTestId('next-button').click()
-      console.log('✅ Moved to profile step')
-
-      // Skip profile setup (use default ETH address)
-      const profileSubmitButton = iframeLocator.getByTestId('profile-submit-button')
-      if (await profileSubmitButton.isVisible({ timeout: 5000 })) {
-        await profileSubmitButton.click()
-        console.log('✅ Profile step completed')
-      }
-
-      // Go to transaction step
-      await iframeLocator.getByTestId('next-button').click()
-      console.log('✅ Moved to transaction step')
-
-      // Start first transaction (commit)
-      console.log('🔄 Starting commit transaction...')
-      await iframeLocator.getByText('Open Wallet').waitFor({ timeout: 10000 })
-
-      // Confirm first transaction with MetaMask
-      await confirmTransactionWithMetaMask(iframeLocator, metaMask, page, 'commit', name)
-      console.log('✅ Commit transaction confirmed')
-
-      // Wait for countdown to appear
-      try {
-        // Look for finish button or completion indicator
-        const finishButton = iframeLocator.getByTestId('finish-button')
-        if (await finishButton.isVisible({ timeout: 60000 })) {
-          await finishButton.click()
-          console.log('✅ Started registration transaction')
-
-          // Handle second transaction
-          try {
-            await confirmTransactionWithMetaMask(iframeLocator, metaMask, page, 'register', name)
-            console.log('✅ Registration transaction confirmed')
-          } catch (error) {
-            console.log('⚠️ Second transaction confirmation failed:', error)
-          }
-
-          // Wait for completion
-          try {
-            await iframeLocator
-              .getByText(`You are now the owner of ${name}`)
-              .waitFor({ timeout: 30000 })
-            console.log('🎉 Registration completed successfully!')
-          } catch (error) {
-            console.log('⚠️ Registration completion not detected, but may have succeeded')
-          }
-        }
-      } catch (error) {
-        console.log('⚠️ Countdown process failed:', error)
-      }
-    } catch (error) {
-      console.error('❌ Registration failed:', error)
-      throw error
-    }
-  }
-
-  async function confirmTransactionWithMetaMask(
-    iframeLocator: any,
-    metaMask: any,
-    page: any,
-    transactionType: string,
-    name: string,
-  ) {
-    console.log(`🔐 Confirming ${transactionType} transaction with MetaMask...`)
-
-    try {
-      // Click the "Open Wallet" or "Sign" button in Safe
-      const openWalletButton = iframeLocator.getByText('Open Wallet')
-      if (await openWalletButton.isVisible({ timeout: 5000 })) {
-        await openWalletButton.click()
-        console.log('✅ Clicked Open Wallet button')
-      }
-
-      // Look for Safe's transaction signing interface
-      await page.waitForTimeout(2000)
-
-      await page.getByTestId('continue-sign-btn').first().click()
-      console.log('✅ Clicked Safe continue sign button')
-      await page.getByTestId('combo-submit-sign').first().click()
-      console.log('✅ Clicked Safe sign button')
-
-      // Wait for MetaMask extension window to appear
-      await page.waitForTimeout(3000)
-
-      // Handle MetaMask extension window for transaction approval
-      try {
-        console.log('🔍 Looking for MetaMask extension window...')
-
-        // Get all pages in the browser context
-        const allPages = page.context().pages()
-        console.log(`📍 Found ${allPages.length} pages in context`)
-
-        // Find the MetaMask extension page
-        let metaMaskPage = null
-        for (const contextPage of allPages) {
-          const url = contextPage.url()
-          console.log(`📍 Page URL: ${url}`)
-
-          if (url.includes('chrome-extension://') && url.includes('notification.html')) {
-            metaMaskPage = contextPage
-            console.log('✅ Found MetaMask extension page for transaction!')
-            break
-          }
-        }
-
-        if (metaMaskPage) {
-          // Bring MetaMask page to front
-          await metaMaskPage.bringToFront()
-          await metaMaskPage.waitForLoadState('domcontentloaded')
-          await page.waitForTimeout(2000)
-
-          // Click the confirm button in MetaMask extension
-          console.log('🔘 Looking for confirm button in MetaMask extension...')
-
-          const confirmButton = metaMaskPage.getByTestId('confirm-footer-button')
-          if (await confirmButton.isVisible({ timeout: 5000 })) {
-            await confirmButton.click()
-            console.log('✅ Clicked MetaMask confirm-footer-button')
-
-            // Wait for transaction to be confirmed
-            await page.waitForTimeout(3000)
-            console.log('✅ MetaMask transaction approved')
-          } else {
-            console.log('⚠️ Confirm button not found, trying fallback...')
-            // Fallback to dappwright approve
-            await metaMask.approve()
-            console.log('✅ Used dappwright approve as fallback')
-          }
-        } else {
-          console.log('⚠️ MetaMask extension window not found, trying dappwright approve...')
-          await metaMask.approve()
-          console.log('✅ Used dappwright approve as fallback')
-        }
-      } catch (metaMaskError) {
-        console.log('⚠️ MetaMask approval failed:', metaMaskError.message)
-        console.log('🔄 Transaction may still process...')
-      }
-
-      // await page.getByLabel('collapse sidebar').first().click()
-      const safeAddress = getSafeAddress()
-      await page.goto(`${SafeEnsConfig.SAFE_URL}/home?safe=${safeAddress}`)
-      await page.waitForTimeout(3000)
-
-      await page.getByText('Transactions').first().click()
-      // click the second execute button
-      await page.getByText('Execute').nth(1).click()
-      console.log('✅ Clicked second execute button')
-      await page.getByTestId('continue-sign-btn').first().click()
-      console.log('✅ Clicked Safe continue sign button')
-      await page.getByTestId('combo-submit-execute').first().click()
-      console.log('✅ Clicked Safe continue execute button')
-
-      // Wait for MetaMask extension window to appear for execution
-      await page.waitForTimeout(3000)
-
-      // Handle MetaMask extension window for transaction execution
-      try {
-        console.log('🔍 Looking for MetaMask extension window for execution...')
-
-        // Get all pages in the browser context
-        const allPages = page.context().pages()
-        console.log(`📍 Found ${allPages.length} pages in context`)
-
-        // Find the MetaMask extension page
-        let metaMaskPage = null
-        for (const contextPage of allPages) {
-          const url = contextPage.url()
-          console.log(`📍 Page URL: ${url}`)
-
-          if (url.includes('chrome-extension://') && url.includes('notification.html')) {
-            metaMaskPage = contextPage
-            console.log('✅ Found MetaMask extension page for execution!')
-            break
-          }
-        }
-
-        if (metaMaskPage) {
-          // Bring MetaMask page to front
-          await metaMaskPage.bringToFront()
-          await metaMaskPage.waitForLoadState('domcontentloaded')
-          await page.waitForTimeout(2000)
-
-          // Click the confirm button in MetaMask extension
-          console.log('🔘 Looking for confirm button in MetaMask extension...')
-
-          const confirmButton = metaMaskPage.getByTestId('confirm-footer-button')
-          if (await confirmButton.isVisible({ timeout: 5000 })) {
-            await confirmButton.click()
-            console.log('✅ Clicked MetaMask confirm-footer-button for execution')
-
-            // Wait for transaction to be executed
-            await page.waitForTimeout(3000)
-            console.log('✅ MetaMask execution approved')
-          } else {
-            console.log('⚠️ Confirm button not found, trying fallback...')
-            // Fallback to dappwright approve
-            await metaMask.approve()
-            console.log('✅ Used dappwright approve as fallback')
-          }
-        } else {
-          console.log('⚠️ MetaMask extension window not found, trying dappwright approve...')
-          await metaMask.approve()
-          console.log('✅ Used dappwright approve as fallback')
-        }
-      } catch (metaMaskError) {
-        console.log('⚠️ MetaMask execution approval failed:', metaMaskError.message)
-        console.log('🔄 Transaction may still process...')
-      }
-
-      // wait for finish button
-      try {
-        await page.getByTestId('finish-transaction-btn').first().click()
-        console.log('✅ Clicked finish transaction button on Safe')
-        //at this stage we should wait until this text Queued transactions will appear here
-        await page.getByText('Queued transactions will appear here').waitFor({ timeout: 30000 })
-        console.log('✅ Queued transactions will appear here')
-      } catch (error) {
-        console.log('⚠️ Finish transaction button not found, continuing...')
-      }
-
-      await page.pause()
-
-      // navigate back to the ENS app
-      // url is https://app.safe.global/apps/open?safe=sep:0x7894BFD6441B2e9a22358F8F71FdF9B2AC817ef8&appUrl=https%3A%2F%2Fsepolia.app.ens.domains
-
-      const appUrl = `${SafeEnsConfig.ENS_APP_URL}/`
-      const url = `${
-        SafeEnsConfig.SAFE_URL
-      }/apps/open?safe=${safeAddress}&appUrl=${encodeURIComponent(appUrl)}`
-      console.log('✅ Navigating to URL:', url)
-      await page.goto(url)
-
-      await page.waitForTimeout(3000)
-
-      const searchInput = iframeLocator.getByPlaceholder('Search for a name')
-      await searchInput.waitFor({ timeout: 15000 })
-      await searchInput.fill(name)
-      await searchInput.press('Enter')
-      console.log('✅ Filled search input')
-
-      await page.pause()
-      // try {
-      //   // click the confirm button
-      //   await page.getByTestId('confirm-footer-button').first().click()
-      //   console.log('✅ Clicked confirm button')
-      // } catch (error) {
-      //   console.log('⚠️ Confirm button not found, continuing...')
-      // }
-
-      // Wait for transaction to be processed
-      await page.waitForTimeout(3000)
-      console.log('✅ Transaction confirmation completed')
-    } catch (error) {
-      console.error('❌ Transaction confirmation failed:', error)
-      throw error
-    }
-  }
 })
