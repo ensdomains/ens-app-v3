@@ -28,7 +28,7 @@ export const validate = (input: string) => {
   const decodedInput = tryDecodeURIComponent(input)
   const { normalised: name, ...parsedInput } = parseInput(decodedInput)
   const isNonASCII = parsedInput.labelDataArray.some((dataItem) => dataItem.type !== 'ASCII')
-  const scriptTypes = new Set(parsedInput.labelDataArray.map((d) => d.type).filter((t) => t && t !== 'ASCII'))
+  const scriptTypes = new Set(parsedInput.labelDataArray.map((d) => d.type).filter((t) => t))
   const hasMixedScripts = scriptTypes.size > 1
   const isLatinOnly = scriptTypes.size === 1 && scriptTypes.has('Latin')
   const hasEmoji = parsedInput.labelDataArray.some((d) => Boolean((d as any).emoji))
