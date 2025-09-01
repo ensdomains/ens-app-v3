@@ -11,6 +11,10 @@ import { Button, Dialog, PlusSVG, Typography } from '@ensdomains/thorin'
 import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import {
+  HeaderViewManager,
+  HeaderViewType,
+} from '@app/components/@molecules/ProfileEditor/Header/HeaderViewManager'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
@@ -23,6 +27,7 @@ import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
 import { profileEditorFormToProfileRecords } from './profileRecordUtils'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
+import { WrappedHeaderButton } from './WrappedHeaderButton'
 
 const StyledCard = styled.form(({ theme }) => [
   css`
@@ -107,7 +112,7 @@ const SubmitButton = ({
   )
 }
 
-type ModalOption = AvatarClickType | 'add-record' | 'clear-eth' | 'public-notice'
+type ModalOption = AvatarClickType | 'add-record' | 'clear-eth' | 'public-notice' | 'header-upload' | 'header-manual'
 
 type Props = {
   name: string
@@ -134,6 +139,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
     removeRecordAtIndex,
     removeRecordByGroupAndKey: removeRecordByTypeAndKey,
     setAvatar,
+    setHeader,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
@@ -147,14 +153,25 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
 
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
+  const [headerFile, setHeaderFile] = useState<File | undefined>()
+  const [headerSrc, setHeaderSrc] = useState<string | undefined>()
+  
   useEffect(() => {
-    const storage = localStorage.getItem(`avatar-src-${name}`)
-    if (storage) setAvatarSrc(storage)
+    const avatarStorage = localStorage.getItem(`avatar-src-${name}`)
+    if (avatarStorage) setAvatarSrc(avatarStorage)
+    const headerStorage = localStorage.getItem(`header-src-${name}`)
+    if (headerStorage) setHeaderSrc(headerStorage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  
   const setAvatarSrcStorage = () => {
     if (avatarSrc) localStorage.setItem(`avatar-src-${name}`, avatarSrc)
     else localStorage.removeItem(`avatar-src-${name}`)
+  }
+  
+  const setHeaderSrcStorage = () => {
+    if (headerSrc) localStorage.setItem(`header-src-${name}`, headerSrc)
+    else localStorage.removeItem(`header-src-${name}`)
   }
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -183,6 +200,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
   const onSubmit = (data: ProfileEditorForm, e?: BaseSyntheticEvent<object, any, any>) => {
     e?.preventDefault()
     setAvatarSrcStorage()
+    setHeaderSrcStorage()
     const nativeEvent = e?.nativeEvent as SubmitEvent | undefined
     const newRecords = profileEditorFormToProfileRecords(data)
 
@@ -209,9 +227,23 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
               avatarFile={avatarFile}
               handleCancel={() => setModalOpen(false)}
               type={_modalOption}
-              handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
+              handleSubmit={(_, uri: string, display?: string) => {
                 setAvatar(uri)
                 setAvatarSrc(display)
+                setModalOpen(false)
+                trigger()
+              }}
+            />
+          ))
+          .with('header-upload', 'header-manual', (_modalOption) => (
+            <HeaderViewManager
+              name={name}
+              headerFile={headerFile}
+              handleCancel={() => setModalOpen(false)}
+              type={_modalOption.replace('header-', '') as HeaderViewType}
+              handleSubmit={(_, uri: string, display?: string) => {
+                setHeader(uri)
+                setHeaderSrc(display)
                 setModalOpen(false)
                 trigger()
               }}
@@ -269,7 +301,18 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
           onAvatarSrcChange={(src) => setAvatarSrc(src)}
           setIsOpen={setIsAvatarDropdownOpen}
         />
-        {records.map((field, index) =>
+        <WrappedHeaderButton
+          name={name}
+          control={control}
+          src={headerSrc}
+          onSelectOption={(option) => setModalOption(`header-${option}` as ModalOption)}
+          onHeaderChange={(header) => setHeader(header)}
+          onHeaderFileChange={(file) => setHeaderFile(file)}
+          onHeaderSrcChange={(src) => setHeaderSrc(src)}
+        />
+        {records
+          .filter((field) => !(field.key === 'header' && field.group === 'media'))
+          .map((field, index) =>
           match(field)
             .with({ group: 'custom' }, () => (
               <CustomProfileRecordInput
