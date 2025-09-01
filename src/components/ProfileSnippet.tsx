@@ -9,7 +9,7 @@ import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { isValidBanner } from '@app/validators/validateBanner'
+import { isValidImageUri } from '@app/validators/validateImageUri'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -211,9 +211,9 @@ export const ProfileSnippet = ({
   console.log(
     'bannerRecord',
     getTextRecord?.('header')?.value,
-    isValidBanner(getTextRecord?.('header')?.value ?? ''),
+    isValidImageUri(getTextRecord?.('header')?.value ?? ''),
   )
-  const bannerUrl = isValidBanner(getTextRecord?.('header')?.value ?? '')
+  const bannerUrl = isValidImageUri(getTextRecord?.('header')?.value ?? '')
     ? getTextRecord?.('header')?.value
     : undefined
 
