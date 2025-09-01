@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Button, Dialog, Input, Typography } from '@ensdomains/thorin'
 
 import { Outlink } from '@app/components/Outlink'
+import { validateImageUri } from '@app/validators/validateImageUri'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -49,26 +50,15 @@ export const AvatarManual = ({
   const [error, setError] = useState<string | undefined>()
 
   const validateUri = (value: string) => {
-    if (!value) {
-      setError('URI is required')
-      return false
+    const validationResult = validateImageUri(value)
+
+    if (validationResult === true) {
+      setError(undefined)
+      return true
     }
 
-    // Basic validation for common URI formats
-    const isValidUri =
-      value.startsWith('https://') ||
-      value.startsWith('http://') ||
-      value.startsWith('ipfs://') ||
-      value.startsWith('data:') ||
-      value.startsWith('eip155:')
-
-    if (!isValidUri) {
-      setError('Invalid URI format')
-      return false
-    }
-
-    setError(undefined)
-    return true
+    setError(validationResult as string)
+    return false
   }
 
   const handleUriChange = (e: React.ChangeEvent<HTMLInputElement>) => {
