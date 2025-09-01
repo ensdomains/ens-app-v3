@@ -12,6 +12,7 @@ export type View =
   | 'editor'
   | 'upload'
   | 'nft'
+  | 'manual'
   | 'addRecord'
   | 'resolverOutOfDate'
   | 'transferOrResetProfile'
@@ -21,7 +22,7 @@ export type View =
   | 'resetProfile'
   | 'updateResolverOrResetProfile'
   | 'header-upload'
-  | 'header-nft'
+  | 'header-manual'
 
 type State = {
   stack: View[]

@@ -10,12 +10,11 @@ export const AvatarViewManager = ({
   ...props
 }: {
   handleCancel: () => void
-  handleSubmit: (type: 'upload' | 'nft', uri: string, display?: string) => void
+  handleSubmit: (type: 'upload' | 'nft' | 'manual', uri: string, display?: string) => void
   name: string
   avatarFile?: File
   type: 'upload' | 'nft' | 'manual'
 }) => {
-  console.log('avatarUpload', avatarFile)
   return match(type)
     .with('upload', () => <AvatarUpload avatar={avatarFile!} {...props} />)
     .with('nft', () => <AvatarNFT {...props} />)

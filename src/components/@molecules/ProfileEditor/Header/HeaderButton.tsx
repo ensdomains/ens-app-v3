@@ -62,29 +62,50 @@ const IndicatorContainer = styled.button<{
   `,
 )
 
-const OuterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 20px;
-  width: 100%;
-`
-
-const ButtonContainer = styled.div<{ $hasImage?: boolean }>(
-  ({ $hasImage }) => css`
+const OuterContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    flex: 1;
-    margin-top: 28px;
-    ${$hasImage &&
-    `
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+
+    @media (min-width: ${theme.breakpoints.md}px) {
+      flex-direction: row;
+      gap: 20px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+  `,
+)
+
+const ButtonContainer = styled.div<{ $hasImage?: boolean }>(
+  ({ $hasImage, theme }) => css`
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    @media (min-width: ${theme.breakpoints.md}px) {
+      flex-direction: column;
+      flex: 1;
+      margin-top: 20px;
+      ${$hasImage &&
+      `
       height: 100px;
       justify-content: space-between;
     `}
 
-    & > div {
-      gap: 0;
+      & > div {
+        gap: 0;
+      }
     }
+  `,
+)
+
+const InputWrapper = styled.div(
+  ({ theme }) => css`
+    margin-top: -${theme.space['2']};
   `,
 )
 
@@ -182,16 +203,21 @@ const HeaderButton = ({
         </IndicatorContainer>
       </HeaderContainer>
       <ButtonContainer $hasImage={!!src}>
-        {headerValue && <Input value={headerValue} disabled readOnly data-testid="header-uri-display" />}
+        {headerValue && (
+          <InputWrapper>
+            <Input
+              label=""
+              value={headerValue}
+              disabled
+              readOnly
+              data-testid="header-uri-display"
+            />
+          </InputWrapper>
+        )}
         <DropdownContainer>
           <LegacyDropdown
             items={
               [
-                {
-                  label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-                  color: 'text',
-                  onClick: handleSelectOption('nft'),
-                },
                 ...(disabledUpload
                   ? []
                   : [

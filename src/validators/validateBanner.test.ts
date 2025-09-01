@@ -15,17 +15,48 @@ describe('validateBanner', () => {
 
   it('should return error for HTTP URLs', () => {
     const result = validateBanner('http://example.com/image.jpg')
-    expect(result).toBe('Banner URL must use HTTPS protocol')
+    expect(result).toBe('Header URL must use HTTPS protocol')
   })
+
+  it('should return error if credentials are provided', () => {
+    const result = validateBanner('https://user:pass@example.com/image.jpg')
+    expect(result).toBe('Header URL must be a valid URL')
+  })  
 
   it('should return error for invalid URLs', () => {
     const result = validateBanner('not-a-url')
-    expect(result).toBe('Banner URL must be a valid URL')
+    expect(result).toBe('Header URL must be a valid URL')
   })
+
 
   it('should return error for non-image file extensions', () => {
     const result = validateBanner('https://example.com/document.pdf')
-    expect(result).toBe('Banner URL must point to a valid image file (.jpg, .jpeg, .png, .gif, .webp, .svg)')
+    expect(result).toBe('Header URL must point to a valid image file (.jpg, .jpeg, .png, .gif, .webp, .svg)')
+  })
+
+  it('should return error for numeric addresses', () => {
+    const result = validateBanner('https://127.0.0.1')
+    expect(result).toBe('Header URL must be a valid URL')
+  })
+
+  it('should return error for a single numeric addresses', () => {
+    const result = validateBanner('https://2130706433')
+    expect(result).toBe('Header URL must be a valid URL')
+  })
+
+  it('should return error for hex addresses', () => {
+    const result = validateBanner('https://0x7f.0x00.0x00.0x01')
+    expect(result).toBe('Header URL must be a valid URL')
+  })
+
+  it('should return error for octal addresses', () => {
+    const result = validateBanner('https://0177.000.000.001')
+    expect(result).toBe('Header URL must be a valid URL')
+  })
+
+  it('should return error for loop back addresses', () => {
+    const result = validateBanner('https://[::1]')
+    expect(result).toBe('Header URL must be a valid URL')
   })
 
   it('should accept various image file extensions', () => {
@@ -43,7 +74,7 @@ describe('validateBanner', () => {
 
   it('should return error for JavaScript URLs', () => {
     const result = validateBanner('javascript:alert("hello")')
-    expect(result).toBe('Banner URL must use HTTPS protocol')
+    expect(result).toBe('Header URL must use HTTPS protocol')
   })
 
   it('should accept image URLs with query parameters', () => {

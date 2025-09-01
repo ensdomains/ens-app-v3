@@ -12,7 +12,7 @@ type Props = {
 } & Omit<ComponentProps<typeof HeaderButton>, 'validated'>
 
 export const WrappedHeaderButton = ({ control, name, src, ...props }: Props) => {
-  //@ts-ignore
+  // @ts-ignore
   const { data: header } = useEnsAvatar({ ...ensAvatarConfig, name, key: 'header' })
   const formState = useFormState<ProfileEditorForm>({
     control,
@@ -26,6 +26,12 @@ export const WrappedHeaderButton = ({ control, name, src, ...props }: Props) => 
   const isDirty = !!formState.dirtyFields.header
   const currentOrUpdatedSrc = isDirty ? src : (header as string | undefined)
   return (
-    <HeaderButton {...props} src={currentOrUpdatedSrc} headerValue={headerValue} validated={isValidated} dirty={isDirty} />
+    <HeaderButton
+      {...props}
+      src={currentOrUpdatedSrc}
+      headerValue={headerValue}
+      validated={isValidated}
+      dirty={isDirty}
+    />
   )
 }

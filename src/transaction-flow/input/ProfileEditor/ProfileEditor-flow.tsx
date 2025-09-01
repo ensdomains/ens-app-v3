@@ -56,15 +56,6 @@ const AvatarWrapper = styled.div(
   `,
 )
 
-const HeaderWrapper = styled.div(
-  () => css`
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 20px;
-  `,
-)
-
 const ButtonContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -433,19 +424,17 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                   onAvatarSrcChange={(src) => setAvatarSrc(src)}
                 />
               </AvatarWrapper>
-              <HeaderWrapper>
-                <WrappedHeaderButton
-                  name={name}
-                  control={control}
-                  src={headerSrc}
-                  onSelectOption={(option) =>
-                    editorDispatch({ type: 'pushView', payload: `header-${option}` as any })
-                  }
-                  onHeaderChange={(header) => setHeader(header)}
-                  onHeaderFileChange={(file) => setHeaderFile(file)}
-                  onHeaderSrcChange={(src) => setHeaderSrc(src)}
-                />
-              </HeaderWrapper>
+              <WrappedHeaderButton
+                name={name}
+                control={control}
+                src={headerSrc}
+                onSelectOption={(option) =>
+                  editorDispatch({ type: 'pushView', payload: `header-${option}` as any })
+                }
+                onHeaderChange={(header) => setHeader(header)}
+                onHeaderFileChange={(file) => setHeaderFile(file)}
+                onHeaderSrcChange={(src) => setHeaderSrc(src)}
+              />
               {profileRecords.map((field, index) =>
                 field.group === 'custom' ? (
                   <CustomProfileRecordInput
@@ -567,7 +556,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             }}
           />
         ))
-        .with('header-upload', 'header-nft', (type) => (
+        .with('header-upload', 'header-manual', (type) => (
           <HeaderViewManager
             name={name}
             headerFile={headerFile}

@@ -208,8 +208,13 @@ export const ProfileSnippet = ({
 
   const beautifiedName = useBeautifiedName(name)
 
-  const bannerUrl = isValidBanner(getTextRecord?.('banner')?.value ?? '')
-    ? getTextRecord?.('banner')?.value
+  console.log(
+    'bannerRecord',
+    getTextRecord?.('header')?.value,
+    isValidBanner(getTextRecord?.('header')?.value ?? ''),
+  )
+  const bannerUrl = isValidBanner(getTextRecord?.('header')?.value ?? '')
+    ? getTextRecord?.('header')?.value
     : undefined
 
   const description = getTextRecord?.('description')?.value
