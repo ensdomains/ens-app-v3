@@ -1,4 +1,4 @@
-import { IS_DEV_ENVIRONMENT } from '@app/utils/constants'
+const ACCEPTED_URI_PROTOCOLS = ['https:', 'http:', 'ipfs:', 'data:', 'eip155:']
 
 export const validateImageUri = (url?: string): string | boolean => {
   if (!url) return 'Image URL is required'
@@ -6,7 +6,7 @@ export const validateImageUri = (url?: string): string | boolean => {
   try {
     const urlObj = new URL(url)
 
-    if (!IS_DEV_ENVIRONMENT && urlObj.protocol !== 'https:') {
+    if (!ACCEPTED_URI_PROTOCOLS.includes(urlObj.protocol)) {
       return 'Image URL must use HTTPS protocol'
     }
 
