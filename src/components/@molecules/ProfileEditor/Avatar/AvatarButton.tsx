@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components'
 import { Avatar, Button, Dropdown, Input, Typography } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
-import CameraIcon from '@app/assets/Camera.svg'
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 
 const InicatorContainer = styled.button<{
@@ -159,7 +158,9 @@ const AvatarButton = ({
         </InicatorContainer>
       </AvatarContainer>
       <ButtonContainer>
-        {avatarValue && <Input label="" value={avatarValue} disabled readOnly data-testid="avatar-uri-display" />}
+        {avatarValue && (
+          <Input label="" value={avatarValue} disabled readOnly data-testid="avatar-uri-display" />
+        )}
         <DropdownContainer>
           <LegacyDropdown
             items={

@@ -112,7 +112,13 @@ const SubmitButton = ({
   )
 }
 
-type ModalOption = AvatarClickType | 'add-record' | 'clear-eth' | 'public-notice' | 'header-upload' | 'header-manual'
+type ModalOption =
+  | AvatarClickType
+  | 'add-record'
+  | 'clear-eth'
+  | 'public-notice'
+  | 'header-upload'
+  | 'header-manual'
 
 type Props = {
   name: string
@@ -155,7 +161,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [headerFile, setHeaderFile] = useState<File | undefined>()
   const [headerSrc, setHeaderSrc] = useState<string | undefined>()
-  
+
   useEffect(() => {
     const avatarStorage = localStorage.getItem(`avatar-src-${name}`)
     if (avatarStorage) setAvatarSrc(avatarStorage)
@@ -163,12 +169,12 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
     if (headerStorage) setHeaderSrc(headerStorage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  
+
   const setAvatarSrcStorage = () => {
     if (avatarSrc) localStorage.setItem(`avatar-src-${name}`, avatarSrc)
     else localStorage.removeItem(`avatar-src-${name}`)
   }
-  
+
   const setHeaderSrcStorage = () => {
     if (headerSrc) localStorage.setItem(`header-src-${name}`, headerSrc)
     else localStorage.removeItem(`header-src-${name}`)
@@ -306,59 +312,66 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
           control={control}
           src={headerSrc}
           onSelectOption={(option) => setModalOption(`header-${option}` as ModalOption)}
-          onHeaderChange={(header) => setHeader(header)}
+          onHeaderChange={(header) => {
+            setHeader(header)
+            // Clear the headerSrc and localStorage when header is removed
+            if (!header) {
+              setHeaderSrc(undefined)
+              localStorage.removeItem(`header-src-${name}`)
+            }
+          }}
           onHeaderFileChange={(file) => setHeaderFile(file)}
           onHeaderSrcChange={(src) => setHeaderSrc(src)}
         />
         {records
           .filter((field) => !(field.key === 'header' && field.group === 'media'))
           .map((field, index) =>
-          match(field)
-            .with({ group: 'custom' }, () => (
-              <CustomProfileRecordInput
-                key={field.id}
-                register={register}
-                trigger={trigger}
-                index={index}
-                validator={validatorForRecord(field)}
-                validated={isDirtyForRecordAtIndex(index)}
-                error={errorForRecordAtIndex(index, 'key')}
-                onDelete={() => handleDeleteRecord(field, index)}
-              />
-            ))
-            .with({ key: 'description' }, () => (
-              <ProfileRecordTextarea
-                key={field.id}
-                recordKey={field.key}
-                label={labelForRecord(field)}
-                secondaryLabel={secondaryLabelForRecord(field)}
-                placeholder={placeholderForRecord(field)}
-                error={errorForRecordAtIndex(index)}
-                validated={isDirtyForRecordAtIndex(index)}
-                onDelete={() => handleDeleteRecord(field, index)}
-                {...register(`records.${index}.value`, {
-                  validate: validatorForRecord(field),
-                })}
-              />
-            ))
-            .otherwise(() => (
-              <ProfileRecordInput
-                key={field.id}
-                recordKey={field.key}
-                group={field.group}
-                disabled={field.key === 'eth' && registrationData.reverseRecord}
-                label={labelForRecord(field)}
-                secondaryLabel={secondaryLabelForRecord(field)}
-                placeholder={placeholderForRecord(field)}
-                error={errorForRecordAtIndex(index)}
-                validated={isDirtyForRecordAtIndex(index)}
-                onDelete={() => handleDeleteRecord(field, index)}
-                {...register(`records.${index}.value`, {
-                  validate: validatorForRecord(field),
-                })}
-              />
-            )),
-        )}
+            match(field)
+              .with({ group: 'custom' }, () => (
+                <CustomProfileRecordInput
+                  key={field.id}
+                  register={register}
+                  trigger={trigger}
+                  index={index}
+                  validator={validatorForRecord(field)}
+                  validated={isDirtyForRecordAtIndex(index)}
+                  error={errorForRecordAtIndex(index, 'key')}
+                  onDelete={() => handleDeleteRecord(field, index)}
+                />
+              ))
+              .with({ key: 'description' }, () => (
+                <ProfileRecordTextarea
+                  key={field.id}
+                  recordKey={field.key}
+                  label={labelForRecord(field)}
+                  secondaryLabel={secondaryLabelForRecord(field)}
+                  placeholder={placeholderForRecord(field)}
+                  error={errorForRecordAtIndex(index)}
+                  validated={isDirtyForRecordAtIndex(index)}
+                  onDelete={() => handleDeleteRecord(field, index)}
+                  {...register(`records.${index}.value`, {
+                    validate: validatorForRecord(field),
+                  })}
+                />
+              ))
+              .otherwise(() => (
+                <ProfileRecordInput
+                  key={field.id}
+                  recordKey={field.key}
+                  group={field.group}
+                  disabled={field.key === 'eth' && registrationData.reverseRecord}
+                  label={labelForRecord(field)}
+                  secondaryLabel={secondaryLabelForRecord(field)}
+                  placeholder={placeholderForRecord(field)}
+                  error={errorForRecordAtIndex(index)}
+                  validated={isDirtyForRecordAtIndex(index)}
+                  onDelete={() => handleDeleteRecord(field, index)}
+                  {...register(`records.${index}.value`, {
+                    validate: validatorForRecord(field),
+                  })}
+                />
+              )),
+          )}
         <ButtonWrapper>
           <Button
             size="medium"
