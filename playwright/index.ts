@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { test as base } from '@playwright/test'
-import { anvil, sepolia } from 'viem/chains'
+import { anvil, mainnet, sepolia } from 'viem/chains'
 
 import {
   injectHeadlessWeb3Provider,
@@ -35,7 +35,7 @@ export const test = base.extend<Fixtures>({
   },
   wallet: async ({ page, accounts }, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
-    const chains = stateful ? [sepolia] : [{ ...anvil, id: 1337 }]
+    const chains = stateful ? [sepolia, mainnet] : [{ ...anvil, id: 1337 }]
     const privateKeys = accounts.getAllPrivateKeys()
     const wallet = await injectHeadlessWeb3Provider({
       page,

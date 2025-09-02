@@ -3,7 +3,7 @@ import { expect } from '@playwright/test'
 import { test } from '../../../playwright/index.js'
 
 test.describe('More Tab Primary Names', () => {
-  test(`should enter primary name more tab`, async ({ page, login, makePageObject }) => {
+  test(`should enter primary name more tab @mainnet`, async ({ page, login, makePageObject }) => {
     const name = 'default-ens.eth'
     await page.goto('/')
     await login.connect()
