@@ -3,7 +3,7 @@ import { expect } from '@playwright/test'
 import { test } from '../../../playwright/index.js'
 
 test.describe('Settings Tab Primary Names', () => {
-  test(`should enter settings tab and check network specific primary names`, async ({
+  test(`should enter settings tab and check network specific primary names @mainnet`, async ({
     page,
     login,
   }) => {
