@@ -13,7 +13,7 @@ type UsePrimaryNameParameters = PartialBy<GetNameParameters, 'address'> & {
   allowMismatch?: boolean
 }
 
-type UsePrimaryNameReturnType = (NonNullable<GetNameReturnType> & { beautifiedName: string }) | null
+type UsePrimaryNameReturnType = (NonNullable<GetNameReturnType> & { beautifiedName: string; originalName?: string }) | null
 
 type UsePrimaryNameConfig = QueryConfig<UsePrimaryNameReturnType, Error>
 
@@ -36,9 +36,14 @@ export const getPrimaryNameQueryFn =
 
     if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
 
+    // Preserve the original unnormalized name exactly as returned by reverse resolution
+    // When there's no match (forward and reverse don't align), we should show the raw name
+    const shouldBeautify = res.match !== false
+    
     return {
       ...res,
-      beautifiedName: tryBeautify(res.name),
+      beautifiedName: shouldBeautify ? tryBeautify(res.name) : res.name,
+      originalName: res.name, // This is the actual name from reverse resolution
     }
   }
 

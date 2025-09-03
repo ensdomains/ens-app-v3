@@ -45,6 +45,7 @@ const Page = () => {
   const loading = !isReady || isPrimaryProfileLoading
 
   const error = isError ? t('errors.names') : ''
+  const hasMismatch = primaryProfile?.match === false
 
   const shortenedAddress = shortenAddress(address)
   const titleContent = t('meta.title', { address: shortenedAddress })
@@ -77,9 +78,10 @@ const Page = () => {
             <DetailsContainer>
               {primaryProfile?.name ? (
                 <ProfileSnippet
-                  name={primaryProfile.name}
-                  button="viewProfile"
+                  name={primaryProfile.originalName || primaryProfile.name}
+                  button={hasMismatch ? undefined : "viewProfile"}
                   getTextRecord={getTextRecord}
+                  hasMismatch={hasMismatch}
                 />
               ) : (
                 <NoProfileSnippet />
