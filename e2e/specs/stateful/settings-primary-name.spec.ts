@@ -34,7 +34,7 @@ test.describe('Settings Tab Primary Names', () => {
 
     // Check all names are visible
     for (const name of ensNames) {
-      await expect(mainSection.getByText(name)).toBeVisible()
+      expect(mainSection.getByText(name)).toBeVisible()
     }
   })
 })
