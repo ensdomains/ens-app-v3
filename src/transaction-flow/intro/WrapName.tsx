@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 const GiftWrapper = styled.div(

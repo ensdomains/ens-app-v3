@@ -2,13 +2,13 @@
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import { CrossSVG, LeftChevronSVG, PersonSVG } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
 

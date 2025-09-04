@@ -20,12 +20,12 @@ export const useEnsAvatar = (params?: UseEnsAvatarParameters) => {
 
   const validUrl = validateImageUri(avatarUrl)
   const isValidUrl = validUrl === true
-  const validUrlError = validUrl === false ? validUrl : undefined
+  const validUrlError = typeof validUrl === 'string' ? validUrl : undefined
 
   return {
     ...result,
     data: avatarUrl && validContentType.isValid && isValidUrl ? avatarUrl : undefined,
     error: validContentType.error ?? result.error ?? validUrlError,
-    isError: validContentType.error || result.error || validUrlError,
+    isError: !!(validContentType.error || result.error || validUrlError),
   }
 }

@@ -1,10 +1,10 @@
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import { Avatar } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { INVALID_NAME } from '@app/utils/constants'
 import { checkETH2LDFromName } from '@app/utils/utils'

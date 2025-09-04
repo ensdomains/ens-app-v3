@@ -13,18 +13,15 @@ export type ValidationResult = {
 
 const validateFileType = async (
   url: string,
-  options: ValidateFileTypeOptions
+  options: ValidateFileTypeOptions,
 ): Promise<ValidationResult> => {
-  const {
-    method = 'HEAD',
-    acceptedMimeTypes = [],
-  } = options
+  const { method = 'HEAD', acceptedMimeTypes = [] } = options
 
   const response = await fetch(url, {
     method,
     mode: 'cors',
     headers: {
-      'Accept': acceptedMimeTypes.length > 0 ? acceptedMimeTypes.join(', ') : '*/*',
+      Accept: acceptedMimeTypes.length > 0 ? acceptedMimeTypes.join(', ') : '*/*',
     },
   })
 
@@ -38,7 +35,7 @@ const validateFileType = async (
   // Validate MIME type
   let isValid = true
   if (acceptedMimeTypes.length > 0 && mimeType) {
-    isValid = acceptedMimeTypes.some(accepted => {
+    isValid = acceptedMimeTypes.some((accepted) => {
       const acceptedLower = accepted.toLowerCase()
       // Support wildcard patterns like "image/*"
       if (acceptedLower.endsWith('/*')) {
@@ -60,7 +57,7 @@ const validateFileType = async (
 
 export const useValidateFileTypeFromSource = (
   url: string | undefined,
-  options: ValidateFileTypeOptions = {}
+  options: ValidateFileTypeOptions = {},
 ) => {
   const { enabled = true, ...validateOptions } = options
 
@@ -94,7 +91,7 @@ export const useValidateImageFromSource = (url: string | undefined, enabled?: bo
   })
 }
 
-// Convenience hook for validating documents  
+// Convenience hook for validating documents
 export const useValidateDocumentFromSource = (url: string | undefined, enabled?: boolean) => {
   return useValidateFileTypeFromSource(url, {
     method: 'HEAD',

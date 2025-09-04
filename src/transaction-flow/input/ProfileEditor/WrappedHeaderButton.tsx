@@ -1,8 +1,8 @@
 import { ComponentProps } from 'react'
 import { Control, useFormState, useWatch } from 'react-hook-form'
-import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import HeaderButton from '@app/components/@molecules/ProfileEditor/Header/HeaderButton'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 type Props = {

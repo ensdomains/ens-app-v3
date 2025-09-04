@@ -1,5 +1,6 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
