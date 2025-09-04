@@ -1,12 +1,97 @@
 import '@app/test-utils'
 
+import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import React from 'react'
 
-import { getUserDefinedUrl } from './ProfileSnippet'
+import { ProfileSnippet, getUserDefinedUrl } from './ProfileSnippet'
 
 vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }))
+
+vi.mock('@app/hooks/abilities/useAbilities', () => ({
+  useAbilities: () => ({ data: { canEdit: false } }),
+}))
+
+vi.mock('@app/hooks/useBeautifiedName', () => ({
+  useBeautifiedName: (name: string) => name,
+}))
+
+vi.mock('@app/hooks/useRouterWithHistory', () => ({
+  useRouterWithHistory: () => ({
+    push: vi.fn(),
+  }),
+}))
+
+vi.mock('@app/hooks/transactions/TransactionFlowProvider', () => ({
+  useTransactionFlow: () => ({
+    usePreparedDataInput: () => vi.fn(),
+  }),
+}))
+
+describe('ProfileSnippet', () => {
+  it('should render warning when hasMismatch is true', () => {
+    render(
+      <ProfileSnippet
+        name="MetaMask.eth"
+        hasMismatch={true}
+      />
+    )
+    
+    expect(screen.getByText('name.unnormalized')).toBeInTheDocument()
+  })
+  
+  it('should not show View Profile button when hasMismatch is true', () => {
+    render(
+      <ProfileSnippet
+        name="MetaMask.eth"
+        button="viewProfile"
+        hasMismatch={true}
+      />
+    )
+    
+    expect(screen.queryByText('action.viewProfile')).not.toBeInTheDocument()
+  })
+  
+  it('should show primary name tag when isPrimary is true and no mismatch', () => {
+    render(
+      <ProfileSnippet
+        name="test.eth"
+        isPrimary={true}
+        hasMismatch={false}
+      />
+    )
+    
+    expect(screen.getByText('name.yourPrimaryName')).toBeInTheDocument()
+  })
+  
+  it('should not beautify name when hasMismatch is true', () => {
+    const { container } = render(
+      <ProfileSnippet
+        name="MetaMask.eth"
+        hasMismatch={true}
+      />
+    )
+    
+    // The name should be displayed as-is without beautification
+    const nameElement = container.querySelector('[data-testid="profile-snippet-name"]')
+    expect(nameElement?.textContent).toBe('MetaMask.eth')
+  })
+  
+  it('should render both primary tag and warning when both conditions are true', () => {
+    render(
+      <ProfileSnippet
+        name="MetaMask.eth"
+        isPrimary={true}
+        hasMismatch={true}
+      />
+    )
+    
+    expect(screen.getByText('name.yourPrimaryName')).toBeInTheDocument()
+    expect(screen.getByText('name.unnormalized')).toBeInTheDocument()
+  })
+})
 
 describe('getUserDefinedUrl', () => {
   it('should return undefined if no URL is provided', () => {
