@@ -219,7 +219,7 @@ jobs:
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful --grep='@mainnet'"
+          "pnpm wait-on http://127.0.0.1:8788 && CHAIN=mainnet npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful --grep='@mainnet'"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 

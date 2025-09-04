@@ -1,5 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { resolve } from 'node:path'
+
 import { test as base } from '@playwright/test'
+import dotenv from 'dotenv'
+import { match } from 'ts-pattern'
 import { anvil, mainnet, sepolia } from 'viem/chains'
 
 import {
@@ -15,6 +19,11 @@ import { createSubgraph } from './fixtures/subgraph.js'
 import { createTime } from './fixtures/time.js'
 import { createPageObjectMaker } from './pageObjects/index.js'
 
+dotenv.config({
+  path: resolve(__dirname, '../../../../.env'),
+  override: true,
+})
+
 type Fixtures = {
   accounts: Accounts
   wallet: Web3ProviderBackend
@@ -27,6 +36,13 @@ type Fixtures = {
   consoleListener: ReturnType<typeof createConsoleListener>
 }
 
+const getChainById = (chain: string) => {
+  return match(chain)
+    .with('sepolia', () => sepolia)
+    .with('mainnet', () => mainnet)
+    .otherwise(() => sepolia)
+}
+
 export const test = base.extend<Fixtures>({
   // eslint-disable-next-line no-empty-pattern
   accounts: async ({}, use, testInfo) => {
@@ -35,7 +51,9 @@ export const test = base.extend<Fixtures>({
   },
   wallet: async ({ page, accounts }, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
-    const chains = stateful ? [sepolia, mainnet] : [{ ...anvil, id: 1337 }]
+    const chains = stateful
+      ? [getChainById(process.env.CHAIN || 'sepolia')]
+      : [{ ...anvil, id: 1337 }]
     const privateKeys = accounts.getAllPrivateKeys()
     const wallet = await injectHeadlessWeb3Provider({
       page,
