@@ -204,7 +204,9 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/setup-playwright
 
-      - run: pnpm rebuild -r
+      - run: |
+          export NEXT_PUBLIC_CHAIN_NAME=mainnet
+          pnpm rebuild -r
 
       - name: Download mainnet build
         id: download
