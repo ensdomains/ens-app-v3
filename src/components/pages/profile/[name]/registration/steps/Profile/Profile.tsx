@@ -161,6 +161,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [headerFile, setHeaderFile] = useState<File | undefined>()
   const [headerSrc, setHeaderSrc] = useState<string | undefined>()
+  console.log('files', avatarFile, headerFile)
 
   useEffect(() => {
     const avatarStorage = localStorage.getItem(`avatar-src-${name}`)

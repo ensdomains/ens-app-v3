@@ -112,20 +112,6 @@ const UploadComponent = ({
       }).then((res) => res.json())) as AvatarUploadResult
 
       if ('message' in fetched && fetched.message === 'uploaded') {
-        // Ensure images are updated even if the url hasn't changed
-        const headerImage = document.getElementById('header-image') as HTMLImageElement
-        if (headerImage) {
-          headerImage.src = dataURL
-        }
-
-        // Forgive me
-        setTimeout(() => {
-          const headerField = document.getElementById('header-field') as HTMLImageElement
-          if (headerField) {
-            headerField.style.backgroundImage = `url(${dataURL})`
-          }
-        }, 1000)
-
         queryClient.invalidateQueries({
           predicate: (query) => {
             const {
@@ -135,6 +121,7 @@ const UploadComponent = ({
             return true
           },
         })
+        queryClient.invalidateQueries({ queryKey: ['image-timestamp'] })
         return handleSubmit('upload', endpoint, dataURL)
       }
 

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { Address } from 'viem'
-import { useEnsAvatar } from 'wagmi'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import { Avatar, lightTheme, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
@@ -17,7 +17,6 @@ import { useBasicName } from '@app/hooks/useBasicName'
 import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
 import { zorbImageDataURI } from '@app/utils/gradient'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -303,7 +302,6 @@ const TldResultItem = ({
 }: SearchResultProps) => {
   const { text: name } = searchItem
   const { data: ensAvatar } = useEnsAvatar({
-    ...ensAvatarConfig,
     name,
     query: { enabled: !usingPlaceholder },
   })
@@ -353,7 +351,6 @@ const EthResultItem = ({
 }: SearchResultProps) => {
   const { text: name } = searchItem
   const { data: ensAvatar } = useEnsAvatar({
-    ...ensAvatarConfig,
     name,
     query: { enabled: !usingPlaceholder },
   })
@@ -417,7 +414,6 @@ const BoxResultItem = ({
 }: SearchResultProps) => {
   const { text: name, isValid } = searchItem
   const { data: ensAvatar } = useEnsAvatar({
-    ...ensAvatarConfig,
     name,
     query: { enabled: !usingPlaceholder },
   })

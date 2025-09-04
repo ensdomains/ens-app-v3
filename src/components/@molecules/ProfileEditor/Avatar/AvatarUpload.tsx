@@ -106,15 +106,6 @@ const UploadComponent = ({
       }).then((res) => res.json())) as AvatarUploadResult
 
       if ('message' in fetched && fetched.message === 'uploaded') {
-        // Ensure images are updated even if the url hasn't changed
-        const avatarImages = document.getElementsByClassName('avatar-image')
-        Array.from(avatarImages).forEach((element) => {
-          const img = element as HTMLImageElement
-          if (img) {
-            img.src = dataURL
-          }
-        })
-
         queryClient.invalidateQueries({
           predicate: (query) => {
             const {
@@ -124,6 +115,7 @@ const UploadComponent = ({
             return true
           },
         })
+        queryClient.invalidateQueries({ queryKey: ['image-timestamp'] })
         return handleSubmit('upload', endpoint, dataURL)
       }
 

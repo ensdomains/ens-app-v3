@@ -7,19 +7,12 @@ import { Outlink } from '@app/components/Outlink'
 import { validateImageUri } from '@app/validators/validateImageUri'
 
 const Container = styled.div(
-  ({ theme }) => css`
+  () => css`
     width: 100%;
     min-width: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
-  `,
-)
-
-const Title = styled(Typography)(
-  ({ theme }) => css`
-    font-weight: ${theme.fontWeights.bold};
-    text-align: center;
   `,
 )
 
@@ -38,11 +31,9 @@ const InputContainer = styled.div(
 )
 
 export const AvatarManual = ({
-  name,
   handleCancel,
   handleSubmit,
 }: {
-  name: string
   handleCancel: () => void
   handleSubmit: (type: 'nft' | 'upload' | 'manual', uri: string, display?: string) => void
 }) => {

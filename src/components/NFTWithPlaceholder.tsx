@@ -1,8 +1,6 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from 'wagmi'
-
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
 
@@ -20,7 +18,7 @@ export const NFTWithPlaceholder = ({
 }: {
   name: string
 } & Omit<ComponentProps<'div'>, 'ref'>) => {
-  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const { data: avatar } = useEnsAvatar({ name })
 
   const isCompatible = !!(name && name.split('.').length === 2 && name.endsWith('.eth'))
 

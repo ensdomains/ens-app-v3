@@ -8,8 +8,8 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { isValidImageUri } from '@app/validators/validateImageUri'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -38,14 +38,14 @@ const Container = styled.div(
   `,
 )
 
-const BannerContainer = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) => css`
+const HeaderContainer = styled.div<{ $header?: string }>(
+  ({ theme, $header }) => css`
     position: absolute;
     top: -1px;
     left: 0;
     width: 100%;
     height: ${theme.space['28']};
-    background-image: ${$banner ? `url("${encodeURI($banner)}")` : theme.colors.blueGradient};
+    background-image: ${$header ? `url("${encodeURI($header)}")` : theme.colors.blueGradient};
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -208,14 +208,9 @@ export const ProfileSnippet = ({
 
   const beautifiedName = useBeautifiedName(name)
 
-  console.log(
-    'bannerRecord',
-    getTextRecord?.('header')?.value,
-    isValidImageUri(getTextRecord?.('header')?.value ?? ''),
-  )
-  const bannerUrl = isValidImageUri(getTextRecord?.('header')?.value ?? '')
-    ? getTextRecord?.('header')?.value
-    : undefined
+  // We are overriding the key parameter here to get the header url. This will break the type checker
+  // @ts-ignore
+  const { data: headerUrl } = useEnsAvatar({ name, key: 'header' })
 
   const description = getTextRecord?.('description')?.value
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
@@ -267,7 +262,7 @@ export const ProfileSnippet = ({
 
   return (
     <Container data-testid="profile-snippet">
-      <BannerContainer $banner={bannerUrl} />
+      <HeaderContainer $header={headerUrl} />
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}

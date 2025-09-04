@@ -1,10 +1,9 @@
 import { ComponentProps } from 'react'
 import { Control, useFormState, useWatch } from 'react-hook-form'
-import { useEnsAvatar } from 'wagmi'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import HeaderButton from '@app/components/@molecules/ProfileEditor/Header/HeaderButton'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 type Props = {
   name: string
@@ -13,7 +12,7 @@ type Props = {
 
 export const WrappedHeaderButton = ({ control, name, src, ...props }: Props) => {
   // @ts-ignore
-  const { data: header } = useEnsAvatar({ ...ensAvatarConfig, name, key: 'header' })
+  const { data: header } = useEnsAvatar({ name, key: 'header' })
   const formState = useFormState<ProfileEditorForm>({
     control,
     name: 'header',

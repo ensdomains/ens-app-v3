@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from 'wagmi'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { getSupportLink } from '@app/utils/supportLinks'
 
 const GiftWrapper = styled.div(
@@ -29,7 +28,7 @@ const DescriptionWrapper = styled(Typography)(
 
 export const WrapName = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
-  const { data: nftUrl } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const { data: nftUrl } = useEnsAvatar({ name })
 
   return (
     <>

@@ -1,13 +1,12 @@
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from 'wagmi'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 
 import { Avatar } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useZorb } from '@app/hooks/useZorb'
 import { INVALID_NAME } from '@app/utils/constants'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { safeDateObj } from '../../../utils/date'
@@ -132,7 +131,7 @@ export const NameDetailItem = ({
   onClick?: () => void
   children: ReactNode
 }) => {
-  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(name, 'name')
 
   const handleClick = () => {

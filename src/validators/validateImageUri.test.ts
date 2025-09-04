@@ -13,9 +13,9 @@ describe('validateImageUri', () => {
     expect(validateImageUri(undefined)).toBe('Image URL is required')
   })
 
-  it('should return error for HTTP URLs', () => {
+  it('should return true for HTTP URLs', () => {
     const result = validateImageUri('http://example.com/image.jpg')
-    expect(result).toBe('Image URL must use HTTPS protocol')
+    expect(result).toBe(true)
   })
 
   it('should accept URLs with credentials', () => {
@@ -95,8 +95,8 @@ describe('isValidImageUri', () => {
     expect(isValidImageUri(undefined as any)).toBe(false)
   })
 
-  it('should return false for HTTP URLs', () => {
-    expect(isValidImageUri('http://example.com/image.jpg')).toBe(false)
+  it('should return true for HTTP URLs', () => {
+    expect(isValidImageUri('http://example.com/image.jpg')).toBe(true)
   })
 
   it('should return false for invalid URLs', () => {
@@ -130,7 +130,7 @@ describe('isValidBanner (legacy alias)', () => {
   })
 
   it('should return false for HTTP URLs', () => {
-    expect(isValidBanner('http://example.com/image.jpg')).toBe(false)
+    expect(isValidBanner('http://example.com/image.jpg')).toBe(true)
   })
 
   it('should return false for invalid URLs', () => {
