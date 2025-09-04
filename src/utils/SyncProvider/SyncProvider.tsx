@@ -66,7 +66,7 @@ const filterByChainDependentQuery =
       | ChainDependentQueryKey
       | CreateQueryKey<object, string, 'graph'>
       | GetEnsAvatarQueryKey<Config>
-      | GetEnsHeaderQueryKey<Config>
+      | GetEnsHeaderQueryKey
       | never[]
 
     // useEnsAvatar query from wagmi
