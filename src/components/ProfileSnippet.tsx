@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { AlertSVG, Button, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Box, Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
@@ -322,10 +322,9 @@ export const ProfileSnippet = ({
             </PrimaryNameTag>
           )}
           {hasMismatch && (
-            <Tag size="medium" colorStyle="yellowSecondary">
-              <AlertSVG />
+            <Helper alert="warning" alignment="horizontal">
               {t('name.unnormalized')}
-            </Tag>
+            </Helper>
           )}
         </TagsContainer>
       )}
