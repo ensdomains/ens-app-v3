@@ -1,9 +1,9 @@
-import { ReactNode, useEffect } from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 
 import { Button, Modal } from '@ensdomains/thorin'
 
-import { ModalScreen, useModalState } from '@app/hooks/useModalState'
+import { useModalState } from '@app/hooks/useModalState'
 
 // Define media queries manually
 const mq = {

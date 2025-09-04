@@ -14,15 +14,7 @@ const Container = styled.div(
   `,
 )
 
-export const HeaderNFT = ({
-  handleCancel,
-  handleSubmit,
-  name,
-}: {
-  handleCancel: () => void
-  handleSubmit: (type: 'nft', uri: string, display?: string) => void
-  name: string
-}) => {
+export const HeaderNFT = ({ handleCancel }: { handleCancel: () => void }) => {
   const { t } = useTranslation('common')
 
   // This is a simplified version. In a real implementation, you would add NFT selection functionality

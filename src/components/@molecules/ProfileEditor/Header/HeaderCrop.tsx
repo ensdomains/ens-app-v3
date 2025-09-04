@@ -1,4 +1,5 @@
 /* eslint-disable no-multi-assign */
+/* eslint-disable no-param-reassign */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -106,7 +107,7 @@ const ImageCropFrame = styled.div(
 )
 
 const StyledCanvas = styled.canvas(
-  ({ theme }) => css`
+  () => css`
     width: 100%;
     height: auto;
     display: block;
@@ -242,9 +243,7 @@ const useImageLoader = (
       const image = imageRef.current
       if (!image || !canvasRef.current) return
 
-      const { canvasWidth, canvasHeight, cropWidth, cropHeight, maxX, maxY } = getHeaderVars(
-        canvasRef.current,
-      )
+      const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current)
       const { width: iw, height: ih } = image
       const ir = iw / ih
 
@@ -463,11 +462,12 @@ const useWindowResize = (
 
     // For a 3:1 ratio (width:height), we need to ensure the height is 1/3 of the width
     let width = Math.min(adjustedWidth, 1200) // Cap at 1200px for max width
-    let height = width / headerAspectRatio // Maintain 3:1 aspect ratio
+    // Height is derived from width to maintain 3:1 aspect ratio
+    // const height = width / headerAspectRatio
 
     // Ensure minimum dimensions
     width = Math.max(width, 600)
-    height = Math.max(height, 200)
+    // Height is derived from width, ensuring minimum through width constraint
 
     const canvas = canvasRef.current
     if (canvas) {
@@ -588,9 +588,8 @@ const useCropSubmission = (
     cropCtx.fillStyle = 'white'
     cropCtx.fillRect(0, 0, cropWidth, cropHeight)
 
-    // Get the current canvas and its context
+    // Get the current canvas
     const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')!
 
     // Get the current image position and dimensions from coordinatesRef
     const { x, y, w, h } = coordinatesRef.current

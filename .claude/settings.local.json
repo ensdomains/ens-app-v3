@@ -15,7 +15,8 @@
       "Bash(git commit:*)",
       "Bash(npx tsc:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm lint:fix:*)"
+      "Bash(pnpm lint:fix:*)",
+      "Bash(pnpm lint:*)"
     ],
     "deny": []
   }

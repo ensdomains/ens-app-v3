@@ -57,10 +57,7 @@ const Context = createContext<SyncContext>({
 type ChainDependentQueryKey = CreateQueryKey<object, string, 'standard'>
 
 // Define a type for ensHeader queries similar to GetEnsAvatarQueryKey
-type GetEnsHeaderQueryKey<TConfig extends Config = Config> = [
-  'ensHeader',
-  { chainId?: number; name?: string },
-]
+type GetEnsHeaderQueryKey = ['ensHeader', { chainId?: number; name?: string }]
 
 const filterByChainDependentQuery =
   (chainId: SupportedChain['id']) =>

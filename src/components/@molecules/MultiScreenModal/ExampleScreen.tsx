@@ -26,14 +26,11 @@ const ExampleScreen = ({
   description,
   fieldName,
   initialValue = '',
-  onNext,
 }: ExampleScreenProps) => {
   const [value, setValue] = useState(initialValue)
 
-  const handleNext = () => {
-    // Pass data to the next screen via onNext
-    onNext?.({ [fieldName]: value })
-  }
+  // Note: onNext is available if you need to pass data to the next screen
+  // You could call onNext?.({ [fieldName]: value }) when appropriate
 
   return (
     <Container>
