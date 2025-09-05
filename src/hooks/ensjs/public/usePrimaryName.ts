@@ -78,7 +78,7 @@ export const getPrimaryNameQueryFn =
           })
 
           if (rawNameResult && rawNameResult[0]) {
-            originalName = rawNameResult[0]
+            ;[originalName] = rawNameResult
             // Check if the raw name is normalized
             try {
               const normalizedVersion = normalise(originalName)
@@ -115,7 +115,7 @@ export const getPrimaryNameQueryFn =
       ...res,
       match: effectiveMatch,
       beautifiedName: shouldBeautify ? tryBeautify(res.name) : res.name,
-      originalName: originalName, // This is the actual raw name from reverse resolution
+      originalName, // This is the actual raw name from reverse resolution
     }
   }
 
