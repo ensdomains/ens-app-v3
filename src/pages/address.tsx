@@ -79,7 +79,7 @@ const Page = () => {
               {primaryProfile?.name ? (
                 <ProfileSnippet
                   name={primaryProfile.originalName || primaryProfile.name}
-                  button={hasMismatch ? undefined : "viewProfile"}
+                  button={hasMismatch ? undefined : 'viewProfile'}
                   getTextRecord={getTextRecord}
                   hasMismatch={hasMismatch}
                 />
