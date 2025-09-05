@@ -243,7 +243,7 @@ test.describe.serial('normal registration', () => {
       await time.increaseTime({ seconds: 60 })
       await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
       await expect(page.getByTestId('transactions-subheading')).toHaveText(
-        /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+        /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
       )
       await expect(page.getByTestId('finish-button')).toBeEnabled()
     })
@@ -256,7 +256,7 @@ test.describe.serial('normal registration', () => {
     await test.step('should be able to start registration step', async () => {
       await expect(page.getByTestId('transactions-subheading')).toBeVisible()
       await expect(page.getByTestId('transactions-subheading')).toHaveText(
-        /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+        /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
       )
       await page.getByTestId('finish-button').click()
     })
@@ -572,7 +572,7 @@ test('should allow normal registration, from disconnected to connected state', a
     await time.increaseTime({ seconds: 60 })
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
     await expect(page.getByTestId('transactions-subheading')).toHaveText(
-      /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+      /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
     )
     await expect(page.getByTestId('finish-button')).toBeEnabled()
   })
@@ -585,7 +585,7 @@ test('should allow normal registration, from disconnected to connected state', a
   await test.step('should be able to start registration step', async () => {
     await expect(page.getByTestId('transactions-subheading')).toBeVisible()
     await expect(page.getByTestId('transactions-subheading')).toHaveText(
-      /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+      /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
     )
     await page.getByTestId('finish-button').click()
   })
