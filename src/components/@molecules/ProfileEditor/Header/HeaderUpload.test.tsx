@@ -6,7 +6,7 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { useChainName } from '@app/hooks/chain/useChainName'
 
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
-import { BannerUpload } from './HeaderUpload'
+import { HeaderUpload } from './HeaderUpload'
 
 vi.mock('wagmi')
 vi.mock('@app/hooks/chain/useChainName')
@@ -27,11 +27,11 @@ makeMockIntersectionObserver()
 const props = {
   handleCancel: mockHandleCancel,
   handleSubmit: mockHandleSubmit,
-  bannerFile: mockFile,
+  headerFile: mockFile,
   name: 'test.eth',
 }
 
-describe('<BannerUpload />', () => {
+describe('<HeaderUpload />', () => {
   mockUseSignTypedData.mockImplementation(() => ({
     signTypedDataAsync: mockSignTypedDataAsync,
   }))
@@ -44,16 +44,16 @@ describe('<BannerUpload />', () => {
     URL.createObjectURL = vi.fn(() => 'https://localhost/test.png')
   })
   it('initially shows crop component', () => {
-    render(<BannerUpload {...props} />)
+    render(<HeaderUpload {...props} />)
     expect(screen.getByTestId('edit-image-container')).toBeVisible()
   })
   it('shows confirmation once crop is complete', () => {
-    render(<BannerUpload {...props} />)
+    render(<HeaderUpload {...props} />)
     fireEvent.click(screen.getByTestId('continue-button'))
     expect(screen.getByTestId('cropped-image-preview')).toBeVisible()
   })
   it('calls handleCancel when cancel button is clicked', () => {
-    render(<BannerUpload {...props} />)
+    render(<HeaderUpload {...props} />)
     fireEvent.click(screen.getByTestId('avatar-cancel-button'))
     expect(mockHandleCancel).toHaveBeenCalled()
   })
@@ -67,11 +67,11 @@ describe('<BannerUpload />', () => {
     vi.spyOn(Uint8Array, 'from').mockImplementation(() => new Uint8Array())
     mockSignTypedDataAsync.mockResolvedValue('sig')
 
-    render(<BannerUpload {...props} />)
+    render(<HeaderUpload {...props} />)
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://euc.li/test.eth/header', {
+      expect(global.fetch).toBeCalledWith('https://euc.li/test.eth/h', {
         method: 'PUT',
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -89,7 +89,7 @@ describe('<BannerUpload />', () => {
     await waitFor(() =>
       expect(mockHandleSubmit).toHaveBeenCalledWith(
         'upload',
-        'https://euc.li/test.eth/header',
+        'https://euc.li/test.eth/h',
         mockFileDataURL,
       ),
     )
@@ -105,11 +105,11 @@ describe('<BannerUpload />', () => {
     vi.spyOn(Uint8Array, 'from').mockImplementation(() => new Uint8Array())
     mockSignTypedDataAsync.mockResolvedValue('sig')
 
-    render(<BannerUpload {...props} />)
+    render(<HeaderUpload {...props} />)
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://euc.li/sepolia/test.eth/header', {
+      expect(global.fetch).toBeCalledWith('https://euc.li/sepolia/test.eth/h', {
         method: 'PUT',
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -132,7 +132,7 @@ describe('<BannerUpload />', () => {
       }),
     )
 
-    render(<BannerUpload {...props} />)
+    render(<HeaderUpload {...props} />)
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
 
