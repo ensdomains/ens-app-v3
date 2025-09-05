@@ -63,8 +63,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const labelForRecord = (record: ProfileRecord) => {
     if (record.group === 'general')
       return t(`steps.profile.options.groups.general.items.${record.key}`)
-    if (record.group === 'media')
-      return t(`steps.profile.options.groups.media.items.${record.key}`)
+    if (record.group === 'media') return t(`steps.profile.options.groups.media.items.${record.key}`)
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.items.${record.key}`)
     if (record.group === 'address')
