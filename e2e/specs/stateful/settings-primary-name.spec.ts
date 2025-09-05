@@ -7,12 +7,6 @@ test.describe('Settings Tab Primary Names', () => {
     page,
     login,
   }) => {
-    const mainSection = page.locator(
-      '.NetworkSpecificPrimaryNamesSection__NetworkSpecificSection-sc-f0f1211a-0.iaIaKv',
-    )
-    const parentTitle = mainSection.locator(
-      'div.NetworkSpecificPrimaryNamesSection__NetworkSectionHeader-sc-f0f1211a-2 >> text="Network-specific primary names"',
-    )
     const ensNames = [
       'default-ens.eth',
       'arbprimary.eth',
@@ -30,11 +24,11 @@ test.describe('Settings Tab Primary Names', () => {
     await expect(page.getByText('Settings')).toBeVisible()
 
     // Check network specific primary names are showing
-    await expect(parentTitle).toHaveText('Network-specific primary names')
+    await expect(page.getByText('Network-specific primary names')).toBeVisible()
 
     // Check all names are visible
     for (const name of ensNames) {
-      expect(mainSection.getByText(name)).toBeVisible()
+      expect(page.getByText(name)).toBeVisible()
     }
   })
 })
