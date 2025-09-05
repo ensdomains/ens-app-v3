@@ -4,6 +4,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ThemeProvider } from 'styled-components'
+import { lightTheme } from '@ensdomains/thorin'
 
 import Page from './address'
 import { useRouter } from 'next/router'
@@ -73,13 +75,15 @@ vi.mock('@app/components/@molecules/NameListView/NameListView', () => ({
 }))
 
 vi.mock('@app/layouts/Content', () => ({
-  Content: ({ children, loading }: any) => (
-    <div data-testid="content" data-loading={loading}>
-      {typeof children === 'function' ? children({}) : children}
-      {children.leading}
-      {children.trailing}
-    </div>
-  ),
+  Content: ({ children, loading }: any) => {
+    const childrenObj = typeof children === 'object' && !React.isValidElement(children) ? children : {}
+    return (
+      <div data-testid="content" data-loading={loading}>
+        {childrenObj.leading}
+        {childrenObj.trailing}
+      </div>
+    )
+  },
 }))
 
 vi.mock('@app/layouts/ContentGrid', () => ({
@@ -104,7 +108,9 @@ describe('Address Page', () => {
   })
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={lightTheme}>{children}</ThemeProvider>
+    </QueryClientProvider>
   )
 
   it('should display MetaMask.eth with original capitalization', async () => {
@@ -128,6 +134,7 @@ describe('Address Page', () => {
     render(<Page />, { wrapper })
 
     await waitFor(() => {
+      // When hasMismatch is true, button prop should be undefined, so button-type should not exist
       const buttonType = screen.queryByTestId('button-type')
       expect(buttonType).not.toBeInTheDocument()
     })

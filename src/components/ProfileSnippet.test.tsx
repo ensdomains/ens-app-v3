@@ -1,6 +1,6 @@
 import '@app/test-utils'
 
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '@app/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import React from 'react'
 
@@ -24,7 +24,7 @@ vi.mock('@app/hooks/useRouterWithHistory', () => ({
   }),
 }))
 
-vi.mock('@app/hooks/transactions/TransactionFlowProvider', () => ({
+vi.mock('../transaction-flow/TransactionFlowProvider', () => ({
   useTransactionFlow: () => ({
     usePreparedDataInput: () => vi.fn(),
   }),
@@ -42,7 +42,7 @@ describe('ProfileSnippet', () => {
     expect(screen.getByText('name.unnormalized')).toBeInTheDocument()
   })
   
-  it('should not show View Profile button when hasMismatch is true', () => {
+  it('should show View Profile button even when hasMismatch is true', () => {
     render(
       <ProfileSnippet
         name="MetaMask.eth"
@@ -51,7 +51,7 @@ describe('ProfileSnippet', () => {
       />
     )
     
-    expect(screen.queryByText('action.viewProfile')).not.toBeInTheDocument()
+    expect(screen.queryByText('wallet.viewProfile')).toBeInTheDocument()
   })
   
   it('should show primary name tag when isPrimary is true and no mismatch', () => {

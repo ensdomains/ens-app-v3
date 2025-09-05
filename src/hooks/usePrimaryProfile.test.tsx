@@ -1,7 +1,5 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook, waitFor } from '@app/test-utils'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import React, { ReactNode } from 'react'
 
 import { usePrimaryProfile } from './usePrimaryProfile'
 import { usePrimaryName } from './ensjs/public/usePrimaryName'
@@ -14,17 +12,6 @@ const mockUsePrimaryName = vi.mocked(usePrimaryName)
 const mockUseRecords = vi.mocked(useRecords)
 
 describe('usePrimaryProfile', () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  })
-
-  const wrapper = ({ children }: { children: ReactNode }) => 
-    React.createElement(QueryClientProvider, { client: queryClient }, children)
-
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -44,7 +31,7 @@ describe('usePrimaryProfile', () => {
       isFetching: false,
     } as any)
 
-    renderHook(() => usePrimaryProfile({ address }), { wrapper })
+    renderHook(() => usePrimaryProfile({ address }))
 
     expect(mockUsePrimaryName).toHaveBeenCalledWith({
       address,
@@ -67,6 +54,7 @@ describe('usePrimaryProfile', () => {
         { key: 'description', value: 'Test description' },
         { key: 'url', value: 'https://test.com' },
       ],
+      coins: [],
     }
 
     mockUsePrimaryName.mockReturnValue({
@@ -81,7 +69,7 @@ describe('usePrimaryProfile', () => {
       isFetching: false,
     } as any)
 
-    const { result } = renderHook(() => usePrimaryProfile({ address }), { wrapper })
+    const { result } = renderHook(() => usePrimaryProfile({ address }))
 
     await waitFor(() => {
       expect(result.current.data).toEqual({
@@ -114,7 +102,7 @@ describe('usePrimaryProfile', () => {
       isFetching: false,
     } as any)
 
-    const { result } = renderHook(() => usePrimaryProfile({ address }), { wrapper })
+    const { result } = renderHook(() => usePrimaryProfile({ address }))
 
     await waitFor(() => {
       expect(result.current.data).toEqual({
@@ -140,7 +128,7 @@ describe('usePrimaryProfile', () => {
       isFetching: false,
     } as any)
 
-    const { result } = renderHook(() => usePrimaryProfile({ address }), { wrapper })
+    const { result } = renderHook(() => usePrimaryProfile({ address }))
 
     await waitFor(() => {
       expect(result.current.data).toBeUndefined()
@@ -162,7 +150,7 @@ describe('usePrimaryProfile', () => {
       isFetching: false,
     } as any)
 
-    const { result } = renderHook(() => usePrimaryProfile({ address }), { wrapper })
+    const { result } = renderHook(() => usePrimaryProfile({ address }))
 
     expect(result.current.isLoading).toBe(true)
     expect(result.current.isFetching).toBe(true)
