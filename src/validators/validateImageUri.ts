@@ -34,7 +34,3 @@ export const validateImageUri = (url?: string): string | boolean => {
 }
 
 export const isValidImageUri = (s: string) => !!s && validateImageUri(s) === true
-
-// Legacy aliases for backward compatibility
-export const validateBanner = validateImageUri
-export const isValidBanner = isValidImageUri

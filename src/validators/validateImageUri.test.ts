@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { validateImageUri, isValidImageUri, validateBanner, isValidBanner } from './validateImageUri'
+import { validateImageUri, isValidImageUri } from './validateImageUri'
 
 describe('validateImageUri', () => {
   it('should return true for valid HTTPS image URLs', () => {
@@ -117,41 +117,3 @@ describe('isValidImageUri', () => {
   })
 })
 
-describe('isValidBanner (legacy alias)', () => {
-  it('should return true for valid HTTPS image URLs', () => {
-    expect(isValidBanner('https://example.com/image.jpg')).toBe(true)
-    expect(isValidBanner('https://example.com/image.png')).toBe(true)
-    expect(isValidBanner('https://example.com/image.gif')).toBe(true)
-  })
-
-  it('should return false for empty or undefined URL', () => {
-    expect(isValidBanner('')).toBe(false)
-    expect(isValidBanner(undefined as any)).toBe(false)
-  })
-
-  it('should return false for HTTP URLs', () => {
-    expect(isValidBanner('http://example.com/image.jpg')).toBe(true)
-  })
-
-  it('should return false for invalid URLs', () => {
-    expect(isValidBanner('not-a-url')).toBe(false)
-  })
-
-  it('should return true for non-image file extensions (validation is commented out)', () => {
-    expect(isValidBanner('https://example.com/document.pdf')).toBe(true)
-    expect(isValidBanner('https://example.com/video.mp4')).toBe(true)
-  })
-
-  it('should return false for JavaScript URLs', () => {
-    expect(isValidBanner('javascript:alert("hello")')).toBe(false)
-  })
-
-  it('should return true for image URLs with query parameters', () => {
-    expect(isValidBanner('https://example.com/image.jpg?width=500&height=300')).toBe(true)
-  })
-
-  it('should be case insensitive for file extensions', () => {
-    expect(isValidBanner('https://example.com/image.JPG')).toBe(true)
-    expect(isValidBanner('https://example.com/image.PNG')).toBe(true)
-  })
-})
