@@ -208,18 +208,17 @@ jobs:
         run: |
           echo "Cleaning Playwright cache..."
           rm -rf ~/.cache/ms-playwright || true
-          
-          echo "Installing system dependencies using Playwright..."
-          # Let Playwright handle system dependencies first
-          pnpm exec playwright install-deps chromium || true
-          
+
+          # echo "Installing system dependencies using Playwright..."
+          # # Let Playwright handle system dependencies first
+          # pnpm exec playwright install-deps chromium || true
+
           echo "Installing Playwright browsers and dependencies..."
-          pnpm exec playwright install-deps chromium
           pnpm exec playwright install chromium
-          
+
           echo "Verifying installation..."
           pnpm exec playwright --version
-          
+
           # Double-check the chromium executable exists
           CHROMIUM_PATH=$(find ~/.cache/ms-playwright -name "chrome" -type f 2>/dev/null | head -1)
           if [ -z "$CHROMIUM_PATH" ]; then
@@ -230,9 +229,9 @@ jobs:
             echo "✅ Chromium found at: $CHROMIUM_PATH"
             ls -la "$CHROMIUM_PATH"
           fi
-          
-      - name: Rebuild native dependencies
-        run: pnpm rebuild -r
+
+      # - name: Rebuild native dependencies
+      #   run: pnpm rebuild -r
 
       - name: Run wallet tests
         run: |
