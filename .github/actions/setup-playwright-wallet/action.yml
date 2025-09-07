@@ -1,7 +1,7 @@
-name: "Setup Playwright for Wallet Tests"
-description: "Robust Playwright setup for wallet/MetaMask testing"
+name: 'Setup Playwright for Wallet Tests'
+description: 'Robust Playwright setup for wallet/MetaMask testing'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Get Playwright version
       id: playwright-version
@@ -28,25 +28,26 @@ runs:
         echo "Installing Playwright browsers..."
         pnpm exec playwright install chromium
         pnpm exec playwright install-deps chromium
-        
+
     - name: Verify Playwright installation
       shell: bash
       run: |
         echo "Verifying Playwright installation..."
         pnpm exec playwright --version
-        
+
         # Check if chromium is installed
         if pnpm exec playwright show-trace 2>&1 | grep -q "executable doesn't exist"; then
           echo "Chromium not found, reinstalling..."
           pnpm exec playwright install --force chromium
           pnpm exec playwright install-deps chromium
         fi
-        
+
         # List installed browsers
         echo "Installed browsers:"
         ls -la ~/.cache/ms-playwright/ 2>/dev/null || true
-        
+
     - name: Install additional dependencies for MetaMask
+      if: false
       shell: bash
       run: |
         # These are often needed for MetaMask extension
