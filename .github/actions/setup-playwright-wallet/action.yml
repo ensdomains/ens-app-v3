@@ -1,0 +1,67 @@
+name: "Setup Playwright for Wallet Tests"
+description: "Robust Playwright setup for wallet/MetaMask testing"
+runs:
+  using: "composite"
+  steps:
+    - name: Get Playwright version
+      id: playwright-version
+      shell: bash
+      run: |
+        PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package.json').devDependencies['@playwright/test'] || require('./package.json').dependencies['@playwright/test'] || '1.48.0')")
+        echo "version=$PLAYWRIGHT_VERSION" >> $GITHUB_OUTPUT
+        echo "Playwright version: $PLAYWRIGHT_VERSION"
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: |
+          ~/.cache/ms-playwright
+          ~/Library/Caches/ms-playwright
+          %USERPROFILE%\AppData\Local\ms-playwright
+        key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium
+
+    - name: Install Playwright browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        echo "Installing Playwright browsers..."
+        pnpm exec playwright install chromium
+        pnpm exec playwright install-deps chromium
+        
+    - name: Verify Playwright installation
+      shell: bash
+      run: |
+        echo "Verifying Playwright installation..."
+        pnpm exec playwright --version
+        
+        # Check if chromium is installed
+        if pnpm exec playwright show-trace 2>&1 | grep -q "executable doesn't exist"; then
+          echo "Chromium not found, reinstalling..."
+          pnpm exec playwright install --force chromium
+          pnpm exec playwright install-deps chromium
+        fi
+        
+        # List installed browsers
+        echo "Installed browsers:"
+        ls -la ~/.cache/ms-playwright/ 2>/dev/null || true
+        
+    - name: Install additional dependencies for MetaMask
+      shell: bash
+      run: |
+        # These are often needed for MetaMask extension
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3 \
+          libatk1.0-0 \
+          libatk-bridge2.0-0 \
+          libcups2 \
+          libxkbcommon0 \
+          libxcomposite1 \
+          libxdamage1 \
+          libxrandr2 \
+          libgbm1 \
+          libasound2 \
+          fonts-liberation \
+          libappindicator3-1 \
+          xdg-utils

@@ -204,10 +204,11 @@ jobs:
           export DISPLAY=:99
           Xvfb :99 -screen 0 1280x720x24 > /dev/null 2>&1 &
 
-      - name: Install Playwright with dependencies
-        run: pnpm exec playwright install --with-deps chromium
-
-      # - run: pnpm rebuild -r
+      - name: Setup Playwright for wallet tests
+        uses: ./.github/actions/setup-playwright-wallet
+          
+      - name: Rebuild native dependencies
+        run: pnpm rebuild -r
 
       - name: Run wallet tests
         run: |
