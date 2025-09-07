@@ -46,7 +46,7 @@ runs:
       shell: bash
       run: |
         echo "Installing additional dependencies for MetaMask..."
-        # These are often needed for MetaMask extension
+        # These are often needed for MetaMask extension (Ubuntu 24.04 compatible)
         sudo apt-get update
         sudo apt-get install -y \
           libnss3 \
@@ -58,7 +58,11 @@ runs:
           libxdamage1 \
           libxrandr2 \
           libgbm1 \
-          libasound2 \
+          libasound2t64 \
           fonts-liberation \
           libappindicator3-1 \
-          xdg-utils
+          xdg-utils \
+          ca-certificates \
+          libdrm2 \
+          libxss1 \
+          lsb-release

@@ -209,22 +209,9 @@ jobs:
           echo "Cleaning Playwright cache..."
           rm -rf ~/.cache/ms-playwright || true
           
-          echo "Installing system dependencies first..."
-          sudo apt-get update
-          sudo apt-get install -y \
-            libnss3 \
-            libatk1.0-0 \
-            libatk-bridge2.0-0 \
-            libcups2 \
-            libxkbcommon0 \
-            libxcomposite1 \
-            libxdamage1 \
-            libxrandr2 \
-            libgbm1 \
-            libasound2 \
-            fonts-liberation \
-            libappindicator3-1 \
-            xdg-utils
+          echo "Installing system dependencies using Playwright..."
+          # Let Playwright handle system dependencies first
+          pnpm exec playwright install-deps chromium || true
           
           echo "Installing Playwright browsers and dependencies..."
           pnpm exec playwright install-deps chromium
