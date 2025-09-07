@@ -21,7 +21,7 @@ jobs:
 
   build-stateless:
     # skip this job
-    if: false
+    # if: false
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
@@ -181,13 +181,12 @@ jobs:
 
   wallets:
     name: wallets (headed)
-    needs: build-stateful
+    needs: build-stateless
     timeout-minutes: 15
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
 
       - name: Setup virtual display
         run: |
