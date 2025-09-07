@@ -10,7 +10,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-base
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -25,7 +25,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-base
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -50,7 +50,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-base
 
       - name: Build stateful and export
         run: |
@@ -111,8 +111,10 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
+      - uses: ./.github/actions/setup-base
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
 
       - run: pnpm rebuild -r
 
@@ -150,8 +152,10 @@ jobs:
         shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
+      - uses: ./.github/actions/setup-base
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
 
       - run: pnpm rebuild -r
 
@@ -181,12 +185,17 @@ jobs:
 
   wallets:
     name: wallets (headed)
-    needs: build-stateless
     timeout-minutes: 15
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    # Use more powerful instance for browser automation with MetaMask
+    # Options:
+    # - blacksmith-8vcpu-ubuntu-2404 (8 vCPUs)
+    # - blacksmith-16vcpu-ubuntu-2404 (16 vCPUs)
+    # - ubuntu-latest-8-cores (GitHub hosted)
+    # - ubuntu-latest-16-cores (GitHub hosted)
+    runs-on: blacksmith-8vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-base
 
       - name: Setup virtual display
         run: |
@@ -195,22 +204,16 @@ jobs:
           export DISPLAY=:99
           Xvfb :99 -screen 0 1280x720x24 > /dev/null 2>&1 &
 
-      - run: pnpm rebuild -r
+      - name: Install Playwright with dependencies
+        run: pnpm exec playwright install --with-deps chromium
 
-      # - name: Download build
-      #   id: download
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: stateful-build
-
-      # - name: Untar files
-      #   run: tar -xvf stateful-build.tar
+      # - run: pnpm rebuild -r
 
       - name: Run wallet tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm dev" \
-          "pnpm wait-on https://127.0.0.1:3000 && DISPLAY=:99 pnpm e2e:wallet --headed"
+          "pnpm wait-on http://localhost:3000 && DISPLAY=:99 pnpm e2e:wallet --headed"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
           DISPLAY: :99
