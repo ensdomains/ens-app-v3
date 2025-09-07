@@ -17,7 +17,7 @@ export const SafeEnsConfig = {
   // URLs
   SAFE_URL: process.env.SAFE_URL || 'https://app.safe.global',
   ENS_APP_URL: process.env.CI
-    ? 'https://127.0.0.1:8788'
+    ? 'https://127.0.0.1:3000'
     : process.env.ENS_APP_URL || 'http://localhost:3000',
 
   // Safe addresses for different networks
