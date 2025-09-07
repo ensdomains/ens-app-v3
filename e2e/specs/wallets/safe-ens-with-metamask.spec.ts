@@ -137,12 +137,16 @@ async function connectWalletToSafe(
     ]
 
     let connected = false
+    // eslint-disable-next-line no-restricted-syntax
     for (const selector of connectButtonSelectors) {
       try {
         const connectButton = page.locator(selector).first()
+        // eslint-disable-next-line no-await-in-loop
         if (await connectButton.isVisible({ timeout: 3000 })) {
           console.log(`🔘 Clicking connect button with selector: ${selector}`)
+          // eslint-disable-next-line no-await-in-loop
           await connectButton.click()
+          // eslint-disable-next-line no-await-in-loop
           await page.waitForTimeout(2000)
 
           // Look for MetaMask option in wallet selection
@@ -153,16 +157,20 @@ async function connectWalletToSafe(
             'text=/MetaMask/i',
           ]
 
+          // eslint-disable-next-line no-restricted-syntax
           for (const mmSelector of metaMaskSelectors) {
             const metaMaskOption = page.locator(mmSelector).first()
+            // eslint-disable-next-line no-await-in-loop
             if (await metaMaskOption.isVisible({ timeout: 3000 })) {
               console.log(`🦊 Selecting MetaMask with selector: ${mmSelector}`)
               // await metaMaskOption.click()
 
+              // eslint-disable-next-line no-await-in-loop
               await metaMaskOption.click()
               console.log('✅ Clicked MetaMask option, waiting for extension window...')
 
               // Wait for MetaMask extension window to open
+              // eslint-disable-next-line no-await-in-loop
               await page.waitForTimeout(3000)
 
               try {
@@ -185,8 +193,11 @@ async function connectWalletToSafe(
 
                 if (metaMaskPage) {
                   // Bring MetaMask page to front
+                  // eslint-disable-next-line no-await-in-loop
                   await metaMaskPage.bringToFront()
+                  // eslint-disable-next-line no-await-in-loop
                   await metaMaskPage.waitForLoadState('domcontentloaded')
+                  // eslint-disable-next-line no-await-in-loop
                   await page.waitForTimeout(2000)
 
                   // Click the confirm button in MetaMask extension
@@ -201,27 +212,32 @@ async function connectWalletToSafe(
                   ]
 
                   let confirmClicked = false
-                  for (const selector of confirmSelectors) {
+                  // eslint-disable-next-line no-restricted-syntax
+                  for (const confirmSelector of confirmSelectors) {
                     try {
-                      const confirmButton = metaMaskPage.locator(selector)
+                      const confirmButton = metaMaskPage.locator(confirmSelector)
+                      // eslint-disable-next-line no-await-in-loop
                       if (await confirmButton.isVisible({ timeout: 5000 })) {
+                        // eslint-disable-next-line no-await-in-loop
                         await confirmButton.click()
-                        console.log(`✅ Clicked MetaMask confirm with: ${selector}`)
+                        console.log(`✅ Clicked MetaMask confirm with: ${confirmSelector}`)
                         confirmClicked = true
                         break
                       }
                     } catch (selectorError) {
-                      console.log(`⚠️ Selector failed: ${selector}`)
+                      console.log(`⚠️ Selector failed: ${confirmSelector}`)
                     }
                   }
 
                   if (confirmClicked) {
                     console.log('✅ MetaMask connection confirmed')
                     // Wait for the extension window to close
+                    // eslint-disable-next-line no-await-in-loop
                     await page.waitForTimeout(3000)
                   } else {
                     console.log('⚠️ Could not find confirm button in MetaMask extension')
                     // Take screenshot for debugging
+                    // eslint-disable-next-line no-await-in-loop
                     await metaMaskPage.screenshot({ path: 'metamask-extension-debug.png' })
                   }
                 } else {
@@ -327,9 +343,12 @@ async function openEnsApp(page: Page): Promise<void> {
     const appSelectors = ['text=ENS', 'text=Ethereum Name Service', '.MuiCard-root:has-text("ENS")']
 
     let appFound = false
+    // eslint-disable-next-line no-restricted-syntax
     for (const selector of appSelectors) {
       const appElement = page.locator(selector)
+      // eslint-disable-next-line no-await-in-loop
       if (await appElement.isVisible({ timeout: 3000 })) {
+        // eslint-disable-next-line no-await-in-loop
         await appElement.click()
         console.log(`✅ Clicked on ENS app using selector: ${selector}`)
         appFound = true
@@ -353,10 +372,13 @@ async function openEnsApp(page: Page): Promise<void> {
     ]
 
     let buttonClicked = false
+    // eslint-disable-next-line no-restricted-syntax
     for (const selector of openButtonSelectors) {
       try {
         const openButton = page.locator(selector)
+        // eslint-disable-next-line no-await-in-loop
         if (await openButton.isVisible({ timeout: 5000 })) {
+          // eslint-disable-next-line no-await-in-loop
           await openButton.click()
           console.log(`✅ Clicked Open Safe App button with: ${selector}`)
           buttonClicked = true
@@ -669,6 +691,7 @@ async function performRegistrationWithMetaMask(
 }
 
 test.describe('Safe + ENS with Dappwright MetaMask', () => {
+  test.setTimeout(300000) // 5 minutes timeout for all tests in this suite
   let metaMask: Dappwright
   let page: Page
   let context: BrowserContext

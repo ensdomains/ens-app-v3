@@ -1,5 +1,6 @@
 import * as path from 'path'
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as dotenv from 'dotenv'
 
 // Load environment variables from .env
