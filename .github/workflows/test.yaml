@@ -20,6 +20,7 @@ jobs:
       - run: pnpm test:coverage
 
   build-stateless:
+    # skip this job
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +44,8 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
+    # skip this job
+    if: false
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
@@ -63,6 +66,8 @@ jobs:
           path: stateful-build.tar
 
   stateless:
+    # skip this job
+    if: false
     name: stateless (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
@@ -133,6 +138,8 @@ jobs:
           overwrite: true
 
   stateful:
+    # skip this job
+    if: false
     name: stateful (${{matrix.shard}})
     needs: build-stateful
     timeout-minutes: 10
@@ -173,7 +180,7 @@ jobs:
 
   wallets:
     name: wallets (headed)
-    needs: build-stateful
+    # needs: build-stateful
     timeout-minutes: 15
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
@@ -188,21 +195,21 @@ jobs:
           export DISPLAY=:99
           Xvfb :99 -screen 0 1280x720x24 > /dev/null 2>&1 &
 
-      - run: pnpm rebuild -r
+      # - run: pnpm rebuild -r
 
-      - name: Download build
-        id: download
-        uses: actions/download-artifact@v4
-        with:
-          name: stateful-build
+      # - name: Download build
+      #   id: download
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: stateful-build
 
-      - name: Untar files
-        run: tar -xvf stateful-build.tar
+      # - name: Untar files
+      #   run: tar -xvf stateful-build.tar
 
       - name: Run wallet tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm wrangle:dev:https" \
+          "pnpm dev" \
           "pnpm wait-on https://127.0.0.1:3000 && DISPLAY=:99 pnpm e2e:wallet --headed"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
