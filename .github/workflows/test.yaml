@@ -21,7 +21,7 @@ jobs:
 
   build-stateless:
     # skip this job
-    # if: false
+    if: false
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
 
   build-stateful:
     # skip this job
-    if: false
+    # if: false
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
