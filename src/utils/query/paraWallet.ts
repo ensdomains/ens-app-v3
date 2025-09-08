@@ -13,12 +13,11 @@ import i18n from '../../i18n'
 import { ENS_LINKS, WC_PROJECT_ID } from '../constants'
 import { transports } from './wagmi'
 
-// const prodParaApiKey = process.env.NEXT_PUBLIC_PARA_API_KEY_PROD
-const prodParaApiKey = 'c5695b18d016139ac4db1c7f98a87e68'
+const prodParaApiKey = process.env.NEXT_PUBLIC_PARA_API_KEY_PROD
 
 const APP_NAME = 'ENS'
 const PARA_ENV: Environment = prodParaApiKey ? Environment.PROD : Environment.BETA
-const PARA_API_KEY = prodParaApiKey || 'de88c0d78a98dd9a3b11897893997b06'
+const PARA_API_KEY = prodParaApiKey || 'de88c0d78a98dd9a3b11897893997b06' // NOSONAR
 
 const paraConstructorOpts: ConstructorOpts = {
   // Passkey Portal Branding
@@ -40,13 +39,8 @@ export const paraClient = new ParaWeb(PARA_ENV, PARA_API_KEY, paraConstructorOpt
 
 export const paraModalProps = {
   appName: 'ENS Manager App',
-  oAuthMethods: [
-    OAuthMethod.GOOGLE,
-    OAuthMethod.TWITTER,
-    OAuthMethod.DISCORD,
-    OAuthMethod.APPLE,
-    OAuthMethod.FACEBOOK,
-  ],
+  oAuthMethods: [OAuthMethod.GOOGLE, OAuthMethod.DISCORD, OAuthMethod.APPLE, OAuthMethod.FACEBOOK],
+  recoverySecretStepEnabled: true,
 } as const satisfies Partial<ParaModalProps>
 
 const paraWalletItegratedOpts: GetParaIntegratedOpts = {

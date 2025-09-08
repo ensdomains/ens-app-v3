@@ -22,6 +22,25 @@ export const isSelfExtendable = ({
   return ownerData?.registrant === address || wrapperData?.owner === address
 }
 
+type ExpiryAction = {
+  label: string
+  type: 'set-reminder' | 'extend'
+  icon: React.ComponentType
+  primary: boolean
+  expiryDate?: Date
+} & (
+  | {
+      type: 'extend'
+      onClick: () => void
+    }
+  | {
+      type: 'set-reminder'
+      expiryDate: Date
+    }
+)
+
+type UseExpiryActionsReturnType = ExpiryAction[]
+
 export const useExpiryActions = ({
   name,
   expiryDetails,
@@ -32,9 +51,9 @@ export const useExpiryActions = ({
   expiryDetails: ReturnType<typeof useExpiryDetails>['data']
   ownerData?: GetOwnerReturnType
   wrapperData?: GetWrapperDataReturnType
-}) => {
+}): UseExpiryActionsReturnType | null => {
   const { t } = useTranslation('common')
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
@@ -51,17 +70,21 @@ export const useExpiryActions = ({
       primary: false,
       expiryDate,
     },
-    {
-      label: t('action.extend'),
-      type: 'extend',
-      icon: FastForwardSVG,
-      primary: true,
-      onClick: () => {
-        showExtendNamesInput(`extend-names-${name}`, {
-          names: [name],
-          isSelf: isSelfExtendable({ ownerData, wrapperData, address }),
-        })
-      },
-    },
+    ...(isConnected
+      ? [
+          {
+            label: t('action.extend'),
+            type: 'extend' as const,
+            icon: FastForwardSVG,
+            primary: true,
+            onClick: () => {
+              showExtendNamesInput(`extend-names-${name}`, {
+                names: [name],
+                isSelf: isSelfExtendable({ ownerData, wrapperData, address }),
+              })
+            },
+          },
+        ]
+      : []),
   ] as const
 }

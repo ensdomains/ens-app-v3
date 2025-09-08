@@ -20,6 +20,7 @@ const rainbowKitTheme: Theme = {
 export const RainbowKitWithParaProvider = (props: RainbowKitProviderProps) => {
   const [paraData, setPara] = useState<Awaited<ReturnType<typeof loadPara>> | null>(null)
 
+  // Dynamically load para
   useEffect(() => {
     loadPara().then(setPara)
   }, [])

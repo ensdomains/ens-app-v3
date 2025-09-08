@@ -7,7 +7,6 @@ import { execSync } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
-import { withSentryConfig } from '@sentry/nextjs'
 import StylelintPlugin from 'stylelint-webpack-plugin'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -42,6 +41,40 @@ const nextConfig = {
   swcMinify: true,
   images: {
     domains: ['metadata.ens.domains'],
+  },
+  async headers() {
+    // keep this in case we need to debug Safe in the future
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          source: '/manifest.json',
+          headers: [
+            {
+              key: 'Access-Control-Allow-Origin',
+              value: '*',
+            },
+            {
+              key: 'Access-Control-Allow-Methods',
+              value: 'GET, OPTIONS',
+            },
+            {
+              key: 'Access-Control-Allow-Headers',
+              value: 'X-Requested-With, content-type, Authorization',
+            },
+          ],
+        },
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'Content-Security-Policy',
+              value: "frame-ancestors 'self' https://app.safe.global;",
+            },
+          ],
+        },
+      ]
+    }
+    return []
   },
   async rewrites() {
     return [
@@ -219,14 +252,6 @@ const plugins = []
 if (process.env.ANALYZE) {
   const withBundleAnalyzer = await import('@next/bundle-analyzer').then((n) => n.default)
   plugins.push(withBundleAnalyzer({ enabled: true }))
-}
-
-if (process.env.CI && process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS) {
-  plugins.push((config) =>
-    withSentryConfig(config, {
-      silent: false,
-    }),
-  )
 }
 
 export default plugins.reduce((acc, next) => next(acc), nextConfig)

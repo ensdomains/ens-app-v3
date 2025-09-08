@@ -7,6 +7,7 @@ import { GetPriceReturnType } from '@ensdomains/ensjs/public'
 import { DecodedFuses } from '@ensdomains/ensjs/utils'
 
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
+import type { ConnectorClientWithEns } from '@app/types'
 
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from './constants'
 import { calculateDatesDiff } from './date'
@@ -230,4 +231,26 @@ export const hslToHex = (hsl: string) => {
 
 export const hasParaConnection = (connections: Connection[]) => {
   return connections?.some((connection) => connection?.connector?.id === 'para-integrated')
+}
+
+export const connectorIsMetaMask = (
+  connections: Connection[],
+  connectorClient: ConnectorClientWithEns,
+) => {
+  return connections?.some(
+    (connection) =>
+      connection?.connector?.id === 'io.metamask' &&
+      connection.accounts.some((a) => a === connectorClient.account.address),
+  )
+}
+
+export const connectorIsPhantom = (
+  connections: Connection[],
+  connectorClient: ConnectorClientWithEns,
+) => {
+  return connections?.some(
+    (connection) =>
+      connection?.connector?.id === 'app.phantom' &&
+      connection.accounts.some((a) => a === connectorClient.account.address),
+  )
 }

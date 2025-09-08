@@ -87,7 +87,7 @@ const wagmiConfig = {
 
 vi.mock('@app/utils/query/wagmi', () => ({
   wagmiConfig,
-  infuraUrl: () => 'http://infura.io',
+  drpcUrl: () => 'http://drpc.org',
 }))
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
