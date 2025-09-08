@@ -50,23 +50,6 @@ jobs:
           echo "Cache contents:"
           ls -la ~/.cache/ms-playwright/ || echo "No cache found"
 
-          # # Test that we can actually launch chromium
-          # echo "Testing chromium launch..."
-          # cat > test-launch.js << 'EOF'
-          # const { chromium } = require('@playwright/test');
-          # (async () => {
-          #   console.log('Attempting to launch chromium...');
-          #   const browser = await chromium.launch({ headless: true });
-          #   console.log('✅ Chromium launched successfully!');
-          #   await browser.close();
-          #   process.exit(0);
-          # })().catch(err => {
-          #   console.error('❌ Failed to launch chromium:', err);
-          #   process.exit(1);
-          # });
-          # EOF
-          # node test-launch.js
-
       - name: Run wallet tests
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}

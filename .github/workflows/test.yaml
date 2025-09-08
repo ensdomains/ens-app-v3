@@ -10,7 +10,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-base
+      - uses: ./.github/actions/setup
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -20,12 +20,10 @@ jobs:
       - run: pnpm test:coverage
 
   build-stateless:
-    # skip this job
-    if: false
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-base
+      - uses: ./.github/actions/setup
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -45,12 +43,10 @@ jobs:
           path: stateless-build.tar
 
   build-stateful:
-    # skip this job
-    if: false
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-base
+      - uses: ./.github/actions/setup
 
       - name: Build stateful and export
         run: |
@@ -67,8 +63,6 @@ jobs:
           path: stateful-build.tar
 
   stateless:
-    # skip this job
-    if: false
     name: stateless (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
@@ -111,7 +105,7 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-base
+      - uses: ./.github/actions/setup
 
       - name: Install Playwright
         run: pnpm exec playwright install --with-deps chromium
@@ -141,8 +135,6 @@ jobs:
           overwrite: true
 
   stateful:
-    # skip this job
-    if: false
     name: stateful (${{matrix.shard}})
     needs: build-stateful
     timeout-minutes: 10
@@ -152,7 +144,7 @@ jobs:
         shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-base
+      - uses: ./.github/actions/setup
 
       - name: Install Playwright
         run: pnpm exec playwright install --with-deps chromium
@@ -182,5 +174,3 @@ jobs:
           name: stateful-report-${{matrix.shard}}
           path: playwright-report/
           retention-days: 30
-
-
