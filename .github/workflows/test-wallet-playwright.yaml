@@ -1,4 +1,4 @@
-name: Wallet Tests (Playwright Action)
+name: Wallet Tests (Container)
 
 on:
   workflow_dispatch:
@@ -11,13 +11,15 @@ env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
-  wallets-playwright-action:
-    name: wallets (Using Playwright Action)
+  wallets-container:
+    name: wallets (container)
     timeout-minutes: 20
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.50.1-jammy
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -34,29 +36,20 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y parallel xvfb
-
-      - name: Install Playwright browsers with dependencies
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Setup virtual display
-        run: |
-          export DISPLAY=:99
-          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
+          apt-get update
+          apt-get install -y parallel
 
       - name: Verify Playwright installation
         run: |
           echo "Checking Playwright installation..."
           pnpm exec playwright --version
-          
+
           echo "Checking browser installations..."
           pnpm exec playwright show-report || true
-          
+
           echo "Cache contents:"
           ls -la ~/.cache/ms-playwright/ || echo "No cache found"
-          
+
           # Test that we can actually launch chromium
           echo "Testing chromium launch..."
           cat > test-launch.js << 'EOF'
@@ -75,14 +68,12 @@ jobs:
           node test-launch.js
 
       - name: Run wallet tests
-        run: |
-          parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm dev" \
-          "pnpm wait-on http://localhost:3000 && pnpm e2e:wallet --headed"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-          DISPLAY: :99
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "0"
+        run: |
+          xvfb-run --auto-servernum parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm dev" \
+          "pnpm wait-on http://localhost:3000 && pnpm e2e:wallet --headed"
 
       - uses: actions/upload-artifact@v4
         if: always()
