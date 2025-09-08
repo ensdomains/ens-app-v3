@@ -53,6 +53,9 @@ describe('useValidate', () => {
       is2LD: undefined,
       isETH: undefined,
       labelDataArray: [],
+      hasEmoji: undefined,
+      hasMixedScripts: undefined,
+      isLatinOnly: undefined,
     })
   })
   describe('mocks', () => {
