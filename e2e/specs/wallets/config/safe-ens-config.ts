@@ -18,7 +18,7 @@ export const SafeEnsConfig = {
   // URLs
   SAFE_URL: process.env.SAFE_URL || 'https://app.safe.global',
   ENS_APP_URL: process.env.CI
-    ? 'http://127.0.0.1:3000'
+    ? 'https://sepolia.app.ens.domains/'
     : process.env.ENS_APP_URL || 'http://localhost:3000',
 
   // Safe addresses for different networks
