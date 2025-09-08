@@ -8,6 +8,7 @@ export const supportedAddresses = [
   'matic',
   'linea',
   'scr',
+  'sui',
 ] as const
 
 export type SupportedAddress = (typeof supportedAddresses)[number]
