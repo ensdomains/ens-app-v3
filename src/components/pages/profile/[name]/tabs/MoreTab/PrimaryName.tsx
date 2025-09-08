@@ -110,6 +110,7 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
               key={primaryName.coinName}
               keyLabel={primaryName.coinName}
               value={primaryName.address}
+              data-testid={`primary-name-${primaryName.coinName}-${primaryName.address}`}
             >
               {primaryName.address}
             </RecordItem>

@@ -4,7 +4,6 @@ import { test } from '../../../playwright/index.js'
 
 test.describe('More Tab Primary Names', () => {
   test(`should enter primary name more tab @mainnet`, async ({ page, login, makePageObject }) => {
-    const primaryNameCard = page.locator('.PrimaryName__PrimaryNameCard-sc-a812dff2-0')
     const name = 'default-ens.eth'
 
     // Enter ens app and connect
@@ -17,16 +16,11 @@ test.describe('More Tab Primary Names', () => {
     await expect(morePage.wrapButton).toHaveCount(0)
 
     // Check primary name section is showing
-    await expect(
-      primaryNameCard.locator('.PrimaryName__TitleRow-sc-a812dff2-2 div', {
-        hasText: 'Primary name',
-      }),
-    ).toBeVisible()
+    await expect(page.getByText('Your primary name')).toBeVisible()
 
     // Check eth and scr is showing with correct address
     const address = '0xFc5958B4B6F9a06D21E06429c8833f865577acf0'
-
-    await expect(page.locator(`button:has-text("eth"):has-text("${address}")`)).toBeVisible()
-    await expect(page.locator(`button:has-text("scr"):has-text("${address}")`)).toBeVisible()
+    await expect(page.getByTestId(`primary-name-eth-${address}`)).toBeVisible()
+    await expect(page.getByTestId(`primary-name-scr-${address}`)).toBeVisible()
   })
 })

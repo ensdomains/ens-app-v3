@@ -80,7 +80,7 @@ interface NetworkRowProps {
 
 export const NetworkRowComponent = ({ name, networks }: NetworkRowProps) => {
   return (
-    <NetworkRow>
+    <NetworkRow data-testid={`network-row-${name}`}>
       <NetworkInfo>
         <ZorbContainer>
           <AvatarWithZorb name={name} label={`${name} avatar`} size="8" />
@@ -93,7 +93,7 @@ export const NetworkRowComponent = ({ name, networks }: NetworkRowProps) => {
       </NetworkInfo>
       <NetworkIcons>
         {networks.map((network) => (
-          <NetworkIcon>
+          <NetworkIcon data-testid={`network-icon-${name}-${network.coinName}`}>
             <DynamicNetworkIcon name={network.coinName?.replace(/-sep$/, '')} />
           </NetworkIcon>
         ))}
