@@ -21,6 +21,12 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
     },
+    {
+      name: 'wallets',
+      testDir: './e2e/specs/wallets',
+      timeout: 300000, // 5 minutes for wallet tests
+      use: { ...devices['Desktop Chrome'], headless: false },
+    },
   ],
   use: {
     baseURL: process.env.CI ? 'http://127.0.0.1:8788' : 'http://localhost:3000',
