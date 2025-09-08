@@ -38,7 +38,7 @@
     "e2e:install": "npx playwright install chromium",
     "e2e": "npx playwright test --project=stateless",
     "e2e:stateful": "playwright test --project=stateful",
-    "e2e:wallet": "npx playwright test --project=wallets",
+    "e2e:wallet": "playwright test --project=wallets",
     "e2e:wallet:debug": "playwright test --project=wallets --debug",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000 --verbosity 1",
     "postinstall": "husky install",

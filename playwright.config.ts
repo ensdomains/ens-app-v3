@@ -25,7 +25,7 @@ export default defineConfig({
       name: 'wallets',
       testDir: './e2e/specs/wallets',
       timeout: 300000, // 5 minutes for wallet tests
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], headless: false },
     },
   ],
   use: {
