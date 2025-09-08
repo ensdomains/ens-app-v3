@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.50.1-jammy
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy
     steps:
       - uses: actions/checkout@v4
 
@@ -71,9 +71,9 @@ jobs:
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
         run: |
-          xvfb-run --auto-servernum parallel --lb --halt now,success=1,fail=1 ::: \
+          parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm dev" \
-          "pnpm wait-on http://localhost:3000 && pnpm e2e:wallet --headed"
+          "pnpm wait-on http://localhost:3000 && xvfb-run --auto-servernum pnpm e2e:wallet"
 
       - uses: actions/upload-artifact@v4
         if: always()
