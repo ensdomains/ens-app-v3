@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'e2e/specs/wallets/**'
-      - '.github/workflows/test-wallet-playwright.yaml'
+      #all files
+      - '**'
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
