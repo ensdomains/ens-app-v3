@@ -24,6 +24,14 @@ export default defineConfig({
     },
   ],
   use: {
-    baseURL: process.env.CI ? 'http://127.0.0.1:8788' : 'http://localhost:3000',
+    baseURL: (() => {
+      if (!process.env.CI) {
+        return 'http://localhost:3000'
+      }
+      if (process.env.CHAIN === 'mainnet') {
+        return 'http://127.0.0.1:3000'
+      }
+      return 'http://127.0.0.1:8788'
+    })(),
   },
 })
