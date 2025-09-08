@@ -9,9 +9,7 @@ env:
 on: [push]
 jobs:
   deploy:
-    # skip this job
-    if: false
-    # if: ${{ always() }}
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
