@@ -32,15 +32,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Setup Playwright using official action
-        uses: microsoft/playwright-github-action@v1
-        with:
-          browsers: chromium
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y parallel xvfb
+
+      - name: Install Playwright browsers with dependencies
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Setup virtual display
         run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb
           export DISPLAY=:99
           Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
           echo "DISPLAY=:99" >> $GITHUB_ENV
@@ -81,6 +82,7 @@ jobs:
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
           DISPLAY: :99
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "0"
 
       - uses: actions/upload-artifact@v4
         if: always()
