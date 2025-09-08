@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'styled-components'
 import { lightTheme } from '@ensdomains/thorin'
 
-import Page from '../address'
+import Page from '../../pages/address'
 import { useRouter } from 'next/router'
 
 // Mock Next.js router
