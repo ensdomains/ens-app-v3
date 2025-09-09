@@ -55,8 +55,8 @@ const StyledAddressIconComponent = ({ name }: { name: string }) => (
   <StyledAddressIcon name={name} />
 )
 
-// Icon component for verification icon
-const VerificationIcon = ({ name }: { name: string }) => <DynamicVerificationIcon name={name} />
+// Icon component for verification icon  
+const VerificationIcon = ({ name }: { name: Parameters<typeof DynamicVerificationIcon>[0]['name'] }) => <DynamicVerificationIcon name={name} />
 
 export const SocialProfileButton = ({
   iconKey,
