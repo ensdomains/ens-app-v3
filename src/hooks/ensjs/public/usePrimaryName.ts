@@ -65,6 +65,12 @@ export const getPrimaryNameQueryFn =
 
     if (res.match) {
       // For match=true case, fetch the actual raw reverse name
+      // getName() returns a normalized (lowercase) name when match=true, but we need to check
+      // if the actual stored reverse name follows ENS normalization rules (ENSIP-15).
+      // Some names like "MetaMask.eth" may resolve correctly but are not normalized
+      // (should be "metamask.eth"). We fetch the raw name directly from the Universal Resolver
+      // to verify it matches the normalized version, ensuring only properly normalized names
+      // are displayed as valid primary names.
       try {
         const ensUniversalResolverAddress = client.chain?.contracts?.ensUniversalResolver?.address
         if (ensUniversalResolverAddress) {
