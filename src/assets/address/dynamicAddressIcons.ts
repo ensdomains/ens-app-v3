@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 export type DynamicAddressIconName = keyof typeof dynamicAddressIcons
 
 export const dynamicAddressIcons = {
+  default: dynamic(() => import('./DefaultIcon.svg')),
   btc: dynamic(() => import('./BtcIcon.svg')),
   ltc: dynamic(() => import('./LtcIcon.svg')),
   doge: dynamic(() => import('./DogeIcon.svg')),
