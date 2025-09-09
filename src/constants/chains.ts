@@ -7,8 +7,6 @@ import type { Register } from '@app/local-contracts'
 import { addEnsContractsWithSubgraph } from '@app/utils/chains/addEnsContractsWithSubgraph'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 
-const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
-
 export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
 ) as Register['deploymentAddresses']
@@ -70,44 +68,52 @@ export type SupportedChain =
   | typeof holeskyWithEns
   | typeof localhostWithEns
 
-export const getChainsFromUrl = () => {
-  if (typeof window === 'undefined') {
-    return [
-      ...(isLocalProvider ? ([localhostWithEns] as const) : ([] as const)),
-      holeskyWithEns,
-      mainnetWithEns,
-      sepoliaWithEns,
-    ]
-  }
+export const getNetworkFromUrl = ():
+  | 'mainnet'
+  | 'sepolia'
+  | 'holesky'
+  | 'localhost'
+  | undefined => {
+  if (typeof window === 'undefined') return undefined
 
   const { hostname } = window.location
   const segments = hostname.split('.')
 
   // Chain override
   const chain = process.env.NEXT_PUBLIC_CHAIN_NAME
-  if (chain === 'holesky') return [holeskyWithEns]
-  if (chain === 'sepolia') return [sepoliaWithEns]
-  if (chain === 'mainnet') return [mainnetWithEns]
+  if (chain === 'holesky') return 'holesky' as const
+  if (chain === 'sepolia') return 'sepolia' as const
+  if (chain === 'mainnet') return 'mainnet' as const
 
   // Previews
   if (segments.length === 4) {
     /* Used for testing preview on mainnet at: test.app.ens.domains. Update by configuring dns */
     if (segments[0] === 'test') {
-      return [mainnetWithEns]
+      return 'mainnet' as const
     }
     if (segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-      return [sepoliaWithEns]
+      return 'sepolia' as const
     }
   }
 
   // Dev environment
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    if (isLocalProvider) return [localhostWithEns]
-    return [sepoliaWithEns]
+    if (process.env.NEXT_PUBLIC_PROVIDER) return 'localhost' as const
+    return 'sepolia' as const
   }
 
   return match(segments[0])
+    .with('sepolia', () => 'sepolia' as const)
+    .with('holesky', () => 'holesky' as const)
+    .otherwise(() => 'mainnet' as const)
+}
+
+export const getChainsFromUrl = () => {
+  const network = getNetworkFromUrl()
+  return match(network)
+    .with('mainnet', () => [mainnetWithEns])
     .with('sepolia', () => [sepoliaWithEns])
     .with('holesky', () => [holeskyWithEns])
+    .with('localhost', () => [localhostWithEns])
     .otherwise(() => [mainnetWithEns])
 }
