@@ -72,7 +72,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       showSendDNS
         ? {
             type: 'send-dns',
-            icon: AeroplaneSVG,
+            icon: () => <AeroplaneSVG height={16} width={16} />,
             label: t('action.send'),
             error: canSendError,
             onClick: () => showSendNameInput(`send-name-${name}`, { name }),
@@ -81,7 +81,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       canRefreshDNS
         ? {
             type: 'refresh-dns',
-            icon: CounterClockwiseArrowSVG,
+            icon: () => <CounterClockwiseArrowSVG height={16} width={16} />,
             label: t('dns.refresh'),
             onClick: () =>
               queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] }),
@@ -90,7 +90,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       showSyncManager
         ? {
             type: 'sync-manager',
-            icon: HorizontalOutwardArrowsSVG,
+            icon: () => <HorizontalOutwardArrowsSVG height={16} width={16} />,
             label: t('transaction.description.syncManager'),
             onClick: () =>
               showSyncManagerInput(`sync-manager-${name}`, {
@@ -101,7 +101,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       showSendEth
         ? {
             type: 'send-name',
-            icon: AeroplaneSVG,
+            icon: () => <AeroplaneSVG height={16} width={16} />,
             label: t('action.send'),
             error: canSendError,
             onClick: () => showSendNameInput(`send-name-${name}`, { name }),
@@ -110,7 +110,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       canEditRoles
         ? {
             type: 'edit-roles',
-            icon: PersonSVG,
+            icon: () => <PersonSVG height={16} width={16} />,
             label: t('action.editRoles'),
             primary: true,
             onClick: () => showEditRolesInput(`edit-roles-${name}`, { name }),
