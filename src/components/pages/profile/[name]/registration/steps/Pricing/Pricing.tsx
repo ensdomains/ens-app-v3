@@ -245,8 +245,6 @@ const PaymentChoice = ({
 }) => {
   const { t } = useTranslation('register')
 
-  console.log({ paymentMethodChoice })
-
   return (
     <Box width="full">
       <StyledTitle color="grey" weight="bold">
