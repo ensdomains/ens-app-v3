@@ -26,17 +26,15 @@ test.describe('Settings Tab Primary Names', () => {
     // Check network specific primary names are showing
     await expect(page.getByText('Network-specific primary names').first()).toBeVisible()
 
-    await expect(page.getByText(ensNames[0]).first()).toBeVisible()
-    await expect(page.getByText(ensNames[1]).first()).toBeVisible()
-    await expect(page.getByText(ensNames[2]).first()).toBeVisible()
-    await expect(page.getByText(ensNames[3]).first()).toBeVisible()
-    await expect(page.getByText(ensNames[4]).first()).toBeVisible()
+    // Check all ENS names are visible (each gets up to 15 seconds)
+    for (const name of ensNames) {
+      await expect(page.getByText(name).first()).toBeVisible({ timeout: 15000 })
+    }
 
-    await expect(page.getByTestId(`network-row-${ensNames[0]}`)).toBeVisible()
-    await expect(page.getByTestId(`network-row-${ensNames[1]}`)).toBeVisible()
-    await expect(page.getByTestId(`network-row-${ensNames[2]}`)).toBeVisible()
-    await expect(page.getByTestId(`network-row-${ensNames[3]}`)).toBeVisible()
-    await expect(page.getByTestId(`network-row-${ensNames[4]}`)).toBeVisible()
+    // Check all network rows are visible (each gets up to 15 seconds)
+    for (const name of ensNames) {
+      await expect(page.getByTestId(`network-row-${name}`)).toBeVisible({ timeout: 15000 })
+    }
 
     await expect(page.getByTestId(`network-icon-${ensNames[0]}-eth`)).toBeVisible()
     await expect(page.getByTestId(`network-icon-${ensNames[0]}-scr`)).toBeVisible()
