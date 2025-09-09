@@ -54,6 +54,8 @@ export const getCoinChainQueryFn = async <TParams extends UseCoinChainParameters
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseCoinChainReturnType> => {
   if (!coinName) throw new Error('name is required')
 
+  if (coinName === 'default') return null
+
   if (isSupportedCoinName(coinName)) {
     const supportedBlockExplorers = (await import(
       '../../constants/blockExplorers/supported.json'

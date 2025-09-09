@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { DevSection } from '@app/components/pages/profile/settings/DevSection'
-import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection'
+import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection/PrimarySection'
 import { PrivacySection } from '@app/components/pages/profile/settings/PrivacySection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
 import { WalletSection } from '@app/components/pages/profile/settings/WalletSection'
@@ -44,8 +44,8 @@ export default function Page() {
         trailing: (
           <OtherWrapper>
             <PrimarySection />
-            <WalletSection />
             <TransactionSection />
+            <WalletSection />
             <PrivacySection />
             {IS_DEV_ENVIRONMENT && <DevSection />}
           </OtherWrapper>

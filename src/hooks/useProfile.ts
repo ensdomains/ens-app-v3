@@ -1,11 +1,12 @@
 import { useMemo } from 'react'
 import type { Address } from 'viem'
 
-import { getCoderByCoinName, getCoderByCoinType } from '@ensdomains/address-encoder'
+import { getCoderByCoinType } from '@ensdomains/address-encoder'
 
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
+import { getCoderByCoinNameWithTestnetSupport } from '@app/utils/records'
 
 import { usePrefetchRecords, useRecords } from './ensjs/public/useRecords'
 import { useDecodedName } from './ensjs/subgraph/useDecodedName'
@@ -47,7 +48,9 @@ const getProfileRecordsParameters = ({
     ] as [string, ...string[]],
     coins: [
       ...new Set([
-        ...supportedAddresses.map((coinName) => getCoderByCoinName(coinName).coinType),
+        ...supportedAddresses.map(
+          (coinName) => getCoderByCoinNameWithTestnetSupport(coinName).coinType,
+        ),
         ...(subgraphRecords?.coins
           .map((coinId) => parseInt(coinId))
           .filter((coinId) => {
