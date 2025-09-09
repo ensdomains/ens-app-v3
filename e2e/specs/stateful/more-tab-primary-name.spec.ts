@@ -18,7 +18,7 @@ test.describe('More Tab Primary Names', () => {
     // Check primary name section is showing
     await expect(page.getByText('Your primary name')).toBeVisible()
 
-    // Check eth and scr is showing with correct address
+    // Check eth and scr is showing with correct addresses
     const address = '0xFc5958B4B6F9a06D21E06429c8833f865577acf0'
     await expect(page.getByTestId(`primary-name-eth-${address}`)).toBeVisible()
     await expect(page.getByTestId(`primary-name-scr-${address}`)).toBeVisible()
