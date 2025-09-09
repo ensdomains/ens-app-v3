@@ -74,6 +74,11 @@ export const SocialProfileButton = ({
   const breakpoints = useBreakpoint()
   const socialData = getSocialData(normalisedKey, value)
 
+  const IconComponent = useMemo(
+    () => () => socialData ? <SocialIcon color={socialData.color} icon={socialData.icon as keyof typeof socialIconTypes} /> : null,
+    [socialData]
+  )
+
   if (!socialData) return null
   return (
     <VerificationBadge
@@ -83,7 +88,7 @@ export const SocialProfileButton = ({
       tooltipContent={<VerificationBadgeAccountTooltipContent verifiers={verifiers} />}
     >
       <RecordItem
-        icon={() => <SocialIcon color={socialData.color} icon={socialData.icon as keyof typeof socialIconTypes} />}
+        icon={IconComponent}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`social-profile-button-${iconKey}`}
@@ -113,6 +118,11 @@ export const AddressProfileButton = ({
   const { data } = coinChainResults
   const defaultBlockExplorer = data?.blockExplorers?.default
 
+  const IconComponent = useMemo(
+    () => () => <StyledAddressIconComponent name={iconKey} />,
+    [iconKey]
+  )
+
   const items = [
     iconKey === 'eth'
       ? {
@@ -140,7 +150,7 @@ export const AddressProfileButton = ({
       <RecordItem
         data-testid={`address-profile-button-${iconKey}`}
         postfixIcon={VerticalDotsSVG}
-        icon={() => <StyledAddressIconComponent name={iconKey} />}
+        icon={IconComponent}
         value={address}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
@@ -407,6 +417,11 @@ export const VerificationProfileButton = ({
 }) => {
   const breakpoints = useBreakpoint()
 
+  const IconComponent = useMemo(
+    () => () => <VerificationIcon name={iconKey} />,
+    [iconKey]
+  )
+
   if (!isVerificationProtocol(iconKey)) return null
 
   const verificationData = getVerifierData(iconKey, value)
@@ -419,7 +434,7 @@ export const VerificationProfileButton = ({
       tooltipContent={<VerificationBadgeVerifierTooltipContent isVerified={!!isVerified} />}
     >
       <RecordItem
-        icon={() => <VerificationIcon name={iconKey} />}
+        icon={IconComponent}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`verification-profile-button-${iconKey}`}
