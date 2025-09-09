@@ -21,6 +21,12 @@ import { checkCanSend } from '@app/transaction-flow/input/SendName/utils/checkCa
 import { checkCanSyncManager } from '@app/transaction-flow/input/SyncManager/utils/checkCanSyncManager'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
+// Icon components defined outside of parent component
+const AeroplaneIcon = () => <AeroplaneSVG height={16} width={16} />
+const CounterClockwiseArrowIcon = () => <CounterClockwiseArrowSVG height={16} width={16} />
+const HorizontalOutwardArrowsIcon = () => <HorizontalOutwardArrowsSVG height={16} width={16} />
+const PersonIcon = () => <PersonSVG height={16} width={16} />
+
 type Action = Omit<DropdownItemObject, 'onClick' | 'icon'> & {
   primary?: boolean
   icon: AsProp
@@ -72,7 +78,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       showSendDNS
         ? {
             type: 'send-dns',
-            icon: () => <AeroplaneSVG height={16} width={16} />,
+            icon: AeroplaneIcon,
             label: t('action.send'),
             error: canSendError,
             onClick: () => showSendNameInput(`send-name-${name}`, { name }),
@@ -81,7 +87,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       canRefreshDNS
         ? {
             type: 'refresh-dns',
-            icon: () => <CounterClockwiseArrowSVG height={16} width={16} />,
+            icon: CounterClockwiseArrowIcon,
             label: t('dns.refresh'),
             onClick: () =>
               queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] }),
@@ -90,7 +96,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       showSyncManager
         ? {
             type: 'sync-manager',
-            icon: () => <HorizontalOutwardArrowsSVG height={16} width={16} />,
+            icon: HorizontalOutwardArrowsIcon,
             label: t('transaction.description.syncManager'),
             onClick: () =>
               showSyncManagerInput(`sync-manager-${name}`, {
@@ -101,7 +107,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       showSendEth
         ? {
             type: 'send-name',
-            icon: () => <AeroplaneSVG height={16} width={16} />,
+            icon: AeroplaneIcon,
             label: t('action.send'),
             error: canSendError,
             onClick: () => showSendNameInput(`send-name-${name}`, { name }),
@@ -110,7 +116,7 @@ export const useRoleActions = ({ name, roles, details }: Props) => {
       canEditRoles
         ? {
             type: 'edit-roles',
-            icon: () => <PersonSVG height={16} width={16} />,
+            icon: PersonIcon,
             label: t('action.editRoles'),
             primary: true,
             onClick: () => showEditRolesInput(`edit-roles-${name}`, { name }),

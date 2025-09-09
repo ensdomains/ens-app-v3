@@ -41,6 +41,23 @@ const StyledAddressIcon = styled(DynamicAddressIcon)(
   `,
 )
 
+// Icon components defined outside of parent components
+const UpRightArrowIcon = () => <UpRightArrowSVG height={16} width={16} />
+const CopyIcon = () => <CopySVG height={16} width={16} />
+
+// Icon component for social icons with props
+const SocialIcon = ({ color, icon }: { color?: string; icon: keyof typeof socialIconTypes }) => (
+  <DynamicSocialIcon height={20} width={20} fill={color} name={icon} />
+)
+
+// Icon component for styled address icon
+const StyledAddressIconComponent = ({ name }: { name: string }) => (
+  <StyledAddressIcon name={name} />
+)
+
+// Icon component for verification icon
+const VerificationIcon = ({ name }: { name: string }) => <DynamicVerificationIcon name={name} />
+
 export const SocialProfileButton = ({
   iconKey,
   value,
@@ -66,14 +83,7 @@ export const SocialProfileButton = ({
       tooltipContent={<VerificationBadgeAccountTooltipContent verifiers={verifiers} />}
     >
       <RecordItem
-        icon={() => (
-          <DynamicSocialIcon
-            height={20}
-            width={20}
-            fill={socialData.color}
-            name={socialData.icon as keyof typeof socialIconTypes}
-          />
-        )}
+        icon={() => <SocialIcon color={socialData.color} icon={socialData.icon as keyof typeof socialIconTypes} />}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`social-profile-button-${iconKey}`}
@@ -106,19 +116,19 @@ export const AddressProfileButton = ({
   const items = [
     iconKey === 'eth'
       ? {
-          icon: () => <UpRightArrowSVG height={16} width={16} />,
+          icon: UpRightArrowIcon,
           label: t('address.viewAddress'),
           href: getDestination(`/${address}`) as string,
         }
       : undefined,
     {
-      icon: () => <CopySVG height={16} width={16} />,
+      icon: CopyIcon,
       label: t('address.copyAddress'),
       onClick: () => copy(address),
     },
     defaultBlockExplorer
       ? {
-          icon: () => <UpRightArrowSVG height={16} width={16} />,
+          icon: UpRightArrowIcon,
           label: `View on ${defaultBlockExplorer?.name}`,
           href: `${defaultBlockExplorer?.url}/address/${address}`,
         }
@@ -130,7 +140,7 @@ export const AddressProfileButton = ({
       <RecordItem
         data-testid={`address-profile-button-${iconKey}`}
         postfixIcon={VerticalDotsSVG}
-        icon={() => <StyledAddressIcon name={iconKey} />}
+        icon={() => <StyledAddressIconComponent name={iconKey} />}
         value={address}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
@@ -326,14 +336,14 @@ export const OwnerProfileButton = ({
   const items = [
     link
       ? {
-          icon: () => <UpRightArrowSVG height={16} width={16} />,
+          icon: UpRightArrowIcon,
           label: 'View profile',
           href: link,
         }
       : undefined,
     primary.data?.name
       ? {
-          icon: () => <CopySVG height={16} width={16} />,
+          icon: CopyIcon,
           label: 'Copy name',
           onClick: () => copy(primary.data?.name!),
         }
@@ -341,17 +351,17 @@ export const OwnerProfileButton = ({
     ...(dataType === 'address'
       ? ([
           {
-            icon: () => <UpRightArrowSVG height={16} width={16} />,
+            icon: UpRightArrowIcon,
             label: 'View address',
             href: getDestination(`/${addressOrNameOrDate}`) as string,
           },
           {
-            icon: () => <CopySVG height={16} width={16} />,
+            icon: CopyIcon,
             label: t('address.copyAddress'),
             onClick: () => copy(addressOrNameOrDate),
           },
           {
-            icon: () => <UpRightArrowSVG height={16} width={16} />,
+            icon: UpRightArrowIcon,
             label: t('address.viewAddress'),
             href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
           },
@@ -409,7 +419,7 @@ export const VerificationProfileButton = ({
       tooltipContent={<VerificationBadgeVerifierTooltipContent isVerified={!!isVerified} />}
     >
       <RecordItem
-        icon={() => <DynamicVerificationIcon name={iconKey} />}
+        icon={() => <VerificationIcon name={iconKey} />}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`verification-profile-button-${iconKey}`}
