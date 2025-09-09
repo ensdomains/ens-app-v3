@@ -85,10 +85,16 @@
     "back": "返回",
     "oldApp": "旧版 ENS App",
     "language": "语言",
+    "theme": "主题",
     "currency": "货币",
     "ipfsApp": "IPFS ENS App",
     "feedback": "反馈",
-    "syncMessage": "正在进行网络同步，您在交易中更改的内容可能还看不到。"
+    "syncMessage": "正在进行网络同步，您在交易中更改的内容可能还看不到。",
+    "mode": {
+      "light": "明亮",
+      "dark": "黑暗",
+      "system": "跟随系统"
+    }
   },
   "wallet": {
     "myProfile": "个人资料",
@@ -97,7 +103,8 @@
     "noPrimaryName": "未设置主名称",
     "viewProfile": "查看个人资料",
     "viewDetails": "查看详情",
-    "register": "注册"
+    "register": "注册",
+    "myWallet": "我的钱包"
   },
   "name": {
     "registered": "已注册",
@@ -227,7 +234,8 @@
       "resetProfile": "重置个人资料",
       "unwrapName": "将名称解除包装",
       "updateVerificationRecord": "更新验证记录",
-      "removeVerificationRecord": "移除验证记录"
+      "removeVerificationRecord": "移除验证记录",
+      "repairDesyncedName": "修复名称"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
@@ -246,6 +254,7 @@
       "burnFuses": "烧毁选中的权限，直到名称过期",
       "commitName": "启动注册名称的计时器",
       "approveNameWrapper": "批准名称包装器管理您的名称",
+      "repairDesyncedName": "同步已包装名称的过期情况",
       "fuses": {
         "revoke": "撤销",
         "grant": "授权",
@@ -305,6 +314,7 @@
         "message": "请您在钱包里确认之前，仔细检查这些细节。",
         "waitingForWallet": "等待钱包确认",
         "openWallet": "打开钱包",
+        "openPara": "开始",
         "insufficientFunds": "资金不足"
       },
       "sent": {
@@ -361,7 +371,8 @@
       "unsupportedTLD": "不支持",
       "imported": "已导入",
       "owned": "已被持有",
-      "offChain": "查看"
+      "offChain": "查看",
+      "desynced": "未同步"
     }
   },
   "selectableInput": {
@@ -417,5 +428,25 @@
     "ownerNotManager": "您必须以该名称的管理员连接才能设置验证记录。您可以在所有权选项卡下查看和更新管理员。",
     "wrongAccount": "您必须以 <strong>{{ nameOrAddress }}</strong> 的身份连接才能设置验证记录。",
     "default": "我们无法验证您的账户。请返回 Dentity 重试。"
+  },
+  "networkNotifications": {
+    "Ethereum": {
+      "title": "切换到 Ethereum?",
+      "description": "您已经在钱包中选择了 Ethereum (主网)。",
+      "action": "前往 app.ens.domains"
+    },
+    "Sepolia": {
+      "title": "切换到 Sepolia?",
+      "description": "您已经在钱包中选择了 Sepolia (测试网)。",
+      "action": "前往 sepolia.app.ens.domains"
+    },
+    "Holesky": {
+      "title": "切换到 Holesky?",
+      "description": "您已经在钱包中选择了 Holesky (测试网)。",
+      "action": "前往 holesky.app.ens.domains"
+    }
+  },
+  "para": {
+    "signInWithPara": "使用 Para 登录"
   }
 }
