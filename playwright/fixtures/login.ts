@@ -49,7 +49,7 @@ export class Login {
     await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toBeGreaterThanOrEqual(1)
     await this.wallet.authorize(Web3RequestKind.RequestAccounts)
     await expect.poll(() => this.wallet.getPendingRequestCount(Web3RequestKind.RequestAccounts)).toEqual(0)
-    await expect.poll(() => this.getProfileButton.isVisible()).toBe(true)
+    await expect.poll(() => this.getProfileButton.isVisible(), { timeout: 15000 }).toBe(true)
   }
 
   async switchTo(user: User) {
