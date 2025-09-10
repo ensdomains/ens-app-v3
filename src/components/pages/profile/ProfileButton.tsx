@@ -418,7 +418,7 @@ export const VerificationProfileButton = ({
   const breakpoints = useBreakpoint()
 
   const IconComponent = useMemo(
-    () => () => <VerificationIcon name={iconKey} />,
+    () => () => <VerificationIcon name={iconKey as Parameters<typeof DynamicVerificationIcon>[0]['name']} />,
     [iconKey]
   )
 
