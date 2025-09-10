@@ -23,10 +23,6 @@ export const validateImageUri = (url?: string): string | boolean => {
       return 'Image URL must use a domain name, not a numeric IP address'
     }
 
-    // if (!/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(urlObj.pathname)) {
-    //   return 'Image URL must point to a valid image file (.jpg, .jpeg, .png, .gif, .webp, .svg)'
-    // }
-
     return true
   } catch {
     return 'Image URL must be a valid URL'
