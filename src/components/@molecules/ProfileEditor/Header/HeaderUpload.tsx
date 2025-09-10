@@ -136,8 +136,8 @@ const UploadComponent = ({
   return (
     <>
       <Dialog.Heading
-        title={t('input.profileEditor.tabs.avatar.image.upload.title')}
-        subtitle={t('input.profileEditor.tabs.avatar.image.upload.subtitle')}
+        title={t('input.profileEditor.tabs.header.image.upload.title')}
+        subtitle={t('input.profileEditor.tabs.header.image.upload.subtitle')}
       />
       <Dialog.Content>
         <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
@@ -158,7 +158,7 @@ const UploadComponent = ({
           >
             {error
               ? t('action.tryAgain', { ns: 'common' })
-              : t('input.profileEditor.tabs.avatar.image.upload.action')}
+              : t('input.profileEditor.tabs.header.image.upload.action')}
           </Button>
         }
       />

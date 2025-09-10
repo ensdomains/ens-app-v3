@@ -8,12 +8,17 @@ import { Button, Dialog, Input, PlusSVG } from '@ensdomains/thorin'
 
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import {
+  HeaderViewManager,
+  HeaderViewType,
+} from '@app/components/@molecules/ProfileEditor/Header/HeaderViewManager'
 import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
 import { profileEditorFormToProfileRecords } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { WrappedAvatarButton } from '@app/components/pages/profile/[name]/registration/steps/Profile/WrappedAvatarButton'
+import { WrappedHeaderButton } from '@app/components/pages/profile/[name]/registration/steps/Profile/WrappedHeaderButton'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
@@ -28,7 +33,13 @@ type Data = {
   isWrapped: boolean
 }
 
-type ModalOption = AvatarClickType | 'editor' | 'profile-editor' | 'add-record'
+type ModalOption =
+  | AvatarClickType
+  | 'editor'
+  | 'profile-editor'
+  | 'add-record'
+  | 'header-upload'
+  | 'header-manual'
 
 export type Props = {
   data: Data
@@ -129,6 +140,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
     getValues,
     removeRecordAtIndex,
     setAvatar,
+    setHeader,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
@@ -175,6 +187,8 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
 
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
+  const [headerFile, setHeaderFile] = useState<File | undefined>()
+  const [headerSrc, setHeaderSrc] = useState<string | undefined>()
 
   const handleDeleteRecord = (_: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
@@ -226,13 +240,21 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
             <Dialog.Heading title={t('details.tabs.subnames.setProfile')} />
             <Dialog.Content>
               <WrappedAvatarButton
-                disabledUpload
                 control={control}
                 src={avatarSrc}
                 onSelectOption={setView}
                 onAvatarChange={(avatar) => setAvatar(avatar)}
                 onAvatarFileChange={(file) => setAvatarFile(file)}
                 onAvatarSrcChange={(src) => setAvatarSrc(src)}
+              />
+              <WrappedHeaderButton
+                name={name}
+                control={control}
+                src={headerSrc}
+                onSelectOption={(option) => setView(`header-${option}` as ModalOption)}
+                onHeaderChange={(header) => setHeader(header)}
+                onHeaderFileChange={(file) => setHeaderFile(file)}
+                onHeaderSrcChange={(src) => setHeaderSrc(src)}
               />
               {records.map((field, index) =>
                 match(field)
@@ -325,13 +347,27 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
         ))
         .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
-            name={parent} // TODO name
+            name={name}
             avatarFile={avatarFile}
             handleCancel={() => setView('profile-editor')}
             type={type}
             handleSubmit={(_, uri, display) => {
               setAvatar(uri)
               setAvatarSrc(display)
+              setView('profile-editor')
+              trigger()
+            }}
+          />
+        ))
+        .with('header-upload', 'header-manual', (_modalOption) => (
+          <HeaderViewManager
+            name={name}
+            headerFile={headerFile}
+            handleCancel={() => setView('profile-editor')}
+            type={_modalOption.replace('header-', '') as HeaderViewType}
+            handleSubmit={(_, uri: string, display?: string) => {
+              setHeader(uri)
+              setHeaderSrc(display)
               setView('profile-editor')
               trigger()
             }}
