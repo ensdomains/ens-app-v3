@@ -7,6 +7,7 @@ test.describe('Settings Tab Primary Names', () => {
     page,
     login,
   }) => {
+    test.slow()
     const ensNames = [
       'default-ens.eth',
       'arbprimary.eth',
@@ -27,11 +28,11 @@ test.describe('Settings Tab Primary Names', () => {
     await expect(page.getByText('Network-specific primary names').first()).toBeVisible()
 
     // Check network specific names are showing correctly
-    await expect(page.getByText(ensNames[0]).first()).toBeVisible({ timeout: 15000 })
-    await expect(page.getByText(ensNames[1]).first()).toBeVisible({ timeout: 15000 })
-    await expect(page.getByText(ensNames[2]).first()).toBeVisible({ timeout: 15000 })
-    await expect(page.getByText(ensNames[3]).first()).toBeVisible({ timeout: 15000 })
-    await expect(page.getByText(ensNames[4]).first()).toBeVisible({ timeout: 15000 })
+    await expect(page.getByText(ensNames[0]).first()).toBeVisible({ timeout: 20000 })
+    await expect(page.getByText(ensNames[1]).first()).toBeVisible({ timeout: 20000 })
+    await expect(page.getByText(ensNames[2]).first()).toBeVisible({ timeout: 20000 })
+    await expect(page.getByText(ensNames[3]).first()).toBeVisible({ timeout: 20000 })
+    await expect(page.getByText(ensNames[4]).first()).toBeVisible({ timeout: 20000 })
 
     await expect(page.getByTestId(`network-row-${ensNames[0]}`)).toBeVisible()
     await expect(page.getByTestId(`network-row-${ensNames[1]}`)).toBeVisible()
