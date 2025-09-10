@@ -51,12 +51,14 @@ const SocialIcon = ({ color, icon }: { color?: string; icon: keyof typeof social
 )
 
 // Icon component for styled address icon
-const StyledAddressIconComponent = ({ name }: { name: string }) => (
-  <StyledAddressIcon name={name} />
-)
+const StyledAddressIconComponent = ({ name }: { name: string }) => <StyledAddressIcon name={name} />
 
-// Icon component for verification icon  
-const VerificationIcon = ({ name }: { name: Parameters<typeof DynamicVerificationIcon>[0]['name'] }) => <DynamicVerificationIcon name={name} />
+// Icon component for verification icon
+const VerificationIcon = ({
+  name,
+}: {
+  name: Parameters<typeof DynamicVerificationIcon>[0]['name']
+}) => <DynamicVerificationIcon name={name} />
 
 export const SocialProfileButton = ({
   iconKey,
@@ -75,8 +77,14 @@ export const SocialProfileButton = ({
   const socialData = getSocialData(normalisedKey, value)
 
   const IconComponent = useMemo(
-    () => () => socialData ? <SocialIcon color={socialData.color} icon={socialData.icon as keyof typeof socialIconTypes} /> : null,
-    [socialData]
+    () => () =>
+      socialData ? (
+        <SocialIcon
+          color={socialData.color}
+          icon={socialData.icon as keyof typeof socialIconTypes}
+        />
+      ) : null,
+    [socialData],
   )
 
   if (!socialData) return null
@@ -120,7 +128,7 @@ export const AddressProfileButton = ({
 
   const IconComponent = useMemo(
     () => () => <StyledAddressIconComponent name={iconKey} />,
-    [iconKey]
+    [iconKey],
   )
 
   const items = [
@@ -418,8 +426,10 @@ export const VerificationProfileButton = ({
   const breakpoints = useBreakpoint()
 
   const IconComponent = useMemo(
-    () => () => <VerificationIcon name={iconKey as Parameters<typeof DynamicVerificationIcon>[0]['name']} />,
-    [iconKey]
+    () => () => (
+      <VerificationIcon name={iconKey as Parameters<typeof DynamicVerificationIcon>[0]['name']} />
+    ),
+    [iconKey],
   )
 
   if (!isVerificationProtocol(iconKey)) return null
