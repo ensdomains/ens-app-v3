@@ -120,7 +120,6 @@ export const AddressProfileButton = ({
 }) => {
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
-  const { t } = useTranslation()
   const [, copy] = useCopyToClipboard()
   const coinChainResults = useCoinChain({ coinName: iconKey })
   const { data } = coinChainResults
@@ -135,13 +134,13 @@ export const AddressProfileButton = ({
     iconKey === 'eth'
       ? {
           icon: UpRightArrowIcon,
-          label: t('address.viewAddress'),
+          label: 'View address',
           href: getDestination(`/${address}`) as string,
         }
       : undefined,
     {
       icon: CopyIcon,
-      label: t('address.copyAddress'),
+      label: 'Copy address',
       onClick: () => copy(address),
     },
     defaultBlockExplorer
@@ -375,12 +374,12 @@ export const OwnerProfileButton = ({
           },
           {
             icon: CopyIcon,
-            label: t('address.copyAddress'),
+            label: 'Copy address',
             onClick: () => copy(addressOrNameOrDate),
           },
           {
             icon: UpRightArrowIcon,
-            label: t('address.viewAddress'),
+            label: 'View on Etherscan',
             href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
           },
         ] as DropdownItem[])
