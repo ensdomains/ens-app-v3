@@ -68,16 +68,12 @@ export const getPrimaryNameQueryFn =
             functionName: 'reverse',
             args: [address, coinType],
           })
-          console.log('ensUniversalResolverAddress', ensUniversalResolverAddress)
-          console.log('rawNameResult', rawNameResult)
 
           // The reverse function returns [name, address, reverseResolver, resolver]
           if (rawNameResult && rawNameResult[0]) {
             ;[originalName] = rawNameResult
             // Check if the raw name is normalized
             try {
-              console.log('originalName', originalName)
-              console.log('normalise(originalName)', normalise(originalName))
               const normalizedVersion = normalise(originalName)
               isNormalized = originalName === normalizedVersion
             } catch (error) {
