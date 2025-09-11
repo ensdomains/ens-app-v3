@@ -1,0 +1,375 @@
+diff --git a/_cjs/actions/ens/getEnsAvatar.js b/_cjs/actions/ens/getEnsAvatar.js
+index 00ed729b733b4bbff036e079ed2527a1f6e357df..bf033a7dd0a532c2b21d963d51f017698b8d52c0 100644
+--- a/_cjs/actions/ens/getEnsAvatar.js
++++ b/_cjs/actions/ens/getEnsAvatar.js
+@@ -4,26 +4,40 @@ exports.getEnsAvatar = getEnsAvatar;
+ const parseAvatarRecord_js_1 = require("../../utils/ens/avatar/parseAvatarRecord.js");
+ const getAction_js_1 = require("../../utils/getAction.js");
+ const getEnsText_js_1 = require("./getEnsText.js");
+-async function getEnsAvatar(client, { blockNumber, blockTag, assetGatewayUrls, name, gatewayUrls, strict, universalResolverAddress, }) {
+-    const record = await (0, getAction_js_1.getAction)(client, getEnsText_js_1.getEnsText, 'getEnsText')({
+-        blockNumber,
+-        blockTag,
+-        key: 'avatar',
+-        name,
+-        universalResolverAddress,
+-        gatewayUrls,
+-        strict,
++async function getEnsAvatar(
++  client,
++  {
++    blockNumber,
++    blockTag,
++    assetGatewayUrls,
++    name,
++    gatewayUrls,
++    strict,
++    universalResolverAddress,
++    key,
++  }
++) {
++  const record = await (0, getAction_js_1.getAction)(
++    client,
++    getEnsText_js_1.getEnsText,
++    "getEnsText"
++  )({
++    blockNumber,
++    blockTag,
++    key: key || "avatar",
++    name,
++    universalResolverAddress,
++    gatewayUrls,
++    strict,
++  });
++  if (!record) return null;
++  try {
++    return await (0, parseAvatarRecord_js_1.parseAvatarRecord)(client, {
++      record,
++      gatewayUrls: assetGatewayUrls,
+     });
+-    if (!record)
+-        return null;
+-    try {
+-        return await (0, parseAvatarRecord_js_1.parseAvatarRecord)(client, {
+-            record,
+-            gatewayUrls: assetGatewayUrls,
+-        });
+-    }
+-    catch {
+-        return null;
+-    }
++  } catch {
++    return null;
++  }
+ }
+ //# sourceMappingURL=getEnsAvatar.js.map
+diff --git a/_esm/actions/ens/getEnsAvatar.js b/_esm/actions/ens/getEnsAvatar.js
+index 985e6a9cb12b5facd7ffd42b2509902baef5b87d..0c7b210933cba2ea5d31cc0c891427fdea9e26c3 100644
+--- a/_esm/actions/ens/getEnsAvatar.js
++++ b/_esm/actions/ens/getEnsAvatar.js
+@@ -1,6 +1,6 @@
+-import { parseAvatarRecord, } from '../../utils/ens/avatar/parseAvatarRecord.js';
+-import { getAction } from '../../utils/getAction.js';
+-import { getEnsText, } from './getEnsText.js';
++import { parseAvatarRecord } from "../../utils/ens/avatar/parseAvatarRecord.js";
++import { getAction } from "../../utils/getAction.js";
++import { getEnsText } from "./getEnsText.js";
+ /**
+  * Gets the avatar of an ENS name.
+  *
+@@ -29,26 +29,40 @@ import { getEnsText, } from './getEnsText.js';
+  * })
+  * // 'https://ipfs.io/ipfs/Qma8mnp6xV3J2cRNf3mTth5C8nV11CAnceVinc3y8jSbio'
+  */
+-export async function getEnsAvatar(client, { blockNumber, blockTag, assetGatewayUrls, name, gatewayUrls, strict, universalResolverAddress, }) {
+-    const record = await getAction(client, getEnsText, 'getEnsText')({
+-        blockNumber,
+-        blockTag,
+-        key: 'avatar',
+-        name,
+-        universalResolverAddress,
+-        gatewayUrls,
+-        strict,
++export async function getEnsAvatar(
++  client,
++  {
++    blockNumber,
++    blockTag,
++    assetGatewayUrls,
++    name,
++    gatewayUrls,
++    strict,
++    universalResolverAddress,
++    key,
++  }
++) {
++  const record = await getAction(
++    client,
++    getEnsText,
++    "getEnsText"
++  )({
++    blockNumber,
++    blockTag,
++    key: key || "avatar",
++    name,
++    universalResolverAddress,
++    gatewayUrls,
++    strict,
++  });
++  if (!record) return null;
++  try {
++    return await parseAvatarRecord(client, {
++      record,
++      gatewayUrls: assetGatewayUrls,
+     });
+-    if (!record)
+-        return null;
+-    try {
+-        return await parseAvatarRecord(client, {
+-            record,
+-            gatewayUrls: assetGatewayUrls,
+-        });
+-    }
+-    catch {
+-        return null;
+-    }
++  } catch {
++    return null;
++  }
+ }
+ //# sourceMappingURL=getEnsAvatar.js.map
+diff --git a/actions/ens/getEnsAvatar.ts b/actions/ens/getEnsAvatar.ts
+index 0551bafaf883702a54b58898a7a9ca17c8353038..5e35f57a7ece4eb0de73a2cf2f2ac33a00f044e1 100644
+--- a/actions/ens/getEnsAvatar.ts
++++ b/actions/ens/getEnsAvatar.ts
+@@ -1,34 +1,36 @@
+-import type { Client } from '../../clients/createClient.js'
+-import type { Transport } from '../../clients/transports/createTransport.js'
+-import type { ErrorType } from '../../errors/utils.js'
+-import type { Chain } from '../../types/chain.js'
+-import type { AssetGatewayUrls } from '../../types/ens.js'
+-import type { Prettify } from '../../types/utils.js'
++import type { Client } from "../../clients/createClient.js";
++import type { Transport } from "../../clients/transports/createTransport.js";
++import type { ErrorType } from "../../errors/utils.js";
++import type { Chain } from "../../types/chain.js";
++import type { AssetGatewayUrls } from "../../types/ens.js";
++import type { Prettify } from "../../types/utils.js";
+ import {
+   type ParseAvatarRecordErrorType,
+   parseAvatarRecord,
+-} from '../../utils/ens/avatar/parseAvatarRecord.js'
+-import { getAction } from '../../utils/getAction.js'
++} from "../../utils/ens/avatar/parseAvatarRecord.js";
++import { getAction } from "../../utils/getAction.js";
+ 
+ import {
+   type GetEnsTextErrorType,
+   type GetEnsTextParameters,
+   getEnsText,
+-} from './getEnsText.js'
++} from "./getEnsText.js";
+ 
+ export type GetEnsAvatarParameters = Prettify<
+-  Omit<GetEnsTextParameters, 'key'> & {
++  Omit<GetEnsTextParameters, "key"> & {
+     /** Gateway urls to resolve IPFS and/or Arweave assets. */
+-    assetGatewayUrls?: AssetGatewayUrls | undefined
++    assetGatewayUrls?: AssetGatewayUrls | undefined;
++    /** The key to get the ENS record for. */
++    key?: string | undefined;
+   }
+->
++>;
+ 
+-export type GetEnsAvatarReturnType = string | null
++export type GetEnsAvatarReturnType = string | null;
+ 
+ export type GetEnsAvatarErrorType =
+   | GetEnsTextErrorType
+   | ParseAvatarRecordErrorType
+-  | ErrorType
++  | ErrorType;
+ 
+ /**
+  * Gets the avatar of an ENS name.
+@@ -68,28 +70,29 @@ export async function getEnsAvatar<chain extends Chain | undefined>(
+     gatewayUrls,
+     strict,
+     universalResolverAddress,
+-  }: GetEnsAvatarParameters,
++    key,
++  }: GetEnsAvatarParameters
+ ): Promise<GetEnsAvatarReturnType> {
+   const record = await getAction(
+     client,
+     getEnsText,
+-    'getEnsText',
++    "getEnsText"
+   )({
+     blockNumber,
+     blockTag,
+-    key: 'avatar',
++    key: key || "avatar",
+     name,
+     universalResolverAddress,
+     gatewayUrls,
+     strict,
+-  })
+-  if (!record) return null
++  });
++  if (!record) return null;
+   try {
+     return await parseAvatarRecord(client, {
+       record,
+       gatewayUrls: assetGatewayUrls,
+-    })
++    });
+   } catch {
+-    return null
++    return null;
+   }
+ }
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..f128a6971d9e78c904f1278fb7bb39d31b65cc10
+--- /dev/null
++++ b/pnpm-lock.yaml
+@@ -0,0 +1,137 @@
++lockfileVersion: '9.0'
++
++settings:
++  autoInstallPeers: true
++  excludeLinksFromLockfile: false
++
++importers:
++
++  .:
++    dependencies:
++      '@adraffy/ens-normalize':
++        specifier: 1.10.0
++        version: 1.10.0
++      '@noble/curves':
++        specifier: 1.4.0
++        version: 1.4.0
++      '@noble/hashes':
++        specifier: 1.4.0
++        version: 1.4.0
++      '@scure/bip32':
++        specifier: 1.4.0
++        version: 1.4.0
++      '@scure/bip39':
++        specifier: 1.3.0
++        version: 1.3.0
++      abitype:
++        specifier: 1.0.5
++        version: 1.0.5(typescript@5.8.2)
++      isows:
++        specifier: 1.0.4
++        version: 1.0.4(ws@8.17.1)
++      typescript:
++        specifier: '>=5.0.4'
++        version: 5.8.2
++      webauthn-p256:
++        specifier: 0.0.5
++        version: 0.0.5
++      ws:
++        specifier: 8.17.1
++        version: 8.17.1
++
++packages:
++
++  '@adraffy/ens-normalize@1.10.0':
++    resolution: {integrity: sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==}
++
++  '@noble/curves@1.4.0':
++    resolution: {integrity: sha512-p+4cb332SFCrReJkCYe8Xzm0OWi4Jji5jVdIZRL/PmacmDkFNw6MrrV+gGpiPxLHbV+zKFRywUWbaseT+tZRXg==}
++
++  '@noble/hashes@1.4.0':
++    resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
++    engines: {node: '>= 16'}
++
++  '@scure/base@1.1.9':
++    resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
++
++  '@scure/bip32@1.4.0':
++    resolution: {integrity: sha512-sVUpc0Vq3tXCkDGYVWGIZTRfnvu8LoTDaev7vbwh0omSvVORONr960MQWdKqJDCReIEmTj3PAr73O3aoxz7OPg==}
++
++  '@scure/bip39@1.3.0':
++    resolution: {integrity: sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ==}
++
++  abitype@1.0.5:
++    resolution: {integrity: sha512-YzDhti7cjlfaBhHutMaboYB21Ha3rXR9QTkNJFzYC4kC8YclaiwPBBBJY8ejFdu2wnJeZCVZSMlQJ7fi8S6hsw==}
++    peerDependencies:
++      typescript: '>=5.0.4'
++      zod: ^3 >=3.22.0
++    peerDependenciesMeta:
++      typescript:
++        optional: true
++      zod:
++        optional: true
++
++  isows@1.0.4:
++    resolution: {integrity: sha512-hEzjY+x9u9hPmBom9IIAqdJCwNLax+xrPb51vEPpERoFlIxgmZcHzsT5jKG06nvInKOBGvReAVz80Umed5CczQ==}
++    peerDependencies:
++      ws: '*'
++
++  typescript@5.8.2:
++    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
++    engines: {node: '>=14.17'}
++    hasBin: true
++
++  webauthn-p256@0.0.5:
++    resolution: {integrity: sha512-drMGNWKdaixZNobeORVIqq7k5DsRC9FnG201K2QjeOoQLmtSDaSsVZdkg6n5jUALJKcAG++zBPJXmv6hy0nWFg==}
++
++  ws@8.17.1:
++    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
++    engines: {node: '>=10.0.0'}
++    peerDependencies:
++      bufferutil: ^4.0.1
++      utf-8-validate: '>=5.0.2'
++    peerDependenciesMeta:
++      bufferutil:
++        optional: true
++      utf-8-validate:
++        optional: true
++
++snapshots:
++
++  '@adraffy/ens-normalize@1.10.0': {}
++
++  '@noble/curves@1.4.0':
++    dependencies:
++      '@noble/hashes': 1.4.0
++
++  '@noble/hashes@1.4.0': {}
++
++  '@scure/base@1.1.9': {}
++
++  '@scure/bip32@1.4.0':
++    dependencies:
++      '@noble/curves': 1.4.0
++      '@noble/hashes': 1.4.0
++      '@scure/base': 1.1.9
++
++  '@scure/bip39@1.3.0':
++    dependencies:
++      '@noble/hashes': 1.4.0
++      '@scure/base': 1.1.9
++
++  abitype@1.0.5(typescript@5.8.2):
++    optionalDependencies:
++      typescript: 5.8.2
++
++  isows@1.0.4(ws@8.17.1):
++    dependencies:
++      ws: 8.17.1
++
++  typescript@5.8.2: {}
++
++  webauthn-p256@0.0.5:
++    dependencies:
++      '@noble/curves': 1.4.0
++      '@noble/hashes': 1.4.0
++
++  ws@8.17.1: {}

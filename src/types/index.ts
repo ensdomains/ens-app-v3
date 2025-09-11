@@ -68,12 +68,13 @@ export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records
 
 export type AvatarEditorType = {
   avatar?: string
+  header?: string
 }
 
 export type ProfileEditorType = {
   _avatar?: File
   avatar?: string
-  banner?: string
+  header?: string
   website?: string
   general: {
     [key: string]: string

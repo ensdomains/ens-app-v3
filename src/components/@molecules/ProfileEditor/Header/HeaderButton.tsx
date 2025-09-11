@@ -2,12 +2,13 @@ import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Button, Dropdown, Input, Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Input, Typography } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
+import { useImgTimestamp } from '@app/hooks/useImgTimestamp'
 
-const InicatorContainer = styled.button<{
+const IndicatorContainer = styled.button<{
   $error?: boolean
   $validated?: boolean
   $dirty?: boolean
@@ -29,7 +30,7 @@ const InicatorContainer = styled.button<{
       border-radius: 50%;
       right: 0;
       top: 0;
-      transform: translate(-60%, 60%) scale(0.2);
+      transform: translate(50%, -50%) scale(0.2);
       transition: all 0.3s ease-out;
     }
 
@@ -38,7 +39,7 @@ const InicatorContainer = styled.button<{
       ::after {
         background-color: ${theme.colors.blue};
         border-color: ${theme.colors.backgroundPrimary};
-        transform: translate(-60%, 60%) scale(1);
+        transform: translate(50%, -50%) scale(1);
       }
     `}
 
@@ -47,7 +48,7 @@ const InicatorContainer = styled.button<{
       ::after {
         background-color: ${theme.colors.green};
         border-color: ${theme.colors.backgroundPrimary};
-        transform: translate(-60%, 60%) scale(1);
+        transform: translate(50%, -50%) scale(1);
       }
     `}
 
@@ -56,46 +57,91 @@ const InicatorContainer = styled.button<{
       ::after {
         background-color: ${theme.colors.red};
         border-color: ${theme.colors.backgroundPrimary};
-        transform: translate(-60%, 60%) scale(1);
+        transform: translate(50%, -50%) scale(1);
       }
     `}
   `,
 )
 
-const OuterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 20px;
-  width: 100%;
-`
+const OuterContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
 
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-  padding-top: 28px;
-`
+    @media (min-width: ${theme.breakpoints.md}px) {
+      flex-direction: row;
+      gap: 20px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+  `,
+)
+
+const ButtonContainer = styled.div<{ $hasImage?: boolean }>(
+  ({ $hasImage, theme }) => css`
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    @media (min-width: ${theme.breakpoints.md}px) {
+      flex-direction: column;
+      flex: 1;
+      margin-top: 20px;
+      ${$hasImage &&
+      `
+      height: 100px;
+      justify-content: space-between;
+    `}
+
+      & > div {
+        gap: 0;
+      }
+    }
+  `,
+)
+
+const InputWrapper = styled.div(
+  ({ theme }) => css`
+    margin-top: -${theme.space['2']};
+  `,
+)
 
 const DropdownContainer = styled.div`
   width: fit-content;
 `
 
-const AvatarContainer = styled.div`
+const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 128px;
+  width: 300px;
 `
 
-const AvatarLabel = styled(Typography)`
+const HeaderLabel = styled(Typography)`
   font-weight: 600;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textSecondary};
 `
 
-export type AvatarClickType = 'upload' | 'nft' | 'manual'
+const HeaderPreview = styled.div<{ $src?: string }>(
+  ({ theme, $src }) => css`
+    width: 300px;
+    height: 100px;
+    border-radius: ${theme.radii.large};
+    background-color: ${theme.colors.greyLight};
+    background-image: ${$src ? `url(${$src})` : 'none'};
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+  `,
+)
+
+export type HeaderClickType = 'upload' | 'nft' | 'manual'
 
 type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
 
@@ -105,34 +151,35 @@ type Props = {
   dirty?: boolean
   error?: boolean
   src?: string
-  avatarValue?: string
-  onSelectOption?: (value: AvatarClickType) => void
-  onAvatarChange?: (avatar?: string) => void
-  onAvatarSrcChange?: (src?: string) => void
-  onAvatarFileChange?: (file?: File) => void
+  headerValue?: string
+  onSelectOption?: (value: HeaderClickType) => void
+  onHeaderChange?: (header?: string) => void
+  onHeaderSrcChange?: (src?: string) => void
+  onHeaderFileChange?: (file?: File) => void
 } & PickedDropdownProps
 
-const AvatarButton = ({
+const HeaderButton = ({
   validated,
   disabledUpload,
   dirty,
   error,
   src,
-  avatarValue,
+  headerValue,
   onSelectOption,
-  onAvatarChange,
-  onAvatarSrcChange,
-  onAvatarFileChange,
+  onHeaderChange,
+  onHeaderSrcChange,
+  onHeaderFileChange,
   isOpen,
   setIsOpen,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
+  const { addTimestamp } = useImgTimestamp()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
+  const handleSelectOption = (value: HeaderClickType | 'remove') => () => {
     if (value === 'remove') {
-      onAvatarChange?.(undefined)
-      onAvatarSrcChange?.(undefined)
+      onHeaderChange?.(undefined)
+      onHeaderSrcChange?.(undefined)
     } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {
@@ -146,30 +193,33 @@ const AvatarButton = ({
 
   return (
     <OuterContainer>
-      <AvatarContainer>
-        <AvatarLabel>Avatar</AvatarLabel>
-        <InicatorContainer
+      <HeaderContainer>
+        <HeaderLabel>Header</HeaderLabel>
+        <IndicatorContainer
           $validated={validated && dirty}
           $error={error}
           $dirty={dirty}
           type="button"
         >
-          <Avatar label="profile-button-avatar" src={src} />
-        </InicatorContainer>
-      </AvatarContainer>
-      <ButtonContainer>
-        {avatarValue && (
-          <Input label="" value={avatarValue} disabled readOnly data-testid="avatar-uri-display" />
+          <HeaderPreview $src={addTimestamp(src)} id="header-field" />
+        </IndicatorContainer>
+      </HeaderContainer>
+      <ButtonContainer $hasImage={!!src}>
+        {headerValue && (
+          <InputWrapper>
+            <Input
+              label=""
+              value={headerValue}
+              disabled
+              readOnly
+              data-testid="header-uri-display"
+            />
+          </InputWrapper>
         )}
         <DropdownContainer>
           <LegacyDropdown
             items={
               [
-                {
-                  label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-                  color: 'text',
-                  onClick: handleSelectOption('nft'),
-                },
                 ...(disabledUpload
                   ? []
                   : [
@@ -201,7 +251,7 @@ const AvatarButton = ({
             {...dropdownProps}
           >
             <Button width="44" colorStyle="blueSecondary">
-              {src ? 'Change avatar' : 'Add avatar'}
+              {src ? 'Change header' : 'Add header'}
             </Button>
             <input
               type="file"
@@ -211,7 +261,7 @@ const AvatarButton = ({
               onChange={(e) => {
                 if (e.target.files?.[0]) {
                   onSelectOption?.('upload')
-                  onAvatarFileChange?.(e.target.files[0])
+                  onHeaderFileChange?.(e.target.files[0])
                 }
               }}
             />
@@ -222,4 +272,4 @@ const AvatarButton = ({
   )
 }
 
-export default AvatarButton
+export default HeaderButton

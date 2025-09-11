@@ -33,6 +33,15 @@
             }
           }
         },
+        "header": {
+          "image": {
+            "upload": {
+              "title": "Upload Header",
+              "subtitle": "You need to sign a message to upload a header image. This won't cost anything.",
+              "action": "Sign and Upload"
+            }
+          }
+        },
         "general": {
           "label": "General",
           "name": {
