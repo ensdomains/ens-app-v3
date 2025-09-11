@@ -17,7 +17,7 @@ export const usePrimaryProfile = ({ address, enabled = true }: UsePrimaryProfile
     data: primary,
     isLoading: isPrimaryLoading,
     isFetching: isPrimaryFetching,
-  } = usePrimaryName({ address, enabled })
+  } = usePrimaryName({ address, enabled, allowMismatch: true })
 
   const {
     data: profile,
@@ -29,6 +29,8 @@ export const usePrimaryProfile = ({ address, enabled = true }: UsePrimaryProfile
     if (!primary && !profile) return undefined
     return {
       name: primary?.name,
+      match: primary?.match,
+      originalName: primary?.originalName,
       ...(profile || ({} as GetRecordsReturnType)),
     }
   }, [primary, profile])

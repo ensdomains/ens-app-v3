@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## IMPORTANT: Git Workflow Rules
+
+### NEVER push directly to main branch
+- Always work on feature branches
+- Create pull requests for all changes
+- Use `git push origin <branch-name>` to push to feature branches only
+- If on main branch, switch to a feature branch before making changes
+- Direct pushes to main will bypass GitHub protections and break CI/CD workflows
+
 ## Development Commands
 
 ### Build & Development

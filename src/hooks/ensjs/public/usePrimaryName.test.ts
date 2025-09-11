@@ -56,6 +56,7 @@ describe('getPrimaryNameQueryFn', () => {
         "beautifiedName": "test.eth",
         "match": true,
         "name": "test.eth",
+        "originalName": "test.eth",
         "resolverAddress": "0xresolver",
         "reverseResolverAddress": "0xreverseResolver",
       }
@@ -105,6 +106,59 @@ describe('getPrimaryNameQueryFn', () => {
         "beautifiedName": "test.eth",
         "match": false,
         "name": "test.eth",
+        "originalName": "test.eth",
+        "resolverAddress": "0xresolver",
+        "reverseResolverAddress": "0xreverseResolver",
+      }
+    `)
+  })
+  
+  it('should preserve original name and not beautify when match is false', async () => {
+    mockGetName.mockImplementationOnce(() =>
+      Promise.resolve({
+        name: 'MetaMask.eth',
+        match: false,
+        resolverAddress: '0xresolver',
+        reverseResolverAddress: '0xreverseResolver',
+      }),
+    )
+    const result = await getPrimaryNameQueryFn(mockConfig)({
+      queryKey: [{ address, allowMismatch: true }, chainId, address, undefined, 'getName'],
+      meta: {} as any,
+      signal: undefined as any,
+    })
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "beautifiedName": "MetaMask.eth",
+        "match": false,
+        "name": "MetaMask.eth",
+        "originalName": "MetaMask.eth",
+        "resolverAddress": "0xresolver",
+        "reverseResolverAddress": "0xreverseResolver",
+      }
+    `)
+  })
+  
+  it('should beautify name when match is true', async () => {
+    mockGetName.mockImplementationOnce(() =>
+      Promise.resolve({
+        name: 'test.eth',
+        match: true,
+        resolverAddress: '0xresolver',
+        reverseResolverAddress: '0xreverseResolver',
+      }),
+    )
+    const result = await getPrimaryNameQueryFn(mockConfig)({
+      queryKey: [{ address, allowMismatch: false }, chainId, address, undefined, 'getName'],
+      meta: {} as any,
+      signal: undefined as any,
+    })
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "beautifiedName": "test.eth",
+        "match": true,
+        "name": "test.eth",
+        "originalName": "test.eth",
         "resolverAddress": "0xresolver",
         "reverseResolverAddress": "0xreverseResolver",
       }
