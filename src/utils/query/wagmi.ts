@@ -1,3 +1,4 @@
+import { porto } from 'porto/wagmi'
 import {
   createClient,
   formatTransactionRequest,
@@ -138,7 +139,7 @@ const chains = getChainsFromUrl().map((c) => ({
 
 const wagmiConfig_ = createConfig({
   syncConnectedChain: false,
-  connectors: rainbowKitConnectors,
+  connectors: [...rainbowKitConnectors, porto()],
   ssr: true,
   multiInjectedProviderDiscovery: !isInsideSafe(),
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),
