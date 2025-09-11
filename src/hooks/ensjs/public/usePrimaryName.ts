@@ -1,9 +1,9 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
-import { toHex } from 'viem'
 import { readContract } from 'viem/actions'
 
+import { universalResolverReverseSnippet } from '@ensdomains/ensjs/contracts'
 import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
-import { normalise, packetToBytes } from '@ensdomains/ensjs/utils'
+import { normalise } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
@@ -27,22 +27,6 @@ type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<
   'getName',
   'standard'
 >
-
-// Universal Resolver reverse function ABI
-const universalResolverReverseAbi = [
-  {
-    inputs: [{ name: 'reverseName', type: 'bytes' }],
-    name: 'reverse',
-    outputs: [
-      { name: '', type: 'string' },
-      { name: '', type: 'address' },
-      { name: '', type: 'address' },
-      { name: '', type: 'address' },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const
 
 export const getPrimaryNameQueryFn =
   (config: ConfigWithEns) =>
@@ -74,19 +58,26 @@ export const getPrimaryNameQueryFn =
       try {
         const ensUniversalResolverAddress = client.chain?.contracts?.ensUniversalResolver?.address
         if (ensUniversalResolverAddress) {
-          const reverseNode = `${address.toLowerCase().substring(2)}.addr.reverse`
+          // Use the reverse function that takes address and coinType
+          // coinType 60 is for Ethereum mainnet
+          const coinType = 60n
 
           const rawNameResult = await readContract(client, {
             address: ensUniversalResolverAddress,
-            abi: universalResolverReverseAbi,
+            abi: universalResolverReverseSnippet,
             functionName: 'reverse',
-            args: [toHex(packetToBytes(reverseNode))],
+            args: [address, coinType],
           })
+          console.log('ensUniversalResolverAddress', ensUniversalResolverAddress)
+          console.log('rawNameResult', rawNameResult)
 
+          // The reverse function returns [name, address, reverseResolver, resolver]
           if (rawNameResult && rawNameResult[0]) {
             ;[originalName] = rawNameResult
             // Check if the raw name is normalized
             try {
+              console.log('originalName', originalName)
+              console.log('normalise(originalName)', normalise(originalName))
               const normalizedVersion = normalise(originalName)
               isNormalized = originalName === normalizedVersion
             } catch (error) {
