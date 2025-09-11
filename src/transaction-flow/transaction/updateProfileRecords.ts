@@ -10,7 +10,7 @@ import {
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { recordOptionsToToupleList } from '@app/utils/records'
+import { recordOptionsToToupleList, recordsWithCointypeCoins } from '@app/utils/records'
 
 type Data = {
   name: string
@@ -88,7 +88,7 @@ const transaction = async ({
   return setRecords.makeFunctionData(connectorClient, {
     name,
     resolverAddress,
-    ...recordOptions,
+    ...recordsWithCointypeCoins(recordOptions),
   })
 }
 export default {
