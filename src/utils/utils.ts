@@ -214,7 +214,7 @@ export const thread = <F extends [(arg: any) => any, ...Array<(arg: any) => any>
   ...f: F & AsChain<F>
 ): LaxReturnType<Last<F>> => f.reduce((acc, fn) => fn(acc), arg) as LaxReturnType<Last<F>>
 
-// Adpated from: https://stackoverflow.com/questions/36721830/convert-hsl-to-rgb-and-hex
+// Adapted from: https://stackoverflow.com/questions/36721830/convert-hsl-to-rgb-and-hex
 export const hslToHex = (hsl: string) => {
   const [h, s, l] = hsl.match(/\d+/g)!.map(Number)
   const _l = l / 100
