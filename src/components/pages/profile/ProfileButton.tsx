@@ -41,6 +41,25 @@ const StyledAddressIcon = styled(DynamicAddressIcon)(
   `,
 )
 
+// Icon components defined outside of parent components
+const UpRightArrowIcon = () => <UpRightArrowSVG height={16} width={16} />
+const CopyIcon = () => <CopySVG height={16} width={16} />
+
+// Icon component for social icons with props
+const SocialIcon = ({ color, icon }: { color?: string; icon: keyof typeof socialIconTypes }) => (
+  <DynamicSocialIcon height={20} width={20} fill={color} name={icon} />
+)
+
+// Icon component for styled address icon
+const StyledAddressIconComponent = ({ name }: { name: string }) => <StyledAddressIcon name={name} />
+
+// Icon component for verification icon
+const VerificationIcon = ({
+  name,
+}: {
+  name: Parameters<typeof DynamicVerificationIcon>[0]['name']
+}) => <DynamicVerificationIcon name={name} />
+
 export const SocialProfileButton = ({
   iconKey,
   value,
@@ -57,6 +76,17 @@ export const SocialProfileButton = ({
   const breakpoints = useBreakpoint()
   const socialData = getSocialData(normalisedKey, value)
 
+  const IconComponent = useMemo(
+    () => () =>
+      socialData ? (
+        <SocialIcon
+          color={socialData.color}
+          icon={socialData.icon as keyof typeof socialIconTypes}
+        />
+      ) : null,
+    [socialData],
+  )
+
   if (!socialData) return null
   return (
     <VerificationBadge
@@ -66,14 +96,7 @@ export const SocialProfileButton = ({
       tooltipContent={<VerificationBadgeAccountTooltipContent verifiers={verifiers} />}
     >
       <RecordItem
-        icon={() => (
-          <DynamicSocialIcon
-            height={20}
-            width={20}
-            fill={socialData.color}
-            name={socialData.icon as keyof typeof socialIconTypes}
-          />
-        )}
+        icon={IconComponent}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`social-profile-button-${iconKey}`}
@@ -97,28 +120,32 @@ export const AddressProfileButton = ({
 }) => {
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
-
   const [, copy] = useCopyToClipboard()
   const coinChainResults = useCoinChain({ coinName: iconKey })
   const { data } = coinChainResults
   const defaultBlockExplorer = data?.blockExplorers?.default
 
+  const IconComponent = useMemo(
+    () => () => <StyledAddressIconComponent name={iconKey} />,
+    [iconKey],
+  )
+
   const items = [
     iconKey === 'eth'
       ? {
-          icon: UpRightArrowSVG,
+          icon: UpRightArrowIcon,
           label: 'View address',
           href: getDestination(`/${address}`) as string,
         }
       : undefined,
     {
-      icon: CopySVG,
+      icon: CopyIcon,
       label: 'Copy address',
       onClick: () => copy(address),
     },
     defaultBlockExplorer
       ? {
-          icon: UpRightArrowSVG,
+          icon: UpRightArrowIcon,
           label: `View on ${defaultBlockExplorer?.name}`,
           href: `${defaultBlockExplorer?.url}/address/${address}`,
         }
@@ -130,7 +157,7 @@ export const AddressProfileButton = ({
       <RecordItem
         data-testid={`address-profile-button-${iconKey}`}
         postfixIcon={VerticalDotsSVG}
-        icon={() => <StyledAddressIcon name={iconKey} />}
+        icon={IconComponent}
         value={address}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
@@ -326,14 +353,14 @@ export const OwnerProfileButton = ({
   const items = [
     link
       ? {
-          icon: UpRightArrowSVG,
+          icon: UpRightArrowIcon,
           label: 'View profile',
           href: link,
         }
       : undefined,
     primary.data?.name
       ? {
-          icon: CopySVG,
+          icon: CopyIcon,
           label: 'Copy name',
           onClick: () => copy(primary.data?.name!),
         }
@@ -341,17 +368,17 @@ export const OwnerProfileButton = ({
     ...(dataType === 'address'
       ? ([
           {
-            icon: UpRightArrowSVG,
+            icon: UpRightArrowIcon,
             label: 'View address',
             href: getDestination(`/${addressOrNameOrDate}`) as string,
           },
           {
-            icon: CopySVG,
+            icon: CopyIcon,
             label: 'Copy address',
             onClick: () => copy(addressOrNameOrDate),
           },
           {
-            icon: UpRightArrowSVG,
+            icon: UpRightArrowIcon,
             label: 'View on Etherscan',
             href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
           },
@@ -397,6 +424,13 @@ export const VerificationProfileButton = ({
 }) => {
   const breakpoints = useBreakpoint()
 
+  const IconComponent = useMemo(
+    () => () => (
+      <VerificationIcon name={iconKey as Parameters<typeof DynamicVerificationIcon>[0]['name']} />
+    ),
+    [iconKey],
+  )
+
   if (!isVerificationProtocol(iconKey)) return null
 
   const verificationData = getVerifierData(iconKey, value)
@@ -409,7 +443,7 @@ export const VerificationProfileButton = ({
       tooltipContent={<VerificationBadgeVerifierTooltipContent isVerified={!!isVerified} />}
     >
       <RecordItem
-        icon={() => <DynamicVerificationIcon name={iconKey} />}
+        icon={IconComponent}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
         data-testid={`verification-profile-button-${iconKey}`}
