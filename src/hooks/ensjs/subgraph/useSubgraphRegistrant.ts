@@ -15,12 +15,17 @@ export type UseSubgraphRegistrantParameters = PartialBy<GetSubgraphRegistrantPar
 
 export type UseSubgraphRegistrantReturnType = GetSubgraphRegistrantReturnType
 
-export type UseSubgraphRegistrantConfig = QueryConfig<UseSubgraphRegistrantReturnType, Error>
-
 type QueryKey<TParams extends UseSubgraphRegistrantParameters> = CreateQueryKey<
   TParams,
   'getSubgraphRegistrant',
   'graph'
+>
+
+export type UseSubgraphRegistrantConfig = QueryConfig<
+  UseSubgraphRegistrantReturnType,
+  Error,
+  QueryKey<UseSubgraphRegistrantParameters>,
+  GetSubgraphRegistrantReturnType
 >
 
 export const getSubgraphRegistrantQueryFn =

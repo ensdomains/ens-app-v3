@@ -174,8 +174,14 @@ export type QueryConfig<TData, TError, TQueryKey extends QueryKey, TSelectData =
   /** Scope the cache to a given context. */
   scopeKey?: string
 }
-export type InfiniteQueryConfig<TData, TError, TSelectData = TData> = Pick<
-  UseInfiniteQueryOptions<TData, TError, TSelectData>,
+export type InfiniteQueryConfig<
+  TData,
+  TError,
+  TQueryKey extends QueryKey,
+  TSelectData = TData,
+  TPageParam = unknown,
+> = Pick<
+  UseInfiniteQueryOptions<TData, TError, TSelectData, TData, TQueryKey, TPageParam>,
   'gcTime' | 'enabled' | 'staleTime'
 > & {
   /** Scope the cache to a given context. */
