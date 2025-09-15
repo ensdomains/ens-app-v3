@@ -16,12 +16,16 @@ type UseNameHistoryParameters = PartialBy<GetNameHistoryParameters, 'name'>
 
 type UseNameHistoryReturnType = GetNameHistoryReturnType
 
-type UseNameHistoryConfig = QueryConfig<UseNameHistoryReturnType, Error>
-
 type QueryKey<TParams extends UseNameHistoryParameters> = CreateQueryKey<
   TParams,
   'getNameHistory',
   'graph'
+>
+
+type UseNameHistoryConfig = QueryConfig<
+  UseNameHistoryReturnType,
+  Error,
+  QueryKey<UseNameHistoryParameters>
 >
 
 export const getNameHistoryQueryFn =

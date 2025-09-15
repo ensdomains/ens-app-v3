@@ -16,12 +16,16 @@ type UseDentityTokenParameters = {
 
 export type UseDentityTokenReturnType = DentityFederatedToken
 
-type UseVerificationOAuthConfig = QueryConfig<UseDentityTokenReturnType, Error>
-
 type QueryKey<TParams extends UseDentityTokenParameters> = CreateQueryKey<
   TParams,
   'getDentityToken',
   'independent'
+>
+
+type UseVerificationOAuthConfig = QueryConfig<
+  UseDentityTokenReturnType,
+  Error,
+  QueryKey<UseDentityTokenParameters>
 >
 
 export const getDentityToken = async <TParams extends UseDentityTokenParameters>({

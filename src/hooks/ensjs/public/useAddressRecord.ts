@@ -16,11 +16,15 @@ type UseAddressRecordParameters = PartialBy<GetAddressRecordParameters, 'name'>
 
 export type UseAddressRecordReturnType = GetAddressRecordReturnType
 
-type UseAddressRecordConfig = QueryConfig<UseAddressRecordReturnType, Error>
-
 export type UseAddressRecordQueryKey<
   TParams extends UseAddressRecordParameters = UseAddressRecordParameters,
 > = CreateQueryKey<TParams, 'getAddressRecord', 'standard'>
+
+type UseAddressRecordConfig = QueryConfig<
+  UseAddressRecordReturnType,
+  Error,
+  UseAddressRecordQueryKey<UseAddressRecordParameters>
+>
 
 export const getAddressRecordQueryFn =
   (config: ConfigWithEns) =>

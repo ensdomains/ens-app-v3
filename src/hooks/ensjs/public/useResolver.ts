@@ -12,13 +12,13 @@ type UseResolverParameters = PartialBy<GetResolverParameters, 'name'>
 
 type UseResolverReturnType = GetResolverReturnType
 
-type UseResolverConfig = QueryConfig<UseResolverReturnType, Error>
-
 type QueryKey<TParams extends UseResolverParameters> = CreateQueryKey<
   TParams,
   'getResolver',
   'standard'
 >
+
+type UseResolverConfig = QueryConfig<UseResolverReturnType, Error, QueryKey<UseResolverParameters>>
 
 export const getResolverQueryFn =
   (config: ConfigWithEns) =>

@@ -102,15 +102,20 @@ type UseEstimateGasWithStateOverrideReturnType<
   gasEstimates: GasEstimateArray<TransactionItems>
 }
 
-type UseEstimateGasWithStateOverrideConfig = QueryConfig<
-  UseEstimateGasWithStateOverrideReturnType,
-  Error
->
+type QueryKey<TransactionItems extends TransactionItem[] | readonly TransactionItem[]> =
+  CreateQueryKey<
+    UseEstimateGasWithStateOverrideParameters<TransactionItems>,
+    'estimateGasWithStateOverride',
+    'standard'
+  >
 
-type QueryKey<
+type UseEstimateGasWithStateOverrideConfig<
   TransactionItems extends TransactionItem[] | readonly TransactionItem[],
-  TParams extends UseEstimateGasWithStateOverrideParameters<TransactionItems>,
-> = CreateQueryKey<TParams, 'estimateGasWithStateOverride', 'standard'>
+> = QueryConfig<
+  UseEstimateGasWithStateOverrideReturnType<TransactionItems>,
+  Error,
+  QueryKey<TransactionItems>
+>
 
 const leftPadBytes32 = (hex: Hex) => padHex(hex, { dir: 'left', size: 32 })
 
@@ -237,12 +242,9 @@ const estimateIndividualGas = async <TName extends TransactionName>({
 export const estimateGasWithStateOverrideQueryFn =
   (config: ConfigWithEns) =>
   (connectorClient: ConnectorClientWithEns | undefined) =>
-  async <
-    TransactionItems extends TransactionItem[] | readonly TransactionItem[],
-    TParams extends UseEstimateGasWithStateOverrideParameters<TransactionItems>,
-  >({
+  async <TransactionItems extends TransactionItem[] | readonly TransactionItem[]>({
     queryKey: [{ transactions }, chainId],
-  }: QueryFunctionContext<QueryKey<TransactionItems, TParams>>) => {
+  }: QueryFunctionContext<QueryKey<TransactionItems>>) => {
     const client = config.getClient({ chainId })
 
     const connectorClientWithAccount = {
@@ -270,7 +272,7 @@ export const estimateGasWithStateOverrideQueryFn =
     return {
       reduced: gasEstimates.reduce((acc, curr) => acc + curr, 0n),
       gasEstimates,
-    }
+    } as UseEstimateGasWithStateOverrideReturnType<TransactionItems>
   }
 
 export const useEstimateGasWithStateOverride = <
@@ -284,7 +286,7 @@ export const useEstimateGasWithStateOverride = <
   // params
   ...params
 }: UseEstimateGasWithStateOverrideParameters<TransactionItems> &
-  UseEstimateGasWithStateOverrideConfig) => {
+  UseEstimateGasWithStateOverrideConfig<TransactionItems>) => {
   const { data: connectorClient, isLoading: isConnectorLoading } =
     useConnectorClient<ConfigWithEns>()
 
