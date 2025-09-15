@@ -8,19 +8,19 @@ export const temporaryNonceManagerSource = () => {
   return {
     get: async (parameters) => {
       const { address, client } = parameters
-      if (typeof current[address] === 'undefined') {
-        console.log('getting nonce for:', address)
-        current[address] = await getTransactionCount(client, { address, blockTag: 'pending' })
-        console.log('nonce for:', address, current[address])
-      } else {
-        console.log(
-          'nonce for[existing]:',
-          address,
-          current[address],
-          await getTransactionCount(client, { address, blockTag: 'pending' }),
-        )
-      }
-      return current[address]
+      const remoteNonce = await getTransactionCount(client, { address, blockTag: 'pending' })
+      const newNonce = Math.max(remoteNonce, current[address] ?? 0)
+      console.log(
+        'nonce for:',
+        address,
+        'remote:',
+        remoteNonce,
+        'current:',
+        current[address],
+        'new:',
+        newNonce,
+      )
+      return newNonce
     },
     set: (parameters, nonce) => {
       const { address } = parameters

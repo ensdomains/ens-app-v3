@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { Hash } from 'viem'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setRecords } from '@ensdomains/ensjs/wallet'
@@ -29,14 +28,17 @@ export const generateRecords =
 
     const { texts = [], coins = [], contentHash, abi } = records
 
+    const ownerAccount = accounts.getAccountForUser(owner)
     const tx = await setRecords(walletClient, {
       name,
       resolverAddress: resolver,
       coins,
       texts,
       contentHash,
-      account: accounts.getAddress(owner) as Hash,
       abi,
+      account: ownerAccount,
+      // @ts-expect-error
+      nonceManager: ownerAccount.nonceManager,
     })
     await waitForTransaction(tx)
   }
