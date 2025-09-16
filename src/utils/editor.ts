@@ -1,6 +1,6 @@
 import { match, P } from 'ts-pattern'
 
-import { EncodedAbi } from '@ensdomains/ensjs/dist/types/utils/encoders/encodeAbi'
+import type { EncodedAbi } from '@ensdomains/ensjs/utils'
 
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
