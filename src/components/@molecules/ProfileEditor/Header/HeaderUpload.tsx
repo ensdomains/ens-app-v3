@@ -10,14 +10,15 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { headerAspectRatio } from '@app/utils/headerUpload'
 
-import { AvCancelButton, CropComponent } from './AvatarCrop'
+import { AvCancelButton, CropComponent } from './HeaderCrop'
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
-    aspect-ratio: 1;
+    aspect-ratio: ${headerAspectRatio};
     width: ${theme.space.full};
-    max-width: ${theme.space['72']};
+    max-width: ${theme.space['96']};
     border-radius: ${theme.radii.extraLarge};
   `,
 )
@@ -61,11 +62,16 @@ const UploadComponent = ({
     error,
   } = useMutation<void, Error>({
     mutationFn: async () => {
-      let baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
+      const baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://euc.li`
+      let endpoint
+
       if (chainName !== 'mainnet') {
-        baseURL = `${baseURL}/${chainName}`
+        // For testnets, use the format /:testnet/:name/h
+        endpoint = `${baseURL}/${chainName}/${name}/h`
+      } else {
+        // For mainnet, use the format /:name/header
+        endpoint = `${baseURL}/${name}/h`
       }
-      const endpoint = `${baseURL}/${name}`
 
       const urlHash = bytesToHex(sha256(dataURLToBytes(dataURL)))
       const expiry = `${Date.now() + 1000 * 60 * 60 * 24 * 7}`
@@ -85,7 +91,7 @@ const UploadComponent = ({
           ],
         },
         message: {
-          upload: 'avatar',
+          upload: 'header',
           expiry,
           name,
           hash: urlHash,
@@ -130,8 +136,8 @@ const UploadComponent = ({
   return (
     <>
       <Dialog.Heading
-        title={t('input.profileEditor.tabs.avatar.image.upload.title')}
-        subtitle={t('input.profileEditor.tabs.avatar.image.upload.subtitle')}
+        title={t('input.profileEditor.tabs.header.image.upload.title')}
+        subtitle={t('input.profileEditor.tabs.header.image.upload.subtitle')}
       />
       <Dialog.Content>
         <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
@@ -152,7 +158,7 @@ const UploadComponent = ({
           >
             {error
               ? t('action.tryAgain', { ns: 'common' })
-              : t('input.profileEditor.tabs.avatar.image.upload.action')}
+              : t('input.profileEditor.tabs.header.image.upload.action')}
           </Button>
         }
       />
@@ -160,13 +166,13 @@ const UploadComponent = ({
   )
 }
 
-export const AvatarUpload = ({
-  avatar,
+export const HeaderUpload = ({
+  headerFile,
   handleCancel,
   handleSubmit,
   name,
 }: {
-  avatar: File
+  headerFile: File
   handleCancel: () => void
   handleSubmit: (type: 'upload', uri: string, display?: string) => void
   name: string
@@ -174,7 +180,7 @@ export const AvatarUpload = ({
   const [dataURL, setDataURL] = useState<string | null>(null)
 
   if (!dataURL) {
-    return <CropComponent {...{ avatar, setDataURL, handleCancel }} />
+    return <CropComponent {...{ avatar: headerFile, setDataURL, handleCancel }} />
   }
 
   return (

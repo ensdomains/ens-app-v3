@@ -9,6 +9,10 @@ import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
+import {
+  HeaderViewManager,
+  HeaderViewType,
+} from '@app/components/@molecules/ProfileEditor/Header/HeaderViewManager'
 import { AddProfileRecordView } from '@app/components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
@@ -42,11 +46,13 @@ import { ResolverOutOfDateView } from './views/ResolverOutOfDateView'
 import { TransferOrResetProfileView } from './views/TransferOrResetProfileView'
 import { UpdateResolverOrResetProfileView } from './views/UpdateResolverOrResetProfileView'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
+import { WrappedHeaderButton } from './WrappedHeaderButton'
 
 const AvatarWrapper = styled.div(
   () => css`
     display: flex;
     justify-content: center;
+    width: 100%;
   `,
 )
 
@@ -157,6 +163,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
+    setHeader,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,
@@ -178,6 +185,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       updatedRecords.forEach((record) => {
         if (record.key === 'avatar' && record.group === 'media') {
           setAvatar(record.value)
+        } else if (record.key === 'header' && record.group === 'media') {
+          setHeader(record.value)
         } else {
           updateRecord(record)
         }
@@ -227,6 +236,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
+  const [headerSrc, setHeaderSrc] = useState<string | undefined>()
+  const [headerFile, setHeaderFile] = useState<File | undefined>()
 
   const isLoading_ = isLoading || resolverStatus.isLoading
   const [editorState, editorDispatch] = useProfileEditorReducer(
@@ -413,6 +424,17 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                   onAvatarSrcChange={(src) => setAvatarSrc(src)}
                 />
               </AvatarWrapper>
+              <WrappedHeaderButton
+                name={name}
+                control={control}
+                src={headerSrc}
+                onSelectOption={(option) =>
+                  editorDispatch({ type: 'pushView', payload: `header-${option}` as any })
+                }
+                onHeaderChange={(header) => setHeader(header)}
+                onHeaderFileChange={(file) => setHeaderFile(file)}
+                onHeaderSrcChange={(src) => setHeaderSrc(src)}
+              />
               {profileRecords.map((field, index) =>
                 field.group === 'custom' ? (
                   <CustomProfileRecordInput
@@ -443,7 +465,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                       validate: validatorForRecord(field),
                     })}
                   />
-                ) : (
+                ) : field.key !== 'header' && field.group !== 'media' ? (
                   <ProfileRecordInput
                     key={field.id}
                     recordKey={field.key}
@@ -464,7 +486,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                       validate: validatorForRecord(field),
                     })}
                   />
-                ),
+                ) : null,
               )}
               <ButtonContainer>
                 <ButtonWrapper>
@@ -520,7 +542,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             onClose={() => editorDispatch({ type: 'popView' })}
           />
         ))
-        .with('upload', 'nft', (type) => (
+        .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={name}
             avatarFile={avatarFile}
@@ -529,6 +551,20 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             handleSubmit={(_, uri, display) => {
               setAvatar(uri)
               setAvatarSrc(display)
+              editorDispatch({ type: 'popView' })
+              trigger()
+            }}
+          />
+        ))
+        .with('header-upload', 'header-manual', (type) => (
+          <HeaderViewManager
+            name={name}
+            headerFile={headerFile}
+            handleCancel={() => editorDispatch({ type: 'popView' })}
+            type={type.replace('header-', '') as HeaderViewType}
+            handleSubmit={(_, uri, display) => {
+              setHeader(uri)
+              setHeaderSrc(display)
               editorDispatch({ type: 'popView' })
               trigger()
             }}
