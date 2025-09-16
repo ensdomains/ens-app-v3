@@ -18,11 +18,14 @@ export const localhostWithEns = makeLocalhostChainWithEns<typeof localhost>(
 
 const ENS_SUBGRAPH_API_KEY = '9ad5cff64d93ed2c33d1a57b3ec03ea9'
 
-export const mainnetWithEns = addEnsContractsWithSubgraph({
-  chain: mainnet,
-  subgraphId: '5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH',
-  apiKey: ENS_SUBGRAPH_API_KEY,
-})
+export const mainnetWithEns = {
+  ...addEnsContracts(mainnet),
+  subgraphs: {
+    ens: {
+      url: 'https://api.alpha.blue.ensnode.io/subgraph',
+    },
+  },
+}
 
 export const sepoliaWithEnsBase = addEnsContractsWithSubgraph({
   chain: sepolia,
