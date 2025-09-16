@@ -112,7 +112,7 @@ describe('getPrimaryNameQueryFn', () => {
       }
     `)
   })
-  
+
   it('should preserve original name and not beautify when match is false', async () => {
     mockGetName.mockImplementationOnce(() =>
       Promise.resolve({
@@ -138,7 +138,7 @@ describe('getPrimaryNameQueryFn', () => {
       }
     `)
   })
-  
+
   it('should beautify name when match is true', async () => {
     mockGetName.mockImplementationOnce(() =>
       Promise.resolve({

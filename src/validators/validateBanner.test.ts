@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { validateBanner, isValidBanner } from './validateBanner'
+import { isValidBanner, validateBanner } from './validateBanner'
 
 describe('validateBanner', () => {
   it('should return true for valid HTTPS image URLs', () => {
@@ -25,12 +25,14 @@ describe('validateBanner', () => {
 
   it('should return error for non-image file extensions', () => {
     const result = validateBanner('https://example.com/document.pdf')
-    expect(result).toBe('Banner URL must point to a valid image file (.jpg, .jpeg, .png, .gif, .webp, .svg)')
+    expect(result).toBe(
+      'Banner URL must point to a valid image file (.jpg, .jpeg, .png, .gif, .webp, .svg)',
+    )
   })
 
   it('should accept various image file extensions', () => {
     const extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']
-    extensions.forEach(ext => {
+    extensions.forEach((ext) => {
       const result = validateBanner(`https://example.com/image${ext}`)
       expect(result).toBe(true)
     })

@@ -122,7 +122,7 @@ export default class MyDocument extends Document {
               {/* eslint-disable-next-line react/no-danger */}
               <script dangerouslySetInnerHTML={{ __html: ipfsPathScript }} />
               {/* eslint-disable-next-line @next/next/no-css-tags */}
-              <link rel="stylesheet" href="./fonts/fonts.css" />
+              <link rel="stylesheet" href="/fonts/fonts.css" />
             </>
           )}
 

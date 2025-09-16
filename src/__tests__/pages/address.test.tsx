@@ -1,14 +1,15 @@
 import '@app/test-utils'
 
-import { render, screen, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { render, screen, waitFor } from '@testing-library/react'
+import { useRouter } from 'next/router'
+import React from 'react'
 import { ThemeProvider } from 'styled-components'
+import { describe, expect, it, vi } from 'vitest'
+
 import { lightTheme } from '@ensdomains/thorin'
 
 import Page from '../../pages/address'
-import { useRouter } from 'next/router'
 
 // Mock Next.js router
 vi.mock('next/router', () => ({
@@ -32,9 +33,7 @@ vi.mock('@app/hooks/usePrimaryProfile', () => ({
           name: 'metamask.eth',
           originalName: 'MetaMask.eth',
           match: false,
-          texts: [
-            { key: 'description', value: 'MetaMask wallet' },
-          ],
+          texts: [{ key: 'description', value: 'MetaMask wallet' }],
         },
         isLoading: false,
       }
@@ -76,7 +75,8 @@ vi.mock('@app/components/@molecules/NameListView/NameListView', () => ({
 
 vi.mock('@app/layouts/Content', () => ({
   Content: ({ children, loading }: any) => {
-    const childrenObj = typeof children === 'object' && !React.isValidElement(children) ? children : {}
+    const childrenObj =
+      typeof children === 'object' && !React.isValidElement(children) ? children : {}
     return (
       <div data-testid="content" data-loading={loading}>
         {childrenObj.leading}
@@ -93,9 +93,7 @@ vi.mock('@app/layouts/ContentGrid', () => ({
 }))
 
 vi.mock('@app/components/Outlink', () => ({
-  Outlink: ({ children }: { children: React.ReactNode }) => (
-    <a data-testid="outlink">{children}</a>
-  ),
+  Outlink: ({ children }: { children: React.ReactNode }) => <a data-testid="outlink">{children}</a>,
 }))
 
 describe('Address Page', () => {

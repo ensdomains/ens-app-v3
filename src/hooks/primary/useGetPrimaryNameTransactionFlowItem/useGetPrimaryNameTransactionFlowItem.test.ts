@@ -3,8 +3,8 @@ import { mockFunction, renderHook } from '@app/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegistryName'
+import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 
 import { useGetPrimaryNameTransactionFlowItem } from '.'
 

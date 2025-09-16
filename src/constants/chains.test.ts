@@ -33,7 +33,7 @@ describe('chains', () => {
     process.env = { ...originalEnv }
     delete process.env.NEXT_PUBLIC_CHAIN_NAME
     delete process.env.NEXT_PUBLIC_PROVIDER
-    
+
     // Set up window mock
     Object.defineProperty(global, 'window', {
       value: {
@@ -131,7 +131,7 @@ describe('chains', () => {
         process.env.NEXT_PUBLIC_PROVIDER = 'http://localhost:8545'
         // @ts-ignore
         global.window.location = createMockLocation('localhost')
-        
+
         // Re-import the module to pick up the new environment variable
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
@@ -143,7 +143,7 @@ describe('chains', () => {
         delete process.env.NEXT_PUBLIC_PROVIDER
         // @ts-ignore
         global.window.location = createMockLocation('localhost')
-        
+
         // Re-import the module to pick up the cleared environment variable
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
@@ -155,7 +155,7 @@ describe('chains', () => {
         process.env.NEXT_PUBLIC_PROVIDER = 'http://localhost:8545'
         // @ts-ignore
         global.window.location = createMockLocation('127.0.0.1')
-        
+
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
         const result = getNetworkFromUrlFresh()
@@ -166,7 +166,7 @@ describe('chains', () => {
         delete process.env.NEXT_PUBLIC_PROVIDER
         // @ts-ignore
         global.window.location = createMockLocation('127.0.0.1')
-        
+
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
         const result = getNetworkFromUrlFresh()
@@ -229,9 +229,10 @@ describe('chains', () => {
       process.env.NEXT_PUBLIC_PROVIDER = 'http://localhost:8545'
       // @ts-ignore
       global.window.location = createMockLocation('localhost')
-      
+
       vi.resetModules()
-      const { getChainsFromUrl: getChainsFromUrlFresh, localhostWithEns: localhostWithEnsFresh } = await import('./chains')
+      const { getChainsFromUrl: getChainsFromUrlFresh, localhostWithEns: localhostWithEnsFresh } =
+        await import('./chains')
       const result = getChainsFromUrlFresh()
       expect(result).toEqual([localhostWithEnsFresh])
     })

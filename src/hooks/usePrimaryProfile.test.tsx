@@ -1,9 +1,10 @@
 import { renderHook, waitFor } from '@app/test-utils'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
 
-import { usePrimaryProfile } from './usePrimaryProfile'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { usePrimaryName } from './ensjs/public/usePrimaryName'
 import { useRecords } from './ensjs/public/useRecords'
+import { usePrimaryProfile } from './usePrimaryProfile'
 
 vi.mock('./ensjs/public/usePrimaryName')
 vi.mock('./ensjs/public/useRecords')
@@ -18,13 +19,13 @@ describe('usePrimaryProfile', () => {
 
   it('should pass allowMismatch: true to usePrimaryName', () => {
     const address = '0x1234567890abcdef' as any
-    
+
     mockUsePrimaryName.mockReturnValue({
       data: null,
       isLoading: false,
       isFetching: false,
     } as any)
-    
+
     mockUseRecords.mockReturnValue({
       data: null,
       isLoading: false,
@@ -48,7 +49,7 @@ describe('usePrimaryProfile', () => {
       match: false,
       beautifiedName: 'MetaMask.eth',
     }
-    
+
     const recordsData = {
       texts: [
         { key: 'description', value: 'Test description' },
@@ -62,7 +63,7 @@ describe('usePrimaryProfile', () => {
       isLoading: false,
       isFetching: false,
     } as any)
-    
+
     mockUseRecords.mockReturnValue({
       data: recordsData,
       isLoading: false,
@@ -89,13 +90,13 @@ describe('usePrimaryProfile', () => {
       match: false,
       beautifiedName: 'MetaMask.eth',
     }
-    
+
     mockUsePrimaryName.mockReturnValue({
       data: primaryData,
       isLoading: false,
       isFetching: false,
     } as any)
-    
+
     mockUseRecords.mockReturnValue({
       data: null,
       isLoading: false,
@@ -115,13 +116,13 @@ describe('usePrimaryProfile', () => {
 
   it('should return undefined when no primary name exists', async () => {
     const address = '0x1234567890abcdef' as any
-    
+
     mockUsePrimaryName.mockReturnValue({
       data: null,
       isLoading: false,
       isFetching: false,
     } as any)
-    
+
     mockUseRecords.mockReturnValue({
       data: null,
       isLoading: false,
@@ -137,13 +138,13 @@ describe('usePrimaryProfile', () => {
 
   it('should handle loading states correctly', () => {
     const address = '0x1234567890abcdef' as any
-    
+
     mockUsePrimaryName.mockReturnValue({
       data: null,
       isLoading: true,
       isFetching: true,
     } as any)
-    
+
     mockUseRecords.mockReturnValue({
       data: null,
       isLoading: true,
