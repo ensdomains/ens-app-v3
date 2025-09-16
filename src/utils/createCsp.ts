@@ -34,9 +34,12 @@ csp += ' https://app.usecapsule.com'
 csp += " 'wasm-unsafe-eval'"
 // INLINE SCRIPT HASHES
 // hiddenCheckScript
-csp += " 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc='"
-// themeSwitcherScript
-csp += " 'sha256-84jekTLuMPFFzbBxEFpoUhJbu81z5uBinvhIKKkAPxg='"
+csp += " 'unsafe-inline'"
+// csp += " 'sha256-UyYcl+sKCF/ROFZPHBlozJrndwfNiC5KT5ZZfup/pPc='"
+// // themeSwitcherScript
+// csp += " 'sha256-84jekTLuMPFFzbBxEFpoUhJbu81z5uBinvhIKKkAPxg='"
+// // ipfs script
+// csp += " 'sha256-IHhZ1lhakRgvt6EnnBnjj5bw7wt8hWscIumGmnYASCg='"
 // end script-src
 csp += ';'
 
