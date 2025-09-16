@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { createTestClient, http } from 'viem'
 import {
   revert as evmRevert,
   snapshot as evmSnapshot,
@@ -6,11 +6,11 @@ import {
   mine,
   setAutomine,
 } from 'viem/actions'
-import { Config, useClient, useSendTransaction } from 'wagmi'
+import { localhost } from 'viem/chains'
+import { useSendTransaction } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
-import { localhostWithEns } from '@app/constants/chains'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { DetailedSwitch } from '@app/transaction-flow/input/ProfileEditor/components/DetailedSwitch'
@@ -36,12 +36,13 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
     ),
   })
 
-type TestConfig = Config<[typeof localhostWithEns]>
+const testClient = createTestClient({
+  transport: http(localhost.rpcUrls.default.http[0]),
+  chain: localhost,
+  mode: 'anvil',
+})
 
 export const DevSection = () => {
-  const client = useClient<TestConfig>()
-  const testClient = useMemo(() => ({ ...client, mode: 'anvil' }) as const, [client])
-
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
   const { sendTransactionAsync } = useSendTransaction()
@@ -84,10 +85,10 @@ export const DevSection = () => {
   const stopAutoMine = async () => setAutomine(testClient, false)
 
   const revert = async () => {
-    const currBlock = await getBlockNumber(client)
+    const currBlock = await getBlockNumber(testClient)
     await evmRevert(testClient, { id: '0x1' })
     await evmSnapshot(testClient)
-    const revertBlock = await getBlockNumber(client)
+    const revertBlock = await getBlockNumber(testClient)
     const blocksToMine = currBlock - revertBlock
     await rpcSendBatch(
       Array.from({ length: Number(blocksToMine) + 1 }, () => ({ method: 'evm_mine', params: [] })),

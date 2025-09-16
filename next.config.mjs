@@ -22,6 +22,7 @@ const babelIncludeRegexes = [
  * @type {import('next').NextConfig}
  * */
 const nextConfig = {
+  output: 'export',
   transpilePackages: [
     '@getpara/rainbowkit',
     '@getpara/rainbowkit-wallet',
@@ -238,8 +239,7 @@ const nextConfig = {
   },
   ...(process.env.NEXT_PUBLIC_IPFS
     ? {
-        trailingSlash: true,
-        assetPrefix: './',
+        trailingSlash: true
       }
     : {}),
 }
