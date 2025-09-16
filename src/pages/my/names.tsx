@@ -18,7 +18,7 @@ const ContentContainer = styled.div(
     gap: ${theme.space[6]};
 
     & > *:nth-child(2) svg {
-      color: var(--thorin-color-indigoPrimary);
+      color: ${theme.colors.indigoPrimary};
     }
   `,
 )
