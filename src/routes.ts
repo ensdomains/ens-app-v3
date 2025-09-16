@@ -284,14 +284,24 @@ export const getDestination = (url: UrlObject | string) => {
   // make absolute url relative
   // when displayed in url bar
   if (href?.startsWith('/')) {
-    //  for static html compilation
+    // for static html compilation
     href = `.${href}`
 
-    // on the client
-    //   document is unavailable when compiling on the server
     if (typeof document !== 'undefined') {
-      href = new URL(href, document.baseURI).href
+      const base = new URL(document.baseURI)
+
+      if (base.hostname.endsWith('.ipfs.dweb.link') || base.hostname.includes('.ipfs.')) {
+        // Subdomain gateway → use origin only
+        href = new URL(href, base.origin).href
+      } else {
+        // Path-style gateway (e.g. https://dweb.link/ipfs/<CID>/profile/)
+        const cidMatch = base.pathname.match(/\/(?:ipfs|ipns)\/[^/]+\/?/)
+        const rootPath = cidMatch ? cidMatch[0] : '/'
+        const baseRoot = `${base.origin}${rootPath}`
+        href = new URL(href, baseRoot).href
+      }
     }
   }
+
   return makeURLString()
 }
