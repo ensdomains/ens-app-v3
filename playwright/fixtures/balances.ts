@@ -1,11 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   createPublicClient,
+  createTestClient,
   http,
   parseEther,
   type Address,
   type Chain,
-  type PublicClient
+  type PublicClient,
+  type TestClient
 } from 'viem'
 import { anvil, mainnet, sepolia } from 'viem/chains'
 import { Accounts } from './accounts'
@@ -23,6 +25,7 @@ const snapshots = new Map<string, string>()
 
 // Cache public clients by chain ID to avoid recreation
 const clientCache = new Map<number, PublicClient>()
+const testClientCache = new Map<number, TestClient>()
 
 const getOrCreatePublicClient = (chain: Chain): PublicClient => {
   const cached = clientCache.get(chain.id)
@@ -38,6 +41,21 @@ const getOrCreatePublicClient = (chain: Chain): PublicClient => {
   return client
 }
 
+const getOrCreateTestClient = (chain: Chain): TestClient => {
+  const cached = testClientCache.get(chain.id)
+  if (cached) return cached
+
+  const rpcUrl = chain.id === 1337 ? 'http://localhost:8545' : chain.rpcUrls.default.http[0]
+  const client = createTestClient({
+    chain,
+    mode: 'anvil',
+    transport: http(rpcUrl),
+  })
+
+  testClientCache.set(chain.id, client)
+  return client
+}
+
 export const createBalanceManager = ({
   accounts,
   chainName
@@ -47,6 +65,7 @@ export const createBalanceManager = ({
 }) => {
   const chain = getChain(chainName)
   const publicClient = getOrCreatePublicClient(chain)
+  const testClient = getOrCreateTestClient(chain)
 
   const balanceManager = {
     getBalance: async (address: Address) => {
@@ -62,12 +81,10 @@ export const createBalanceManager = ({
       }
 
       try {
-        const snapshotId = await (publicClient as any).request({
-          method: 'evm_snapshot',
-        })
-        snapshots.set(name, snapshotId as string)
+        const snapshotId = await testClient.snapshot()
+        snapshots.set(name, snapshotId)
         console.log(`Created snapshot ${name}: ${snapshotId}`)
-        return snapshotId as string
+        return snapshotId
       } catch (error) {
         console.error('Failed to create snapshot:', error)
         return ''
@@ -84,22 +101,15 @@ export const createBalanceManager = ({
       const snapshotId = snapshots.get(nameOrId) || nameOrId
 
       try {
-        const success = await (publicClient as any).request({
-          method: 'evm_revert',
-          params: [snapshotId as `0x${string}`],
-        })
-        console.log(`Reverted to snapshot ${nameOrId}: ${success}`)
+        await testClient.revert({ id: snapshotId as `0x${string}` })
+        console.log(`Reverted to snapshot ${nameOrId}`)
 
         // After reverting, we need to create a new snapshot immediately
         // because evm_revert consumes the snapshot
-        if (success) {
-          const newSnapshotId = await (publicClient as any).request({
-            method: 'evm_snapshot',
-          })
-          snapshots.set(nameOrId, newSnapshotId as string)
-        }
+        const newSnapshotId = await testClient.snapshot()
+        snapshots.set(nameOrId, newSnapshotId)
 
-        return success as boolean
+        return true
       } catch (error) {
         console.error('Failed to revert snapshot:', error)
         return false
@@ -120,9 +130,9 @@ export const createBalanceManager = ({
 
       const address = accounts.getAddress(user as any) as Address
 
-      await (publicClient as any).request({
-        method: 'anvil_setBalance',
-        params: [address, `0x${amount.toString(16)}`],
+      await testClient.setBalance({
+        address,
+        value: amount,
       })
 
       const newBalance = await publicClient.getBalance({ address })
