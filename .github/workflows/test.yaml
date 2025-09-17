@@ -42,25 +42,45 @@ jobs:
           name: stateless-build
           path: stateless-build.tar
 
-  build-stateful:
+  build-stateful-sepolia:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
 
-      - name: Build stateful and export
+      - name: Build stateful sepolia and export
         run: |
           export NEXT_PUBLIC_CHAIN_NAME=sepolia
           pnpm build && pnpm export
 
-      - name: Tar stateful files
-        run: tar -cvf stateful-build.tar out
+      - name: Tar stateful sepolia files
+        run: tar -cvf stateful-sepolia-build.tar out
 
-      - name: Upload stateful
+      - name: Upload stateful sepolia
         uses: actions/upload-artifact@v4
         with:
-          name: stateful-build
-          path: stateful-build.tar
+          name: stateful-sepolia-build
+          path: stateful-sepolia-build.tar
+
+  build-stateful-mainnet:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - name: Build stateful mainnet and export
+        run: |
+          export NEXT_PUBLIC_CHAIN_NAME=mainnet
+          pnpm build && pnpm export
+
+      - name: Tar stateful mainnet files
+        run: tar -cvf stateful-mainnet-build.tar out
+
+      - name: Upload stateful mainnet
+        uses: actions/upload-artifact@v4
+        with:
+          name: stateful-mainnet-build
+          path: stateful-mainnet-build.tar
 
   stateless:
     name: stateless (${{matrix.shard}})
@@ -134,9 +154,9 @@ jobs:
           retention-days: 30
           overwrite: true
 
-  stateful:
-    name: stateful (${{matrix.shard}})
-    needs: build-stateful
+  stateful-sepolia:
+    name: stateful-sepolia (${{matrix.shard}})
+    needs: build-stateful-sepolia
     timeout-minutes: 10
     runs-on: blacksmith-4vcpu-ubuntu-2404
     strategy:
@@ -151,26 +171,67 @@ jobs:
 
       - run: pnpm rebuild -r
 
-      - name: Download build
+      - name: Download sepolia build
         id: download
         uses: actions/download-artifact@v4
         with:
-          name: stateful-build
+          name: stateful-sepolia-build
 
-      - name: Untar files
-        run: tar -xvf stateful-build.tar
+      - name: Untar sepolia files
+        run: tar -xvf stateful-sepolia-build.tar
 
-      - name: Run tests
+      - name: Run sepolia tests
         run: |
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm wrangle" \
-          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful"
+          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful --grep-invert='@mainnet'"
         env:
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: stateful-report-${{matrix.shard}}
+          name: stateful-sepolia-report-${{matrix.shard}}
+          path: playwright-report/
+          retention-days: 30
+
+  stateful-mainnet:
+    name: stateful-mainnet (${{matrix.shard}})
+    needs: build-stateful-mainnet
+    timeout-minutes: 10
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    strategy:
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-playwright
+
+      - run: |
+          export NEXT_PUBLIC_CHAIN_NAME=mainnet
+          pnpm rebuild -r
+
+      - name: Download mainnet build
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          name: stateful-mainnet-build
+
+      - name: Untar mainnet files
+        run: tar -xvf stateful-mainnet-build.tar
+
+      - name: Run mainnet tests
+        run: |
+          parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm dev:mainnet" \
+          "pnpm wait-on http://127.0.0.1:3000 && CHAIN=mainnet npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful --grep='@mainnet'"
+        env:
+          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stateful-mainnet-report-${{matrix.shard}}
           path: playwright-report/
           retention-days: 30

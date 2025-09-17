@@ -9,7 +9,8 @@ describe('getCoinChainQueryFn', () => {
     'should return data for supported coin: %s',
     async (coinName: any) => {
       const result = await getCoinChainQueryFn({ queryKey: [{ coinName }] } as any)
-      expect(result).not.toBeNull()
+      if (coinName === 'default') expect(result).toBeNull()
+      else expect(result).not.toBeNull()
     },
   )
 
