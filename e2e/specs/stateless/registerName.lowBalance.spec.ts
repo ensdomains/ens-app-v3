@@ -5,10 +5,7 @@ import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
-import {
-  testClient,
-  walletClient,
-} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 test.describe('Low ETH Balance Tests', () => {
   test.beforeEach(async ({ balanceManager }) => {
