@@ -47,6 +47,15 @@ describe('useValidate', () => {
     const { result } = renderHook(() => useValidate({ input: `test${familyZWJ}` }))
     expect(result.current.hasEmoji).toEqual(true)
   })
+  it('should treat Spanish words with diacritics as LatinOnly info (not mixed)', () => {
+    const words = ['españa', 'camión', 'pingüino']
+    for (const w of words) {
+      const { result } = renderHook(() => useValidate({ input: w }))
+      expect(result.current.isNonASCII).toEqual(true)
+      expect(result.current.isLatinOnly).toEqual(true)
+      expect(result.current.hasMixedScripts).toEqual(false)
+    }
+  })
   it('should cache the result for the same input', () => {
     const { result, rerender } = renderHook(({ input }) => useValidate({ input }), {
       initialProps: { input: 'test' },

@@ -59,7 +59,7 @@
       "warnings": {
         "wrappedDNS": "DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.",
         "offchain": "Offchain names do not currently appear in your 'Names' list. <a>Learn more</a>",
-        "homoglyph": "This name uses non-ASCII characters (for example, accents). That’s common in many languages, such as Spanish. If this is your intended spelling, you can proceed. <a>Learn more about Unicode security guidance</a>"
+        "homoglyph": "This name uses non-ASCII characters (for example, accents or letters like ñ). That’s normal in many languages, such as Spanish. If this is your intended spelling, you can proceed. <a>Learn more about Unicode security guidance</a>"
       }
     },
     "records": {
