@@ -26,13 +26,22 @@ const tryDecodeURIComponent = (input: string) => {
 
 export const validate = (input: string) => {
   const decodedInput = tryDecodeURIComponent(input)
-  const { normalised: name, ...parsedInput } = parseInput(decodedInput)
-  const isNonASCII = parsedInput.labelDataArray.some((dataItem) => dataItem.type !== 'ASCII')
-  const scriptTypes = new Set(parsedInput.labelDataArray.map((d) => d.type).filter((t) => t))
-  const hasMixedScripts = scriptTypes.size > 1
-  const isLatinOnly = scriptTypes.size === 1 && scriptTypes.has('Latin')
-  const hasEmoji = parsedInput.labelDataArray.some((d) => Boolean((d as any).emoji))
-  const outputName = name || input
+  // Normalize to NFC to ensure consistent code point composition before parsing
+  const nfcInput = typeof decodedInput.normalize === 'function' ? decodedInput.normalize('NFC') : decodedInput
+  const { normalised: name, ...parsedInput } = parseInput(nfcInput)
+  // Ignore Common/Inherited/ASCII buckets when determining script mixing
+  const scriptOf = (t: unknown) => String(t || '')
+  const relevantScripts = parsedInput.labelDataArray
+    .map((d) => scriptOf((d as any).type))
+    .filter((t) => t && t !== 'ASCII' && t !== 'Common' && t !== 'Inherited')
+  const scriptSet = new Set(relevantScripts)
+  const hasMixedScripts = scriptSet.size > 1
+  const isLatinOnly = scriptSet.size <= 1 && (scriptSet.size === 0 || scriptSet.has('Latin'))
+  const isNonASCII = parsedInput.labelDataArray.some((dataItem) => scriptOf((dataItem as any).type) !== 'ASCII')
+  // Consider either explicit emoji metadata or presence of extended pictographic chars
+  const emojiRegex = /\p{Extended_Pictographic}/u
+  const hasEmoji = parsedInput.labelDataArray.some((d) => Boolean((d as any).emoji)) || emojiRegex.test(nfcInput)
+  const outputName = name || nfcInput
 
   return {
     ...parsedInput,
