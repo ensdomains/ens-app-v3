@@ -126,7 +126,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
 
       - run: pnpm rebuild -r
 
@@ -163,7 +165,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
 
       - run: pnpm rebuild -r
 
@@ -202,7 +206,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - uses: ./.github/actions/setup-playwright
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
 
       - run: |
           export NEXT_PUBLIC_CHAIN_NAME=mainnet
