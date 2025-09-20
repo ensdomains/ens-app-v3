@@ -48,12 +48,15 @@ export const generateLegacySubname =
     const subname = `${label}.${name}`
     console.log('generating legacy subname:', subname)
 
+    const nameOwnerAccount = accounts.getAccountForUser(nameOwner)
     const tx = await createSubname(walletClient, {
       name: `${label}.${name}`,
       contract: 'registry',
       owner: accounts.getAddress(owner) as `0x${string}`,
-      account: accounts.getAccountForUser(nameOwner),
       resolverAddress: resolver ?? DEFAULT_RESOLVER,
+      account: nameOwnerAccount,
+      // @ts-expect-error
+      nonceManager: nameOwnerAccount.nonceManager,
     })
     await waitForTransaction(tx)
 
@@ -68,6 +71,7 @@ export const generateLegacySubname =
     }
 
     if (type === 'wrapped') {
+      const ownerAccount = accounts.getAccountForUser(owner)
       const approveTx = await walletClient.writeContract({
         abi: registrySetApprovalForAllSnippet,
         address: getChainContractAddress({
@@ -82,7 +86,9 @@ export const generateLegacySubname =
           }),
           true,
         ],
-        account: accounts.getAddress(owner) as `0x${string}`,
+        account: ownerAccount,
+        // @ts-expect-error
+        nonceManager: ownerAccount.nonceManager,
       })
       const approve = await waitForTransaction(approveTx)
       if (approve.status === 'success') console.log('approved name wrapper')
@@ -90,12 +96,14 @@ export const generateLegacySubname =
 
       const wrapTx = await wrapName(walletClient, {
         name: subname,
-        newOwnerAddress: accounts.getAddress(owner) as `0x${string}`,
+        newOwnerAddress: ownerAccount.address,
         resolverAddress: getChainContractAddress({
           client: walletClient,
           contract: 'ensPublicResolver',
         }),
-        account: accounts.getAddress(owner) as `0x${string}`,
+        account: ownerAccount,
+        // @ts-expect-error
+        nonceManager: ownerAccount.nonceManager,
       })
       const wrap = await waitForTransaction(wrapTx)
       if (wrap.status === 'success') console.log('wrapped subname:', subname)

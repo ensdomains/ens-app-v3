@@ -20,12 +20,16 @@ type UseRegistrationDataReturnType = {
   transactionHash: string
 } | null
 
-type UseRegistrationDataConfig = QueryConfig<UseRegistrationDataReturnType, Error>
-
 type QueryKey<TParams extends UseRegistrationDataParameters> = CreateQueryKey<
   TParams,
   'getRegistrationData',
   'graph'
+>
+
+type UseRegistrationDataConfig = QueryConfig<
+  UseRegistrationDataReturnType,
+  Error,
+  QueryKey<UseRegistrationDataParameters>
 >
 
 const gqlQuery = `

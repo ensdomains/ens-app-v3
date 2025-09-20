@@ -29,12 +29,16 @@ export type UseDnsOwnerError =
   | DnsInvalidAddressChecksumError
   | Error
 
-type UseDnsOwnerConfig = QueryConfig<UseDnsOwnerReturnType, UseDnsOwnerError>
-
 export type GetDnsOwnerQueryKey<TParams extends UseDnsOwnerParameters> = CreateQueryKey<
   TParams,
   'getDnsOwner',
   'independent'
+>
+
+type UseDnsOwnerConfig = QueryConfig<
+  UseDnsOwnerReturnType,
+  UseDnsOwnerError,
+  GetDnsOwnerQueryKey<UseDnsOwnerParameters>
 >
 
 export const getDnsOwnerQueryFn = async <TParams extends UseDnsOwnerParameters>({

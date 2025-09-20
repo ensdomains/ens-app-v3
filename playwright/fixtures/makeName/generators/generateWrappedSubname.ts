@@ -57,14 +57,17 @@ export const generateWrappedSubname =
 
     // Make subname with resolver
 
+    const account = accounts.getAccountForUser(nameOwner)
     const tx = await createSubname(walletClient, {
       name: `${label}.${name}`,
       contract: 'nameWrapper',
       fuses,
       owner: accounts.getAddress(owner) as `0x${string}`,
-      account: accounts.getAddress(nameOwner) as `0x${string}`,
       resolverAddress: resolver,
       expiry,
+      account,
+      // @ts-expect-error
+      nonceManager: account.nonceManager,
     })
     await waitForTransaction(tx)
 

@@ -51,15 +51,6 @@ export type UseRecordsReturnType<
     }
   | null
 
-type UseRecordsConfig<
-  TTexts extends readonly string[] | undefined = undefined,
-  TCoins extends readonly (string | number)[] | undefined = undefined,
-  TContentHash extends boolean | undefined = undefined,
-  TAbi extends boolean | undefined = undefined,
-> = QueryConfig<UseRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>, Error> & {
-  keepPreviousData?: boolean
-}
-
 type UseRecordQueryKey<
   TTexts extends readonly string[] | undefined = undefined,
   TCoins extends readonly (string | number)[] | undefined = undefined,
@@ -70,6 +61,19 @@ type UseRecordQueryKey<
   'getRecords',
   'standard'
 >
+
+type UseRecordsConfig<
+  TTexts extends readonly string[] | undefined = undefined,
+  TCoins extends readonly (string | number)[] | undefined = undefined,
+  TContentHash extends boolean | undefined = undefined,
+  TAbi extends boolean | undefined = undefined,
+> = QueryConfig<
+  UseRecordsReturnType<TTexts, TCoins, TContentHash, TAbi>,
+  Error,
+  UseRecordQueryKey<TTexts, TCoins, TContentHash, TAbi>
+> & {
+  keepPreviousData?: boolean
+}
 
 type NonFunctionGuard<T> = T extends Function ? never : T
 

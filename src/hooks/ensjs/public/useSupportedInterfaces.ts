@@ -13,28 +13,31 @@ import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
 
-type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[] = readonly Hex[]> =
-  PartialBy<GetSupportedInterfacesParameters<TInterfaces>, 'address'>
+type UseSupportedInterfacesParameters<TInterfaces extends readonly Hex[]> = PartialBy<
+  GetSupportedInterfacesParameters<TInterfaces>,
+  'address'
+>
 
 type UseSupportedInterfacesReturnType<TInterfaces extends readonly Hex[]> =
   GetSupportedInterfacesReturnType<TInterfaces>
 
-type UseSupportedInterfacesConfig<TInterfaces extends readonly Hex[]> = QueryConfig<
-  UseSupportedInterfacesReturnType<TInterfaces>,
-  Error
->
-
-type QueryKey<TParams extends UseSupportedInterfacesParameters> = CreateQueryKey<
-  TParams,
+type QueryKey<TInterfaces extends readonly Hex[]> = CreateQueryKey<
+  UseSupportedInterfacesParameters<TInterfaces>,
   'getSupportedInterfaces',
   'standard'
 >
 
+type UseSupportedInterfacesConfig<TInterfaces extends readonly Hex[]> = QueryConfig<
+  UseSupportedInterfacesReturnType<TInterfaces>,
+  Error,
+  QueryKey<TInterfaces>
+>
+
 export const getSupportedInterfacesQueryFn =
   (config: ConfigWithEns) =>
-  async <TParams extends UseSupportedInterfacesParameters>({
+  async <TInterfaces extends readonly Hex[]>({
     queryKey: [{ address, ...params }, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
+  }: QueryFunctionContext<QueryKey<TInterfaces>>) => {
     if (!address) throw new Error('address is required')
 
     const client = config.getClient({ chainId })
@@ -42,11 +45,7 @@ export const getSupportedInterfacesQueryFn =
     return getSupportedInterfaces(client, { address, ...params })
   }
 
-export const useSupportedInterfaces = <
-  const TInterfaces extends readonly Hex[],
-  TParams extends
-    UseSupportedInterfacesParameters<TInterfaces> = UseSupportedInterfacesParameters<TInterfaces>,
->({
+export const useSupportedInterfaces = <const TInterfaces extends readonly Hex[]>({
   // config
   enabled = true,
   gcTime,
@@ -54,7 +53,7 @@ export const useSupportedInterfaces = <
   scopeKey,
   // params
   ...params
-}: TParams & UseSupportedInterfacesConfig<TInterfaces>) => {
+}: UseSupportedInterfacesParameters<TInterfaces> & UseSupportedInterfacesConfig<TInterfaces>) => {
   const initialOptions = useQueryOptions({
     params,
     scopeKey,

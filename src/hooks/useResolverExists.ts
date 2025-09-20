@@ -16,12 +16,16 @@ type UseResolverExistsParameters = {
 
 type UseResolverExistsReturnType = boolean
 
-type UseResolverExistsConfig = QueryConfig<UseResolverExistsReturnType, Error>
-
 type QueryKey<TParams extends UseResolverExistsParameters> = CreateQueryKey<
   TParams,
   'getResolverExists',
   'graph'
+>
+
+type UseResolverExistsConfig = QueryConfig<
+  UseResolverExistsReturnType,
+  Error,
+  QueryKey<UseResolverExistsParameters>
 >
 
 const gqlQuery = `

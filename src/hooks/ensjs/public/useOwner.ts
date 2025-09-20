@@ -17,11 +17,11 @@ export type UseOwnerParameters<
 export type UseOwnerReturnType<TContract extends OwnerContract | undefined = undefined> =
   GetOwnerReturnType<TContract>
 
-type UseOwnerConfig<TContract extends OwnerContract | undefined = OwnerContract | undefined> =
-  QueryConfig<UseOwnerReturnType<TContract>, Error>
-
 export type UseOwnerQueryKey<TContract extends OwnerContract | undefined = undefined> =
   CreateQueryKey<UseOwnerParameters<TContract>, 'getOwner', 'standard'>
+
+type UseOwnerConfig<TContract extends OwnerContract | undefined = OwnerContract | undefined> =
+  QueryConfig<UseOwnerReturnType<TContract>, Error, UseOwnerQueryKey<TContract>>
 
 export const getOwnerQueryFn =
   (config: ConfigWithEns) =>

@@ -1,7 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import dotenv from 'dotenv'
-import { Account, Address, bytesToHex, Hash } from 'viem'
-import { mnemonicToAccount, nonceManager, privateKeyToAccount } from 'viem/accounts'
+import { Account, Address, bytesToHex, createNonceManager, Hash } from 'viem'
+import { mnemonicToAccount, privateKeyToAccount } from 'viem/accounts'
+
+import { temporaryNonceManagerSource } from './makeName/utils/temporaryNonceManagerSource'
 
 dotenv.config()
 
@@ -21,6 +23,7 @@ const users = ['user', 'user2', 'user3', 'user4'] as const
 export type User = (typeof users)[number]
 
 export const createAccounts = (stateful = false) => {
+  const nonceManager = createNonceManager({ source: temporaryNonceManagerSource() })
   const mnemonic = stateful ? process.env.SECRET_WORDS || DEFAULT_MNEMONIC : DEFAULT_MNEMONIC
 
   const { accounts, privateKeys } = users.reduce<{ accounts: Account[]; privateKeys: Hash[] }>(

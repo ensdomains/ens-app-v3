@@ -27,12 +27,16 @@ export type UseDentityProfileReturnType = {
   verificationRecord?: string
 }
 
-type UseVerificationOAuthConfig = QueryConfig<UseDentityProfileReturnType, Error>
-
 type QueryKey<TParams extends UseVerificationOAuthParameters> = CreateQueryKey<
   TParams,
   'getVerificationOAuth',
   'standard'
+>
+
+type UseVerificationOAuthConfig = QueryConfig<
+  UseDentityProfileReturnType,
+  Error,
+  QueryKey<UseVerificationOAuthParameters>
 >
 
 export const getDentityProfile =

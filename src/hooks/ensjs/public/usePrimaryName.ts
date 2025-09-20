@@ -20,12 +20,16 @@ type UsePrimaryNameReturnType =
   | (NonNullable<GetNameReturnType> & { beautifiedName: string; originalName?: string })
   | null
 
-type UsePrimaryNameConfig = QueryConfig<UsePrimaryNameReturnType, Error>
-
 type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<
   TParams,
   'getName',
   'standard'
+>
+
+type UsePrimaryNameConfig = QueryConfig<
+  UsePrimaryNameReturnType,
+  Error,
+  QueryKey<UsePrimaryNameParameters>
 >
 
 export const getPrimaryNameQueryFn =

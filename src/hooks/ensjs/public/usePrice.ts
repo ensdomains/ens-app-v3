@@ -12,10 +12,10 @@ type UsePriceParameters = PartialBy<GetPriceParameters, 'nameOrNames'>
 
 type UsePriceReturnType = GetPriceReturnType
 
-type UsePriceConfig = QueryConfig<UsePriceReturnType, Error>
-
 export type UsePriceQueryKey<TParams extends UsePriceParameters = UsePriceParameters> =
   CreateQueryKey<TParams, 'getPrice', 'standard'>
+
+type UsePriceConfig = QueryConfig<UsePriceReturnType, Error, UsePriceQueryKey<UsePriceParameters>>
 
 export const getPriceQueryFn =
   (config: ConfigWithEns) =>

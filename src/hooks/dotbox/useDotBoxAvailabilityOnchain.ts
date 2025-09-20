@@ -19,11 +19,15 @@ type UseDotBoxAvailabilityOnchainParameters = {
 
 export type UseDotBoxAvailabilityOnchainReturnType = boolean
 
-type UseDotBoxAvailabilityOnchainConfig = QueryConfig<UseDotBoxAvailabilityOnchainReturnType, Error>
-
 export type UseDotBoxAvailabilityOnchainQueryKey<
   TParams extends UseDotBoxAvailabilityOnchainParameters = UseDotBoxAvailabilityOnchainParameters,
 > = CreateQueryKey<TParams, 'getDotBoxAvailabilityOnchain', 'standard'>
+
+type UseDotBoxAvailabilityOnchainConfig = QueryConfig<
+  UseDotBoxAvailabilityOnchainReturnType,
+  Error,
+  UseDotBoxAvailabilityOnchainQueryKey
+>
 
 const optimismPublicClient = createPublicClient({
   chain: optimism,

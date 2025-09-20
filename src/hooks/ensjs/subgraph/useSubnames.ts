@@ -15,12 +15,18 @@ type UseSubnamesParameters = Omit<PartialBy<GetSubnamesParameters, 'name'>, 'pre
 
 type UseSubnamesReturnType = GetSubnamesReturnType
 
-type UseSubnamesConfig = InfiniteQueryConfig<UseSubnamesReturnType, Error>
-
 type QueryKey<TParams extends UseSubnamesParameters> = CreateQueryKey<
   TParams,
   'getSubnames',
   'graph'
+>
+
+type UseSubnamesConfig = InfiniteQueryConfig<
+  UseSubnamesReturnType,
+  Error,
+  QueryKey<UseSubnamesParameters>,
+  GetSubnamesReturnType,
+  GetSubnamesReturnType
 >
 
 export const getSubnamesQueryFn =

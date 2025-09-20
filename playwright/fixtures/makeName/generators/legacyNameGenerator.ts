@@ -51,7 +51,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
   commit: async (nameConfig: LegacyName) => {
     const { label, owner, secret } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
-    const ownerAddress = accounts.getAddress(owner)
+    const ownerAccount = accounts.getAccountForUser(owner)
 
     console.log('make commit:', name)
 
@@ -60,7 +60,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
       data: encodeFunctionData({
         functionName: 'makeCommitment',
         abi: legacyEthRegistrarControllerAbi,
-        args: [label, ownerAddress, secret],
+        args: [label, ownerAccount.address, secret],
       }),
     })
 
@@ -72,7 +72,8 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
         args: [commitment],
       }),
       gas: 1000000n,
-      account: accounts.getAccountForUser(owner),
+      account: ownerAccount,
+      nonceManager: ownerAccount.nonceManager,
     })
 
     return walletClient.sendTransaction(preparedTransaction)
@@ -80,7 +81,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
   register: async (nameConfig: LegacyName) => {
     const { label, owner, duration, secret } = nameWithDefaults(nameConfig)
 
-    const ownerAddress = accounts.getAddress(owner)
+    const ownerAccount = accounts.getAccountForUser(owner)
 
     const price = await getLegacyRentPrice({ label, duration })
 
@@ -89,11 +90,12 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
       data: encodeFunctionData({
         functionName: 'register',
         abi: legacyEthRegistrarControllerAbi,
-        args: [label, ownerAddress, duration, secret],
+        args: [label, ownerAccount.address, duration, secret],
       }),
       value: price,
       gas: 1000000n,
-      account: accounts.getAccountForUser(owner),
+      account: ownerAccount,
+      nonceManager: ownerAccount.nonceManager,
     })
 
     return walletClient.sendTransaction(preparedTransaction)
@@ -101,7 +103,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
   configure: async (nameConfig: LegacyName) => {
     const { label, owner, manager, subnames = [], secret } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
-    
+
     // Create subnames
     for (const subname of subnames) {
       await generateLegacySubname({ accounts })({
@@ -113,11 +115,14 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
 
     if (!!manager && manager !== owner) {
       console.log('setting manager:', name, manager)
+      const ownerAccount = accounts.getAccountForUser(owner)
       const tx = await transferName(walletClient, {
         name,
         newOwnerAddress: accounts.getAddress(manager) as `0x${string}`,
         contract: 'registry',
-        account: accounts.getAddress(owner) as `0x${string}`,
+        account: ownerAccount,
+        // @ts-expect-error
+        nonceManager: ownerAccount.nonceManager,
       })
       await waitForTransaction(tx)
     }

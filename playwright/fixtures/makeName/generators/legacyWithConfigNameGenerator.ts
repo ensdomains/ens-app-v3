@@ -77,6 +77,7 @@ export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) =>
       }),
     })
 
+    const account = accounts.getAccountForUser(owner)
     const preparedTransaction = await walletClient.prepareTransactionRequest({
       to: walletClient.chain.contracts.legacyRegistrarController.address,
       data: encodeFunctionData({
@@ -85,8 +86,10 @@ export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) =>
         args: [commitment],
       }),
       gas: 1000000n,
-      account: accounts.getAccountForUser(owner),
+      account,
+      nonceManager: account.nonceManager,
     })
+    console.log('prepared transaction:', preparedTransaction.nonce)
 
     return walletClient.sendTransaction(preparedTransaction)
   },
@@ -105,6 +108,7 @@ export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) =>
 
     const price = await getLegacyRentPrice({ label, duration })
 
+    const account = accounts.getAccountForUser(owner)
     const prepared = await walletClient.prepareTransactionRequest({
       to: walletClient.chain.contracts.legacyRegistrarController.address,
       data: encodeFunctionData({
@@ -113,7 +117,8 @@ export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) =>
         args: [label, ownerAddress, duration, secret, _resolver, addrAddress],
       }),
       gas: 1000000n,
-      account: accounts.getAccountForUser(owner),
+      account,
+      nonceManager: account.nonceManager,
       value: price,
     })
 

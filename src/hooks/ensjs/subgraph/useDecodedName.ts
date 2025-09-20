@@ -18,12 +18,16 @@ type UseDecodedNameParameters = PartialBy<GetDecodedNameParameters, 'name'>
 
 type UseDecodedNameReturnType = GetDecodedNameReturnType
 
-type UseDecodedNameConfig = QueryConfig<UseDecodedNameReturnType, Error>
-
 type QueryKey<TParams extends UseDecodedNameParameters> = CreateQueryKey<
   TParams,
   'getDecodedName',
   'graph'
+>
+
+type UseDecodedNameConfig = QueryConfig<
+  UseDecodedNameReturnType,
+  Error,
+  QueryKey<UseDecodedNameParameters>
 >
 
 export const getDecodedNameQueryFn =

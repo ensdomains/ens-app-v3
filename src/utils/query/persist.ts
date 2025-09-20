@@ -46,7 +46,9 @@ export const createPersistConfig = ({
   persister: persister(),
   dehydrateOptions: {
     shouldDehydrateQuery: (query: any) =>
-      query.gcTime !== 0 && query.queryHash !== JSON.stringify([{ entity: 'signer' }]),
+      query.gcTime !== 0 &&
+      query.queryHash !== JSON.stringify([{ entity: 'signer' }]) &&
+      query.state.status === 'success',
   },
   buster: process.env.CONFIG_BUILD_ID,
 })

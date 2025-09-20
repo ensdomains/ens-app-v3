@@ -16,12 +16,16 @@ type UseDnsImportDataParameters = PartialBy<GetDnsImportDataParameters, 'name'>
 
 type UseDnsImportDataReturnType = GetDnsImportDataReturnType
 
-type UseDnsImportDataConfig = QueryConfig<UseDnsImportDataReturnType, Error>
-
 type QueryKey<TParams extends UseDnsImportDataParameters> = CreateQueryKey<
   TParams,
   'getDnsImportData',
   'standard'
+>
+
+type UseDnsImportDataConfig = QueryConfig<
+  UseDnsImportDataReturnType,
+  Error,
+  QueryKey<UseDnsImportDataParameters>
 >
 
 export const getDnsImportDataQueryFn =

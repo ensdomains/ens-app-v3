@@ -31,12 +31,16 @@ export type UseDnsOffchainDataError =
   | DnsInvalidTxtRecordError
   | Error
 
-type UseDnsOffchainDataConfig = QueryConfig<UseDnsOffchainDataReturnType, UseDnsOffchainDataError>
-
 type QueryKey<TParams extends UseDnsOffchainDataParameters> = CreateQueryKey<
   TParams,
   'getDnsOffchainData',
   'standard'
+>
+
+type UseDnsOffchainDataConfig = QueryConfig<
+  UseDnsOffchainDataReturnType,
+  UseDnsOffchainDataError,
+  QueryKey<UseDnsOffchainDataParameters>
 >
 
 export const getDnsOffchainDataQueryFn =

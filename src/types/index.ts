@@ -1,4 +1,4 @@
-import { UseInfiniteQueryOptions, UseQueryOptions } from '@tanstack/react-query'
+import type { QueryKey, UseInfiniteQueryOptions, UseQueryOptions } from '@tanstack/react-query'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 import type { Account, Address, Client, Hex, TransactionReceipt, Transport } from 'viem'
@@ -167,15 +167,21 @@ export type ConnectorClientWithEns = Client<Transport, SupportedChain, Account>
 export type ConfigWithEns = typeof wagmiConfig
 export type ClientWithEns = ReturnType<ConfigWithEns['getClient']>
 
-export type QueryConfig<TData, TError, TSelectData = TData> = Pick<
-  UseQueryOptions<TData, TError, TSelectData>,
+export type QueryConfig<TData, TError, TQueryKey extends QueryKey, TSelectData = TData> = Pick<
+  UseQueryOptions<TData, TError, TSelectData, TQueryKey>,
   'gcTime' | 'enabled' | 'staleTime'
 > & {
   /** Scope the cache to a given context. */
   scopeKey?: string
 }
-export type InfiniteQueryConfig<TData, TError, TSelectData = TData> = Pick<
-  UseInfiniteQueryOptions<TData, TError, TSelectData>,
+export type InfiniteQueryConfig<
+  TData,
+  TError,
+  TQueryKey extends QueryKey,
+  TSelectData = TData,
+  TPageParam = unknown,
+> = Pick<
+  UseInfiniteQueryOptions<TData, TError, TSelectData, TData, TQueryKey, TPageParam>,
   'gcTime' | 'enabled' | 'staleTime'
 > & {
   /** Scope the cache to a given context. */

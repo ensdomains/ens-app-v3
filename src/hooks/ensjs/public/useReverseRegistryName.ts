@@ -19,21 +19,25 @@ type GetReverseRegistryNameParameters = {
 
 type GetReverseRegistryNameReturnType = string | null
 
-type UseRevereRegistrynameParameters = GetReverseRegistryNameParameters
+type UseReverseRegistryNameParameters = GetReverseRegistryNameParameters
 
-type UseRevereRegistrynameReturnType = GetReverseRegistryNameReturnType
+type UseReverseRegistryNameReturnType = GetReverseRegistryNameReturnType
 
-type UseRevereRegistrynameConfig = QueryConfig<UseRevereRegistrynameReturnType, Error>
-
-type QueryKey<TParams extends UseRevereRegistrynameParameters> = CreateQueryKey<
+type QueryKey<TParams extends UseReverseRegistryNameParameters> = CreateQueryKey<
   TParams,
   'getReverseRegistryName',
   'standard'
 >
 
+type UseReverseRegistryNameConfig = QueryConfig<
+  UseReverseRegistryNameReturnType,
+  Error,
+  QueryKey<UseReverseRegistryNameParameters>
+>
+
 export const getReverseRegistryNameQueryFn =
   (config: ConfigWithEns) =>
-  async <TParams extends UseRevereRegistrynameParameters>({
+  async <TParams extends UseReverseRegistryNameParameters>({
     queryKey: [{ address }, chainId],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!address) throw new Error('address is required')
@@ -67,7 +71,7 @@ export const getReverseRegistryNameQueryFn =
     }
   }
 
-export const useReverseRegistryName = <TParams extends UseRevereRegistrynameParameters>({
+export const useReverseRegistryName = <TParams extends UseReverseRegistryNameParameters>({
   // config
   enabled = true,
   gcTime,
@@ -75,7 +79,7 @@ export const useReverseRegistryName = <TParams extends UseRevereRegistrynamePara
   scopeKey,
   // params
   ...params
-}: TParams & UseRevereRegistrynameConfig) => {
+}: TParams & UseReverseRegistryNameConfig) => {
   const initialOptions = useQueryOptions({
     params: { ...params },
     scopeKey,

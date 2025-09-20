@@ -16,12 +16,16 @@ type UseSubgraphMetaReturnType = {
   blockNumber: number
 }
 
-type UseSubgraphMetaConfig = QueryConfig<UseSubgraphMetaReturnType, Error>
-
 export type QueryKey<TParams extends UseSubgraphMetaParameters> = CreateQueryKey<
   TParams,
   'getSubgraphMeta',
   'graph'
+>
+
+type UseSubgraphMetaConfig = QueryConfig<
+  UseSubgraphMetaReturnType,
+  Error,
+  QueryKey<UseSubgraphMetaParameters>
 >
 
 export const getSubgraphMetaQueryFn =
