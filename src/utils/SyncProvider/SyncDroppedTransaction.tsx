@@ -100,7 +100,7 @@ export const findDroppedTransactions = async (
 
   for (const searchingTransaction of searchingTransactions) {
     // A searchingTransaction likely means the transaction was submitted to a private mempool
-    // Once we see it it is likely a mined transaction already.
+    // Once we see it, it is likely a mined transaction already.
     // Also we won't have the nonce, so will have to wait for it to drop into account history
     // and will match on transaction hash instead
 

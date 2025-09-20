@@ -249,7 +249,7 @@ describe('SelectPrimaryName', () => {
     await waitFor(() => expect(mockDispatch).toBeCalled())
   })
 
-  it('should call dispatch if encrpyted name can be decrypted', async () => {
+  it('should call dispatch if encrypted name can be decrypted', async () => {
     mockUseNamesForAddress.mockReturnValueOnce({
       data: {
         pages: [
