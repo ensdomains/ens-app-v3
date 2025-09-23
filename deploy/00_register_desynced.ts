@@ -4,14 +4,14 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { type Account } from 'viem'
 
+import { type RecordOptions } from '@ensdomains/ensjs/utils'
+
+import { ONE_YEAR } from '../src/utils/time'
 import {
   makeCommitment as generateCommitment,
   makeRegistrationTuple,
-  RecordOptions,
   RegistrationParameters,
-} from '@ensdomains/ensjs/utils'
-
-import { ONE_YEAR } from '../src/utils/time'
+} from './.utils/nameWrapperRegisterHelpers'
 import { nonceManager } from './.utils/nonceManager'
 
 const MIN_REGISTRATION_DURATION = 28 * 24 * 60 * 60 // 28 Days
@@ -118,8 +118,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const publicClient = await viem.getPublicClient()
 
   // Get contracts for wrapped registration
-  const controller = await viem.getContract('ETHRegistrarController')
-  const publicResolver = await viem.getContract('PublicResolver')
+  const controller = await viem.getContract('NameWrapperETHRegistrarController')
+  const publicResolver = await viem.getContract('NameWrapperPublicResolver')
 
   // Get legacy controller for renewal
   const legacyController = await viem.getContract('LegacyETHRegistrarController')

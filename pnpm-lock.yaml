@@ -140,8 +140,8 @@ importers:
         specifier: 1.0.1
         version: 1.0.1
       '@ensdomains/ensjs':
-        specifier: 4.1.1
-        version: 4.1.1(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
+        specifier: https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@4587cee
+        version: https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@4587cee(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
       '@ensdomains/thorin':
         specifier: 1.0.0-beta.28
         version: 1.0.0-beta.28(@vanilla-extract/css@1.15.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1255,8 +1255,9 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
-  '@ensdomains/ensjs@4.1.1':
-    resolution: {integrity: sha512-sKneaWH+iq6KJ0ztvEK1G/Gayg07oKKCwPBBNitdA1WpJ+9KJPmx9GYMBQkgkA5qKgIzlUsV8KAmPoOP3WYXeg==}
+  '@ensdomains/ensjs@https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@4587cee':
+    resolution: {tarball: https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@4587cee}
+    version: 4.0.3-alpha.12
     engines: {node: '>=22'}
     peerDependencies:
       viem: ^2.9.2
@@ -8675,7 +8676,7 @@ snapshots:
       - bare-buffer
       - debug
 
-  '@ensdomains/ensjs@4.1.1(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)':
+  '@ensdomains/ensjs@https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@4587cee(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)':
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
       '@ensdomains/address-encoder': 1.1.3
