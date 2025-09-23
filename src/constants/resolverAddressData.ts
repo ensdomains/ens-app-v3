@@ -35,9 +35,27 @@ export const EXTENDED_DNS_RESOLVER_MAP = {
 export const KNOWN_RESOLVER_DATA: KnownResolverData = {
   '1': [
     {
-      address: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
+      address: '0xF29100983E058B709F3D539b0c765937B804AC15',
       deployer: 'ENS Labs',
       tag: 'latest',
+      isNameWrapperAware: false,
+      supportsDefaultCoinType: true,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
+      address: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
+      deployer: 'ENS Labs',
+      tag: null,
       isNameWrapperAware: true,
       supportsDefaultCoinType: false,
       supportedInterfaces: [
@@ -132,9 +150,27 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
   ],
   '11155111': [
     {
-      address: '0x8948458626811dd0c23EB25Cc74291247077cC51',
+      address: '0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5',
       deployer: 'ENS Labs',
       tag: 'latest',
+      isNameWrapperAware: false,
+      supportsDefaultCoinType: true,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
+      address: '0x8948458626811dd0c23EB25Cc74291247077cC51',
+      deployer: 'ENS Labs',
+      tag: null,
       isNameWrapperAware: true,
       supportsDefaultCoinType: false,
       supportedInterfaces: [
@@ -187,9 +223,27 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
   ],
   '17000': [
     {
-      address: '0x9010A27463717360cAD99CEA8bD39b8705CCA238',
+      address: '0x6925affDa98274FE0376250187CCC4aC62866dCd',
       deployer: 'ENS Labs',
       tag: 'latest',
+      isNameWrapperAware: false,
+      supportsDefaultCoinType: true,
+      supportedInterfaces: [
+        RESOLVER_INTERFACE_IDS.AddressResolver,
+        RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+        RESOLVER_INTERFACE_IDS.NameResolver,
+        RESOLVER_INTERFACE_IDS.AbiResolver,
+        RESOLVER_INTERFACE_IDS.TextResolver,
+        RESOLVER_INTERFACE_IDS.ContentHashResolver,
+        RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+        RESOLVER_INTERFACE_IDS.InterfaceResolver,
+        RESOLVER_INTERFACE_IDS.VersionableResolver,
+      ],
+    },
+    {
+      address: '0x9010A27463717360cAD99CEA8bD39b8705CCA238',
+      deployer: 'ENS Labs',
+      tag: null,
       isNameWrapperAware: true,
       supportsDefaultCoinType: false,
       supportedInterfaces: [
@@ -229,6 +283,24 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             address: deploymentAddresses.PublicResolver,
             deployer: 'ENS Labs',
             tag: 'latest',
+            isNameWrapperAware: false,
+            supportsDefaultCoinType: true,
+            supportedInterfaces: [
+              RESOLVER_INTERFACE_IDS.AddressResolver,
+              RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
+              RESOLVER_INTERFACE_IDS.NameResolver,
+              RESOLVER_INTERFACE_IDS.AbiResolver,
+              RESOLVER_INTERFACE_IDS.TextResolver,
+              RESOLVER_INTERFACE_IDS.ContentHashResolver,
+              RESOLVER_INTERFACE_IDS.DnsRecordResolver,
+              RESOLVER_INTERFACE_IDS.InterfaceResolver,
+              RESOLVER_INTERFACE_IDS.VersionableResolver,
+            ],
+          },
+          {
+            address: deploymentAddresses.NameWrapperPublicResolver,
+            deployer: 'ENS Labs',
+            tag: null,
             isNameWrapperAware: true,
             supportsDefaultCoinType: false,
             supportedInterfaces: [

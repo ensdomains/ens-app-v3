@@ -4,7 +4,6 @@ import { useChainId } from 'wagmi'
 
 import { randomSecret } from '@ensdomains/ensjs/utils'
 
-import { childFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import {
   RegistrationReducerAction,
   RegistrationReducerData,
@@ -15,7 +14,7 @@ import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { sendEvent } from '@app/utils/analytics/events'
 import { ONE_YEAR, yearsToSeconds } from '@app/utils/utils'
 
-const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
+const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 4
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
@@ -25,7 +24,6 @@ const defaultData: RegistrationReducerDataItem = {
   records: [],
   clearRecords: false,
   resolverAddress: '0x',
-  permissions: childFuseObj,
   secret: '0x',
   started: false,
   address: '0x',
@@ -35,6 +33,7 @@ const defaultData: RegistrationReducerDataItem = {
   chainId: 1,
   durationType: 'years',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
+  referrer: '0x',
 }
 
 const isBrowser = !!(
@@ -58,13 +57,13 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   reverseRecord: false,
   records: [],
   resolverAddress: '0x',
-  permissions: childFuseObj,
   secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
   started: false,
   isMoonpayFlow: false,
   externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   durationType: 'years',
+  referrer: '0x',
   ...selected,
 })
 
@@ -150,7 +149,6 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     }
     case 'setProfileData': {
       if (action.payload.records) item.records = action.payload.records
-      if (action.payload.permissions) item.permissions = action.payload.permissions
       if (action.payload.resolverAddress) item.resolverAddress = action.payload.resolverAddress
       break
     }
@@ -168,6 +166,10 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
         ens_name: item.name,
       })
 
+      break
+    }
+    case 'setReferrer': {
+      item.referrer = action.payload
       break
     }
     // no default

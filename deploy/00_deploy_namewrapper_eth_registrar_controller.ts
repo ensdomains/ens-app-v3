@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
 import type { DeployFunction } from 'hardhat-deploy/dist/types'
+import { isAddress } from 'viem'
 
 const func: DeployFunction = async (hre) => {
   const { getNamedAccounts, deployments } = hre
@@ -32,7 +33,7 @@ const func: DeployFunction = async (hre) => {
   console.log('Deploying NameWrapperETHRegistrarController...')
 
   // Deploy the controller with the correct 7 constructor arguments
-  const controllerDeployment = await deploy('NameWrapperETHRegistrarController', {
+  const controller = await deploy('NameWrapperETHRegistrarController', {
     from: deployer,
     args: [
       baseRegistrar.address, // BaseRegistrarImplementation address
@@ -47,7 +48,11 @@ const func: DeployFunction = async (hre) => {
     contract: controllerJson,
   })
 
-  console.log(`NameWrapperETHRegistrarController deployed at: ${controllerDeployment.address}`)
+  if (!isAddress(controller.address)) {
+    throw new Error('Controller address is not a valid address')
+  }
+
+  console.log(`NameWrapperETHRegistrarController deployed at: ${controller.address}`)
 
   console.log('Deploying NameWrapperPublicResolver...')
 
@@ -57,7 +62,7 @@ const func: DeployFunction = async (hre) => {
     args: [
       registry.address, // ENS registry address
       nameWrapper.address, // INameWrapper address
-      controllerDeployment.address, // Trusted ETH Controller address
+      controller.address, // Trusted ETH Controller address
       reverseRegistrar.address, // Trusted Reverse Registrar address
     ],
     log: true,
@@ -67,12 +72,14 @@ const func: DeployFunction = async (hre) => {
   console.log(`NameWrapperPublicResolver deployed at: ${resolverDeployment.address}`)
 
   // Set up controller permissions after deployment
-  if (controllerDeployment.newlyDeployed) {
+  if (controller.newlyDeployed) {
     const { viem } = hre
     const allNamedAccts = await getNamedAccounts()
     const { owner } = allNamedAccts // Get the owner account
 
-    const controller = await viem.getContract('NameWrapperETHRegistrarController')
+    if (!isAddress(owner)) {
+      throw new Error('Owner address is not a valid address')
+    }
 
     console.log('Setting up controller permissions...')
 
