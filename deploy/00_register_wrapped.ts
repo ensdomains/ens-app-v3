@@ -6,6 +6,7 @@ import { labelhash, namehash, type Account } from 'viem'
 
 import {
   EMPTY_ADDRESS,
+  EMPTY_BYTES32,
   encodeFuses,
   generateRecordCallArray,
   // makeRegistrationTuple,
@@ -14,7 +15,9 @@ import {
 
 import {
   makeCommitment as generateCommitment,
+  type CommitmentTuple,
   type RegistrationParameters,
+  type RegistrationTuple,
 } from './.utils/nameWrapperRegisterHelpers'
 import { nonceManager } from './.utils/nonceManager'
 
@@ -210,13 +213,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const allNamedClients = await viem.getNamedClients()
   const publicClient = await viem.getPublicClient()
 
-  const controller = await viem.getContract('NameWrapperETHRegistrarController')
-  const publicResolver = await viem.getContract('NameWrapperPublicResolver')
+  const controller = await viem.getContract('NameWrapperETHRegistrarController' as any)
+  const publicResolver = await viem.getContract('NameWrapperPublicResolver' as any)
   const nameWrapper = await viem.getContract('NameWrapper')
 
   const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
     const resolverAddress = publicResolver.address
-    const secret = '0x0000000000000000000000000000000000000000000000000000000000000000' as const
+    const secret = EMPTY_BYTES32 as `0x${string}`
     const duration = customDuration || 31536000
     // 1659467455 is an approximate base timestamp; adding duration to it gives the wrapper expiry
     const wrapperExpiry = 1659467455 + adjustTime(duration)

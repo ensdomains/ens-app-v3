@@ -83,7 +83,7 @@ export const randomSecret = ({
   }
   if (campaign) {
     if (campaign > 0xffffffff)
-      throw new Error('campaign reference too large', { campaign })
+      throw new Error('campaign reference too large')
     const campaignBytes = pad(toBytes(campaign), { size: 4 })
     for (let i = 0; i < 4; i += 1) {
       bytes[i + 4] = campaignBytes[i]
@@ -126,17 +126,7 @@ export const makeCommitmentTuple = ({
     : []
 
   if (data.length > 0 && resolverAddress === EMPTY_ADDRESS)
-    throw new Error('resolver address required', {
-      data: {
-        name,
-        owner,
-        duration,
-        resolverAddress,
-        records,
-        reverseRecord,
-        fuses,
-      },
-    })
+    throw new Error('resolver address required')
 
   return [
     labelHash,
