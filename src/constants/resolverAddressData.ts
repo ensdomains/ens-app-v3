@@ -9,6 +9,7 @@ export type KnownResolverItem = {
   deployer: string
   tag: 'latest' | 'outdated' | null
   isNameWrapperAware: boolean
+  supportsDefaultCoinType: boolean
   supportedInterfaces: ResolverInterfaceId[]
 }
 
@@ -38,6 +39,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: 'latest',
       isNameWrapperAware: true,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -55,6 +57,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -71,6 +74,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -87,6 +91,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: 'outdated',
       isNameWrapperAware: false,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -102,6 +107,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: 'outdated',
       isNameWrapperAware: false,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.NameResolver,
@@ -115,6 +121,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: 'outdated',
       isNameWrapperAware: false,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.NameResolver,
@@ -129,6 +136,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: 'latest',
       isNameWrapperAware: true,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -146,6 +154,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: true,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -163,6 +172,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -181,6 +191,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: 'latest',
       isNameWrapperAware: true,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -198,6 +209,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       deployer: 'ENS Labs',
       tag: null,
       isNameWrapperAware: false,
+      supportsDefaultCoinType: false,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
         RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -218,6 +230,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             deployer: 'ENS Labs',
             tag: 'latest',
             isNameWrapperAware: true,
+            supportsDefaultCoinType: false,
             supportedInterfaces: [
               RESOLVER_INTERFACE_IDS.AddressResolver,
               RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -235,6 +248,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             deployer: 'ENS Labs',
             tag: null,
             isNameWrapperAware: false,
+            supportsDefaultCoinType: false,
             supportedInterfaces: [
               RESOLVER_INTERFACE_IDS.AddressResolver,
               RESOLVER_INTERFACE_IDS.MultiCoinAddressResolver,
@@ -251,6 +265,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             deployer: 'ENS Labs',
             tag: 'outdated',
             isNameWrapperAware: false,
+            supportsDefaultCoinType: false,
             supportedInterfaces: [
               RESOLVER_INTERFACE_IDS.AddressResolver,
               RESOLVER_INTERFACE_IDS.NameResolver,

@@ -2,9 +2,9 @@ import type { TFunction } from 'react-i18next'
 import { toBytes, type Address } from 'viem'
 import { Connection } from 'wagmi'
 
-import { Eth2ldName } from '@ensdomains/ensjs/dist/types/types'
-import { GetPriceReturnType } from '@ensdomains/ensjs/public'
-import { DecodedFuses } from '@ensdomains/ensjs/utils'
+import type { Eth2ldName } from '@ensdomains/ensjs/dist/types'
+import type { GetPriceReturnType } from '@ensdomains/ensjs/public'
+import type { DecodedFuses } from '@ensdomains/ensjs/utils'
 
 import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 import type { ConnectorClientWithEns } from '@app/types'
@@ -240,6 +240,17 @@ export const connectorIsMetaMask = (
   return connections?.some(
     (connection) =>
       connection?.connector?.id === 'io.metamask' &&
+      connection.accounts.some((a) => a === connectorClient.account.address),
+  )
+}
+
+export const connectorIsPhantom = (
+  connections: Connection[],
+  connectorClient: ConnectorClientWithEns,
+) => {
+  return connections?.some(
+    (connection) =>
+      connection?.connector?.id === 'app.phantom' &&
       connection.accounts.some((a) => a === connectorClient.account.address),
   )
 }

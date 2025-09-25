@@ -740,6 +740,9 @@ test('should handle URL-based renew for disconnected users', async ({ page, make
     owner: 'user',
   })
 
+  await page.goto(`/${name}?tab=ownership`)
+  await expect(page.getByText('Extend')).not.toBeVisible()
+
   await page.goto(`/${name}?renew=94608000`)
   await expect(page.getByText('Connect a wallet')).toBeVisible()
 })

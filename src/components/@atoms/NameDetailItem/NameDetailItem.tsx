@@ -174,7 +174,7 @@ export const NameDetailItem = ({
             }}
           >
             <Avatar
-              placeholder={`url(${zorb})`}
+              placeholder={zorb}
               label={truncatedName || name}
               src={avatar || zorb}
               data-testid="name-detail-item-avatar"

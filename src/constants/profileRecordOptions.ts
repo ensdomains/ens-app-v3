@@ -39,7 +39,7 @@ const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
 
 const coinShortNameToLongName = (coin: string) => {
   const coinType = coinNameToTypeMap[coin as CoinName]
-  const coinLongName = coinTypeToNameMap[coinType][1]
+  const coinLongName = coinTypeToNameMap[coinType]?.[1] ?? coin
   return coinLongName
 }
 

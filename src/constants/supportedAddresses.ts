@@ -1,4 +1,5 @@
 export const supportedAddresses = [
+  'default',
   'eth',
   'btc',
   'sol',

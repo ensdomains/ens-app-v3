@@ -22,6 +22,12 @@
     "available": {
       "title": "{{name}} is available",
       "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
+    },
+    "desynced": {
+      "title": "Name misconfigured",
+      "description": "This name is already owned, but a transaction is required to repair the ownership display. Extending the expiry – even by a single day – will restore accurate ownership information.",
+      "descriptionGracePeriod": "This name is already owned, but a transaction is required to repair the ownership display. Extending the name past the grace period will restore accurate ownership information.",
+      "action": "Repair"
     }
   },
   "tabs": {
@@ -324,6 +330,12 @@
           "controllable": "Parent-controllable",
           "not-controllable": "Not parent-controllable"
         }
+      },
+      "primaryName": {
+        "title": "Primary name",
+        "tooltip": "A primary name links this name to an address, allowing apps to display a name and profile when looking up the address. Each address can only have a single primary name per network.",
+        "description": "A primary name links this name to an address, allowing apps to display a name and profile when looking up the address. Each address can only have a single primary name per network.",
+        "yourPrimaryName": "Your primary name"
       },
       "misc": {
         "registered": "Registered",
