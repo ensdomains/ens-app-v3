@@ -13,6 +13,8 @@ import {
   VerifiedRecord,
 } from './utils/parseVerificationData/parseVerificationData'
 
+const ALLOWED_DENTITY_URL = 'https://oidc.dentity.com/oidc/vp-token'
+
 type UseVerifiedRecordsParameters = {
   verificationsRecord?: string
   ownerAddress?: Hash
@@ -47,8 +49,12 @@ export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParam
   queryKey: [{ verificationsRecord, ownerAddress, name }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerifiedRecordsReturnType> => {
   const verifiablePresentationUris = parseVerificationRecord(verificationsRecord)
+
+  // Filter to only allow Dentity verification URLs
+  const validUris = verifiablePresentationUris.filter((uri) => uri.startsWith(ALLOWED_DENTITY_URL))
+
   const responses = await Promise.allSettled(
-    verifiablePresentationUris.map((uri) => fetch(uri).then((resp) => resp.json())),
+    validUris.map((uri) => fetch(uri).then((resp) => resp.json())),
   )
   return Promise.all(
     responses
