@@ -39,6 +39,11 @@ const getAvatarSrc = async (record: string) => {
       return `https://arweave.net/${decoded}`
     }
 
+    if (protocol === 'walrus') {
+      const { decoded } = getProtocolType(record)!
+      return `https://walrus.network/${decoded}`
+    }
+
     if (protocol === 'eip155') {
       const apiUrl = makeApiURL(record)
       if (!apiUrl) return

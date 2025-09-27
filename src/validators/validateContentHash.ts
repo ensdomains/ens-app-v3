@@ -11,6 +11,7 @@ const contentHashToProtocols = {
   onion: ['onion', 'onion3'],
   skynet: ['sia'],
   arweave: ['arweave', 'ar'],
+  walrus: ['walrus'],
 }
 
 export const validateContentHash =
@@ -19,6 +20,7 @@ export const validateContentHash =
     if (!value) return true
 
     const output = getProtocolType(value)
+    console.log("protocol:",output)
     if (!output) return 'Invalid protocol type'
     const { protocolType, decoded } = output
     if (provider !== 'all' && !contentHashToProtocols[provider]?.includes(protocolType))
@@ -29,6 +31,7 @@ export const validateContentHash =
       (protocolType === 'onion' && decoded.length !== 16) ||
       (protocolType === 'onion3' && decoded.length !== 56) ||
       (protocolType === 'sia' && decoded.length !== 46) ||
+      (protocolType === 'walrus' && decoded.length !== 43) ||
       (['arweave', 'ar'].includes(protocolType) && decoded.length !== 43)
     )
       return 'Invalid content id'
