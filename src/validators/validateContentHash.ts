@@ -31,7 +31,7 @@ export const validateContentHash =
       (protocolType === 'onion' && decoded.length !== 16) ||
       (protocolType === 'onion3' && decoded.length !== 56) ||
       (protocolType === 'sia' && decoded.length !== 46) ||
-      (protocolType === 'walrus' && decoded.length !== 43) ||
+      (protocolType === 'walrus' && decoded.length !== 66) ||
       (['arweave', 'ar'].includes(protocolType) && decoded.length !== 43)
     )
       return 'Invalid content id'

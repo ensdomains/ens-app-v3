@@ -41,7 +41,7 @@ const getAvatarSrc = async (record: string) => {
 
     if (protocol === 'walrus') {
       const { decoded } = getProtocolType(record)!
-      return `https://walrus.network/${decoded}`
+      return `https://aggregator.walrus-testnet.walrus.space/v1/blobs/${decoded}`
     }
 
     if (protocol === 'eip155') {
