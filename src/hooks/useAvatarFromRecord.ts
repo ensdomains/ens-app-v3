@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { getProtocolType } from '@ensdomains/ensjs/utils'
 
-const SUPPORTED_PROTOCOL_REGEX = /^(http|https|ar|ipfs|eip155):/
+const SUPPORTED_PROTOCOL_REGEX = /^(http|https|ar|ipfs|eip155|walrus):/
 
 const chainIdToNetwork = (chainId?: string) => {
   if (chainId === '1') return 'mainnet'
