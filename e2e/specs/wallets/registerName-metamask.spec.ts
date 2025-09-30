@@ -126,7 +126,7 @@ async function confirmTransactionWithMetaMask(
   await page.bringToFront()
 }
 
-// Register name on Sepolia using MM
+// Register unowned name on Sepolia
 async function performRegistrationOnSepolia(name: string): Promise<void> {
   console.log(`🎯 Starting registration for ${name}`)
 
@@ -142,7 +142,7 @@ async function performRegistrationOnSepolia(name: string): Promise<void> {
 
   // Payment + primary toggle
   await page.locator('[data-testid="payment-choice-ethereum"]').check()
-  // await page.locator('[data-testid="primary-name-toggle"]').check()
+  await page.locator('[data-testid="primary-name-toggle"]').check()
 
   // Proceed to profile step
   await page.locator('[data-testid="next-button"]').click()
@@ -180,9 +180,39 @@ async function performRegistrationOnSepolia(name: string): Promise<void> {
   console.log('🎉 ENS registration completed!')
 }
 
+// Register owned name on Sepolia
+async function registerOwnedName() {
+  const registeredName = 'registered-name.eth'
+
+  console.log(`🎯 Starting registration for ${registeredName}`)
+
+  // Search for name
+  const searchInput = page.locator('input[placeholder="Search for a name"]')
+  const searchResult = page.getByTestId('search-result-name')
+
+  await searchInput.waitFor({ timeout: 15000 })
+  await searchInput.fill(registeredName)
+  await expect(searchResult).toHaveText(registeredName)
+  await expect(searchResult).toContainText('Registered')
+  await searchInput.press('Enter')
+
+  // Register should not appear, profile shows instead
+  await expect(page.getByRole('heading', { name: `Register ${registeredName}` })).not.toBeVisible({
+    timeout: 15000,
+  })
+
+  const profileSnippet = page.getByTestId('profile-snippet-name')
+  await expect(profileSnippet).toHaveText('registered-name.eth', { timeout: 15000 })
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText('0xaEa...1974F', {
+    timeout: 15000,
+  })
+
+  console.log(`❌ ${registeredName} has already been registered`)
+}
+
 test.describe('ENS Sepolia Registration', () => {
   // Setup MM before the tests run
-  test.beforeAll(async () => {
+  test.beforeAll('Setup Metamask', async () => {
     console.log('🦊 Setting up MetaMask...')
     const [mm, pg, ctx] = await dappwright.bootstrap('chromium', {
       wallet: 'metamask',
@@ -199,6 +229,14 @@ test.describe('ENS Sepolia Registration', () => {
 
     console.log('✅ MetaMask setup complete')
 
+    // Switch to User 2 account
+    await page.click('[data-testid="account-menu-icon"]')
+    await page.click('[data-testid="multichain-account-menu-popover-action-button"]')
+    await page.click('[data-testid="multichain-account-menu-popover-add-account"]')
+    await page.click('[data-testid="submit-add-account-with-name"]')
+
+    console.log('✅ Switched to User 2 account')
+
     try {
       await metaMask.switchNetwork('Sepolia')
       console.log('✅ Switched to Sepolia network')
@@ -210,7 +248,7 @@ test.describe('ENS Sepolia Registration', () => {
     await connectWalletToEns()
 
     // Generate a unique ENS name for tests
-    ensName = `dappwright-test-${Date.now()}.eth`
+    ensName = `registername-${Date.now()}.eth`
   })
 
   test('Connect MetaMask to ENS Sepolia', async () => {
@@ -223,5 +261,9 @@ test.describe('ENS Sepolia Registration', () => {
 
   test('Register ENS name on Sepolia', async () => {
     await performRegistrationOnSepolia(ensName)
+  })
+
+  test('Register owned ENS name on Sepolia', async () => {
+    await registerOwnedName()
   })
 })

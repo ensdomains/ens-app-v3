@@ -124,18 +124,19 @@ async function confirmTransactionWithMetaMask(): Promise<void> {
   await page.bringToFront()
 }
 
+// Extend owned name
 async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   const name = 'extend-name-test.eth'
 
   console.log(`🎯 Starting extension for ${name}`)
 
-  // 1️⃣ Search for name
+  // Search for name
   const searchInput = page.locator('input[placeholder="Search for a name"]')
   await searchInput.waitFor({ timeout: 15000 })
   await searchInput.fill(name)
   await searchInput.press('Enter')
 
-  // 2️⃣ Grab the current expiry timestamp from profile
+  // Grab the current expiry timestamp from profile
   const expiryElement = page.getByTestId('owner-profile-button-name.expiry')
   await expiryElement.waitFor({ state: 'visible', timeout: 15000 })
 
@@ -145,17 +146,17 @@ async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   const currentExpiryTimestamp = parseInt(timestampAttr, 10)
   console.log(`📅 Current expiry: ${new Date(currentExpiryTimestamp).toISOString()}`)
 
-  // 3️⃣ Click "extend"
+  // Click "extend"
   const extendButton = page.getByTestId('extend-button')
   await extendButton.waitFor({ state: 'visible', timeout: 15000 })
   await extendButton.click()
 
-  // 4️⃣ Switch to "pick by date"
+  // Switch to "pick by date"
   const dateSelection = page.getByTestId('date-selection')
   await expect(dateSelection).toHaveText('Pick by date')
   await dateSelection.click()
 
-  // 5️⃣ Fill the calendar with a date one day later
+  // Fill the calendar with a date one day later
   const expiryTime = currentExpiryTimestamp / 1000
   const calendar = page.getByTestId('calendar')
   const dayLater = await page.evaluate((ts) => {
@@ -182,7 +183,7 @@ async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   await confirmTransactionWithMetaMask()
 
   // Wait for transaction to complete
-  await page.waitForTimeout(15000)
+  await page.waitForTimeout(25000)
 
   // Close transaction complete modal
   const transactionCompleteButton = page.getByTestId('transaction-modal-complete-button')
@@ -205,6 +206,7 @@ async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   )
 }
 
+// Extend unowned name
 async function extendUnownedNameSepolia(): Promise<void> {
   const name = 'user1-extend.eth'
 
@@ -238,7 +240,7 @@ async function extendUnownedNameSepolia(): Promise<void> {
 
   // Switch to "pick by date"
   const dateSelection = page.getByTestId('date-selection')
-  await expect(dateSelection).toHaveText('Pick by date')
+  await expect(dateSelection).toHaveText('Pick by date', { timeout: 5000 })
   await dateSelection.click()
 
   // Fill the calendar with a date one day later
@@ -292,7 +294,6 @@ async function extendUnownedNameSepolia(): Promise<void> {
 }
 
 test.describe('ENS Sepolia Extend Name', () => {
-  // Setup MM before the tests run
   test.beforeAll('Setup Metamask', async () => {
     console.log('🦊 Setting up MetaMask...')
     const [mm, pg, ctx] = await dappwright.bootstrap('chromium', {
