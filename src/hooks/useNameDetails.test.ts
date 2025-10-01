@@ -34,7 +34,7 @@ describe('useNameDetails', () => {
     })
 
     const { result } = renderHook(() => useNameDetails({ name: 'invalid' }))
-    expect(result.current.error).toEqual('errors.invalidName')
+    expect(result.current.error).toEqual(expect.objectContaining({ content: 'errors.invalidName' }))
   })
   it('should not enable useProfile when normalisedName is [root]', () => {
     mockUseBasicName.mockReturnValue({

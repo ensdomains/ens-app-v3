@@ -52,7 +52,7 @@ const staticHandler: PagesFunction = async ({ request, next, env }) => {
   return next()
 }
 
-const firefoxRewrite: PagesFunction = async ({ request, next }) => {
+const cspRewrite: PagesFunction = async ({ request, next }) => {
   const userAgent = request.headers.get('user-agent')?.toLowerCase()
   const response = await next()
 
@@ -62,6 +62,12 @@ const firefoxRewrite: PagesFunction = async ({ request, next }) => {
     return new HTMLRewriter()
       .on('head', new ScriptWriter('/_next/static/chunks/initialise-metamask.js'))
       .transform(response)
+  }
+
+  // safari CSP exception
+  if (userAgent?.includes('safari/') && userAgent.includes('version/')) {
+    response.headers.set('Content-Security-Policy', cspOnlyFrameAncestors)
+    return response
   }
 
   // default headers
@@ -166,4 +172,4 @@ const pathRewriter: PagesFunction = async ({ request, next }) => {
   return next()
 }
 
-export const onRequest = [staticHandler, firefoxRewrite, pathRewriter]
+export const onRequest = [staticHandler, cspRewrite, pathRewriter]

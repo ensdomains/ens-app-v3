@@ -40,7 +40,10 @@ export const senderRole = (nameType: ReturnType<typeof useNameType>['data']) => 
       ),
       () => null,
     )
-    .with(P.union(P.nullish, 'root', 'tld'), () => null)
+    .with(
+      P.union(P.nullish, 'root', 'tld', 'eth-desynced-2ld', 'eth-desynced-2ld:grace-period'),
+      () => null,
+    )
     .exhaustive()
 }
 

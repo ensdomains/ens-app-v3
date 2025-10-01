@@ -74,6 +74,9 @@ export const getRoles = ({
       { address: owner, role: 'manager' as const },
       { address: ethAddress, role: 'eth-record' as const },
     ])
-    .with(P.union(P.nullish, 'tld', 'root'), () => [])
+    .with(
+      P.union(P.nullish, 'tld', 'root', 'eth-desynced-2ld', 'eth-desynced-2ld:grace-period'),
+      () => [],
+    )
     .exhaustive()
 }
