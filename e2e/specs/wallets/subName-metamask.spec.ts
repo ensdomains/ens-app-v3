@@ -94,11 +94,8 @@ async function connectWalletToEns(): Promise<void> {
 }
 
 // Confirm transaction helper
-async function confirmTransactionWithMetaMask(
-  type: 'commit' | 'register',
-  name: string,
-): Promise<void> {
-  console.log(`🦊 Waiting for MetaMask ${type} popup for ${name}...`)
+async function confirmTransactionWithMetaMask(): Promise<void> {
+  console.log(`🦊 Waiting for MetaMask popup...`)
 
   // Listen for a new popup page to open
   const [mmPage] = await Promise.all([
@@ -121,97 +118,126 @@ async function confirmTransactionWithMetaMask(
   await confirmButton.waitFor({ timeout: 10000 })
   await confirmButton.click()
 
-  console.log(`✅ MetaMask ${type} confirmed`)
+  console.log(`✅ MetaMask transaction confirmed`)
 
   await page.bringToFront()
 }
 
-// Register unowned name on Sepolia
-async function performRegistrationOnSepolia(name: string): Promise<void> {
-  console.log(`🎯 Starting registration for ${name}`)
+// Create subname
+async function createSubName(name: string): Promise<void> {
+  const walletName = 'subname-test.eth'
+
+  console.log(`🎯 Creating a new subname for ${walletName}`)
 
   // Search for name
   const searchInput = page.locator('input[placeholder="Search for a name"]')
   await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(name)
+  await searchInput.fill(walletName)
   await searchInput.press('Enter')
 
-  // Wait for registration page
-  await page.getByRole('heading', { name: `Register ${name}` }).waitFor({ timeout: 15000 })
-  console.log('✅ Registration page loaded')
+  // Navigate to subname tab
+  const subnameTab = page.getByTestId('subnames-tab')
+  await subnameTab.waitFor({ state: 'visible', timeout: 15000 })
+  await subnameTab.click()
 
-  // Payment + primary toggle
-  await page.locator('[data-testid="payment-choice-ethereum"]').check()
-  await page.locator('[data-testid="primary-name-toggle"]').check()
+  // Start new subname flow
+  const createSubname = page.getByTestId('add-subname-action')
+  await createSubname.waitFor({ state: 'visible', timeout: 15000 })
+  await createSubname.click()
 
-  // Proceed to profile step
-  await page.locator('[data-testid="next-button"]').click()
+  // Enter subname name
+  const subnameInput = page.getByTestId('add-subname-input')
+  const subnameNext = page.getByTestId('create-subname-next')
+  await subnameInput.waitFor()
+  await subnameInput.fill(name)
+  await subnameNext.click()
 
-  const profileSubmitButton = page.locator('[data-testid="profile-submit-button"]')
-  if (await profileSubmitButton.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await profileSubmitButton.click()
-  }
+  // Skip profile creation
+  const subnameProfileNext = page.getByTestId('create-subname-profile-next')
+  await subnameProfileNext.click()
 
-  // Proceed to commit step
-  await page.locator('[data-testid="next-button"]').click()
-
-  // Wait for "Open Wallet" and confirm commit
+  // Start and confirm transaction
   await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
   await page.locator('text=Open Wallet').click()
+  await confirmTransactionWithMetaMask()
 
-  // Confirm transaction
-  await confirmTransactionWithMetaMask('commit', name)
+  // Wait for transaction to complete
+  await page.waitForTimeout(25000)
 
-  // Wait 60s for commit
-  await page.waitForTimeout(75000)
+  // Check subname is opened after transaction complete
+  const nameProfileName = page.getByTestId('profile-snippet-name')
+  const expectedSubname = `${ensName}.subname-test.eth`
+  await expect(nameProfileName).toHaveText(expectedSubname)
 
-  // Wait for "Finish" button and confirm register
-  const finishButton = page.locator('[data-testid="finish-button"]')
-  await finishButton.waitFor({ timeout: 10000 })
-  await finishButton.click()
-
-  // Open wallet modal and click
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
-
-  // Confirm transaction
-  await confirmTransactionWithMetaMask('register', name)
-
-  console.log('🎉 ENS registration completed!')
-}
-
-// Register owned name on Sepolia
-async function registerOwnedName() {
-  const registeredName = 'registered-name.eth'
-
-  console.log(`🎯 Starting registration for ${registeredName}`)
-
-  // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  const searchResult = page.getByTestId('search-result-name')
-
+  // Enter parent name profile
   await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(registeredName)
-  await expect(searchResult).toHaveText(registeredName)
-  await expect(searchResult).toContainText('Registered')
+  await searchInput.fill(walletName)
   await searchInput.press('Enter')
+  await expect(nameProfileName).toHaveText(walletName, { timeout: 10000 })
 
-  // Register should not appear, profile shows instead
-  await expect(page.getByRole('heading', { name: `Register ${registeredName}` })).not.toBeVisible({
-    timeout: 15000,
-  })
+  // Switch to subname tab
+  const parentSubnameTab = page.getByTestId('subnames-tab')
+  await parentSubnameTab.click()
 
-  const profileSnippet = page.getByTestId('profile-snippet-name')
-  await expect(profileSnippet).toHaveText('registered-name.eth', { timeout: 15000 })
-  await expect(page.getByTestId('address-profile-button-eth')).toHaveText('0xaEa...1974F', {
-    timeout: 15000,
-  })
-
-  console.log(`❌ ${registeredName} has already been registered`)
+  // Check created subname is appearing
+  const subnameItem = page.getByTestId(`name-item-${ensName}.subname-test.eth`)
+  await expect(subnameItem).toBeVisible({ timeout: 15000 })
 }
 
-test.describe('ENS Sepolia Registration', () => {
-  // Setup MM before the tests run
+// Delete subname
+async function deleteSubName(name: string): Promise<void> {
+  const walletName = 'subname-test.eth'
+
+  console.log(`🎯 Deleting ${name}.subname-test.eth`)
+
+  // Access created subname through search bar
+  const searchInput = page.locator('input[placeholder="Search for a name"]')
+  await searchInput.waitFor({ timeout: 15000 })
+  await searchInput.fill(`${name}.subname-test.eth`)
+  await searchInput.press('Enter')
+
+  // Confirm subname then click delete
+  const profileName = page.getByTestId('profile-snippet-name')
+  const expectedSubname = `${ensName}.subname-test.eth`
+  await expect(profileName).toHaveText(expectedSubname)
+
+  const deleteSubnameButton = page.getByTestId('profile-action-Delete subname')
+  await deleteSubnameButton.click()
+
+  // Start and confirm transaction
+  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
+  await page.locator('text=Open Wallet').click()
+  await confirmTransactionWithMetaMask()
+
+  // Wait for transaction to complete
+  await page.waitForTimeout(25000)
+
+  // Click done to return to subname profile
+  const transactionCompleteButton = page.getByTestId('transaction-modal-complete-button')
+  await transactionCompleteButton.click()
+
+  // Check expiry has no expiry
+  const expiryBox = page.getByTestId('owner-profile-button-name.expiry')
+  await expect(expiryBox).toContainText('no expiry', { timeout: 15000 })
+
+  // Enter parent name profile
+  const parentSubnameTab = page.getByTestId('subnames-tab')
+  await searchInput.waitFor({ timeout: 15000 })
+  await searchInput.fill(walletName)
+  await searchInput.press('Enter')
+  await expect(profileName).toHaveText(walletName, { timeout: 10000 })
+
+  // Switch to subname tab
+  await parentSubnameTab.click()
+
+  // Check deleted subname is no longer appearing
+  const subnameItem = page.getByTestId(`name-item-${ensName}.subname-test.eth`)
+  await expect(subnameItem).not.toBeVisible({ timeout: 15000 })
+
+  console.log(`⚔️ {name} has been deleted`)
+}
+
+test.describe('ENS Sepolia Connection', () => {
   test.beforeAll('Setup Metamask', async () => {
     console.log('🦊 Setting up MetaMask...')
     const [mm, pg, ctx] = await dappwright.bootstrap('chromium', {
@@ -248,7 +274,7 @@ test.describe('ENS Sepolia Registration', () => {
     await connectWalletToEns()
 
     // Generate a unique ENS name for tests
-    ensName = `registername-${Date.now()}.eth`
+    ensName = `sub-${Date.now()}`
   })
 
   test('Connect MetaMask to ENS Sepolia', async () => {
@@ -259,11 +285,11 @@ test.describe('ENS Sepolia Registration', () => {
     console.log('✅ Wallet is connected and ready')
   })
 
-  test('Register ENS name on Sepolia', async () => {
-    await performRegistrationOnSepolia(ensName)
+  test('Create new ENS subname on Sepolia', async () => {
+    await createSubName(ensName)
   })
 
-  test('Register owned ENS name on Sepolia', async () => {
-    await registerOwnedName()
+  test('Delete created ENS subname on Sepolia', async () => {
+    await deleteSubName(ensName)
   })
 })
