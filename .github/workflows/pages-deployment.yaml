@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Misc. Deps
+      - name: Update Misc. Deps
         run: sudo apt-get update
 
       - name: Install Misc. Deps
