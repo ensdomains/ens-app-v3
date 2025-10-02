@@ -363,6 +363,24 @@ const names: Name[] = [
       ],
     },
   },
+  {
+    label: 'with-testnet-records',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    records: {
+      addr: [
+        { key: 61n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0n, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2n, value: '0x0000000000000000000000000000000000000000' },
+        { key: 2147568180n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2147905262n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2158639068n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2147542789n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2148017999n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2147500648n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+      ],
+    },
+  },
 ] as const
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -557,8 +575,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   ) => {
     const newNonceMap = nonceMap || {}
     for (const client of Object.values(allNamedClients)) {
-      const account = client.account
-      const address = account.address
+      const { account } = client
+      const { address } = account
       const namesWithAccount = allNameData.filter((data) => {
         const propertyValue = data[property]
         if (typeof propertyValue === 'string') {
@@ -605,9 +623,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await getNonceAndApply('registrant', makeSubnames, (data) => !!data.subnames, tempNonces2)
   await network.provider.send('evm_mine')
 
-  // Skip forward 28 + 90 days so that minimum exp names go into premium
-  await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
-  await network.provider.send('evm_mine')
+  // // Skip forward 28 + 90 days so that minimum exp names go into premium
+  // await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
+  // await network.provider.send('evm_mine')
 
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
