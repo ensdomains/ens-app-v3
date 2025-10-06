@@ -180,7 +180,7 @@ const AvatarButton = ({
                       },
                     ]),
                 {
-                  label: 'Enter manually',
+                  label: 'Enter Manually',
                   color: 'text',
                   onClick: handleSelectOption('manual'),
                 },

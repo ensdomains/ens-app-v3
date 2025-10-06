@@ -81,6 +81,8 @@ export const NameAvatar = ({
   })
   const zorb = useZorb(name, 'name')
 
+  console.log('avatar', avatar)
+
   return (
     <Wrapper $size={size}>
       <Avatar {...props} placeholder={zorb} src={avatar || zorb} />
