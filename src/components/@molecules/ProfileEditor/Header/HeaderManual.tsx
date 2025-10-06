@@ -70,12 +70,12 @@ export const HeaderManual = ({
 
   return (
     <>
-      <Dialog.Heading title="Enter Header URI" />
+      <Dialog.Heading title="Enter Header URL" />
       <Dialog.Content>
         <Container>
           <HeaderPreview $src={uri} />
           <Input
-            label="Header URI"
+            label="Header URL"
             placeholder="https:// or ipfs://"
             value={uri}
             onChange={handleUriChange}

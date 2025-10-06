@@ -71,9 +71,9 @@ export const AvatarManual = ({
       <Dialog.Content>
         <Container>
           <Description fontVariant="body">
-            Manual entry supports NFT, https, IPFS, and data URIs.
+            Manual entry supports NFT, https, IPFS, and data URLs.
             <Outlink href="https://docs.ens.domains/ensip/12" iconPosition="after">
-              Learn more about avatar URIs
+              Learn more about avatar URLs
             </Outlink>
           </Description>
           <InputContainer>
