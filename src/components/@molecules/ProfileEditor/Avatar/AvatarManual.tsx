@@ -23,6 +23,21 @@ const Description = styled(Typography)(
   `,
 )
 
+const AvatarPreview = styled.div<{ $src?: string }>(
+  ({ theme, $src }) => css`
+    width: 120px;
+    height: 120px;
+    border-radius: ${theme.radii.full};
+    background-color: ${theme.colors.greyLight};
+    background-image: ${$src ? `url(${$src})` : 'none'};
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: ${theme.space['4']};
+  `,
+)
+
 const InputContainer = styled.div(
   ({ theme }) => css`
     width: 100%;
@@ -70,6 +85,7 @@ export const AvatarManual = ({
       <Dialog.Heading title="Enter manually" />
       <Dialog.Content>
         <Container>
+          <AvatarPreview $src={uri} />
           <Description fontVariant="body">
             Manual entry supports NFT, https, IPFS, and data URLs.
             <Outlink href="https://docs.ens.domains/ensip/12" iconPosition="after">
