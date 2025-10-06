@@ -16,7 +16,6 @@ const IndicatorContainer = styled.button<{
   ({ theme, $validated, $dirty, $error }) => css`
     position: relative;
     background-color: ${theme.colors.backgroundPrimary};
-    cursor: pointer;
     gap: 20px;
 
     ::after {
