@@ -284,6 +284,7 @@
     },
     "patchedDependencies": {
       "@ensdomains/ens-contracts@1.6.0": "patches/@ensdomains__ens-contracts@1.6.0.patch",
+      "@ensdomains/ens-test-env@1.0.1": "patches/@ensdomains__ens-test-env@1.0.1.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
       "node-forge@1.3.1": "patches/node-forge@1.3.1.patch",
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
