@@ -118,7 +118,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const publicClient = await viem.getPublicClient()
 
   // Get contracts for wrapped registration
-  const controller = await viem.getContract('NameWrapperETHRegistrarController' as any)
+  const controller = await viem.getContract('WrappedEthRegistrarController' as any)
   const publicResolver = await viem.getContract('NameWrapperPublicResolver' as any)
 
   // Get legacy controller for renewal

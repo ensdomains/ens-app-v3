@@ -213,7 +213,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const allNamedClients = await viem.getNamedClients()
   const publicClient = await viem.getPublicClient()
 
-  const controller = await viem.getContract('NameWrapperETHRegistrarController' as any)
+  const controller = await viem.getContract('WrappedEthRegistrarController' as any)
   const publicResolver = await viem.getContract('NameWrapperPublicResolver' as any)
   const nameWrapper = await viem.getContract('NameWrapper')
 
@@ -325,7 +325,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 func.id = 'register-wrapped-names'
 func.tags = ['register-wrapped-names']
-func.dependencies = ['NameWrapperETHRegistrarController', 'NameWrapperPublicResolver']
+func.dependencies = ['WrappedEthRegistrarController', 'NameWrapperPublicResolver']
 func.runAtTheEnd = true
 
 export default func
