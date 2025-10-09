@@ -7,6 +7,8 @@ import {
 } from '@ensdomains/ensjs/public'
 import { ParsedInputResult } from '@ensdomains/ensjs/utils'
 
+import { getChainsFromUrl } from '@app/constants/chains'
+
 import { emptyAddress } from './constants'
 
 export type RegistrationStatus =
@@ -22,6 +24,8 @@ export type RegistrationStatus =
   | 'notOwned'
   | 'unsupportedTLD'
   | 'offChain'
+  | 'desynced'
+  | 'desynced:gracePeriod'
 
 export const getRegistrationStatus = ({
   timestamp,
@@ -61,10 +65,28 @@ export const getRegistrationStatus = ({
     if (expiryData && expiryData.expiry) {
       const { expiry: _expiry, gracePeriod } = expiryData
       const expiry = new Date(_expiry.date)
+
       if (expiry.getTime() > timestamp) {
+        if (
+          ownerData &&
+          ownerData.owner === emptyAddress &&
+          ownerData.ownershipLevel === 'nameWrapper'
+        ) {
+          return 'desynced'
+        }
         return 'registered'
       }
       if (expiry.getTime() + gracePeriod * 1000 > timestamp) {
+        // Will need to rethink this when we add multiple chains to manager app.
+        const chain = getChainsFromUrl()[0]
+        if (
+          chain &&
+          ownerData &&
+          ownerData.owner === chain.contracts.ensNameWrapper.address &&
+          wrapperData === null
+        ) {
+          return 'desynced:gracePeriod'
+        }
         return 'gracePeriod'
       }
       const { premium } = priceData || { premium: 0n }

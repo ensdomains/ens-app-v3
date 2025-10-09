@@ -7,7 +7,7 @@ import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { profileRecordsToKeyValue } from '@app/utils/records'
+import { profileRecordsToKeyValue, recordsWithCointypeCoins } from '@app/utils/records'
 
 type Data = {
   name: string
@@ -64,7 +64,7 @@ const transaction = async ({
 
   return setRecords.makeFunctionData(connectorClient, {
     name: data.name,
-    ...profileRecords,
+    ...recordsWithCointypeCoins(profileRecords),
     clearRecords: true,
     resolverAddress: latestResolverAddress,
   })

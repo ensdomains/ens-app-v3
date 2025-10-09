@@ -47,6 +47,10 @@ type ProcessedNameData = Omit<RegistrationParameters, 'owner'> & {
   fuses?: RegistrationParameters['fuses']
 }
 
+const adjustTime = (time: number) => {
+  return time + 2419200 + 7776000 // 28 days + 90 days
+}
+
 const names: Name[] = [
   {
     name: 'wrapped.eth',
@@ -162,7 +166,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000' as const
     const duration = customDuration || 31536000
     // 1659467455 is an approximate base timestamp; adding duration to it gives the wrapper expiry
-    const wrapperExpiry = 1659467455 + duration
+    const wrapperExpiry = 1659467455 + adjustTime(duration)
     const owner = allNamedClients[namedOwner].account
 
     const processedSubnames: ProcessedSubname[] =

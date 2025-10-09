@@ -2,27 +2,24 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { isValidBanner } from '@app/validators/validateBanner'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
 
-const Container = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) => css`
+const Container = styled.div(
+  ({ theme }) => css`
+    position: relative;
     width: 100%;
     padding: ${theme.space['4']};
     padding-top: ${theme.space['18']};
-    background-image: ${$banner ? `url(${$banner})` : theme.colors.blueGradient};
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-size: 100% ${theme.space['28']};
-    background-position-y: -1px; /* for overlap with border i think */
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.border};
@@ -32,11 +29,27 @@ const Container = styled.div<{ $banner?: string }>(
     justify-content: center;
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
+    overflow: hidden;
 
     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
       padding-top: ${theme.space['12']};
     }
+  `,
+)
+
+const BannerContainer = styled.div<{ $banner?: string }>(
+  ({ theme, $banner }) => css`
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: ${theme.space['28']};
+    background-image: ${$banner ? `url("${encodeURI($banner)}")` : theme.colors.blueGradient};
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
   `,
 )
 
@@ -177,13 +190,15 @@ export const ProfileSnippet = ({
   // network,
   isPrimary,
   isVerified,
+  hasMismatch,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
-  button?: 'viewProfile' | 'extend' | 'register'
+  button?: 'viewProfile' | 'extend' | 'register' | undefined
   isPrimary?: boolean
   isVerified?: boolean
+  hasMismatch?: boolean
   children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
@@ -193,9 +208,14 @@ export const ProfileSnippet = ({
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
 
-  const beautifiedName = useBeautifiedName(name)
+  // Always call the hook but conditionally use its result
+  const hookBeautifiedName = useBeautifiedName(name)
+  const beautifiedName = hasMismatch ? name : hookBeautifiedName
 
-  const banner = getTextRecord?.('banner')?.value
+  const bannerUrl = isValidBanner(getTextRecord?.('banner')?.value ?? '')
+    ? getTextRecord?.('banner')?.value
+    : undefined
+
   const description = getTextRecord?.('description')?.value
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value
@@ -245,7 +265,8 @@ export const ProfileSnippet = ({
   }, [button, name, canSelfExtend])
 
   return (
-    <Container $banner={banner} data-testid="profile-snippet">
+    <Container data-testid="profile-snippet">
+      <BannerContainer $banner={bannerUrl} />
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
@@ -292,12 +313,19 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
-      {isPrimary && (
+      {(isPrimary || hasMismatch) && (
         <TagsContainer>
-          <PrimaryNameTag size="medium" colorStyle="greenSecondary">
-            <NametagSVG />
-            {t('name.yourPrimaryName')}
-          </PrimaryNameTag>
+          {isPrimary && (
+            <PrimaryNameTag size="medium" colorStyle="greenSecondary">
+              <NametagSVG />
+              {t('name.yourPrimaryName')}
+            </PrimaryNameTag>
+          )}
+          {hasMismatch && (
+            <Helper alert="warning" alignment="horizontal">
+              {t('name.unnormalized')}
+            </Helper>
+          )}
         </TagsContainer>
       )}
       {children}

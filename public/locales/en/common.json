@@ -32,6 +32,7 @@
     "done": "Done",
     "burnSelected": "Burn Selected",
     "extend": "Extend",
+    "manage": "Manage",
     "delete": "Delete",
     "sort": "Sort",
     "check": "Check",
@@ -123,6 +124,7 @@
     "all": "All Names",
     "copy": "Copy name",
     "yourPrimaryName": "Your primary name",
+    "unnormalized": "Unnormalized name",
     "expiresInYears_one": "Expires in {{count}} year",
     "expiresInYears_other": "Expires in {{count}} years",
     "expiresInMonths_one": "Expires in {{count}} month",
@@ -234,7 +236,8 @@
       "resetProfile": "Reset profile",
       "unwrapName": "Unwrap name",
       "updateVerificationRecord": "Update verification record",
-      "removeVerificationRecord": "Remove verification record"
+      "removeVerificationRecord": "Remove verification record",
+      "repairDesyncedName": "Repair name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -253,6 +256,7 @@
       "burnFuses": "Burn the chosen permissions until name expiry",
       "commitName": "Start timer to register name",
       "approveNameWrapper": "Approve the NameWrapper to manage your names",
+      "repairDesyncedName": "Sync the wrapped name expiry",
       "fuses": {
         "revoke": "Revoke",
         "grant": "Grant",
@@ -369,7 +373,8 @@
       "unsupportedTLD": "Not Supported",
       "imported": "Imported",
       "owned": "Owned",
-      "offChain": "View"
+      "offChain": "View",
+      "desynced": "Out of sync"
     }
   },
   "selectableInput": {
