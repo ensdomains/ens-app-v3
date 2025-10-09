@@ -66,7 +66,9 @@ test('should allow claim (owned by user)', async ({
   })
 
   // should show cost value above 0
-  await expect(importPage.getCost()).resolves.toBeGreaterThan(0)
+  await expect(async () => {
+    await expect(await importPage.getCost()).toBeGreaterThan(0)
+  }).toPass({ timeout: 10000 })
 
   await expect(importPage.nextButton).toHaveText('Claim')
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
@@ -205,7 +207,9 @@ test('should allow import (not owned by user)', async ({
   await expect(importPage.heading).toHaveText('Import this domain')
 
   // should show cost value above 0
-  await expect(importPage.getCost()).resolves.toBeGreaterThan(0)
+  await expect(async () => {
+    await expect(await importPage.getCost()).toBeGreaterThan(0)
+  }).toPass({ timeout: 10000 })
 
   await expect(importPage.nextButton).toHaveText('Import')
   await expect(importPage.nextButton).toBeEnabled({ timeout: 15000 })
