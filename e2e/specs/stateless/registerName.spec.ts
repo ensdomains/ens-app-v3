@@ -2056,3 +2056,89 @@ test('should allow registering a premium name for two months, user should connec
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
+
+test('should change profile submit button text from "Skip profile" to "Next" when a header record is added', async ({
+  page,
+  login,
+  time,
+  makePageObject,
+}) => {
+  const name = `registration-with-images-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+  await page.getByTestId('next-button').click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Upload header - directly set files on hidden input
+  await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
+  await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('header-manual-input').fill('https://image.com/header.jpg')
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 30000 })
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+})
+
+test('should change profile submit button text from "Skip profile" to "Next" when an avatar record is added', async ({
+  page,
+  login,
+  time,
+  makePageObject,
+}) => {
+  const name = `registration-with-avatar-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+  await page.getByTestId('next-button').click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add avatar
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('avatar-uri-input').fill('https://image.com/avatar.jpg')
+  await page.getByRole('button', { name: 'Confirm' }).click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+})
+
+test('should change profile submit button text from "Skip profile" to "Next" when any record is added', async ({
+  page,
+  login,
+  time,
+  makePageObject,
+}) => {
+  const name = `registration-with-record-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+  await page.getByTestId('next-button').click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add a text record
+  await page.getByTestId('show-add-profile-records-modal-button').click()
+  await page.getByTestId('confirmation-dialog-confirm-button').click()
+  await page.getByTestId('profile-record-option-name').click()
+  await page.getByTestId('add-profile-records-button').click()
+  await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+})

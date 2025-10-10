@@ -144,7 +144,7 @@ const AvatarButton = ({
     : ({} as { isOpen: never; setIsOpen: never })
 
   return (
-    <OuterContainer>
+    <OuterContainer data-testid="avatar-button">
       <AvatarContainer>
         <AvatarLabel>Avatar</AvatarLabel>
         <InicatorContainer

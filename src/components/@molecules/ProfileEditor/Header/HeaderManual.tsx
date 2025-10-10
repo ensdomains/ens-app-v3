@@ -76,6 +76,7 @@ export const HeaderManual = ({
           <HeaderPreview $src={uri} />
           <Input
             label="Header URL"
+            data-testid="header-manual-input"
             placeholder="https:// or ipfs://"
             value={uri}
             onChange={handleUriChange}

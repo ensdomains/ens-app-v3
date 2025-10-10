@@ -191,7 +191,7 @@ const HeaderButton = ({
     : ({} as { isOpen: never; setIsOpen: never })
 
   return (
-    <OuterContainer>
+    <OuterContainer data-testid="header-button">
       <HeaderContainer>
         <HeaderLabel>Header</HeaderLabel>
         <IndicatorContainer

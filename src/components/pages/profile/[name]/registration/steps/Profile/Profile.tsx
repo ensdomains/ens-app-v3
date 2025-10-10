@@ -96,10 +96,16 @@ const SubmitButton = ({
     name: 'avatar',
   })
 
+  const header = useWatch({
+    control,
+    name: 'header',
+  })
+
   const hasEthRecord = records.some((record) => record.key === 'eth' && record.value === address)
   const hasAvatar = !!avatar
+  const hasHeader = !!header
   const hasOneRecord = records.length === 1
-  const isClean = hasEthRecord && !hasAvatar && hasOneRecord
+  const isClean = hasEthRecord && !hasAvatar && !hasHeader && hasOneRecord
 
   const message = isClean
     ? t('steps.profile.actions.skipProfile')
