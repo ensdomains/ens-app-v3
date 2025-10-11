@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react'
-import { Control, useFormState, useWatch } from 'react-hook-form'
+import { Control, useWatch } from 'react-hook-form'
 
 import HeaderButton from '@app/components/@molecules/ProfileEditor/Header/HeaderButton'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
@@ -10,16 +10,11 @@ type Props = {
 } & Omit<ComponentProps<typeof HeaderButton>, 'validated'>
 
 export const WrappedHeaderButton = ({ control, name, src, ...props }: Props) => {
-  const formState = useFormState<ProfileEditorForm>({
-    control,
-    name: 'header',
-  })
   const headerValue = useWatch({
     control,
     name: 'header',
   })
   const isValidated = !!headerValue
-  const isDirty = !!formState.dirtyFields.header
   // Only show src if there's a headerValue (not removed)
   const currentOrUpdatedSrc = headerValue ? src : undefined
   return (
@@ -28,7 +23,6 @@ export const WrappedHeaderButton = ({ control, name, src, ...props }: Props) => 
       src={currentOrUpdatedSrc}
       headerValue={headerValue}
       validated={isValidated}
-      dirty={isDirty}
     />
   )
 }
