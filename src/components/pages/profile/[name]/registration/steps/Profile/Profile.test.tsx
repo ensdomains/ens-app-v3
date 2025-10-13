@@ -217,15 +217,9 @@ describe('Profile', () => {
     )
   })
 
-  it('should show an error for duplicate label on custom avatar field if media avatar record exists', async () => {
+  it('should show an error for reserved key on custom avatar field', async () => {
     const overrides = {
       records: [
-        {
-          key: 'avatar',
-          value: 'https://example.com',
-          type: 'text',
-          group: 'media',
-        },
         {
           key: 'avatar',
           value: 'https://example.com',
@@ -245,6 +239,6 @@ describe('Profile', () => {
     )
     await userEvent.click(screen.getByTestId('profile-submit-button'))
     await waitFor(() => expect(mockCallback).not.toHaveBeenCalled())
-    expect(screen.getByText('steps.profile.errors.avatarReserved')).toBeInTheDocument()
+    expect(screen.getByText('steps.profile.errors.reservedKey')).toBeInTheDocument()
   })
 })
