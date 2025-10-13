@@ -122,9 +122,8 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
       return (key?: string) => {
         if (!key) return t('steps.profile.errors.keyRequired') as string
         const trimmedKey = key.trim()
-        if (trimmedKey === 'avatar') {
-          const avatar = getValues('avatar')
-          if (avatar) return t('steps.profile.errors.avatarReserved') as string
+        if (['avatar', 'header'].includes(trimmedKey)) {
+          return t('steps.profile.errors.reservedKey', { ns: 'register' }) as string
         }
         const allTextRecords = getValues('records').filter((r) => r.type === 'text')
         if (

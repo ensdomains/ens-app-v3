@@ -75,15 +75,11 @@ const other: ProfileRecord[] = supportedOtherRecordKeys.map((key) => ({
   type: typeForOtherRecordKey(key),
 }))
 
-export default [...general, ...media, ...social, ...address, ...website, ...other] as const
+export default [...general, ...social, ...address, ...website, ...other] as const
 export const grouped = [
   {
     group: 'general',
     items: general,
-  },
-  {
-    group: 'media',
-    items: media,
   },
   {
     group: 'social',

@@ -126,7 +126,7 @@ const HeaderPreview = styled.div<{ $src?: string }>(
     height: 100px;
     border-radius: ${theme.radii.large};
     background-color: ${theme.colors.greyLight};
-    background-image: ${$src ? `url(${$src})` : 'none'};
+    background-image: ${$src ? `url(${$src})` : theme.colors.blueGradient};
     background-size: cover;
     background-position: center;
     position: relative;
