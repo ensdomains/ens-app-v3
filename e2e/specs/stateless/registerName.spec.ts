@@ -2101,7 +2101,10 @@ test('should change profile submit button text from "Skip profile" to "Next" whe
 
   await homePage.searchInput.fill(name)
   await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
 
   await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
 
@@ -2129,7 +2132,10 @@ test('should change profile submit button text from "Skip profile" to "Next" whe
 
   await homePage.searchInput.fill(name)
   await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
 
   await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
 
