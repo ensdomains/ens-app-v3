@@ -59,7 +59,7 @@
             "label": "Media",
             "items": {
               "avatar": "Avatar",
-              "banner": "Banner"
+              "header": "Header"
             },
             "placeholder": {
               "avatar": "https://example.com/avatar.png",
@@ -140,7 +140,8 @@
         "labelRequired": "A record key is required",
         "duplicateRecord": "Duplicate record key",
         "avatarReserved": "Key is being used by avatar manager",
-        "invalidValue": "Invalid value"
+        "invalidValue": "Invalid value",
+        "reservedKey": "This key is reserved"
       },
       "confirmations": {
         "publicNotice": {
