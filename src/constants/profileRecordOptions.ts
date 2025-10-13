@@ -32,11 +32,12 @@ const general: ProfileRecord[] = supportedGeneralRecordKeys.map((key) => ({
   type: 'text',
 }))
 
-const media: ProfileRecord[] = supportedMediaRecordKeys.map((key) => ({
-  key,
-  group: 'media',
-  type: 'text',
-}))
+// NOTE: Removed because avatar and header are not build into profile. Leaving this here as reference.
+// const media: ProfileRecord[] = supportedMediaRecordKeys.map((key) => ({
+//   key,
+//   group: 'media',
+//   type: 'text',
+// }))
 
 const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
   key,
