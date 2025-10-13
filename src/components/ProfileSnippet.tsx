@@ -262,7 +262,7 @@ export const ProfileSnippet = ({
 
   return (
     <Container data-testid="profile-snippet">
-      <HeaderContainer $header={headerUrl} />
+      <HeaderContainer $header={headerUrl ?? undefined} />
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
