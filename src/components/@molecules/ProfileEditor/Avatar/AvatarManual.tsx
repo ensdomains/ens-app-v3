@@ -16,13 +16,6 @@ const Container = styled.div(
   `,
 )
 
-const Description = styled(Typography)(
-  ({ theme }) => css`
-    text-align: center;
-    color: ${theme.colors.textSecondary};
-  `,
-)
-
 const AvatarPreview = styled.div<{ $src?: string }>(
   ({ theme, $src }) => css`
     width: 120px;
@@ -86,12 +79,12 @@ export const AvatarManual = ({
       <Dialog.Content>
         <Container>
           <AvatarPreview $src={uri} />
-          <Description fontVariant="body">
+          <Typography fontVariant="body" textAlign="center" color="textSecondary">
             Manual entry supports NFT, https, IPFS, and data URLs.
             <Outlink href="https://docs.ens.domains/ensip/12" iconPosition="after">
               Learn more about avatar URLs
             </Outlink>
-          </Description>
+          </Typography>
           <InputContainer>
             <Input
               label=""

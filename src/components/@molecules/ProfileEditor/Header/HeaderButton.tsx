@@ -120,12 +120,6 @@ const HeaderContainer = styled.div`
   width: 300px;
 `
 
-const HeaderLabel = styled(Typography)`
-  font-weight: 600;
-  font-size: 14px;
-  color: ${({ theme }) => theme.colors.textSecondary};
-`
-
 const HeaderPreview = styled.div<{ $src?: string }>(
   ({ theme, $src }) => css`
     width: 300px;
@@ -193,7 +187,9 @@ const HeaderButton = ({
   return (
     <OuterContainer data-testid="header-button">
       <HeaderContainer>
-        <HeaderLabel>Header</HeaderLabel>
+        <Typography fontVariant="smallBold" color="textSecondary">
+          Header
+        </Typography>
         <IndicatorContainer
           $validated={validated && dirty}
           $error={error}

@@ -61,13 +61,15 @@ const InicatorContainer = styled.button<{
   `,
 )
 
-const OuterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 20px;
-  width: 100%;
-`
+const OuterContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    width: ${theme.space.full};
+  `,
+)
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -86,12 +88,6 @@ const AvatarContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   width: 128px;
-`
-
-const AvatarLabel = styled(Typography)`
-  font-weight: 600;
-  font-size: 14px;
-  color: ${({ theme }) => theme.colors.textSecondary};
 `
 
 export type AvatarClickType = 'upload' | 'nft' | 'manual'
@@ -146,7 +142,9 @@ const AvatarButton = ({
   return (
     <OuterContainer data-testid="avatar-button">
       <AvatarContainer>
-        <AvatarLabel>Avatar</AvatarLabel>
+        <Typography fontVariant="smallBold" color="textSecondary">
+          Avatar
+        </Typography>
         <InicatorContainer
           $validated={validated && dirty}
           $error={error}
