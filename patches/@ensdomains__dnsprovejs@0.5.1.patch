@@ -1,0 +1,37 @@
+diff --git a/dist/prove.js b/dist/prove.js
+index 66315faaac8dc0640bf0cc7760e315da7f67d570..4b32e7d883d4129039173430cb7d924e8d50f41a 100644
+--- a/dist/prove.js
++++ b/dist/prove.js
+@@ -43,6 +43,13 @@ function encodeURLParams(p) {
+         .map((kv) => kv.map(encodeURIComponent).join('='))
+         .join('&');
+ }
++// Convert standard base64 to base64url (RFC 4648 §5)
++function base64ToBase64Url(base64) {
++    return base64
++        .replace(/\+/g, '-')
++        .replace(/\//g, '_')
++        .replace(/=/g, '');
++}
+ function getKeyTag(key) {
+     const data = packet.dnskey.encode(key.data).slice(2);
+     let keytag = 0;
+@@ -87,11 +94,13 @@ function dohQuery(url) {
+     return function getDNS(q) {
+         return __awaiter(this, void 0, void 0, function* () {
+             const buf = packet.encode(q);
+-            const response = yield fetch(`${url}?${encodeURLParams({
+-                ct: 'application/dns-udpwireformat',
+-                dns: buf.toString('base64'),
+-                ts: Date.now().toString(),
+-            })}`);
++            // RFC 8484: Use base64url encoding and Accept header
++            const dnsParam = base64ToBase64Url(buf.toString('base64'));
++            const response = yield fetch(`${url}?dns=${encodeURIComponent(dnsParam)}`, {
++                headers: {
++                    'accept': 'application/dns-message'
++                }
++            });
+             return packet.decode(Buffer.from(yield response.arrayBuffer()));
+         });
+     };

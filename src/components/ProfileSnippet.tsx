@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
@@ -190,13 +190,15 @@ export const ProfileSnippet = ({
   // network,
   isPrimary,
   isVerified,
+  hasMismatch,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
-  button?: 'viewProfile' | 'extend' | 'register'
+  button?: 'viewProfile' | 'extend' | 'register' | undefined
   isPrimary?: boolean
   isVerified?: boolean
+  hasMismatch?: boolean
   children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
@@ -206,7 +208,9 @@ export const ProfileSnippet = ({
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
 
-  const beautifiedName = useBeautifiedName(name)
+  // Always call the hook but conditionally use its result
+  const hookBeautifiedName = useBeautifiedName(name)
+  const beautifiedName = hasMismatch ? name : hookBeautifiedName
 
   // We are overriding the key parameter here to get the header url. This will break the type checker
   // @ts-ignore
@@ -309,12 +313,19 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
-      {isPrimary && (
+      {(isPrimary || hasMismatch) && (
         <TagsContainer>
-          <PrimaryNameTag size="medium" colorStyle="greenSecondary">
-            <NametagSVG />
-            {t('name.yourPrimaryName')}
-          </PrimaryNameTag>
+          {isPrimary && (
+            <PrimaryNameTag size="medium" colorStyle="greenSecondary">
+              <NametagSVG />
+              {t('name.yourPrimaryName')}
+            </PrimaryNameTag>
+          )}
+          {hasMismatch && (
+            <Helper alert="warning" alignment="horizontal">
+              {t('name.unnormalized')}
+            </Helper>
+          )}
         </TagsContainer>
       )}
       {children}

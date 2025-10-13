@@ -93,7 +93,10 @@ export const NetworkRowComponent = ({ name, networks }: NetworkRowProps) => {
       </NetworkInfo>
       <NetworkIcons>
         {networks.map((network) => (
-          <NetworkIcon data-testid={`network-icon-${name}-${network.coinName}`}>
+          <NetworkIcon
+            key={network.coinName}
+            data-testid={`network-icon-${name}-${network.coinName}`}
+          >
             <DynamicNetworkIcon name={network.coinName?.replace(/-sep$/, '')} />
           </NetworkIcon>
         ))}
