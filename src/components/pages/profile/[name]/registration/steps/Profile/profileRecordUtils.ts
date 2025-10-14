@@ -47,6 +47,22 @@ export const profileRecordsToRecordOptions = (
         }
       }
 
+      if (record.key === 'header') {
+        const currentHeaderValue = options.texts?.find((r) => r.key === 'header')?.value || ''
+        const defaultHeaderValue =
+          !!currentHeaderValue && !!recordItem.value && group === 'media'
+            ? recordItem.value
+            : currentHeaderValue
+        const newHeaderValue = defaultHeaderValue || currentHeaderValue || recordItem.value
+        return {
+          ...options,
+          texts: [
+            ...(options.texts?.filter((r) => r.key !== 'header') || []),
+            { key: 'header', value: newHeaderValue },
+          ],
+        }
+      }
+
       if (record.type === 'text') {
         return {
           ...options,

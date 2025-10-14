@@ -20,7 +20,7 @@ const Container = styled.div(
 const HeaderPreview = styled.div<{ $src?: string }>(
   ({ theme, $src }) => css`
     width: 100%;
-    height: 150px;
+    height: 9.375rem;
     border-radius: ${theme.radii.large};
     background-color: ${theme.colors.greyLight};
     background-image: ${$src ? `url(${$src})` : 'none'};

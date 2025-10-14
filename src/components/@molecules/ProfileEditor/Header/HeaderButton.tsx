@@ -16,15 +16,15 @@ const IndicatorContainer = styled.button<{
   ({ theme, $validated, $dirty, $error }) => css`
     position: relative;
     background-color: ${theme.colors.backgroundPrimary};
-    gap: 20px;
+    gap: ${theme.space['5']};
 
     ::after {
       content: '';
       position: absolute;
       background-color: transparent;
-      width: 16px;
-      height: 16px;
-      border: 2px solid transparent;
+      width: ${theme.space['4']};
+      height: ${theme.space['4']};
+      border: ${theme.space['0.5']} solid transparent;
       box-sizing: border-box;
       border-radius: 50%;
       right: 0;
@@ -68,12 +68,12 @@ const OuterContainer = styled.div(
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 10px;
+    gap: ${theme.space['2.5']};
     width: 100%;
 
     @media (min-width: ${theme.breakpoints.md}px) {
       flex-direction: row;
-      gap: 20px;
+      gap: ${theme.space['5']};
       align-items: center;
       justify-content: flex-start;
     }
@@ -84,15 +84,15 @@ const ButtonContainer = styled.div<{ $hasImage?: boolean }>(
   ({ $hasImage, theme }) => css`
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: ${theme.space['2.5']};
 
     @media (min-width: ${theme.breakpoints.md}px) {
       flex-direction: column;
       flex: 1;
-      margin-top: 20px;
+      margin-top: ${theme.space['5']};
       ${$hasImage &&
       `
-      height: 100px;
+      height: 6.25rem;
       justify-content: space-between;
     `}
 
@@ -113,17 +113,19 @@ const DropdownContainer = styled.div`
   width: fit-content;
 `
 
-const HeaderContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 300px;
-`
+const HeaderContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['2']};
+    width: 18.75rem;
+  `,
+)
 
 const HeaderPreview = styled.div<{ $src?: string }>(
   ({ theme, $src }) => css`
-    width: 300px;
-    height: 100px;
+    width: 18.75rem;
+    height: 6.25rem;
     border-radius: ${theme.radii.large};
     background-color: ${theme.colors.greyLight};
     background-image: ${$src ? `url(${$src})` : theme.colors.blueGradient};

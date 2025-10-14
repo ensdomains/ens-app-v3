@@ -9,7 +9,7 @@ import { validateImageUri } from '@app/validators/validateImageUri'
 const Container = styled.div(
   () => css`
     width: 100%;
-    min-width: 300px;
+    min-width: 18.75rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,8 +18,8 @@ const Container = styled.div(
 
 const AvatarPreview = styled.div<{ $src?: string }>(
   ({ theme, $src }) => css`
-    width: 120px;
-    height: 120px;
+    width: 7.5rem;
+    height: 7.5rem;
     border-radius: ${theme.radii.full};
     background-color: ${theme.colors.greyLight};
     background-image: ${$src ? `url(${$src})` : 'none'};
