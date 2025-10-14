@@ -12,7 +12,7 @@ let ensName: string
 
 // Connect wallet to ENS app Sepolia
 async function connectWalletToEns(): Promise<void> {
-  console.log('🔗 Connecting MetaMask to Localhost ENS...')
+  console.log('🔗 Connecting MetaMask to Local ENS App...')
   await page.goto('http://localhost:3000/')
   await page.waitForTimeout(3000)
 
@@ -237,7 +237,7 @@ async function deleteSubName(name: string): Promise<void> {
   console.log(`⚔️ {name} has been deleted`)
 }
 
-test.describe('ENS Localhost Connection', () => {
+test.describe('ENS Local App Connection', () => {
   test.beforeAll('Setup Metamask', async () => {
     console.log('🦊 Setting up MetaMask...')
     const [mm, pg, ctx] = await dappwright.bootstrap('chromium', {
@@ -270,14 +270,14 @@ test.describe('ENS Localhost Connection', () => {
       console.log('⚠️ Could not switch to Sepolia:', error)
     }
 
-    // Connect wallet to ENS Localhost
+    // Connect wallet to ENS Local App
     await connectWalletToEns()
 
     // Generate a unique ENS name for tests
     ensName = `sub-${Date.now()}`
   })
 
-  test('Connect MetaMask to ENS Localhost', async () => {
+  test('Connect MetaMask to ENS Local App', async () => {
     await expect(
       page.locator('button:has-text("Connect"), [data-testid="connect-button"]'),
     ).toBeHidden({ timeout: 5000 })
