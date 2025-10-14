@@ -56,9 +56,6 @@ const Context = createContext<SyncContext>({
 
 type ChainDependentQueryKey = CreateQueryKey<object, string, 'standard'>
 
-// Define a type for ensHeader queries similar to GetEnsAvatarQueryKey
-type GetEnsHeaderQueryKey = ['ensHeader', { chainId?: number; name?: string }]
-
 const filterByChainDependentQuery =
   (chainId: SupportedChain['id']) =>
   ({ queryKey: queryKey_ }: Query) => {
@@ -66,14 +63,12 @@ const filterByChainDependentQuery =
       | ChainDependentQueryKey
       | CreateQueryKey<object, string, 'graph'>
       | GetEnsAvatarQueryKey<Config>
-      | GetEnsHeaderQueryKey
       | never[]
 
     // useEnsAvatar query from wagmi
+    // Note: This catches both avatar and header queries since headers use
+    // useEnsAvatar({ name, key: 'header' }) which still produces an 'ensAvatar' query key
     if (queryKey[0] === 'ensAvatar' && queryKey[1]?.chainId === chainId) return true
-
-    // ensHeader query for banner images
-    if (queryKey[0] === 'ensHeader' && queryKey[1]?.chainId === chainId) return true
 
     // internal queries
     if (queryKey[1] !== chainId) return false
