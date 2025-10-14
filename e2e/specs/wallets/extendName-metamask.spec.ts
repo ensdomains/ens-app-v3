@@ -14,7 +14,7 @@ let context: BrowserContext
 // Connect wallet to ENS app Sepolia
 async function connectWalletToEns(): Promise<void> {
   console.log('🔗 Connecting MetaMask to Sepolia ENS...')
-  await page.goto('https://sepolia.app.ens.domains')
+  await page.goto('http://localhost:3000/')
   await page.waitForTimeout(3000)
 
   // Wait for "Connect Wallet" button and click
