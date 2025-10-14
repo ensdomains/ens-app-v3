@@ -145,12 +145,12 @@ const UploadComponent = ({
         }
 
         throw new Error('Unknown error')
-      } catch (error) {
+      } catch (err) {
         clearTimeout(timeoutId)
-        if (error instanceof Error && error.name === 'AbortError') {
+        if (err instanceof Error && err.name === 'AbortError') {
           throw new Error('Upload timed out. Please try again.')
         }
-        throw error
+        throw err
       }
     },
   })
