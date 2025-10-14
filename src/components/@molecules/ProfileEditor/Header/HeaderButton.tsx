@@ -24,7 +24,7 @@ const IndicatorContainer = styled.button<{
       background-color: transparent;
       width: ${theme.space['4']};
       height: ${theme.space['4']};
-      border: ${theme.space['0.5']} solid transparent;
+      border: ${theme.borderWidths['2x']} solid transparent;
       box-sizing: border-box;
       border-radius: 50%;
       right: 0;

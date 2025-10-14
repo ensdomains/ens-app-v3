@@ -21,9 +21,9 @@ const InicatorContainer = styled.button<{
       content: '';
       position: absolute;
       background-color: transparent;
-      width: 16px;
-      height: 16px;
-      border: 2px solid transparent;
+      width: ${theme.space['4']};
+      height: ${theme.space['4']};
+      border: ${theme.borderWidths['2x']} solid transparent;
       box-sizing: border-box;
       border-radius: 50%;
       right: 0;
@@ -71,24 +71,28 @@ const OuterContainer = styled.div(
   `,
 )
 
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-  padding-top: 28px;
-`
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['2.5']};
+    flex: 1;
+    padding-top: ${theme.space['7']};
+  `,
+)
 
 const DropdownContainer = styled.div`
   width: fit-content;
 `
 
-const AvatarContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 128px;
-`
+const AvatarContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['2']};
+    width: 8rem;
+  `,
+)
 
 export type AvatarClickType = 'upload' | 'nft' | 'manual'
 
