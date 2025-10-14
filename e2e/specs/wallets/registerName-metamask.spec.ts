@@ -12,8 +12,8 @@ let ensName: string
 
 // Connect wallet to ENS app Sepolia
 async function connectWalletToEns(): Promise<void> {
-  console.log('🔗 Connecting MetaMask to Sepolia ENS...')
-  await page.goto('https://sepolia.app.ens.domains')
+  console.log('🔗 Connecting MetaMask to Localhost ENS...')
+  await page.goto('http://localhost:3000/')
   await page.waitForTimeout(3000)
 
   // Wait for "Connect Wallet" button and click
@@ -210,7 +210,7 @@ async function registerOwnedName() {
   console.log(`❌ ${registeredName} has already been registered`)
 }
 
-test.describe('ENS Sepolia Registration', () => {
+test.describe('ENS Localhost Registration', () => {
   // Setup MM before the tests run
   test.beforeAll('Setup Metamask', async () => {
     console.log('🦊 Setting up MetaMask...')
@@ -244,14 +244,14 @@ test.describe('ENS Sepolia Registration', () => {
       console.log('⚠️ Could not switch to Sepolia:', error)
     }
 
-    // Connect wallet to ENS Sepolia
+    // Connect wallet to ENS Localhost
     await connectWalletToEns()
 
     // Generate a unique ENS name for tests
     ensName = `registername-${Date.now()}.eth`
   })
 
-  test('Connect MetaMask to ENS Sepolia', async () => {
+  test('Connect MetaMask to ENS Localhost', async () => {
     await expect(
       page.locator('button:has-text("Connect"), [data-testid="connect-button"]'),
     ).toBeHidden({ timeout: 5000 })
