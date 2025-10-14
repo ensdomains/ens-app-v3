@@ -295,9 +295,24 @@ const useImageLoader = (
 
   useEffect(() => {
     const image = imageRef.current
-    if (canvasRef.current && image && !image.src) {
-      image.src = URL.createObjectURL(avatar)
-      image.onload = handleImageLoad
+    if (!canvasRef.current || !image || image.src) return
+
+    const blobUrl = URL.createObjectURL(avatar)
+    image.src = blobUrl
+    image.onload = handleImageLoad
+    image.onerror = () => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to load image')
+      }
+      // Could show error to user via toast/alert in the future
+    }
+
+    return () => {
+      if (URL.revokeObjectURL) {
+        URL.revokeObjectURL(blobUrl)
+      }
+      image.onload = null
+      image.onerror = null
     }
   }, [avatar, canvasRef, handleImageLoad, imageRef])
 
@@ -576,54 +591,68 @@ const useCropSubmission = (
   const handleSubmit = useCallback(() => {
     if (!canvasRef.current) return
 
-    const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current)
-    const cropCanvas = document.createElement('canvas')
-    const cropCtx = cropCanvas.getContext('2d')!
+    try {
+      const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current)
+      const cropCanvas = document.createElement('canvas')
+      const cropCtx = cropCanvas.getContext('2d')
 
-    // Set the output dimensions for the cropped image with proper aspect ratio
-    cropCanvas.width = cropWidth
-    cropCanvas.height = cropHeight
+      if (!cropCtx) {
+        throw new Error('Failed to get canvas context')
+      }
 
-    // Fill with white background
-    cropCtx.fillStyle = 'white'
-    cropCtx.fillRect(0, 0, cropWidth, cropHeight)
+      // Set the output dimensions for the cropped image with proper aspect ratio
+      cropCanvas.width = cropWidth
+      cropCanvas.height = cropHeight
 
-    // Get the current canvas
-    const canvas = canvasRef.current
+      // Fill with white background
+      cropCtx.fillStyle = 'white'
+      cropCtx.fillRect(0, 0, cropWidth, cropHeight)
 
-    // Get the current image position and dimensions from coordinatesRef
-    const { x, y, w, h } = coordinatesRef.current
+      // Get the current canvas
+      const canvas = canvasRef.current
 
-    // Calculate the visible portion of the image that falls within the crop area
-    // The crop area is defined by the SVG overlay, which is positioned at (maxX, maxY) with size cropWidth x cropHeight
+      // Get the current image position and dimensions from coordinatesRef
+      const { x, y, w, h } = coordinatesRef.current
 
-    // Calculate source coordinates (the part of the canvas we want to extract)
-    // This is the intersection of the image and the crop window
-    const sourceX = Math.max(maxX, x)
-    const sourceY = Math.max(maxY, y)
-    const sourceWidth = Math.min(maxX + cropWidth, x + w) - sourceX
-    const sourceHeight = Math.min(maxY + cropHeight, y + h) - sourceY
+      // Calculate the visible portion of the image that falls within the crop area
+      // The crop area is defined by the SVG overlay, which is positioned at (maxX, maxY) with size cropWidth x cropHeight
 
-    // Calculate destination coordinates (where to place the extracted portion in the new canvas)
-    // This maps the extracted portion to the correct position in the output
-    const destX = sourceX - maxX
-    const destY = sourceY - maxY
+      // Calculate source coordinates (the part of the canvas we want to extract)
+      // This is the intersection of the image and the crop window
+      const sourceX = Math.max(maxX, x)
+      const sourceY = Math.max(maxY, y)
+      const sourceWidth = Math.min(maxX + cropWidth, x + w) - sourceX
+      const sourceHeight = Math.min(maxY + cropHeight, y + h) - sourceY
 
-    // Draw the visible portion of the image onto the crop canvas
-    cropCtx.drawImage(
-      canvas,
-      sourceX,
-      sourceY,
-      sourceWidth,
-      sourceHeight,
-      destX,
-      destY,
-      sourceWidth,
-      sourceHeight,
-    )
+      // Calculate destination coordinates (where to place the extracted portion in the new canvas)
+      // This maps the extracted portion to the correct position in the output
+      const destX = sourceX - maxX
+      const destY = sourceY - maxY
 
-    // Convert the cropped canvas to a data URL and set it
-    setDataURL(cropCanvas.toDataURL('image/jpeg', 0.9))
+      // Draw the visible portion of the image onto the crop canvas
+      cropCtx.drawImage(
+        canvas,
+        sourceX,
+        sourceY,
+        sourceWidth,
+        sourceHeight,
+        destX,
+        destY,
+        sourceWidth,
+        sourceHeight,
+      )
+
+      // Convert the cropped canvas to a data URL and set it
+      const dataURL = cropCanvas.toDataURL('image/jpeg', 0.9)
+      setDataURL(dataURL)
+    } catch (error) {
+      // Log error in development
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to crop image:', error)
+      }
+      // In production, we could show a user-friendly error message
+      // For now, fail silently to maintain existing behavior
+    }
   }, [canvasRef, coordinatesRef, setDataURL])
 
   return { handleSubmit }

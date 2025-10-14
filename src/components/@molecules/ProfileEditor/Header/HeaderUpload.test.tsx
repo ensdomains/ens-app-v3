@@ -60,6 +60,7 @@ describe('<HeaderUpload />', () => {
   it('calls handleSubmit with correct data if upload is successful on mainnet', async () => {
     global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
+        ok: true,
         json: () => ({ message: 'uploaded' }),
       }),
     )
@@ -70,21 +71,22 @@ describe('<HeaderUpload />', () => {
     render(<HeaderUpload {...props} />)
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
-    await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://euc.li/test.eth/h', {
-        method: 'PUT',
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled()
+      const fetchCall = (global.fetch as any).mock.calls[0]
+      expect(fetchCall[0]).toBe('https://euc.li/test.eth/h')
+      expect(fetchCall[1].method).toBe('PUT')
+      expect(fetchCall[1].headers).toEqual({ 'Content-Type': 'application/json' })
+      expect(fetchCall[1].body).toBe(
+        JSON.stringify({
           expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
           dataURL: mockFileDataURL,
           sig: 'sig',
           unverifiedAddress: '0x80c5657CEE59A5a193EfDCfDf3D3913Fad977B61',
         }),
-      }),
-    )
+      )
+      expect(fetchCall[1].signal).toBeDefined() // AbortController signal
+    })
 
     await waitFor(() =>
       expect(mockHandleSubmit).toHaveBeenCalledWith(
@@ -98,6 +100,7 @@ describe('<HeaderUpload />', () => {
     mockUseChainName.mockImplementation(() => 'sepolia')
     global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
+        ok: true,
         json: () => ({ message: 'uploaded' }),
       }),
     )
@@ -108,26 +111,29 @@ describe('<HeaderUpload />', () => {
     render(<HeaderUpload {...props} />)
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
-    await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://euc.li/sepolia/test.eth/h', {
-        method: 'PUT',
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled()
+      const fetchCall = (global.fetch as any).mock.calls[0]
+      expect(fetchCall[0]).toBe('https://euc.li/sepolia/test.eth/h')
+      expect(fetchCall[1].method).toBe('PUT')
+      expect(fetchCall[1].headers).toEqual({ 'Content-Type': 'application/json' })
+      expect(fetchCall[1].body).toBe(
+        JSON.stringify({
           expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
           dataURL: mockFileDataURL,
           sig: 'sig',
           unverifiedAddress: '0x80c5657CEE59A5a193EfDCfDf3D3913Fad977B61',
         }),
-      }),
-    )
+      )
+      expect(fetchCall[1].signal).toBeDefined() // AbortController signal
+    })
   })
   it('does not call handleSubmit if upload is unsuccessful', async () => {
     mockHandleSubmit.mockClear()
     global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({
+        ok: false,
+        status: 500,
         json: () => ({ error: 'failed', status: 500 }),
       }),
     )

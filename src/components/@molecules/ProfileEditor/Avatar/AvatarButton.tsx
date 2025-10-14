@@ -15,7 +15,7 @@ const InicatorContainer = styled.button<{
   ({ theme, $validated, $dirty, $error }) => css`
     position: relative;
     background-color: ${theme.colors.backgroundPrimary};
-    gap: 20px;
+    gap: ${theme.space['5']};
 
     ::after {
       content: '';

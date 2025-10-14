@@ -241,4 +241,29 @@ describe('Profile', () => {
     await waitFor(() => expect(mockCallback).not.toHaveBeenCalled())
     expect(screen.getByText('steps.profile.errors.reservedKey')).toBeInTheDocument()
   })
+
+  it('should show an error for reserved key on custom header field', async () => {
+    const overrides = {
+      records: [
+        {
+          key: 'header',
+          value: 'https://example.com/banner.jpg',
+          type: 'text',
+          group: 'custom',
+        },
+      ],
+    }
+
+    render(
+      <Profile
+        name={name}
+        registrationData={makeRegistrationData(overrides)}
+        callback={mockCallback}
+        resolverExists
+      />,
+    )
+    await userEvent.click(screen.getByTestId('profile-submit-button'))
+    await waitFor(() => expect(mockCallback).not.toHaveBeenCalled())
+    expect(screen.getByText('steps.profile.errors.reservedKey')).toBeInTheDocument()
+  })
 })
