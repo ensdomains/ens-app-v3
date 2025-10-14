@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Slider } from '@ensdomains/thorin'
+import { Button, Dialog, Helper, Slider } from '@ensdomains/thorin'
 
 import CropBorderSVG from '@app/assets/HeaderCropBorder.svg'
 import CropFrameSVG from '@app/assets/HeaderCropFrame.svg'
@@ -186,7 +186,14 @@ const useCanvasDrawing = (
     const { maxX, maxY, cropWidth, cropHeight } = getHeaderVars(canvas)
     // eslint-disable-next-line prefer-const
     let { x, y, w, h, mx, my, moving } = coordinatesRef.current
-    const ctx = canvas.getContext('2d')!
+    const ctx = canvas.getContext('2d')
+
+    if (!ctx) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to get canvas context')
+      }
+      return
+    }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     x += mx
@@ -273,7 +280,14 @@ const useImageLoader = (
         y = maxY
       }
 
-      const ctx = canvasRef.current.getContext('2d')!
+      const ctx = canvasRef.current.getContext('2d')
+      if (!ctx) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to get canvas context')
+        }
+        return
+      }
+
       ctx.drawImage(image, x, y, w, h)
       coordinatesRef.current = {
         x,
@@ -588,8 +602,12 @@ const useCropSubmission = (
   coordinatesRef: React.MutableRefObject<Coordinates>,
   setDataURL: (dataURL: string) => void,
 ) => {
+  const [cropError, setCropError] = useState<string | null>(null)
+
   const handleSubmit = useCallback(() => {
     if (!canvasRef.current) return
+
+    setCropError(null) // Clear any previous errors
 
     try {
       const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current)
@@ -650,12 +668,12 @@ const useCropSubmission = (
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to crop image:', error)
       }
-      // In production, we could show a user-friendly error message
-      // For now, fail silently to maintain existing behavior
+      // Set user-facing error message
+      setCropError('Failed to crop image. Please try again.')
     }
   }, [canvasRef, coordinatesRef, setDataURL])
 
-  return { handleSubmit }
+  return { handleSubmit, cropError }
 }
 
 export const CropComponent = ({
@@ -715,7 +733,7 @@ export const CropComponent = ({
   )
 
   // Initialize crop submission
-  const { handleSubmit } = useCropSubmission(canvasRef, coordinatesRef, setDataURL)
+  const { handleSubmit, cropError } = useCropSubmission(canvasRef, coordinatesRef, setDataURL)
 
   return (
     <>
@@ -743,6 +761,11 @@ export const CropComponent = ({
           </SliderContainer>
         </EditImageContainer>
       </Dialog.Content>
+      {cropError && (
+        <Helper data-testid="crop-error" alert="error">
+          {cropError}
+        </Helper>
+      )}
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={
