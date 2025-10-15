@@ -7,7 +7,7 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 
-const InicatorContainer = styled.button<{
+const IndicatorContainer = styled.button<{
   $error?: boolean
   $validated?: boolean
   $dirty?: boolean
@@ -149,14 +149,14 @@ const AvatarButton = ({
         <Typography fontVariant="smallBold" color="textSecondary">
           Avatar
         </Typography>
-        <InicatorContainer
+        <IndicatorContainer
           $validated={validated && dirty}
           $error={error}
           $dirty={dirty}
           type="button"
         >
           <Avatar label="profile-button-avatar" src={src} />
-        </InicatorContainer>
+        </IndicatorContainer>
       </AvatarContainer>
       <ButtonContainer>
         {avatarValue && (

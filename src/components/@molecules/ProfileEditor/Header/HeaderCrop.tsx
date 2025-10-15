@@ -181,7 +181,7 @@ const useCanvasDrawing = (
   const draw = useCallback(() => {
     const image = imageRef.current
     const canvas = canvasRef.current
-    if (!canvas || !image) return
+    if (!canvas || !image || !image.complete || !image.naturalWidth) return
 
     const { maxX, maxY, cropWidth, cropHeight } = getHeaderVars(canvas)
     // eslint-disable-next-line prefer-const
@@ -309,7 +309,7 @@ const useImageLoader = (
 
   useEffect(() => {
     const image = imageRef.current
-    if (!canvasRef.current || !image || image.src) return
+    if (!canvasRef.current || !image) return
 
     const blobUrl = URL.createObjectURL(avatar)
     image.src = blobUrl
@@ -483,6 +483,7 @@ const useTouchInteractions = (
 const useWindowResize = (
   canvasRef: React.RefObject<HTMLCanvasElement>,
   resolutionMultiplierRef: React.MutableRefObject<number>,
+  imageRef: React.RefObject<HTMLImageElement>,
   draw: () => void,
 ) => {
   const handleWindowResize = useCallback(() => {
@@ -499,12 +500,13 @@ const useWindowResize = (
     // Height is derived from width, ensuring minimum through width constraint
 
     const canvas = canvasRef.current
-    if (canvas) {
+    const image = imageRef.current
+    if (canvas && image && image.complete && image.naturalWidth) {
       // Update resolution multiplier
       resolutionMultiplierRef.current = canvas.width / width
       draw()
     }
-  }, [canvasRef, draw, resolutionMultiplierRef])
+  }, [canvasRef, imageRef, draw, resolutionMultiplierRef])
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -518,12 +520,18 @@ const useWindowResize = (
 // Hook for handling zoom functionality
 const useZoomControl = (
   coordinatesRef: React.MutableRefObject<Coordinates>,
+  imageRef: React.RefObject<HTMLImageElement>,
   zoom: number,
   draw: () => void,
 ) => {
   useEffect(() => {
-    if (zoom !== undefined) {
+    const image = imageRef.current
+    // Only zoom if image is loaded and coordinates have been initialized
+    if (zoom !== undefined && image && image.complete && image.naturalWidth) {
       const { oW: originalWidth, oH: originalHeight } = coordinatesRef.current
+      // Skip if not initialized yet (oW will be 0)
+      if (originalWidth === 0 || originalHeight === 0) return
+
       // Adjust zoom factor to allow for zooming out more (50% to 200%)
       const zoomFactor = zoom / 100
       const newWidth = originalWidth * zoomFactor
@@ -538,7 +546,7 @@ const useZoomControl = (
 
       window.requestAnimationFrame(draw)
     }
-  }, [coordinatesRef, draw, zoom])
+  }, [coordinatesRef, imageRef, draw, zoom])
 }
 
 // Hook for setting up event listeners
@@ -715,10 +723,10 @@ export const CropComponent = ({
   )
 
   // Initialize window resize handling
-  const { handleWindowResize } = useWindowResize(canvasRef, resolutionMultiplierRef, draw)
+  const { handleWindowResize } = useWindowResize(canvasRef, resolutionMultiplierRef, imageRef, draw)
 
   // Initialize zoom control
-  useZoomControl(coordinatesRef, zoom, draw)
+  useZoomControl(coordinatesRef, imageRef, zoom, draw)
 
   // Set up event listeners
   useEventListeners(

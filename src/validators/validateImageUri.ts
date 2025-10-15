@@ -1,4 +1,10 @@
-const ACCEPTED_URI_PROTOCOLS = ['https:', 'ipfs:', 'data:', 'eip155:']
+const ACCEPTED_URI_PROTOCOLS = [
+  'https:',
+  'ipfs:',
+  'data:',
+  'eip155:',
+  ...(process.env.NODE_ENV === 'development' ? ['http:'] : []),
+]
 
 export const validateImageUri = (url?: string): string | boolean => {
   if (!url) return 'Image URL is required'
