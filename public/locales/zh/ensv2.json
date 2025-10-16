@@ -18,11 +18,6 @@
       "text": "二层网络通过无信任连接实现跨区块链无缝使用 .eth 名称。"
     }
   },
-  "learn-more": {
-    "title": "想了解更多？",
-    "caption": "如果你想了解更多并在 Namechain 上进行开发，欢迎加入 ENS 开发者 Telegram 群。",
-    "button": "开发者 Telegram 群"
-  },
   "announcement": {
     "title": "公告",
     "l2": {

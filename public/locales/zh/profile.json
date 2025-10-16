@@ -22,6 +22,12 @@
     "available": {
       "title": "{{name}} 可以注册",
       "description": "该名称在 <strong>{{date}}</strong> 已经过期。点击此处查看注册页面。"
+    },
+    "desynced": {
+      "title": "名称配置错误",
+      "description": "此名称已被持有，但需要进行一次交易来修复所有权显示。延长有效期（即使只延长一天）就能恢复准确的所有权信息。",
+      "descriptionGracePeriod": "此名称已被持有，但需要进行一次交易来修复所有权显示。延期名称并使其超过宽限期，便能够恢复准确的所有权信息。",
+      "action": "修复"
     }
   },
   "tabs": {
