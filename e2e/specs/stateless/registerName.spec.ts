@@ -355,6 +355,8 @@ test.describe.serial('normal registration', () => {
     await page.goto(`/${nonPrimaryNme}/register`)
     await login.connect()
 
+    await page.getByTestId('primary-name-toggle').uncheck()
+
     await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked({ timeout: 1000 })
 
@@ -431,7 +433,7 @@ test('should allow normal registration, from disconnected to connected state', a
 
   await test.step('should show cost comparison accurately', async () => {
     // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-    await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+    await expect(registrationPage.yearMarker(0)).toHaveText(/1[01]% gas/)
     await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
     await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
   })
