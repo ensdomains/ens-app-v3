@@ -2199,7 +2199,9 @@ test('should allow the user to register with an avatar image manually set', asyn
   time,
   makePageObject,
 }) => {
-  const name = `registration-full-avatar-${Date.now()}.eth`
+  const name = `avatar-reg-${Date.now()}.eth`
+  const avatarUrl =
+    'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
 
   await setPrimaryName(walletClient, {
     name: '',
@@ -2225,14 +2227,14 @@ test('should allow the user to register with an avatar image manually set', asyn
   // Add avatar
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('avatar-uri-input').fill('https://image.com/avatar.jpg')
+  await page.getByTestId('avatar-uri-input').fill(avatarUrl)
   await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 5000 })
 
-  await test.step('should show ETH record by default', async () => {
-    await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
-      accounts.getAddress('user'),
-    )
-  })
+  // Show ETH record by default
+  await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+    accounts.getAddress('user'),
+  )
 
   // Go to info step
   await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
@@ -2249,11 +2251,23 @@ test('should allow the user to register with an avatar image manually set', asyn
   await expect(page.getByText('Open Wallet')).toBeVisible()
   await transactionModal.confirm()
 
+  // Countdown text
+  await expect(
+    page.getByText(
+      'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+    ),
+  ).toBeVisible()
+
   // Wait for countdown
   await time.sync()
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
-  await time.increaseTime({ seconds: 80 })
+  const waitButton = page.getByTestId('wait-button')
+  await expect(waitButton).toBeVisible()
+  await expect(waitButton).toBeDisabled()
+
+  // Finish countdown
+  await time.increaseTime({ seconds: 60 })
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
@@ -2271,9 +2285,7 @@ test('should allow the user to register with an avatar image manually set', asyn
   await test.step('confirm avatar is set', async () => {
     const recordsPage = makePageObject('RecordsPage')
     await recordsPage.goto(name)
-    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(
-      'https://image.com/avatar.jpg',
-    )
+    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(avatarUrl)
   })
 })
 
@@ -2284,7 +2296,9 @@ test('should allow the user to register with a header image manually set', async
   time,
   makePageObject,
 }) => {
-  const name = `registration-full-header-${Date.now()}.eth`
+  const name = `header-reg-${Date.now()}.eth`
+  const headerUrl =
+    'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
 
   await setPrimaryName(walletClient, {
     name: '',
@@ -2310,15 +2324,14 @@ test('should allow the user to register with a header image manually set', async
   // Add header
   await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
   await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('header-manual-input').fill('https://image.com/header.jpg')
+  await page.getByTestId('header-manual-input').fill(headerUrl)
   await page.getByRole('button', { name: 'Save' }).click()
-  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 30000 })
+  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 5000 })
 
-  await test.step('should show ETH record by default', async () => {
-    await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
-      accounts.getAddress('user'),
-    )
-  })
+  // Show ETH record by default
+  await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+    accounts.getAddress('user'),
+  )
 
   // Go to info step
   await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
@@ -2335,11 +2348,23 @@ test('should allow the user to register with a header image manually set', async
   await expect(page.getByText('Open Wallet')).toBeVisible()
   await transactionModal.confirm()
 
+  // Countdown text
+  await expect(
+    page.getByText(
+      'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+    ),
+  ).toBeVisible()
+
   // Wait for countdown
   await time.sync()
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
-  await time.increaseTime({ seconds: 80 })
+  const waitButton = page.getByTestId('wait-button')
+  await expect(waitButton).toBeVisible()
+  await expect(waitButton).toBeDisabled()
+
+  // Finish countdown
+  await time.increaseTime({ seconds: 60 })
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
@@ -2354,12 +2379,10 @@ test('should allow the user to register with a header image manually set', async
     accounts.getAddress('user', 5),
   )
 
-  await test.step('confirm avatar is set', async () => {
+  await test.step('confirm header is set', async () => {
     const recordsPage = makePageObject('RecordsPage')
     await recordsPage.goto(name)
-    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(
-      'https://image.com/header.jpg',
-    )
+    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(headerUrl)
   })
 })
 
@@ -2370,7 +2393,11 @@ test('should allow the user to register with both avatar and header manually set
   time,
   makePageObject,
 }) => {
-  const name = `registration-full-avatar-header-${Date.now()}.eth`
+  const name = `avatar-header-reg-${Date.now()}.eth`
+  const avatar2 =
+    'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
+  const header2 =
+    'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
 
   await setPrimaryName(walletClient, {
     name: '',
@@ -2396,21 +2423,21 @@ test('should allow the user to register with both avatar and header manually set
   // Add avatar
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('avatar-uri-input').fill('https://image.com/avatar.jpg')
+  await page.getByTestId('avatar-uri-input').fill(avatar2)
   await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 5000 })
 
   // Add header
   await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
   await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('header-manual-input').fill('https://image.com/header.jpg')
+  await page.getByTestId('header-manual-input').fill(header2)
   await page.getByRole('button', { name: 'Save' }).click()
-  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 30000 })
+  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 5000 })
 
-  await test.step('should show ETH record by default', async () => {
-    await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
-      accounts.getAddress('user'),
-    )
-  })
+  // Show ETH record by default
+  await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+    accounts.getAddress('user'),
+  )
 
   // Go to info step
   await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
@@ -2427,11 +2454,23 @@ test('should allow the user to register with both avatar and header manually set
   await expect(page.getByText('Open Wallet')).toBeVisible()
   await transactionModal.confirm()
 
+  // Countdown text
+  await expect(
+    page.getByText(
+      'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+    ),
+  ).toBeVisible()
+
   // Wait for countdown
   await time.sync()
   await expect(page.getByTestId('countdown-circle')).toBeVisible()
   await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
-  await time.increaseTime({ seconds: 80 })
+  const waitButton = page.getByTestId('wait-button')
+  await expect(waitButton).toBeVisible()
+  await expect(waitButton).toBeDisabled()
+
+  // Finish countdown
+  await time.increaseTime({ seconds: 60 })
   await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
   await expect(page.getByTestId('finish-button')).toBeEnabled()
 
@@ -2446,14 +2485,10 @@ test('should allow the user to register with both avatar and header manually set
     accounts.getAddress('user', 5),
   )
 
-  await test.step('confirm avatar is set', async () => {
+  await test.step('confirm avatar and header is set', async () => {
     const recordsPage = makePageObject('RecordsPage')
     await recordsPage.goto(name)
-    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(
-      'https://image.com/avatar.jpg',
-    )
-    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(
-      'https://image.com/header.jpg',
-    )
+    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(avatar2)
+    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(header2)
   })
 })
