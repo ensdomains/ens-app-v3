@@ -2,7 +2,7 @@ import posthog from 'posthog-js'
 import { match, P } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
-import { randomSecret } from '@ensdomains/ensjs/utils'
+import { EMPTY_ADDRESS, EMPTY_BYTES32, randomSecret } from '@ensdomains/ensjs/utils'
 
 import {
   RegistrationReducerAction,
@@ -23,17 +23,17 @@ const defaultData: RegistrationReducerDataItem = {
   reverseRecord: false,
   records: [],
   clearRecords: false,
-  resolverAddress: '0x',
-  secret: '0x',
+  resolverAddress: EMPTY_ADDRESS,
+  secret: EMPTY_BYTES32,
   started: false,
-  address: '0x',
+  address: EMPTY_ADDRESS,
   name: '',
   isMoonpayFlow: false,
   externalTransactionId: '',
   chainId: 1,
   durationType: 'years',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
-  referrer: '0x',
+  referrer: EMPTY_BYTES32,
 }
 
 const isBrowser = !!(
@@ -56,14 +56,14 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   seconds: getDefaultRegistrationDuration(),
   reverseRecord: false,
   records: [],
-  resolverAddress: '0x',
+  resolverAddress: EMPTY_ADDRESS,
   secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
   started: false,
   isMoonpayFlow: false,
   externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   durationType: 'years',
-  referrer: '0x',
+  referrer: EMPTY_BYTES32,
   ...selected,
 })
 

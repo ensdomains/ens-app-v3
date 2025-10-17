@@ -1,10 +1,7 @@
 import { expect } from '@playwright/test'
 import { Hash } from 'viem'
 
-import {
-  ethRegistrarControllerCommitSnippet,
-  legacyEthRegistrarControllerCommitSnippet,
-} from '@ensdomains/ensjs/contracts'
+import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 import { Web3RequestKind } from '@ensdomains/headless-web3-provider'
 
@@ -65,8 +62,8 @@ test.describe.serial('normal registration', () => {
 
     await test.step('should show cost comparison accurately', async () => {
       // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-      await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
-      await expect(registrationPage.yearMarker(1)).toHaveText(/8% gas/)
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+      await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
       await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
     })
 
@@ -84,7 +81,7 @@ test.describe.serial('normal registration', () => {
     })
   })
 
-  test('should allow normal registration, if primary name is set, name is wrapped', async ({
+  test('should allow normal registration, if primary name is set, name is not wrapped', async ({
     page,
     login,
     accounts,
@@ -144,9 +141,9 @@ test.describe.serial('normal registration', () => {
 
     await test.step('should show cost comparison accurately', async () => {
       // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-      await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
-      await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
-      await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+      await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
+      await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
     })
 
     await test.step('should show correct price for yearly registration', async () => {
@@ -308,8 +305,8 @@ test.describe.serial('normal registration', () => {
       )
     })
 
-    await test.step('confirm name is wrapped', async () => {
-      await expect(page.getByTestId('permissions-tab')).toBeVisible()
+    await test.step('confirm name is not wrapped', async () => {
+      await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
     })
   })
 
@@ -383,7 +380,7 @@ test.describe.serial('normal registration', () => {
       new RegExp(accounts.getAddress('user', 5)),
     )
 
-    await test.step('confirm name is unwrapped', async () => {
+    await test.step('confirm name is not wrapped', async () => {
       await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
     })
   })
@@ -434,8 +431,8 @@ test('should allow normal registration, from disconnected to connected state', a
 
   await test.step('should show cost comparison accurately', async () => {
     // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-    await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
-    await expect(registrationPage.yearMarker(1)).toHaveText(/8% gas/)
+    await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+    await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
     await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
   })
 
@@ -466,16 +463,16 @@ test('should allow normal registration, from disconnected to connected state', a
       await registrationPage.primaryNameToggle.click()
       const estimate2 = await registrationPage.getGas()
       await expect(estimate2).toBeGreaterThan(0)
-      expect(estimate2).toBeLessThan(estimate1)
+      expect(estimate2).toBeLessThanOrEqual(estimate1)
       await registrationPage.primaryNameToggle.click()
       return estimate1
     })
 
   await test.step('should show cost comparison accurately', async () => {
     // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-    await expect(registrationPage.yearMarker(0)).toHaveText(/1[34]% gas/)
-    await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
-    await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+    await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+    await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
+    await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
   })
 
   await test.step('should show correct price for yearly registration', async () => {
@@ -637,8 +634,8 @@ test('should allow normal registration, from disconnected to connected state', a
     )
   })
 
-  await test.step('confirm name is wrapped', async () => {
-    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  await test.step('confirm name is not wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
 
@@ -742,76 +739,13 @@ test('registering a premium name with primary name not set should not be wrapped
     new RegExp(accounts.getAddress('user', 5)),
   )
 
-  await test.step('confirm name is wrapped', async () => {
+  await test.step('confirm name is not wrapped', async () => {
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 
   const morePage = makePageObject('MorePage')
   await morePage.goto(premiumName)
   await expect(morePage.wrapButton).toBeVisible()
-
-  const recordsPage = makePageObject('RecordsPage')
-  await recordsPage.goto(premiumName)
-
-  await expect(recordsPage.getRecordValue('address', 'ETH')).toHaveText(
-    createAccounts().getAddress('user') as `0x${string}`,
-  )
-})
-
-test('registering a premium name with primary name set should be wrapped', async ({
-  page,
-  login,
-  accounts,
-  makeName,
-  makePageObject,
-}) => {
-  const premiumName = await makeName(
-    {
-      label: 'premium',
-      owner: 'user2',
-      type: 'legacy',
-      duration: -7890000 - 4 * 345600, // 3 months 4 days
-    },
-    { timeOffset: 500 },
-  )
-
-  await setPrimaryName(walletClient, {
-    name: 'premium',
-    account: createAccounts().getAddress('user') as `0x${string}`,
-  })
-
-  const transactionModal = makePageObject('TransactionModal')
-
-  await page.goto(`/${premiumName}/register`)
-  await login.connect()
-
-  await page.getByTestId('payment-choice-ethereum').click()
-  await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
-  await page.getByTestId('next-button').click()
-  if (await page.getByTestId('profile-submit-button').isVisible()) {
-    await page.getByTestId('profile-submit-button').click()
-  }
-
-  await page.getByTestId('next-button').click()
-  await transactionModal.confirm()
-
-  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
-  await testClient.increaseTime({ seconds: 120 })
-  await page.getByTestId('finish-button').click()
-  await transactionModal.confirm()
-
-  await page.getByTestId('view-name').click()
-  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
-    new RegExp(accounts.getAddress('user', 5)),
-  )
-
-  await test.step('confirm name is wrapped', async () => {
-    await expect(page.getByTestId('permissions-tab')).toBeVisible()
-  })
-
-  const morePage = makePageObject('MorePage')
-  await morePage.goto(premiumName)
-  await expect(morePage.wrapButton).toHaveCount(0)
 
   const recordsPage = makePageObject('RecordsPage')
   await recordsPage.goto(premiumName)
@@ -883,7 +817,7 @@ test('registering a premium name with existing records should not be wrapped', a
   )
 })
 
-test('registering a wrapped premium name with no records should not be wrapped', async ({
+test('registering a wrapped premium name should not be wrapped', async ({
   page,
   login,
   accounts,
@@ -1007,8 +941,8 @@ test('registering a wrapped premium name with records set should be wrapped', as
     new RegExp(accounts.getAddress('user', 5)),
   )
 
-  await test.step('confirm name is wrapped', async () => {
-    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  await test.step('confirm name is not wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 
   const morePage = makePageObject('MorePage')
@@ -1188,8 +1122,8 @@ test('should allow registering a premium name with a specific date', async ({
     new RegExp(accounts.getAddress('user', 5)),
   )
 
-  await test.step('confirm name is wrapped', async () => {
-    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  await test.step('confirm name is not wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
 
@@ -1260,7 +1194,7 @@ test('should allow registering a premium name for two months', async ({
     new RegExp(accounts.getAddress('user', 5)),
   )
 
-  await test.step('confirm name is unwrapped', async () => {
+  await test.step('confirm name is not wrapped', async () => {
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
@@ -1343,7 +1277,7 @@ test('should not allow registering a premium name for less than 28 days', async 
     new RegExp(accounts.getAddress('user', 5)),
   )
 
-  await test.step('confirm name is unwrapped', async () => {
+  await test.step('confirm name is not wrapped', async () => {
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
@@ -1411,10 +1345,12 @@ test('should allow normal registration for a month', async ({
   expect(estimate2).toBeLessThan(estimate)
   await registrationPage.primaryNameToggle.click()
 
+  await page.pause()
+
   // should show cost comparison accurately
-  await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
-  await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
-  await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+  await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+  await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
+  await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
 
   // should go to profile editor step
   await page.getByTestId('next-button').click()
@@ -1467,8 +1403,8 @@ test('should allow normal registration for a month', async ({
     accounts.getAddress('user', 5),
   )
 
-  await test.step('confirm name is wrapped', async () => {
-    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  await test.step('confirm name is not wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
 
@@ -1543,13 +1479,13 @@ test('should not allow normal registration less than 28 days', async ({
   await registrationPage.primaryNameToggle.click()
   const estimate2 = await registrationPage.getGas()
   await expect(estimate2).toBeGreaterThan(0)
-  expect(estimate2).toBeLessThan(estimate)
+  expect(estimate2).toBeLessThanOrEqual(estimate)
   await registrationPage.primaryNameToggle.click()
 
   // should show cost comparison accurately
-  await expect(registrationPage.yearMarker(0)).toHaveText(/13% gas/)
-  await expect(registrationPage.yearMarker(1)).toHaveText(/7% gas/)
-  await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
+  await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+  await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
+  await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
 
   // should go to profile editor step
   await page.getByTestId('next-button').click()
@@ -1602,12 +1538,12 @@ test('should not allow normal registration less than 28 days', async ({
     accounts.getAddress('user', 5),
   )
 
-  await test.step('confirm name is wrapped (set primary name)', async () => {
-    await expect(page.getByTestId('permissions-tab')).toBeVisible()
+  await test.step('confirm name is not wrapped', async () => {
+    await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })
 
-test('should be able to detect an existing commit created on a private mempool for a wrapped registration', async ({
+test('should be able to detect an existing commit created on a private mempool', async ({
   page,
   login,
   accounts,
@@ -1701,110 +1637,12 @@ test('should be able to detect an existing commit created on a private mempool f
       accounts.getAddress('user', 5),
     )
 
-    await test.step('confirm name is unwrapped', async () => {
-      await expect(page.getByTestId('permissions-tab')).toBeVisible()
-    })
-  })
-})
-
-test('should be able to detect an existing commit created on a private mempool for a legacy registration', async ({
-  page,
-  login,
-  accounts,
-  time,
-  wallet,
-  consoleListener,
-  makePageObject,
-}) => {
-  test.slow()
-
-  const name = `registration-normal-${Date.now()}.eth`
-  const homePage = makePageObject('HomePage')
-  const registrationPage = makePageObject('RegistrationPage')
-  const transactionModal = makePageObject('TransactionModal')
-  await consoleListener.initialize({
-    regex: /commit is:/,
-  })
-
-  await time.sync(500)
-
-  await homePage.goto()
-  await login.connect()
-
-  // should redirect to registration page
-  await homePage.searchInput.fill(name)
-  await homePage.searchInput.press('Enter')
-  await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
-
-  await registrationPage.primaryNameToggle.uncheck()
-
-  // should go to profile editor step
-  await page.getByTestId('next-button').click()
-
-  await test.step('should be able to find an existing commit', async () => {
-    await page.getByTestId('next-button').click()
-
-    await transactionModal.closeButton.click()
-
-    await expect(consoleListener.getMessages().length).toBeGreaterThan(0)
-    const commitHash = consoleListener.getMessages()[0].split(':')[1]?.trim() as Hash
-
-    const approveTx = await walletClient.writeContract({
-      abi: legacyEthRegistrarControllerCommitSnippet,
-      address: testClient.chain.contracts.legacyEthRegistrarController.address,
-      args: [commitHash!],
-      functionName: 'commit',
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
-    await waitForTransaction(approveTx)
-
-    await page.route('https://api.findblock.xyz/**/*', async (route) => {
-      await route.fulfill({
-        json: {
-          ok: true,
-          data: {
-            hash: approveTx,
-          },
-        },
-      })
-    })
-
-    // should show countdown
-    await expect(page.getByTestId('countdown-circle')).toBeVisible()
-    await expect(page.getByTestId('countdown-circle')).toContainText(/^[0-6]?[0-9]$/)
-    await testClient.increaseTime({ seconds: 60 })
-
-    await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
-  })
-
-  await test.step('should be able to complete registration when modal is closed', async () => {
-    await expect(page.getByTestId('finish-button')).toBeEnabled()
-
-    // should save the registration state and the transaction status
-    await page.reload()
-    await expect(page.getByTestId('finish-button')).toBeEnabled()
-
-    // should allow finalising registration and automatically go to the complete step
-    await page.getByTestId('finish-button').click()
-    await expect(page.getByText('Open Wallet')).toBeVisible()
-    await transactionModal.confirmButton.click()
-
-    await transactionModal.closeButton.click()
-
-    await expect(transactionModal.transactionModal).toHaveCount(0)
-
-    await wallet.authorize(Web3RequestKind.SendTransaction)
-
-    await page.getByTestId('view-name').click()
-    await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
-      accounts.getAddress('user', 5),
-    )
-
-    await test.step('confirm name is unwrapped', async () => {
+    await test.step('confirm name is not wrapped', async () => {
       await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
     })
   })
 })
+
 test.describe('Error handling', () => {
   test('should be able to detect an existing commit created on a private mempool', async ({
     page,
@@ -2052,7 +1890,7 @@ test('should allow registering a premium name for two months, user should connec
     new RegExp(accounts.getAddress('user', 5)),
   )
 
-  await test.step('confirm name is unwrapped', async () => {
+  await test.step('confirm name is not wrapped', async () => {
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
   })
 })

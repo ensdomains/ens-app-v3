@@ -49,6 +49,9 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
       legacyPublicResolver: {
         address: deploymentAddresses_.LegacyPublicResolver,
       },
+      nameWrapperEthRegistrarController: {
+        address: deploymentAddresses_.WrappedEthRegistrarController,
+      },
     },
     subgraphs: {
       ens: {

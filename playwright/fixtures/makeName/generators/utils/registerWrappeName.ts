@@ -2,6 +2,7 @@ import {
   type Address,
   type Hex,
   encodeAbiParameters,
+  encodeFunctionData,
   keccak256,
   labelhash,
   namehash,
@@ -186,10 +187,11 @@ export const commitName = {
 
     return {
       to: controllerAddress as Address,
-      data: encodeAbiParameters(
-        COMMITMENT_ABI[0].inputs,
-        [commitment]
-      ),
+      data: encodeFunctionData({
+        abi: COMMITMENT_ABI,
+        functionName: 'commit',
+        args: [commitment],
+      }),
       abi: COMMITMENT_ABI,
       functionName: 'commit' as const,
       args: [commitment],
@@ -215,10 +217,11 @@ export const registerName = {
 
     return {
       to: controllerAddress as Address,
-      data: encodeAbiParameters(
-        REGISTER_ABI[0].inputs,
-        registrationTuple
-      ),
+      data: encodeFunctionData({
+        abi: REGISTER_ABI,
+        functionName: 'register',
+        args: registrationTuple,
+      }),
       abi: REGISTER_ABI,
       functionName: 'register' as const,
       args: registrationTuple,
