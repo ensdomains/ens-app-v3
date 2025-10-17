@@ -18,7 +18,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Add alias for legacy ETHRegistrarController as UnwrappedEthRegistrarController
   const deploymentAddressMapWithAliases = {
     ...deploymentAddressMap,
-    UnwrappedEthRegistrarController: deploymentAddressMap.ETHRegistrarController,
+    UnwrappedETHRegistrarController: deploymentAddressMap.ETHRegistrarController,
   }
 
   await writeFile(
@@ -27,7 +27,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   )
   const deploymentAddressArrayWithAliases = [
     ...deploymentAddressArray,
-    ['UnwrappedEthRegistrarController', deploymentAddressMap.ETHRegistrarController],
+    ['UnwrappedETHRegistrarController', deploymentAddressMap.ETHRegistrarController],
   ]
 
   if (!existsSync(resolve(__dirname, '../typings-custom/generated'))) {

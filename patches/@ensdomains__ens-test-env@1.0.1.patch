@@ -1,5 +1,5 @@
 diff --git a/src/docker-compose.yml b/src/docker-compose.yml
-index 7b933cecb50874065956f6e16fa214240255a754..65602ef60708a8bc20355eea78c8a1f36ba9d466 100644
+index 7b933cecb50874065956f6e16fa214240255a754..0ed18907c5117ceb91bc5e2b773a108dbfded3d7 100644
 --- a/src/docker-compose.yml
 +++ b/src/docker-compose.yml
 @@ -4,40 +4,75 @@ services:
@@ -21,7 +21,7 @@ index 7b933cecb50874065956f6e16fa214240255a754..65602ef60708a8bc20355eea78c8a1f3
      container_name: ensindexer
 -    image: ghcr.io/namehash/ensnode/ensindexer:0.26.0
 -    pull_policy: always
-+    image: ghcr.io/namehash/ensnode/ensindexer:0.35.0
++    image: ghcr.io/namehash/ensnode/ensindexer:0.35.0-ens-test-env.2
      ports:
        - "42069:42069"
      depends_on:
@@ -45,10 +45,11 @@ index 7b933cecb50874065956f6e16fa214240255a754..65602ef60708a8bc20355eea78c8a1f3
        DATABASE_SCHEMA: ens-test-env
 -      ENS_DEPLOYMENT_CHAIN: ens-test-env
        HEAL_REVERSE_ADDRESSES: false
-       INDEX_RESOLVER_RECORDS: false
+-      INDEX_RESOLVER_RECORDS: false
 -      ACTIVE_PLUGINS: subgraph
 -      NEXT_PUBLIC_DEPLOYMENT_ADDRESSES: ${NEXT_PUBLIC_DEPLOYMENT_ADDRESSES:-}
 -      DEPLOYMENT_ADDRESSES: ${DEPLOYMENT_ADDRESSES:-}
++      INDEX_ADDITIONAL_RESOLVER_RECORDS: false
 +      REPLACE_UNNORMALIZED: false
 +      PLUGINS: subgraph
 +      LABEL_SET_ID: ens-test-env
@@ -61,7 +62,7 @@ index 7b933cecb50874065956f6e16fa214240255a754..65602ef60708a8bc20355eea78c8a1f3
      container_name: ensrainbow
 -    image: ghcr.io/namehash/ensnode/ensrainbow-test:latest
 -    pull_policy: always
-+    image: ghcr.io/namehash/ensnode/ensrainbow:0.35.0
++    image: ghcr.io/namehash/ensnode/ensrainbow:0.35.0-ens-test-env.2
      environment:
 +      DB_SCHEMA_VERSION: 3
 +      LABEL_SET_ID: ens-test-env
@@ -79,7 +80,7 @@ index 7b933cecb50874065956f6e16fa214240255a754..65602ef60708a8bc20355eea78c8a1f3
 +
 +  ensadmin:
 +    container_name: ensadmin
-+    image: ghcr.io/namehash/ensnode/ensadmin:0.35.0
++    image: ghcr.io/namehash/ensnode/ensadmin:0.35.0-ens-test-env.2
 +    ports:
 +      - "4173:4173"
 +    environment:
