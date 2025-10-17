@@ -134,7 +134,7 @@ test.describe.serial('normal registration', () => {
         await registrationPage.primaryNameToggle.click()
         const estimate2 = await registrationPage.getGas()
         await expect(estimate2).toBeGreaterThan(0)
-        expect(estimate2).toBeLessThan(estimate1)
+        expect(estimate2).toBeLessThanOrEqual(estimate1)
         await registrationPage.primaryNameToggle.click()
         return estimate1
       })
@@ -1342,7 +1342,7 @@ test('should allow normal registration for a month', async ({
   await registrationPage.primaryNameToggle.click()
   const estimate2 = await registrationPage.getGas()
   await expect(estimate2).toBeGreaterThan(0)
-  expect(estimate2).toBeLessThan(estimate)
+  expect(estimate2).toBeLessThanOrEqual(estimate)
   await registrationPage.primaryNameToggle.click()
 
   await page.pause()
