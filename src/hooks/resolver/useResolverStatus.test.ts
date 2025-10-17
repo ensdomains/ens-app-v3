@@ -150,7 +150,6 @@ describe('useResolverStatus', () => {
         'isAuthorized',
         'hasMigratedProfile',
         'isMigratedProfileEqual',
-        'isNameWrapperAware',
       ]),
     )
     expectEnabledHook(mockUseProfile, true)
@@ -173,7 +172,6 @@ describe('useResolverStatus', () => {
         'hasValidResolver',
         'isAuthorized',
         'hasMigratedProfile',
-        'isNameWrapperAware',
       ]),
     )
     expectEnabledHook(mockUseProfile, true)
@@ -201,7 +199,6 @@ describe('useResolverStatus', () => {
         'hasValidResolver',
         'isAuthorized',
         'hasMigratedProfile',
-        'isNameWrapperAware',
         'hasMigratedRecord',
       ]),
     )
@@ -230,7 +227,6 @@ describe('useResolverStatus', () => {
         'hasValidResolver',
         'isAuthorized',
         'hasMigratedProfile',
-        'isNameWrapperAware',
       ]),
     )
     expectEnabledHook(mockUseProfile, true)
@@ -252,7 +248,6 @@ describe('useResolverStatus', () => {
         'hasResolver',
         'hasValidResolver',
         'isAuthorized',
-        'isNameWrapperAware',
       ]),
     )
     expectEnabledHook(mockUseProfile, true)
@@ -270,7 +265,6 @@ describe('useResolverStatus', () => {
         'hasResolver',
         'hasValidResolver',
         'isAuthorized',
-        'isNameWrapperAware',
       ]),
     )
     expectEnabledHook(mockUseProfile, true)
