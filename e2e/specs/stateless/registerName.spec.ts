@@ -62,7 +62,7 @@ test.describe.serial('normal registration', () => {
 
     await test.step('should show cost comparison accurately', async () => {
       // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-      await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[01]% gas/)
       await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
       await expect(registrationPage.yearMarker(2)).toHaveText(/3% gas/)
     })
@@ -141,7 +141,7 @@ test.describe.serial('normal registration', () => {
 
     await test.step('should show cost comparison accurately', async () => {
       // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-      await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+      await expect(registrationPage.yearMarker(0)).toHaveText(/1[01]% gas/)
       await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
       await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
     })
@@ -472,7 +472,7 @@ test('should allow normal registration, from disconnected to connected state', a
 
   await test.step('should show cost comparison accurately', async () => {
     // Gas can fluctuate enough to cause the percentage to change, so we check for a range
-    await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+    await expect(registrationPage.yearMarker(0)).toHaveText(/1[01]% gas/)
     await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
     await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
   })
@@ -1350,7 +1350,7 @@ test('should allow normal registration for a month', async ({
   await page.pause()
 
   // should show cost comparison accurately
-  await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+  await expect(registrationPage.yearMarker(0)).toHaveText(/1[01]% gas/)
   await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
   await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
 
@@ -1485,7 +1485,7 @@ test('should not allow normal registration less than 28 days', async ({
   await registrationPage.primaryNameToggle.click()
 
   // should show cost comparison accurately
-  await expect(registrationPage.yearMarker(0)).toHaveText(/1[1]% gas/)
+  await expect(registrationPage.yearMarker(0)).toHaveText(/1[01]% gas/)
   await expect(registrationPage.yearMarker(1)).toHaveText(/6% gas/)
   await expect(registrationPage.yearMarker(2)).toHaveText(/2% gas/)
 

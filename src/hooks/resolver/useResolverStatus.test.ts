@@ -107,7 +107,6 @@ describe('useResolverStatus', () => {
         'isAuthorized',
         'hasMigratedProfile',
         'isMigratedProfileEqual',
-        'isNameWrapperAware',
       ]),
     )
     // first useProfile call
