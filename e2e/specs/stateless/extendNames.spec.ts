@@ -223,7 +223,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await extendNamesModal.getCounterMinusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$5\.1[23]/)
   })
 
   await test.step('should extend', async () => {
@@ -271,6 +271,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
+  await page.pause()
   await test.step('should work correctly with plus minus control', async () => {
     await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
@@ -287,7 +288,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await extendNamesModal.getCounterMinusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$5\.1[23]/)
   })
 
   await test.step('should extend', async () => {
@@ -295,7 +296,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    expect(newTimestamp).toEqual(timestamp + 31536000000)
+    await expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
@@ -667,7 +668,7 @@ test('should be able to extend a single wrapped name using deep link', async ({
     await extendNamesModal.getExtendButton.click()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    expect(newTimestamp).toEqual(timestamp + 31536000000)
+    await expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
