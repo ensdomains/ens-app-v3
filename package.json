@@ -52,7 +52,8 @@
     "subgraph:update": "ens-test-env subgraph --var NEXT_PUBLIC_DEPLOYMENT_ADDRESSES",
     "knip": "knip",
     "knip:fix": "knip --fix --allow-remove-files",
-    "hh": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only' hardhat"
+    "hh": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only' hardhat",
+    "note": "DELETE ME"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "1.1.3",
