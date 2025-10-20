@@ -283,7 +283,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
             address: deploymentAddresses.PublicResolver,
             deployer: 'ENS Labs',
             tag: 'latest',
-            isNameWrapperAware: false,
+            isNameWrapperAware: true,
             supportsDefaultCoinType: true,
             supportedInterfaces: [
               RESOLVER_INTERFACE_IDS.AddressResolver,
