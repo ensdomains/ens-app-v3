@@ -108,7 +108,7 @@ index 7b933cecb50874065956f6e16fa214240255a754..0ed18907c5117ceb91bc5e2b773a108d
 +    driver: local
 \ No newline at end of file
 diff --git a/src/manager.js b/src/manager.js
-index 1ba0bccf82e7b96ac9c828d5f4a6e466c09f239c..d5ebc3ab394689d8d125c4758eeab07af60bbcfb 100644
+index 1ba0bccf82e7b96ac9c828d5f4a6e466c09f239c..e032c0cd4743e05513157be3c61940df0752e0a8 100644
 --- a/src/manager.js
 +++ b/src/manager.js
 @@ -91,13 +91,13 @@ async function cleanup(exitCode) {
@@ -127,7 +127,14 @@ index 1ba0bccf82e7b96ac9c828d5f4a6e466c09f239c..d5ebc3ab394689d8d125c4758eeab07a
    })
  
    process.exit(exitCode ? 1 : 0)
-@@ -150,15 +150,15 @@ const waitForENSNode = async (blockheight) => {
+@@ -144,21 +144,21 @@ const logContainers = async (names) => {
+  */
+ const waitForENSNode = async (blockheight) => {
+   // wait for server to be available
+-  await waitOn({ resources: ['http://localhost:42069'] })
++  await waitOn({ resources: ['http://localhost:42069/subgraph'] })
+ 
+   let currentBlockheight = 0
    // getter for current indexed blockheight
    const getCurrentBlock = async () =>
      // TODO: once _meta is available on subgraph-compat schema (/subgraph), use that
