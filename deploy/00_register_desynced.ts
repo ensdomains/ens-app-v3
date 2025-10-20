@@ -2,7 +2,7 @@
 /* eslint-disable no-await-in-loop */
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { namehash, type Account } from 'viem'
+import { type Account } from 'viem'
 
 import { type RecordOptions } from '@ensdomains/ensjs/utils'
 
