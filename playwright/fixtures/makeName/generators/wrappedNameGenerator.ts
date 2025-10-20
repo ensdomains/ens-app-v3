@@ -7,9 +7,9 @@ import { getPrice } from '@ensdomains/ensjs/public'
 import {
   EncodeChildFusesInputObject,
   RecordOptions,
-  RegistrationParameters,
 } from '@ensdomains/ensjs/utils'
-import { commitName, registerName, setFuses, setResolver } from '@ensdomains/ensjs/wallet'
+import { setFuses, setResolver } from '@ensdomains/ensjs/wallet'
+import { commitName, registerName, RegistrationParameters } from './utils/registerWrappeName'
 
 import { Accounts, User } from '../../accounts'
 import {

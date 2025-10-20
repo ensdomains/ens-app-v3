@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Address } from 'viem'
 
-import { ChildFuseReferenceType, RegistrationParameters } from '@ensdomains/ensjs/utils'
+import { RegistrationParameters } from '@ensdomains/ensjs/utils'
 
 import { profileRecordsToRecordOptions } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { RegistrationReducerDataItem } from '@app/components/pages/profile/[name]/registration/types'
@@ -16,8 +16,8 @@ type Props = {
     | 'secret'
     | 'records'
     | 'clearRecords'
-    | 'permissions'
     | 'reverseRecord'
+    | 'referrer'
   >
 }
 
@@ -33,15 +33,10 @@ const useRegistrationParams = ({ name, owner, registrationData }: Props) => {
         registrationData.records,
         registrationData.clearRecords,
       ),
-      fuses: {
-        named: registrationData.permissions
-          ? (Object.keys(registrationData.permissions).filter(
-              (key) => !!registrationData.permissions?.[key as ChildFuseReferenceType['Key']],
-            ) as ChildFuseReferenceType['Key'][])
-          : [],
-        unnamed: [],
-      },
-      reverseRecord: registrationData.reverseRecord,
+      // Convert boolean to ReverseRecordParameter enum values
+      // false -> 0 (None), true -> 2 (Default - sets as primary name)
+      reverseRecord: registrationData.reverseRecord ? 2 : 0,
+      referrer: registrationData.referrer,
     }),
     [owner, name, registrationData],
   )

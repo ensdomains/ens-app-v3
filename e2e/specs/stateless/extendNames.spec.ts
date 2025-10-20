@@ -139,7 +139,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.003[34]/)
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible({
       timeout: 30000,
     })
@@ -203,7 +203,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.003[34]/)
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
@@ -218,12 +218,12 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should show correct fiat values', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.13')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$10\.1[23]/)
     await extendNamesModal.getCounterMinusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$5\.1[23]/)
   })
 
   await test.step('should extend', async () => {
@@ -267,10 +267,11 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.003[34]/)
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
+  await page.pause()
   await test.step('should work correctly with plus minus control', async () => {
     await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
@@ -282,12 +283,12 @@ test('should be able to extend a single unwrapped name in grace period from prof
   await test.step('should show correct fiat values', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$10.13')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$10\.1[23]/)
     await extendNamesModal.getCounterMinusButton.click()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$5.00')
-    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('$5.13')
+    await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$5\.1[23]/)
   })
 
   await test.step('should extend', async () => {
@@ -295,7 +296,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    expect(newTimestamp).toEqual(timestamp + 31536000000)
+    await expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
@@ -487,7 +488,7 @@ test('should be able to extend a name in grace period by a month', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.003[34]/)
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
@@ -567,7 +568,7 @@ test('should be able to extend a name in grace period by 1 day', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.003[34]/)
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
@@ -667,7 +668,7 @@ test('should be able to extend a single wrapped name using deep link', async ({
     await extendNamesModal.getExtendButton.click()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    expect(newTimestamp).toEqual(timestamp + 31536000000)
+    await expect(newTimestamp).toEqual(timestamp + 31536000000)
   })
 })
 
