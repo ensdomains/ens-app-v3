@@ -20,13 +20,13 @@ export async function connectWalletToEns(page: Page, context: BrowserContext): P
   // Wait for wallet modal
   const modal = page.locator('[role="dialog"], .wallet-modal')
   await modal.waitFor({ timeout: 15000 })
-  console.log('=� Wallet modal detected')
+  console.log('Wallet modal detected')
 
   // Wait for MetaMask option inside modal
   const metamaskOption = modal.locator('button', { hasText: 'MetaMask' }).first()
   await metamaskOption.waitFor({ timeout: 15000 })
   await metamaskOption.click()
-  console.log('>� MetaMask option clicked, waiting for extension popup...')
+  console.log('MetaMask option clicked, waiting for extension popup...')
 
   // Poll for MetaMask notification popup
   let mmPage
