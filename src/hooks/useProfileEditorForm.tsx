@@ -24,6 +24,7 @@ const SUPPORTED_AVUP_ENDPOINTS = [
   'https://euc.li',
   'https://ens.xyz',
   'https://avatar-upload.ens-cf.workers.dev',
+  ...(process.env.NEXT_PUBLIC_AVUP_ENDPOINT ? [process.env.NEXT_PUBLIC_AVUP_ENDPOINT] : []),
 ]
 
 export type ProfileEditorForm = {

@@ -16,7 +16,7 @@
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.studio.thegraph.com/query/49574/ensholesky/version/latest pnpm dev",
     "dev:avlocal": "NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "build": "next build",
-    "build:preview": "NEXT_PUBLIC_ENSJS_DEBUG=true next build --profile",
+    "build:preview": "NEXT_PUBLIC_ENSJS_DEBUG=true NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev next build --profile",
     "build:local": "ANALYZE=true next build",
     "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:42069/subgraph NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_ETH_NODE=anvil pnpm build",
     "build:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm build",
