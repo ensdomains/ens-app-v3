@@ -218,6 +218,12 @@ test.describe('ENS Sepolia Extend Name', () => {
     await connectWalletToEns(page, context)
   })
 
+  test.beforeEach('Navigate to home page', async () => {
+    // Navigate back to home page before each test to ensure clean state
+    await page.goto('http://localhost:3000/')
+    await page.waitForTimeout(2000)
+  })
+
   test('Connect MetaMask to ENS localhost app', async () => {
     await expect(
       page.locator('button:has-text("Connect"), [data-testid="connect-button"]'),
