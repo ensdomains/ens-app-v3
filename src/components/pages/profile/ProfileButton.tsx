@@ -33,6 +33,7 @@ import { getSocialData } from '@app/utils/getSocialData'
 import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
 import { getVerifierData } from '@app/utils/verification/getVerifierData'
 import { isVerificationProtocol } from '@app/utils/verification/isVerificationProtocol'
+import { isDeceptiveUrl } from '@app/utils/security/validateUrl'
 
 const StyledAddressIcon = styled(DynamicAddressIcon)(
   ({ theme }) => css`
@@ -88,6 +89,10 @@ export const SocialProfileButton = ({
   )
 
   if (!socialData) return null
+
+  // Check if the URL is deceptive
+  const isDeceptive = socialData.type === 'link' && isDeceptiveUrl(socialData.urlFormatter)
+
   return (
     <VerificationBadge
       isVerified={isVerified}
@@ -101,9 +106,15 @@ export const SocialProfileButton = ({
         inline
         data-testid={`social-profile-button-${iconKey}`}
         value={socialData.value}
-        {...(socialData.type === 'link'
+        {...(socialData.type === 'link' && !isDeceptive
           ? { as: 'a' as const, link: socialData.urlFormatter }
           : { as: 'button' as const })}
+        style={isDeceptive ? {
+          textDecoration: 'line-through',
+          opacity: 0.5,
+          cursor: 'not-allowed'
+        } : {}}
+        title={isDeceptive ? 'This URL contains deceptive patterns and has been disabled for security' : undefined}
       >
         {socialData.value}
       </RecordItem>
@@ -230,16 +241,23 @@ export const OtherProfileButton = ({
       if (!decodedContentHash) return {}
       const _link = getContentHashLink({ name, chainId, decodedContentHash })
       if (!_link) return {}
+      // Check if contenthash link is deceptive
+      if (isDeceptiveUrl(_link)) return {}
       return {
         as: 'a',
         link: _link,
       } as const
     }
+    // Check if regular URL is deceptive
+    if (isDeceptiveUrl(value)) return {}
     return {
       as: 'a',
       link: value,
     } as const
   }, [isLink, type, value, name, chainId])
+
+  // Determine if the URL is deceptive for styling
+  const isDeceptive = isLink && !linkProps.link && !linkProps.as
 
   return (
     <RecordItem
@@ -259,6 +277,12 @@ export const OtherProfileButton = ({
         )
       }
       data-testid={`other-profile-button-${iconKey}`}
+      style={isDeceptive ? {
+        textDecoration: 'line-through',
+        opacity: 0.5,
+        cursor: 'not-allowed'
+      } : {}}
+      title={isDeceptive ? 'This URL contains deceptive patterns and has been disabled for security' : undefined}
     >
       {formattedValue}
     </RecordItem>
