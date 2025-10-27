@@ -49,6 +49,8 @@ beforeEach(() => {
 
 describe('useResolverType', () => {
   it('should return type is latest for base mock data', () => {
+    // Use non-wrapped name since the default resolver (index 0) is not NameWrapper aware
+    mockUseIsWrapped.mockReturnValueOnce({ data: false, isLoading: false })
     const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
     expect(result.current).toMatchObject(
       expect.objectContaining({
@@ -162,11 +164,11 @@ describe('useResolverType', () => {
     )
   })
 
-  it('should return type is null if resolver is second latest and is wrapped', () => {
+  it('should return type is null if name is wrapped and resolver is not namewrapper aware', () => {
     mockUseProfile.mockReturnValueOnce(
       createProfileData({
         data: {
-          resolverAddress: KNOWN_RESOLVER_DATA['1']![1].address,
+          resolverAddress: KNOWN_RESOLVER_DATA['1']![2].address,
         },
       }),
     )

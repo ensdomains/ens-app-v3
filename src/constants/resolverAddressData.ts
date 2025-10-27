@@ -38,7 +38,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       address: '0xF29100983E058B709F3D539b0c765937B804AC15',
       deployer: 'ENS Labs',
       tag: 'latest',
-      isNameWrapperAware: false,
+      isNameWrapperAware: true,
       supportsDefaultCoinType: true,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,
@@ -153,7 +153,7 @@ export const KNOWN_RESOLVER_DATA: KnownResolverData = {
       address: '0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5',
       deployer: 'ENS Labs',
       tag: 'latest',
-      isNameWrapperAware: false,
+      isNameWrapperAware: true,
       supportsDefaultCoinType: true,
       supportedInterfaces: [
         RESOLVER_INTERFACE_IDS.AddressResolver,

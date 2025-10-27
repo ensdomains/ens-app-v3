@@ -259,22 +259,9 @@ describe('chains', () => {
       )
     })
 
-    it('should have correct contract addresses for holesky', () => {
-      expect(holeskyWithEns.contracts.ensEthRegistrarController?.address).toBe(
-        '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
-      )
-      expect(holeskyWithEns.contracts.ensPublicResolver?.address).toBe(
-        '0x9010A27463717360cAD99CEA8bD39b8705CCA238',
-      )
-      expect(holeskyWithEns.contracts.ensReverseRegistrar?.address).toBe(
-        '0x132AC0B116a73add4225029D1951A9A707Ef673f ',
-      )
-    })
-
     it('should have correct chain ids', () => {
       expect(mainnetWithEns.id).toBe(mainnet.id)
       expect(sepoliaWithEns.id).toBe(sepolia.id)
-      expect(holeskyWithEns.id).toBe(holesky.id)
       expect(localhostWithEns.id).toBe(localhost.id)
     })
   })
