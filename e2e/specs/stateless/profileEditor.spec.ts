@@ -947,7 +947,6 @@ test.describe('unauthorised resolver', () => {
       type: 'legacy',
       owner: 'user2',
       resolver: ownedResolverAddress as Address,
-      records: await makeRecords(),
     })
 
     const morePage = makePageObject('MorePage')
@@ -982,7 +981,6 @@ test.describe('invalid resolver', () => {
       type: 'legacy',
       owner: 'user',
       resolver: invalidResolverAddress as Address,
-      records: await makeRecords(),
     })
 
     const morePage = makePageObject('MorePage')
