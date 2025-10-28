@@ -7,6 +7,7 @@ import { Avatar, Box, Button, Helper, NametagSVG, Tag, Typography } from '@ensdo
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -203,6 +204,7 @@ export const ProfileSnippet = ({
 }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
+  const chainName = useChainName()
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
@@ -280,7 +282,7 @@ export const ProfileSnippet = ({
             label=""
             height="24"
             width="24"
-            src={`https://metadata.ens.domains/mainnet/avatar/${name}`}
+            src={`https://metadata.ens.domains/${chainName}/avatar/${name}`}
           />
         </Box>
         <ButtonStack>
