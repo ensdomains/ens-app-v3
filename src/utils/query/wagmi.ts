@@ -1,4 +1,5 @@
 import { inAppWalletConnector } from '@thirdweb-dev/wagmi-adapter'
+import { porto } from 'porto/wagmi'
 import { createThirdwebClient, defineChain as thirdwebDefineChain } from 'thirdweb'
 import {
   createClient,
@@ -164,7 +165,7 @@ const combinedConnectors = [unicornConnector, ...rainbowKitConnectors]
 
 const wagmiConfig_ = createConfig({
   syncConnectedChain: false,
-  connectors: combinedConnectors,
+  connectors: [...combinedConnectors, porto()],
   ssr: true,
   multiInjectedProviderDiscovery: !isInsideSafe(),
   storage: createStorage({ storage: localStorageWithInvertMiddleware(), key: prefix }),

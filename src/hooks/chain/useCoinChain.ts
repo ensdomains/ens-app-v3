@@ -33,12 +33,16 @@ type CoinBlockExplorer = {
 
 type UseCoinChainReturnType = CoinBlockExplorer | null
 
-type UseCoinChainConfig = QueryConfig<UseCoinChainReturnType, Error>
-
 type QueryKey<TParams extends UseCoinChainParameters> = CreateQueryKey<
   TParams,
   'getCoinChain',
   'independent'
+>
+
+type UseCoinChainConfig = QueryConfig<
+  UseCoinChainReturnType,
+  Error,
+  QueryKey<UseCoinChainParameters>
 >
 
 const isSupportedCoinName = (coinName: string): coinName is SupportedAddress =>

@@ -21,12 +21,16 @@ type UseVerifiedRecordsParameters = {
 
 export type UseVerifiedRecordsReturnType = VerifiedRecord[]
 
-type UseVerifiedRecordsConfig = QueryConfig<UseVerifiedRecordsReturnType, Error>
-
 type QueryKey<TParams extends UseVerifiedRecordsParameters> = CreateQueryKey<
   TParams,
   'getVerifiedRecords',
   'independent'
+>
+
+type UseVerifiedRecordsConfig = QueryConfig<
+  UseVerifiedRecordsReturnType,
+  Error,
+  QueryKey<UseVerifiedRecordsParameters>
 >
 
 const isStringArray = (object: unknown): object is string[] =>

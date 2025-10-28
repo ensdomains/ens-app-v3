@@ -38,12 +38,16 @@ type UseDnsSecEnabledParameters = {
 
 type UseDnsSecEnabledReturnType = boolean
 
-type UseDnsSecEnabledConfig = QueryConfig<UseDnsSecEnabledReturnType, Error>
-
 type QueryKey<TParams extends UseDnsSecEnabledParameters> = CreateQueryKey<
   TParams,
   'getDnsSecEnabled',
   'independent'
+>
+
+type UseDnsSecEnabledConfig = QueryConfig<
+  UseDnsSecEnabledReturnType,
+  Error,
+  QueryKey<UseDnsSecEnabledParameters>
 >
 
 export const getDnsSecEnabledQueryFn = async <TParams extends UseDnsSecEnabledParameters>({

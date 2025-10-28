@@ -16,11 +16,15 @@ type UseWrapperDataParameters = PartialBy<GetWrapperDataParameters, 'name'>
 
 export type UseWrapperDataReturnType = GetWrapperDataReturnType
 
-type UseWrapperDataConfig = QueryConfig<UseWrapperDataReturnType, Error>
-
 export type UseWrapperDataQueryKey<
   TParams extends UseWrapperDataParameters = UseWrapperDataParameters,
 > = CreateQueryKey<TParams, 'getWrapperData', 'standard'>
+
+type UseWrapperDataConfig = QueryConfig<
+  UseWrapperDataReturnType,
+  Error,
+  UseWrapperDataQueryKey<UseWrapperDataParameters>
+>
 
 export const getWrapperDataQueryFn =
   (config: ConfigWithEns) =>

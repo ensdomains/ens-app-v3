@@ -81,7 +81,8 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
               q.isActive() &&
               q.isStale() &&
               Date.now() >
-                q.state.dataUpdatedAt + queryClient.getDefaultOptions().queries!.staleTime!
+                q.state.dataUpdatedAt +
+                  (queryClient.getDefaultOptions().queries!.staleTime as number)
             )
           })
           // if there are stale queries, stop polling, set isCached to true, and subscribe to the cache

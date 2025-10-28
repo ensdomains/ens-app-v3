@@ -12,10 +12,14 @@ type UseExpiryParameters = PartialBy<GetExpiryParameters, 'name'>
 
 type UseExpiryReturnType = GetExpiryReturnType
 
-type UseExpiryConfig = QueryConfig<UseExpiryReturnType, Error>
-
 export type UseExpiryQueryKey<TParams extends UseExpiryParameters = UseExpiryParameters> =
   CreateQueryKey<TParams, 'getExpiry', 'standard'>
+
+type UseExpiryConfig = QueryConfig<
+  UseExpiryReturnType,
+  Error,
+  UseExpiryQueryKey<UseExpiryParameters>
+>
 
 export const getExpiryQueryFn =
   (config: ConfigWithEns) =>

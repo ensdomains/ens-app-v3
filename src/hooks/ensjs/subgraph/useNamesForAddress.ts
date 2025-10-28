@@ -18,12 +18,18 @@ type UseNamesForAddressParameters = Omit<
 
 type UseNamesForAddressReturnType = GetNamesForAddressReturnType
 
-type UseNamesForAddressConfig = InfiniteQueryConfig<UseNamesForAddressReturnType, Error>
-
 type QueryKey<TParams extends UseNamesForAddressParameters> = CreateQueryKey<
   TParams,
   'getNamesForAddress',
   'graph'
+>
+
+type UseNamesForAddressConfig = InfiniteQueryConfig<
+  UseNamesForAddressReturnType,
+  Error,
+  QueryKey<UseNamesForAddressParameters>,
+  GetNamesForAddressReturnType,
+  GetNamesForAddressReturnType
 >
 
 export const getNamesForAddressQueryFn =

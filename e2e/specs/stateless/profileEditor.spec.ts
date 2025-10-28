@@ -287,6 +287,7 @@ test.describe('legacy resolver', () => {
 
 test.describe('custom legacy resolver', () => {
   test('should be able to add/update profile records without migration', async ({
+    page,
     login,
     makeName,
     makePageObject,
@@ -298,6 +299,7 @@ test.describe('custom legacy resolver', () => {
       resolver: customLegacyResolver,
       records: await makeRecords(),
     })
+    await testClient.mine({ blocks: 1 })
 
     const morePage = makePageObject('MorePage')
     const profilePage = makePageObject('ProfilePage')
@@ -317,6 +319,7 @@ test.describe('custom legacy resolver', () => {
     await expect(profilePage.record('address', 'etcLegacy')).toHaveText('etcLegacy0x3C4...293BC')
     await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
 
+    await page.waitForTimeout(5000)
     await profilePage.editProfileButton.click()
 
     // await profilePage.profileEditor.getByTestId('warning-overlay-skip-button').click()
@@ -383,6 +386,7 @@ test.describe('custom legacy resolver', () => {
     await expect(profilePage.record('address', 'etcLegacy')).toHaveText('etcLegacy0x3C4...293BC')
     await expect(profilePage.record('text', 'email')).toHaveText('fakeemail@fake.com')
 
+    await page.waitForTimeout(5000)
     await profilePage.editProfileButton.click()
 
     // await profilePage.profileEditor.getByTestId('warning-overlay-skip-button').click()
@@ -723,7 +727,6 @@ test.describe('outdated resolver', () => {
       type: 'legacy',
       owner: 'user',
       resolver: outdatedResolver,
-      records: await makeRecords(),
     })
 
     await generateRecords({ accounts })({
@@ -789,7 +792,6 @@ test.describe('outdated resolver', () => {
       type: 'legacy',
       owner: 'user',
       resolver: outdatedResolver,
-      records: await makeRecords(),
     })
 
     await generateRecords({ accounts })({
@@ -947,7 +949,6 @@ test.describe('unauthorised resolver', () => {
       type: 'legacy',
       owner: 'user2',
       resolver: ownedResolverAddress as Address,
-      records: await makeRecords(),
     })
 
     const morePage = makePageObject('MorePage')
@@ -982,7 +983,6 @@ test.describe('invalid resolver', () => {
       type: 'legacy',
       owner: 'user',
       resolver: invalidResolverAddress as Address,
-      records: await makeRecords(),
     })
 
     const morePage = makePageObject('MorePage')

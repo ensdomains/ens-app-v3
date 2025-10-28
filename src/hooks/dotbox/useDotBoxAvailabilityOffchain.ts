@@ -24,15 +24,16 @@ type UseDotBoxAvailabilityOffchainReturnType = {
   }
 }
 
-type UseDotBoxAvailabilityOffchainConfig = QueryConfig<
-  UseDotBoxAvailabilityOffchainReturnType,
-  Error
->
-
 type QueryKey<TParams extends UseDotBoxAvailabilityOffchainParameters> = CreateQueryKey<
   TParams,
   'getDotBoxAvailabilityOffchain',
   'independent'
+>
+
+type UseDotBoxAvailabilityOffchainConfig = QueryConfig<
+  UseDotBoxAvailabilityOffchainReturnType,
+  Error,
+  QueryKey<UseDotBoxAvailabilityOffchainParameters>
 >
 
 export const getDotBoxAvailabilityOffchainQueryFn = async <

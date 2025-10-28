@@ -262,27 +262,43 @@ test('should calculate needed steps without localstorage', async ({
   await transactionModal.introButton.click()
   await transactionModal.confirm()
   await expect(transactionModal.completeButton).toBeEnabled()
+  await transactionModal.completeButton.click()
 
-  await page.waitForTimeout(10000)
+  // Wait for transaction to be mined
+  await testClient.mine({ blocks: 1 })
 
   await page.evaluate(() => window.localStorage.clear())
   await page.evaluate(() => window.sessionStorage.clear())
   await page.reload()
+  await page.waitForLoadState('networkidle')
   await login.reconnect()
 
   await morePage.wrapButton.click()
 
-  await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Migrate profile', {
-    timeout: 10000,
+  // Wait for the step to exist AND contain the correct text
+  await page
+    .locator('[data-testid="display-item-Step 1-normal"]:has-text("Migrate profile")')
+    .waitFor({
+      timeout: 15000,
+    })
+  await page.locator('[data-testid="display-item-Step 2-normal"]:has-text("Wrap name")').waitFor({
+    timeout: 15000,
   })
+
+  await expect(page.getByTestId('display-item-Step 1-normal')).toContainText('Migrate profile')
   await expect(page.getByTestId('display-item-Step 2-normal')).toContainText('Wrap name')
 
   await transactionModal.introButton.click()
   await transactionModal.confirm()
   await expect(transactionModal.completeButton).toBeEnabled()
+  await transactionModal.completeButton.click()
+
+  // Wait for transaction to be mined
+  await testClient.mine({ blocks: 1 })
 
   await page.evaluate(() => localStorage.clear())
   await page.reload()
+  await page.waitForLoadState('networkidle')
   await login.reconnect()
 
   await morePage.wrapButton.click()

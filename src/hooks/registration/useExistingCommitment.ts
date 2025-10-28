@@ -55,12 +55,16 @@ type UseExistingCommitmentReturnType =
     }
   | null
 
-type UseExistingCommitmentConfig = QueryConfig<UseExistingCommitmentReturnType, Error>
-
 type QueryKey<TParams extends UseExistingCommitmentParameters> = CreateQueryKey<
   TParams,
   'getExistingCommitment',
   'standard'
+>
+
+type UseExistingCommitmentConfig = QueryConfig<
+  UseExistingCommitmentReturnType,
+  Error,
+  QueryKey<UseExistingCommitmentParameters>
 >
 
 const maxCommitmentAgeSnippet = [
@@ -440,7 +444,7 @@ export const useExistingCommitment = <TParams extends UseExistingCommitmentParam
   })
 
   useInvalidateOnBlock({
-    enabled: preparedOptions.enabled,
+    enabled: preparedOptions.enabled as boolean,
     queryKey: preparedOptions.queryKey,
   })
 

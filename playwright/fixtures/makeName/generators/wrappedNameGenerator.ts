@@ -95,9 +95,11 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
 
     const data = commitName.makeFunctionData(walletClient, params)
 
+    const account = accounts.getAccountForUser(owner)
     const prepared = await walletClient.prepareTransactionRequest({
       ...data,
-      account: accounts.getAccountForUser(owner),
+      account,
+      nonceManager: account.nonceManager,
       gas: 1000000n, // This is necessary to bypass the gas estimation which will throw an error at times because the nonce is off
     })
 
@@ -132,9 +134,11 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
       value: total,
     })
 
+    const account = accounts.getAccountForUser(owner)
     const prepared = await walletClient.prepareTransactionRequest({
       ...data,
-      account: accounts.getAccountForUser(owner),
+      account,
+      nonceManager: account.nonceManager,
       gas: 1000000n, // This is necessary to bypass the gas estimation which will throw an error at times because of the pending
     })
 
@@ -144,7 +148,7 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
     const { label, owner, resolver, records, subnames = [], fuses } = nameWithDefaults(nameConfig)
     const name = `${label}.eth`
     const childFuses = getChildFuses(fuses)
-    const ownerAddress = accounts.getAddress(owner) as `0x${string}`
+    const ownerAccount = accounts.getAccountForUser(owner)
     const hasValidResolver =
       resolver.toLocaleLowerCase() ===
       testClient.chain.contracts.ensPublicResolver.address.toLowerCase()
@@ -159,14 +163,14 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
       })
     }
 
-    for (const subname of subnames)  {
-        await generateWrappedSubname({ accounts })({
-          ...subname,
-          name: `${label}.eth`,
-          nameOwner: owner,
-          resolver: subname.resolver ?? _resolver,
-        })
-      }
+    for (const subname of subnames) {
+      await generateWrappedSubname({ accounts })({
+        ...subname,
+        name: `${label}.eth`,
+        nameOwner: owner,
+        resolver: subname.resolver ?? _resolver,
+      })
+    }
 
     if (!hasValidResolver && resolver) {
       console.log('setting resolver: ', name, resolver)
@@ -174,16 +178,19 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
         name,
         contract: 'nameWrapper',
         resolverAddress: resolver,
-        account: ownerAddress as `0x${string}`,
+        account: ownerAccount,
+        // @ts-expect-error
+        nonceManager: ownerAccount.nonceManager,
       })
       await waitForTransaction(resolverTx)
 
-      if (records) await generateRecords({ accounts })({
-        name,
-        owner,
-        resolver: resolver as `0x${string}`,
-        records,
-      })
+      if (records)
+        await generateRecords({ accounts })({
+          name,
+          owner,
+          resolver: resolver as `0x${string}`,
+          records,
+        })
     }
 
     if (childFuses) {
@@ -191,7 +198,9 @@ export const makeWrappedNameGenerator = ({ accounts }: Dependencies) => ({
       const fusesTx = await setFuses(walletClient, {
         name,
         fuses: childFuses,
-        account: accounts.getAccountForUser(owner),
+        account: ownerAccount,
+        // @ts-expect-error
+        nonceManager: ownerAccount.nonceManager,
       })
       await waitForTransaction(fusesTx)
     }
