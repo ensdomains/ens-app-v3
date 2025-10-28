@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Avatar, Box, Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
@@ -275,6 +275,14 @@ export const ProfileSnippet = ({
           noCache={canEdit}
           decoding="sync"
         />
+        <Box height="24" width="24">
+          <Avatar
+            label=""
+            height="24"
+            width="24"
+            src={`https://metadata.ens.domains/mainnet/avatar/${name}`}
+          />
+        </Box>
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
         </ButtonStack>
