@@ -17,7 +17,7 @@ type UsePrimaryNameParameters = PartialBy<GetNameParameters, 'address'> & {
 }
 
 type UsePrimaryNameReturnType =
-  | (NonNullable<GetNameReturnType> & { beautifiedName: string; originalName?: string })
+  | (NonNullable<GetNameReturnType> & { beautifiedName: string; originalName: string })
   | null
 
 type QueryKey<TParams extends UsePrimaryNameParameters> = CreateQueryKey<

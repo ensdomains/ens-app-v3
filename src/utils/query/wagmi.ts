@@ -1,5 +1,5 @@
-import { porto } from 'porto/wagmi'
 import { inAppWalletConnector } from '@thirdweb-dev/wagmi-adapter'
+import { porto } from 'porto/wagmi'
 import { createThirdwebClient, defineChain as thirdwebDefineChain } from 'thirdweb'
 import {
   createClient,
