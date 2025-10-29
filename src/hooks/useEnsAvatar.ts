@@ -23,9 +23,10 @@ const checkImageExists = async ({
 }): Promise<null | string> => {
   if (!imageUrl) return null
 
+  const imageUrlWithTimestamp = `${imageUrl}?timestamp=${Date.now()}`
   try {
-    const response = await fetch(imageUrl, { method: 'HEAD' })
-    return response.ok ? `${imageUrl}?timestamp=${Date.now()}` : null
+    const response = await fetch(imageUrlWithTimestamp, { method: 'HEAD' })
+    return response.ok ? imageUrlWithTimestamp : null
   } catch (error) {
     return null
   }
@@ -40,10 +41,13 @@ export const useEnsAvatar = (params?: UseEnsAvatarParameters) => {
   const chainName = useChainName()
   const url = createMetaDataUrl({ name: params?.name, chainName, mediaKey: params?.key })
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['ens-media', url],
     queryFn: checkImageExists,
-    staleTime: Infinity,
-    gcTime: Infinity,
   })
+
+  return {
+    ...query,
+    data: query.data ? query.data : undefined,
+  }
 }
