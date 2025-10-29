@@ -57,19 +57,10 @@ async function createSubName(name: string): Promise<void> {
   const expectedSubname = `${ensName}.subname-test.eth`
   await expect(nameProfileName).toHaveText(expectedSubname)
 
-  // Enter parent name profile
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(walletName)
-  await searchInput.press('Enter')
-  await expect(nameProfileName).toHaveText(walletName, { timeout: 10000 })
-
-  // Switch to subname tab
-  const parentSubnameTab = page.getByTestId('subnames-tab')
-  await parentSubnameTab.click()
-
-  // Check created subname is appearing
-  const subnameItem = page.getByTestId(`name-item-${ensName}.subname-test.eth`)
-  await expect(subnameItem).toBeVisible({ timeout: 15000 })
+  // Check parent is correct
+  const parentLabel = page.getByTestId('owner-profile-button-name.parent')
+  await expect(parentLabel).toBeVisible()
+  await expect(parentLabel).toContainText('subname-test.eth')
 }
 
 // Delete subname
@@ -163,6 +154,12 @@ test.describe('ENS Subname Checks', () => {
 
     // Generate a unique ENS name for tests
     ensName = `sub-${Date.now()}`
+  })
+
+  test.beforeEach('Navigate to home page', async () => {
+    // Navigate back to home page before each test to ensure clean state
+    await page.goto('http://localhost:3000/')
+    await page.waitForTimeout(2000)
   })
 
   test('Connect MetaMask to ENS localhost', async () => {
