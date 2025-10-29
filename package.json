@@ -15,6 +15,8 @@
     "dev:glocal": "SWC_CACHE=false rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:42069/subgraph NEXT_PUBLIC_ETH_NODE=anvil pnpm dev:nlocal",
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.studio.thegraph.com/query/49574/ensholesky/version/latest pnpm dev",
     "dev:avlocal": "NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
+    "dev:avsepolia": "NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev pnpm dev:sepolia",
+    "dev:avmainnet": "NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev pnpm dev:mainnet",
     "build": "next build",
     "build:preview": "NEXT_PUBLIC_ENSJS_DEBUG=true NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev next build --profile",
     "build:local": "ANALYZE=true next build",

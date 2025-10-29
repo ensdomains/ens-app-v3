@@ -204,7 +204,6 @@ export const ProfileSnippet = ({
 }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
-  const chainName = useChainName()
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
@@ -277,14 +276,6 @@ export const ProfileSnippet = ({
           noCache={canEdit}
           decoding="sync"
         />
-        <Box height="24" width="24">
-          <Avatar
-            label=""
-            height="24"
-            width="24"
-            src={`https://metadata.ens.domains/${chainName}/avatar/${name}`}
-          />
-        </Box>
         <ButtonStack>
           {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
         </ButtonStack>

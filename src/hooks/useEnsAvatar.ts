@@ -1,28 +1,33 @@
-import { UseEnsAvatarParameters, useEnsAvatar as useWagmiEnsAvatar } from 'wagmi'
+import { UseEnsAvatarParameters as WagmiUseiEnsAvatarParameters } from 'wagmi'
 
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { validateImageUri } from '@app/validators/validateImageUri'
-
+import { useChainName } from './chain/useChainName'
 import { useImgTimestamp } from './useImgTimestamp'
+
+const createMetaDataUrl = ({
+  name,
+  chainName,
+  mediaKey = 'avatar',
+}: {
+  name?: string
+  chainName: string
+  mediaKey?: 'avatar' | 'header'
+}): string | null => {
+  if (!name || !chainName || !mediaKey) return null
+  return `https://metadata.ens.domains/${chainName}/${mediaKey}/${name}`
+}
+
+type UseEnsAvatarParameters = Pick<WagmiUseiEnsAvatarParameters, 'name'> & {
+  key: 'avatar' | 'header'
+}
 
 export const useEnsAvatar = (params?: UseEnsAvatarParameters) => {
   const { addTimestamp } = useImgTimestamp()
 
-  const result = useWagmiEnsAvatar({
-    ...ensAvatarConfig,
-    ...params,
-  })
-
-  const avatarUrl = addTimestamp(result.data)
-
-  const validUrl = validateImageUri(avatarUrl)
-  const isValidUrl = avatarUrl && validUrl === true
-  const validUrlError = typeof validUrl === 'string' ? validUrl : undefined
+  const chainName = useChainName()
+  const url = createMetaDataUrl({ name: params?.name, chainName, mediaKey: params?.key })
+  const avatarUrl = addTimestamp(url)
 
   return {
-    ...result,
-    data: isValidUrl ? avatarUrl : null,
-    error: isValidUrl ? undefined : validUrlError,
-    isError: !isValidUrl,
+    data: avatarUrl,
   }
 }
