@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -33,6 +34,7 @@ export const TransactionNotifications = () => {
   const breakpoints = useBreakpoint()
 
   const chainName = useChainName()
+  const queryClient = useQueryClient()
 
   const [open, setOpen] = useState(false)
 
@@ -54,6 +56,10 @@ export const TransactionNotifications = () => {
             break
           case 'extendNames':
             trackEvent('renew', chainName)
+            break
+          case 'updateProfileRecords':
+          case 'updateProfile':
+            queryClient.invalidateQueries({ queryKey: ['ens-media'] })
             break
           default:
             break
@@ -91,7 +97,7 @@ export const TransactionNotifications = () => {
 
       setNotificationQueue((queue) => [...queue, item])
     },
-    [chainName, getResumable, resumeTransactionFlow, t],
+    [chainName, getResumable, resumeTransactionFlow, t, queryClient],
   )
 
   useCallbackOnTransaction(updateCallback)
