@@ -16,8 +16,9 @@ const createMetaDataUrl = ({
   return `https://metadata.ens.domains/${chainName}/${mediaKey}/${name}`
 }
 
-type UseEnsAvatarParameters = Pick<WagmiUseiEnsAvatarParameters, 'name'> & {
-  key: 'avatar' | 'header'
+// TODO: BEFORE Merge, remove query and resolve typescript errors
+type UseEnsAvatarParameters = Pick<WagmiUseiEnsAvatarParameters, 'name' | 'query'> & {
+  key?: 'avatar' | 'header'
 }
 
 export const useEnsAvatar = (params?: UseEnsAvatarParameters) => {

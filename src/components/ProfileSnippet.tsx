@@ -2,12 +2,11 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Box, Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useChainName } from '@app/hooks/chain/useChainName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
