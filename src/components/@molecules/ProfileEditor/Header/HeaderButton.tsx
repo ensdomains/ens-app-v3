@@ -6,7 +6,6 @@ import { Button, Dropdown, Input, Typography } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
-import { useImgTimestamp } from '@app/hooks/useImgTimestamp'
 
 const IndicatorContainer = styled.button<{
   $error?: boolean
@@ -168,7 +167,6 @@ const HeaderButton = ({
   setIsOpen,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
-  const { addTimestamp } = useImgTimestamp()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const handleSelectOption = (value: HeaderClickType | 'remove') => () => {
@@ -198,7 +196,7 @@ const HeaderButton = ({
           $dirty={dirty}
           type="button"
         >
-          <HeaderPreview $src={addTimestamp(src)} id="header-field" />
+          <HeaderPreview $src={src} id="header-field" />
         </IndicatorContainer>
       </HeaderContainer>
       <ButtonContainer $hasImage={!!src}>

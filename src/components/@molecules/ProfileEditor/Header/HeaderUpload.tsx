@@ -128,15 +128,8 @@ const UploadComponent = ({
 
         if ('message' in fetched && fetched.message === 'uploaded') {
           queryClient.invalidateQueries({
-            predicate: (query) => {
-              const {
-                queryKey: [params],
-              } = query
-              if (params !== 'ensAvatar') return false
-              return true
-            },
+            queryKey: ['ens-media', `https://metadata.ens.domains/${chainName}/header/${name}`],
           })
-          queryClient.invalidateQueries({ queryKey: ['image-timestamp'] })
           return handleSubmit('upload', endpoint, dataURL)
         }
 

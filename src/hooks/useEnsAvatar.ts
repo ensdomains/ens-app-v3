@@ -1,9 +1,9 @@
+import { useQuery } from '@tanstack/react-query'
 import { UseEnsAvatarParameters as WagmiUseiEnsAvatarParameters } from 'wagmi'
 
 import { useChainName } from './chain/useChainName'
-import { useImgTimestamp } from './useImgTimestamp'
 
-const createMetaDataUrl = ({
+export const createMetaDataUrl = ({
   name,
   chainName,
   mediaKey = 'avatar',
@@ -16,19 +16,34 @@ const createMetaDataUrl = ({
   return `https://metadata.ens.domains/${chainName}/${mediaKey}/${name}`
 }
 
+const checkImageExists = async ({
+  queryKey: [, imageUrl],
+}: {
+  queryKey: [string, string | null]
+}): Promise<null | string> => {
+  if (!imageUrl) return null
+
+  try {
+    const response = await fetch(imageUrl, { method: 'HEAD' })
+    return response.ok ? `${imageUrl}?timestamp=${Date.now()}` : null
+  } catch (error) {
+    return null
+  }
+}
+
 // TODO: BEFORE Merge, remove query and resolve typescript errors
 type UseEnsAvatarParameters = Pick<WagmiUseiEnsAvatarParameters, 'name' | 'query'> & {
   key?: 'avatar' | 'header'
 }
 
 export const useEnsAvatar = (params?: UseEnsAvatarParameters) => {
-  const { addTimestamp } = useImgTimestamp()
-
   const chainName = useChainName()
   const url = createMetaDataUrl({ name: params?.name, chainName, mediaKey: params?.key })
-  const avatarUrl = addTimestamp(url)
 
-  return {
-    data: avatarUrl,
-  }
+  return useQuery({
+    queryKey: ['ens-media', url],
+    queryFn: checkImageExists,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  })
 }
