@@ -29,11 +29,137 @@
       }
     },
     "profile": {
+      "title": "Creëer je profiel",
+      "title2": "Bewerk je profiel",
       "default": "Standaard",
       "advanced": "Geavanceerd",
       "permissions": "Permissies",
       "resolver": "Resolver",
-      "visibilityMessage": "Je profiel informatie word opgeslagen op de blockchain. Alles wat je toevoegd is publiekelijk zichtbaar."
+      "visibilityMessage": "Je profiel informatie word opgeslagen op de blockchain. Alles wat je toevoegd is publiekelijk zichtbaar.",
+      "addProfile": "Profiel velden toevoegen",
+      "addMore": "Meer toevoegen aan profiel",
+      "options": {
+        "groups": {
+          "general": {
+            "label": "Algemeen",
+            "items": {
+              "name": "Bijnaam",
+              "url": "Website",
+              "location": "Locatie",
+              "description": "Korte bio"
+            },
+            "placeholder": {
+              "name": "Jan Jansen",
+              "url": "https://ens.domains",
+              "location": "Metaverse",
+              "description": "Ik ben een yield farmer uit het platteland van Tennessee."
+            }
+          },
+          "media": {
+            "label": "Media",
+            "items": {
+              "avatar": "Avatar",
+              "header": "Header"
+            },
+            "placeholder": {
+              "avatar": "https://voorbeeld.nl/avatar.png",
+              "banner": "https://voorbeeld.nl/banner.png"
+            }
+          },
+          "social": {
+            "label": "Sociaal",
+            "items": {
+              "com.twitter": "Twitter",
+              "com.github": "GitHub",
+              "com.discord": "Discord",
+              "org.telegram": "Telegram",
+              "email": "Email"
+            },
+            "placeholder": {
+              "com.twitter": "bijv. ensdomains",
+              "com.github": "bijv. ensdomains",
+              "com.discord": "bijv. nickjohnson",
+              "org.telegram": "bijv. nicksdjohnson",
+              "email": "bijv. hallo@voorbeeld.nl"
+            }
+          },
+          "address": {
+            "label": "Adres",
+            "itemLabel": "{{coin}} adres",
+            "placeholder": {
+              "default": "Voeg adres hier toe",
+              "eth": "0xb8c2C2...",
+              "btc": "3FZbgi29...",
+              "sol": "D4kA7VzHnmV...",
+              "op": "0xb8c2C2...",
+              "arb1": "0xb8c2C2...",
+              "base": "0xb8c2C2...",
+              "matic": "0xb8c2C2...",
+              "linea": "0xb8c2C2...",
+              "scr": "0xb8c2C2..."
+            }
+          },
+          "website": {
+            "label": "Website",
+            "items": {
+              "ipfs": "IPFS",
+              "ipns": "IPNS",
+              "swarm": "Swarm",
+              "onion": "Onion",
+              "skynet": "Skynet",
+              "arweave": "Arweave"
+            },
+            "placeholder": {
+              "default": "Voeg url hier toe",
+              "ipfs": "ipfs://...",
+              "skynet": "sia://...",
+              "arweave": "ar://...",
+              "swarm": "bzz://...",
+              "onion": "onion3://..."
+            }
+          },
+          "other": {
+            "label": "Overig",
+            "items": {
+              "contentHash": "Content Hash",
+              "publicKey": "Publieke Sleutel",
+              "abi": "ABI",
+              "custom": "Aangepast"
+            }
+          },
+          "custom": {
+            "key": "Sleutel",
+            "value": "Waarde"
+          },
+          "default": {
+            "placeholder": "Voeg waarde hier toe"
+          }
+        }
+      },
+      "errors": {
+        "labelRequired": "Een record sleutel is verplicht",
+        "duplicateRecord": "Dubbele record sleutel",
+        "avatarReserved": "Sleutel wordt gebruikt door avatar manager",
+        "invalidValue": "Ongeldige waarde",
+        "reservedKey": "Deze sleutel is gereserveerd"
+      },
+      "confirmations": {
+        "publicNotice": {
+          "title": "Je gegevens zijn openbaar",
+          "description": "Alles wat je aan je profiel toevoegt is publiekelijk zichtbaar op de blockchain.",
+          "confirm": "Ik begrijp het",
+          "decline": "Terug"
+        },
+        "clearEth": {
+          "title": "ETH adres wissen?",
+          "description": "Zonder een ETH adres kunnen mensen geen geld naar deze naam sturen. Dit kan later aangepast worden.",
+          "confirm": "Wissen",
+          "decline": "Annuleren"
+        }
+      },
+      "actions": {
+        "skipProfile": "Profiel overslaan"
+      }
     },
     "complete": {
       "heading": "Gefeliciteerd!",

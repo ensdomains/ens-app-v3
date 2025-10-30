@@ -124,6 +124,43 @@ async function connectWalletToSafe(
   await page.goto(`${SafeEnsConfig.SAFE_URL}/welcome`)
   await page.waitForTimeout(3000)
 
+  // Accept terms and conditions
+  try {
+    console.log('📋 Checking for terms and conditions...')
+
+    // Find both checkboxes within the terms card
+    const termsCheckboxes = page.locator(
+      '.styles_checkboxCardOuter__fFTIA label input[type="checkbox"]',
+    )
+    const checkboxCount = await termsCheckboxes.count()
+
+    if (checkboxCount > 0) {
+      console.log(`✅ Found ${checkboxCount} terms checkboxes`)
+
+      // Click first checkbox (Safe{Wallet} Terms & Conditions)
+      await termsCheckboxes.nth(0).click()
+      console.log('✅ Checked first terms checkbox (Terms & Conditions)')
+      await page.waitForTimeout(500)
+
+      // Click second checkbox (Liabilities acknowledgment)
+      await termsCheckboxes.nth(1).click()
+      console.log('✅ Checked second terms checkbox (Liabilities acknowledgment)')
+      await page.waitForTimeout(500)
+
+      // Click the "Accept terms & Continue" button
+      const acceptButton = page.locator('button:has-text("Accept terms & Continue")')
+      if (await acceptButton.isVisible({ timeout: 3000 })) {
+        await acceptButton.click()
+        console.log('✅ Clicked Accept terms & Continue button')
+        await page.waitForTimeout(2000)
+      }
+    } else {
+      console.log('ℹ️ No terms and conditions found - may have been already accepted')
+    }
+  } catch (error) {
+    console.log('⚠️ Terms and conditions handling failed (may not be present):', error)
+  }
+
   // Handle Safe banners first
   await handleSafeBanners(page)
 
