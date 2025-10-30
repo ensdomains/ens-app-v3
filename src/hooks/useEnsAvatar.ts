@@ -2,6 +2,8 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 import { useChainName } from './chain/useChainName'
 
+export const META_DATA_QUERY_KEY = 'ensMetaData'
+
 export const createMetaDataUrl = ({
   name,
   chainName,
@@ -41,7 +43,7 @@ export const useEnsAvatar = ({ name, key, staleTime, enabled = true }: UseEnsAva
   const url = createMetaDataUrl({ name, chainName, mediaKey: key })
 
   return useQuery({
-    queryKey: ['ensMetaData', url],
+    queryKey: [META_DATA_QUERY_KEY, url],
     queryFn: checkImageExists,
     staleTime: staleTime ?? 15 * 60 * 1000, // 15 minutes
     enabled: enabled && !!url,

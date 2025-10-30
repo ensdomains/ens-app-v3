@@ -10,6 +10,7 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { createMetaDataUrl, META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 import { headerAspectRatio } from '@app/utils/headerUpload'
 
 import { AvCancelButton, CropComponent } from './HeaderCrop'
@@ -128,7 +129,7 @@ const UploadComponent = ({
 
         if ('message' in fetched && fetched.message === 'uploaded') {
           queryClient.invalidateQueries({
-            queryKey: ['ensMetaData', `https://metadata.ens.domains/${chainName}/header/${name}`],
+            queryKey: [META_DATA_QUERY_KEY, createMetaDataUrl({ name, chainName, mediaKey: 'header' })],
           })
           return handleSubmit('upload', endpoint, dataURL)
         }

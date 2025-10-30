@@ -10,6 +10,7 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { createMetaDataUrl, META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
@@ -107,7 +108,7 @@ const UploadComponent = ({
 
       if ('message' in fetched && fetched.message === 'uploaded') {
         queryClient.invalidateQueries({
-          queryKey: ['ensMetaData', `https://metadata.ens.domains/${chainName}/avatar/${name}`],
+          queryKey: [META_DATA_QUERY_KEY, createMetaDataUrl({ name, chainName, mediaKey: 'avatar' })],
         })
         return handleSubmit('upload', endpoint, dataURL)
       }
