@@ -1,28 +1,51 @@
-import { UseEnsAvatarParameters, useEnsAvatar as useWagmiEnsAvatar } from 'wagmi'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
-import { validateImageUri } from '@app/validators/validateImageUri'
+import { useChainName } from './chain/useChainName'
 
-import { useImgTimestamp } from './useImgTimestamp'
+export const META_DATA_QUERY_KEY = 'ensMetaData'
 
-export const useEnsAvatar = (params?: UseEnsAvatarParameters) => {
-  const { addTimestamp } = useImgTimestamp()
+export const createMetaDataUrl = ({
+  name,
+  chainName,
+  mediaKey = 'avatar',
+}: {
+  name?: string
+  chainName: string
+  mediaKey?: 'avatar' | 'header'
+}): string | null => {
+  if (!name || !chainName || !mediaKey) return null
+  return `https://metadata.ens.domains/${chainName}/${mediaKey}/${name}`
+}
 
-  const result = useWagmiEnsAvatar({
-    ...ensAvatarConfig,
-    ...params,
-  })
+const checkImageExists = async ({
+  queryKey: [, imageUrl],
+}: {
+  queryKey: [string, string | null]
+}): Promise<null | string> => {
+  if (!imageUrl) return null
 
-  const avatarUrl = addTimestamp(result.data)
-
-  const validUrl = validateImageUri(avatarUrl)
-  const isValidUrl = avatarUrl && validUrl === true
-  const validUrlError = typeof validUrl === 'string' ? validUrl : undefined
-
-  return {
-    ...result,
-    data: isValidUrl ? avatarUrl : null,
-    error: isValidUrl ? undefined : validUrlError,
-    isError: !isValidUrl,
+  const imageUrlWithTimestamp = `${imageUrl}?timestamp=${Date.now()}`
+  try {
+    const response = await fetch(imageUrlWithTimestamp, { method: 'HEAD' })
+    return response.ok ? imageUrlWithTimestamp : null
+  } catch (error) {
+    return null
   }
+}
+
+type UseEnsAvatarParameters = Omit<UseQueryOptions, 'queryFn' | 'queryKey'> & {
+  name?: string
+  key?: 'avatar' | 'header'
+}
+
+export const useEnsAvatar = ({ name, key, staleTime, enabled = true }: UseEnsAvatarParameters) => {
+  const chainName = useChainName()
+  const url = createMetaDataUrl({ name, chainName, mediaKey: key })
+
+  return useQuery({
+    queryKey: [META_DATA_QUERY_KEY, url],
+    queryFn: checkImageExists,
+    staleTime: staleTime ?? 15 * 60 * 1000, // 15 minutes
+    enabled: enabled && !!url,
+  })
 }

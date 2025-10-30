@@ -77,7 +77,7 @@ export const NameAvatar = ({
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
   const { data: avatar } = useEnsAvatar({
     name,
-    query: { gcTime: noCache ? 0 : undefined },
+    gcTime: noCache ? 0 : undefined,
   })
   const zorb = useZorb(name, 'name')
 
@@ -98,7 +98,7 @@ export const AvatarWithZorb = ({
 }: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
   const { data: avatar } = useEnsAvatar({
     name,
-    query: { gcTime: noCache ? 0 : undefined },
+    gcTime: noCache ? 0 : undefined,
   })
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
