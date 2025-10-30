@@ -129,7 +129,10 @@ const UploadComponent = ({
 
         if ('message' in fetched && fetched.message === 'uploaded') {
           queryClient.invalidateQueries({
-            queryKey: [META_DATA_QUERY_KEY, createMetaDataUrl({ name, chainName, mediaKey: 'header' })],
+            queryKey: [
+              META_DATA_QUERY_KEY,
+              createMetaDataUrl({ name, chainName, mediaKey: 'header' }),
+            ],
           })
           return handleSubmit('upload', endpoint, dataURL)
         }
