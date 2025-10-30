@@ -2,12 +2,12 @@
 
 const SUPPORT_LINKS = {
   homoglyphs: 'https://support.ens.domains/en/articles/7901658-homoglyphs',
-  namesAndSubnames: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_d83b3ffcb0',
-  managersAndOwners: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_3cf7f2fbdf',
-  resolver: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_1ef2545a3f',
+  namesAndSubnames: 'https://support.ens.domains/en/articles/11799364-about-project-subnames-like-base-eth-linea-eth-uni-eth-gemini-eth',
+  managersAndOwners: 'https://support.ens.domains/en/articles/8825632-how-to-edit-roles',
+  resolver: 'https://support.ens.domains/en/articles/8845494-how-to-update-the-resolver-record',
   fuses: 'https://support.ens.domains/en/articles/7902567-fuses',
-  primaryName: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_b2baf0c02b',
-  nameWrapper: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_cae4f1dea6',
+  primaryName: 'https://support.ens.domains/en/articles/8684192-how-to-set-as-primary-name',
+  nameWrapper: 'https://support.ens.domains/en/articles/7902532-name-wrapper-overview',
   dnsNames: 'https://support.ens.domains/en/collections/4027734-dns-names',
   gaslessDnssec:
     'https://support.ens.domains/en/articles/8834820-offchain-gasless-dnssec-names-in-ens#h_b92a64180f',
