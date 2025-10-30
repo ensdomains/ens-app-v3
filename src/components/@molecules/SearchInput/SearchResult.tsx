@@ -263,7 +263,7 @@ const AddressResultItem = ({
   })
   const { data: ensAvatar } = useEnsAvatar({
     name: primaryName?.name,
-    query: { enabled: !usingPlaceholder },
+    enabled: !usingPlaceholder,
   })
   const zorb = useZorb(address, 'address')
 
@@ -303,7 +303,7 @@ const TldResultItem = ({
   const { text: name } = searchItem
   const { data: ensAvatar } = useEnsAvatar({
     name,
-    query: { enabled: !usingPlaceholder },
+    enabled: !usingPlaceholder,
   })
   const zorb = useZorb(usingPlaceholder ? 'placeholder' : name, 'name')
   const { registrationStatus, isLoading, beautifiedName } = useBasicName({
@@ -352,7 +352,7 @@ const EthResultItem = ({
   const { text: name } = searchItem
   const { data: ensAvatar } = useEnsAvatar({
     name,
-    query: { enabled: !usingPlaceholder },
+    enabled: !usingPlaceholder,
   })
   const zorb = useZorb(name, 'name')
   const { registrationStatus, isLoading, beautifiedName } = useBasicName({
@@ -415,7 +415,7 @@ const BoxResultItem = ({
   const { text: name, isValid } = searchItem
   const { data: ensAvatar } = useEnsAvatar({
     name,
-    query: { enabled: !usingPlaceholder },
+    enabled: !usingPlaceholder,
   })
   const zorb = useZorb(usingPlaceholder ? 'placeholder' : name, 'name')
   const { data: isDotBoxAvailableOnchain, isLoading: isDotBoxAvailabilityLoading } =

@@ -1,5 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
-import { UseEnsAvatarParameters as WagmiUseiEnsAvatarParameters } from 'wagmi'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 import { useChainName } from './chain/useChainName'
 
@@ -32,22 +31,19 @@ const checkImageExists = async ({
   }
 }
 
-// TODO: BEFORE Merge, remove query and resolve typescript errors
-type UseEnsAvatarParameters = Pick<WagmiUseiEnsAvatarParameters, 'name' | 'query'> & {
+type UseEnsAvatarParameters = Omit<UseQueryOptions, 'queryFn' | 'queryKey'> & {
+  name?: string
   key?: 'avatar' | 'header'
 }
 
-export const useEnsAvatar = (params?: UseEnsAvatarParameters) => {
+export const useEnsAvatar = ({ name, key, staleTime, enabled = true }: UseEnsAvatarParameters) => {
   const chainName = useChainName()
-  const url = createMetaDataUrl({ name: params?.name, chainName, mediaKey: params?.key })
+  const url = createMetaDataUrl({ name, chainName, mediaKey: key })
 
-  const query = useQuery({
-    queryKey: ['ens-media', url],
+  return useQuery({
+    queryKey: ['ensMetaData', url],
     queryFn: checkImageExists,
+    staleTime: staleTime ?? 15 * 60 * 1000, // 15 minutes
+    enabled: enabled && !!url,
   })
-
-  return {
-    ...query,
-    data: query.data ? query.data : undefined,
-  }
 }

@@ -128,7 +128,7 @@ const UploadComponent = ({
 
         if ('message' in fetched && fetched.message === 'uploaded') {
           queryClient.invalidateQueries({
-            queryKey: ['ens-media', `https://metadata.ens.domains/${chainName}/header/${name}`],
+            queryKey: ['ensMetaData', `https://metadata.ens.domains/${chainName}/header/${name}`],
           })
           return handleSubmit('upload', endpoint, dataURL)
         }

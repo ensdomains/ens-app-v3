@@ -59,7 +59,7 @@ export const TransactionNotifications = () => {
             break
           case 'updateProfileRecords':
           case 'updateProfile':
-            queryClient.invalidateQueries({ queryKey: ['ens-media'] })
+            queryClient.invalidateQueries({ queryKey: ['ensMetaData'] })
             break
           default:
             break
