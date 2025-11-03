@@ -455,7 +455,7 @@ export const CropComponent = ({
 
   return (
     <>
-      <Dialog.Heading title={t('input.profileEditor.tabs.header.image.title')} />
+      <Dialog.Heading title={t('input.profileEditor.tabs.avatar.image.title')} />
       <Dialog.Content>
         <EditImageContainer data-testid="edit-image-container">
           <ImageWrapper>
