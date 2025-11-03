@@ -13,7 +13,7 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { createMetaDataUrl, META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 import { headerAspectRatio } from '@app/utils/headerUpload'
 
-import { HeaderCancelButton, CropComponent } from './HeaderCrop'
+import { CropComponent, HeaderCancelButton } from './HeaderCrop'
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
