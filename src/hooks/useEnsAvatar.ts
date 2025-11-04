@@ -19,14 +19,17 @@ export const createMetaDataUrl = ({
 
 const checkImageExists = async ({
   queryKey: [, imageUrl],
+  ...rest
 }: {
   queryKey: [string, string | null]
 }): Promise<null | string> => {
   if (!imageUrl) return null
 
-  const imageUrlWithTimestamp = `${imageUrl}?timestamp=${Date.now()}`
+  console.log('rest', rest)
+  const imageUrlWithTimestamp = `${imageUrl}`
   try {
     const response = await fetch(imageUrlWithTimestamp, { method: 'HEAD' })
+    console.log('response', response)
     return response.ok ? imageUrlWithTimestamp : null
   } catch (error) {
     return null
