@@ -6,9 +6,9 @@ import styled, { css } from 'styled-components'
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
-import { META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { invalidateMetaDataQuery } from '@app/utils/invalidateMetaDataQuery'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
@@ -60,7 +60,7 @@ export const TransactionNotifications = () => {
             break
           case 'updateProfileRecords':
           case 'updateProfile':
-            queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
+            invalidateMetaDataQuery(queryClient)
             break
           default:
             break
