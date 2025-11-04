@@ -5,7 +5,6 @@ import type { Dappwright } from '@tenkeylabs/dappwright'
 import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
 
 import { SafeEnsConfig } from './config/safe-ens-config'
-import { connectWalletToEns } from './config/wallet-ens-config'
 import {
   closeTransactionModal,
   navigateToHome,
@@ -13,6 +12,7 @@ import {
   searchForName,
   waitForTransactionComplete,
 } from './config/test-utilities'
+import { connectWalletToEns } from './config/wallet-ens-config'
 
 // Global variables to share state
 let metaMask: Dappwright
