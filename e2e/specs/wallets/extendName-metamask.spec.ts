@@ -1,4 +1,4 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import dappwright from '@tenkeylabs/dappwright'
 import type { Dappwright } from '@tenkeylabs/dappwright'
 
@@ -16,8 +16,8 @@ import {
 
 // Global variables to share state
 let metaMask: Dappwright
-let page: Page
-let context: BrowserContext
+let page: any // Using any to avoid Playwright version conflicts with dappwright
+let context: any
 
 /**
  * Extends an owned ENS name by one day.
