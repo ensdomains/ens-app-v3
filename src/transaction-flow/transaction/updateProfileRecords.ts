@@ -10,6 +10,7 @@ import {
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { bustAvatarCache, bustHeaderCache } from '@app/utils/bustMetadataCache'
 import { recordOptionsToToupleList, recordsWithCointypeCoins } from '@app/utils/records'
 
 type Data = {
@@ -80,6 +81,15 @@ const transaction = async ({
 }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress, records, previousRecords = [], clearRecords } = data
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
+
+  // Check if avatar or header are being modified
+  const hasAvatarChange = submitRecords.some((r) => r.key === 'avatar' && r.group === 'media')
+  const hasHeaderChange = submitRecords.some((r) => r.key === 'header' && r.group === 'media')
+
+  // Bust cache for modified media records
+  if (hasAvatarChange) bustAvatarCache(name, client)
+  if (hasHeaderChange) bustHeaderCache(name, client)
+
   const recordOptions = await profileRecordsToRecordOptionsWithDeleteAbiArray(client, {
     name,
     profileRecords: submitRecords,
