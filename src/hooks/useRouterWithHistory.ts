@@ -1,9 +1,11 @@
 import { useRouter } from 'next/router'
 
 import { getDestination } from '@app/routes'
+import { createUrlObject } from '@app/utils/urlObject'
 
 export const useRouterWithHistory = () => {
   const router = useRouter()
+  const referrer = router.query.referrer as string | undefined
 
   const _replace = router?.replace
 
@@ -17,10 +19,13 @@ export const useRouterWithHistory = () => {
   ) => {
     if (typeof window === 'undefined') return
     const { maintainHistory, ...opts } = options || {}
-    const destination =
-      maintainHistory && router.query.from
-        ? getDestination({ pathname, query: { from: router.query.from } })
-        : getDestination(pathname)
+
+    const urlObject = createUrlObject(pathname, {
+      from: maintainHistory ? (router.query.from as string | undefined) : undefined,
+      referrer,
+    })
+
+    const destination = getDestination(urlObject)
     router.replace(
       destination,
       typeof destination === 'string' ? undefined : destination.pathname,
@@ -29,15 +34,19 @@ export const useRouterWithHistory = () => {
   }
 
   const push = (pathname: string, query?: Record<string, any>, shallow?: boolean) => {
-    const destination = getDestination({ pathname, query })
+    const urlObject = createUrlObject(pathname, { ...query, referrer })
+    const destination = getDestination(urlObject)
     router.push(destination, undefined, { shallow })
   }
 
   const pushWithHistory = (pathname: string, query?: Record<string, any>) => {
-    const initialQuery = query || {}
-    initialQuery.from = router.asPath
-    const destination = getDestination({ pathname, query: initialQuery })
-    router.push(destination, typeof destination === 'string' ? undefined : destination.pathname)
+    const urlObject = createUrlObject(pathname, {
+      ...query,
+      from: router.asPath,
+      referrer,
+    })
+    const destination = getDestination(urlObject)
+    router.push(destination)
   }
 
   return { ...router, push, pushWithHistory, replace, _replace }

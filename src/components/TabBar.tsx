@@ -12,6 +12,7 @@ import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTran
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
 import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
+import { createUrlObject } from '@app/utils/urlObject'
 
 import { DisconnectButton, RouteItem } from './@atoms/RouteItem/RouteItem'
 import { ConnectButton } from './@molecules/ConnectButton/ConnectButton'
@@ -203,7 +204,14 @@ const TabBarProfile = ({
       {name && (
         <RouteItem
           route={profileRoute}
-          active={router.asPath === getDestination(`/profile/${name}`)}
+          active={
+            router.asPath ===
+            getDestination(
+              createUrlObject(`/profile/${name}`, {
+                referrer: router.query.referrer as string | undefined,
+              }),
+            )
+          }
         />
       )}
       <RouteItem route={getRoute('settings')} hasNotification={hasPendingTransactions} />

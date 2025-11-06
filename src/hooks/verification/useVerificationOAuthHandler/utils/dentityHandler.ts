@@ -10,6 +10,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
 import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
+import { createUrlObject } from '../../../../utils/urlObject'
 import { shortenAddress } from '../../../../utils/utils'
 import { UseDentityProfileReturnType } from '../../useDentityProfile/useDentityProfile'
 import { createVerificationTransactionFlow } from './createVerificationTransactionFlow'
@@ -98,7 +99,11 @@ export const dentityVerificationHandler =
               trailing: {
                 children: t('action.goToProfile'),
                 as: 'a',
-                href: getDestination(`/${json.name}`),
+                href: getDestination(
+                  createUrlObject(`/${json.name}`, {
+                    referrer: router.query.referrer as string | undefined,
+                  }),
+                ),
               } as ButtonProps,
             },
           }) as VerificationErrorDialogProps,
