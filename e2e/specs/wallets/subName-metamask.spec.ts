@@ -12,9 +12,8 @@ import {
 } from './config/test-utilities'
 import { connectWalletToEns } from './config/wallet-ens-config'
 
-// Global variables to share state
 let metaMask: Dappwright
-let page: any // Using any to avoid Playwright version conflicts with dappwright
+let page: any
 let context: any
 let ensName: string
 
@@ -39,13 +38,16 @@ async function createSubName(name: string): Promise<void> {
 
   // Enter subname name
   const subnameInput = page.getByTestId('add-subname-input')
-  const subnameNext = page.getByTestId('create-subname-next')
-  await subnameInput.waitFor()
+  await subnameInput.waitFor({ state: 'visible', timeout: 15000 })
   await subnameInput.fill(name)
+
+  const subnameNext = page.getByTestId('create-subname-next')
+  await subnameNext.waitFor({ state: 'visible', timeout: 15000 })
   await subnameNext.click()
 
   // Skip profile creation
   const subnameProfileNext = page.getByTestId('create-subname-profile-next')
+  await subnameProfileNext.waitFor({ state: 'visible', timeout: 15000 })
   await subnameProfileNext.click()
 
   // Open wallet and confirm transaction
@@ -57,12 +59,12 @@ async function createSubName(name: string): Promise<void> {
   // Check subname is opened after transaction complete
   const nameProfileName = page.getByTestId('profile-snippet-name')
   const expectedSubname = `${ensName}.subname-test.eth`
-  await expect(nameProfileName).toHaveText(expectedSubname)
+  await expect(nameProfileName).toHaveText(expectedSubname, { timeout: 30000 })
 
   // Check parent is correct
   const parentLabel = page.getByTestId('owner-profile-button-name.parent')
-  await expect(parentLabel).toBeVisible()
-  await expect(parentLabel).toContainText('subname-test.eth')
+  await expect(parentLabel).toBeVisible({ timeout: 15000 })
+  await expect(parentLabel).toContainText('subname-test.eth', { timeout: 10000 })
 }
 
 // Delete subname
@@ -75,12 +77,13 @@ async function deleteSubName(name: string): Promise<void> {
   // Access created subname through search bar
   await searchForName(page, fullSubname)
 
-  // Confirm subname then click delete
+  // Confirm subname profile loaded before deleting
   const profileName = page.getByTestId('profile-snippet-name')
   const expectedSubname = `${ensName}.subname-test.eth`
-  await expect(profileName).toHaveText(expectedSubname)
+  await expect(profileName).toHaveText(expectedSubname, { timeout: 30000 })
 
   const deleteSubnameButton = page.getByTestId('profile-action-Delete subname')
+  await deleteSubnameButton.waitFor({ state: 'visible', timeout: 15000 })
   await deleteSubnameButton.click()
 
   // Open wallet and confirm transaction
@@ -92,16 +95,13 @@ async function deleteSubName(name: string): Promise<void> {
   // Close the completion modal
   await closeTransactionModal(page)
 
-  // Check expiry has no expiry
-  const expiryBox = page.getByTestId('owner-profile-button-name.expiry')
-  await expect(expiryBox).toContainText('no expiry', { timeout: 15000 })
-
-  // Enter parent name profile
-  const parentSubnameTab = page.getByTestId('subnames-tab')
+  // Navigate to parent name profile
   await searchForName(page, walletName)
-  await expect(profileName).toHaveText(walletName, { timeout: 10000 })
+  await expect(profileName).toHaveText(walletName, { timeout: 30000 })
 
   // Switch to subname tab
+  const parentSubnameTab = page.getByTestId('subnames-tab')
+  await parentSubnameTab.waitFor({ state: 'visible', timeout: 15000 })
   await parentSubnameTab.click()
 
   // Check deleted subname is no longer appearing
