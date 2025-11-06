@@ -1,6 +1,5 @@
 import posthog from 'posthog-js'
 import { match, P } from 'ts-pattern'
-import { stringToHex } from 'viem'
 import { useChainId } from 'wagmi'
 
 import { EMPTY_ADDRESS, EMPTY_BYTES32, randomSecret } from '@ensdomains/ensjs/utils'
@@ -53,18 +52,28 @@ const getDefaultRegistrationDuration = () => {
 }
 
 /**
- * Converts a referrer string to a valid 32-byte hex value.
+ * Validates and pads a referrer hex string to 32 bytes.
+ * The referrer should already be a hex string from the query parameter.
  * Returns EMPTY_BYTES32 if the referrer is undefined or invalid.
  */
 const getReferrerHex = (referrer: string | undefined): `0x${string}` => {
   if (!referrer) return EMPTY_BYTES32
 
-  try {
-    return stringToHex(referrer, { size: 32 })
-  } catch {
-    // If conversion fails, return empty bytes
+  // Check if it's a valid hex string (starts with 0x and contains only hex chars)
+  if (!/^0x[0-9a-fA-F]*$/.test(referrer)) {
     return EMPTY_BYTES32
   }
+
+  // Remove '0x' prefix, pad to 64 hex chars (32 bytes), and add '0x' back
+  const hexWithoutPrefix = referrer.slice(2)
+  const paddedHex = hexWithoutPrefix.padEnd(64, '0')
+
+  // Ensure it's exactly 64 chars (32 bytes)
+  if (paddedHex.length > 64) {
+    return EMPTY_BYTES32
+  }
+
+  return `0x${paddedHex}` as `0x${string}`
 }
 
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
