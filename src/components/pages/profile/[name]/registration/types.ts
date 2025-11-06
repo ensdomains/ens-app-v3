@@ -47,6 +47,7 @@ export type SelectedItemProperties = {
   address: string
   name: string
   chainId: number
+  referrer?: Hex
 }
 
 export type RegistrationReducerDataItem = Prettify<

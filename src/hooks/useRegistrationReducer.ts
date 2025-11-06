@@ -52,6 +52,21 @@ const getDefaultRegistrationDuration = () => {
     .otherwise(() => ONE_YEAR)
 }
 
+/**
+ * Converts a referrer string to a valid 32-byte hex value.
+ * Returns EMPTY_BYTES32 if the referrer is undefined or invalid.
+ */
+const getReferrerHex = (referrer: string | undefined): `0x${string}` => {
+  if (!referrer) return EMPTY_BYTES32
+
+  try {
+    return stringToHex(referrer, { size: 32 })
+  } catch {
+    // If conversion fails, return empty bytes
+    return EMPTY_BYTES32
+  }
+}
+
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
@@ -65,7 +80,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   durationType: 'years',
-  referrer: EMPTY_BYTES32,
+  referrer: selected.referrer || EMPTY_BYTES32,
   ...selected,
 })
 
@@ -78,7 +93,8 @@ export const getSelectedIndex = (
       x.address === selected.address &&
       x.name === selected.name &&
       x.chainId === selected.chainId &&
-      x.version === REGISTRATION_REDUCER_DATA_ITEM_VERSION,
+      x.version === REGISTRATION_REDUCER_DATA_ITEM_VERSION &&
+      x.referrer === (selected.referrer || EMPTY_BYTES32),
   )
 
 /* eslint-disable no-param-reassign */
@@ -189,7 +205,8 @@ const useRegistrationReducer = ({
 }) => {
   const chainId = useChainId()
   const referrer = useReferrer()
-  const selected = { address: address!, name, chainId } as const
+  const referrerHex = getReferrerHex(referrer)
+  const selected = { address: address!, name, chainId, referrer: referrerHex } as const
   const [state, dispatch] = useLocalStorageReducer<
     RegistrationReducerData,
     RegistrationReducerAction
@@ -199,13 +216,6 @@ const useRegistrationReducer = ({
   if (isBrowser) {
     const itemIndex = getSelectedIndex(state, selected)
     item = itemIndex === -1 ? makeDefaultData(selected) : state.items[itemIndex]
-
-    // Set referrer if it exists and hasn't been set yet
-    if (referrer && item.referrer === EMPTY_BYTES32) {
-      const referrerHex = stringToHex(referrer, { size: 32 })
-      dispatch({ name: 'setReferrer', payload: referrerHex, selected })
-      item = { ...item, referrer: referrerHex }
-    }
   }
 
   return { state, dispatch, item, selected }
