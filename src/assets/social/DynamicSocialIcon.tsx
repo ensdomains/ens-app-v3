@@ -13,8 +13,11 @@ export const socialIconTypes = {
   'com.youtube': dynamic(() => import('./SocialYoutube.svg')),
   'org.telegram': dynamic(() => import('./SocialTelegram.svg')),
   'xyz.mirror': dynamic(() => import('./SocialMirrorColour.svg')),
+  'xyz.poap': dynamic(() => import('./SocialPoap.svg')),
   email: dynamic(() => import('@ensdomains/thorin').then((m) => m.EnvelopeSVG)),
 }
+
+export type SocialIconType = keyof typeof socialIconTypes
 
 export const socialIconColors = {
   'com.discord': '#5A57DD',
@@ -25,6 +28,7 @@ export const socialIconColors = {
   'com.youtube': '#FF0000',
   'org.telegram': '#2BABEE',
   'xyz.mirror': undefined,
+  'xyz.poap': '#6534FF',
   email: '#000000',
 }
 
