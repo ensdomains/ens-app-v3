@@ -1,5 +1,6 @@
 import posthog from 'posthog-js'
 import { match, P } from 'ts-pattern'
+import { stringToHex } from 'viem'
 import { useChainId } from 'wagmi'
 
 import { EMPTY_ADDRESS, EMPTY_BYTES32, randomSecret } from '@ensdomains/ensjs/utils'
@@ -11,6 +12,7 @@ import {
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+import { useReferrer } from '@app/hooks/useReferrer'
 import { sendEvent } from '@app/utils/analytics/events'
 import { ONE_YEAR, yearsToSeconds } from '@app/utils/utils'
 
@@ -50,7 +52,10 @@ const getDefaultRegistrationDuration = () => {
     .otherwise(() => ONE_YEAR)
 }
 
-const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
+const makeDefaultData = (
+  selected: SelectedItemProperties,
+  referrer?: string,
+): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
   seconds: getDefaultRegistrationDuration(),
@@ -63,7 +68,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   durationType: 'years',
-  referrer: EMPTY_BYTES32,
+  referrer: referrer ? stringToHex(referrer, { size: 32 }) : EMPTY_BYTES32,
   ...selected,
 })
 
@@ -80,13 +85,17 @@ export const getSelectedIndex = (
   )
 
 /* eslint-disable no-param-reassign */
-const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
+const reducer = (
+  state: RegistrationReducerData,
+  action: RegistrationReducerAction,
+  referrer?: string,
+) => {
   let selectedItemInx = getSelectedIndex(state, action.selected)
 
   if (!isBrowser) return state
 
   if (selectedItemInx === -1) {
-    selectedItemInx = state.items.push(makeDefaultData(action.selected)) - 1
+    selectedItemInx = state.items.push(makeDefaultData(action.selected, referrer)) - 1
   }
 
   const item = state.items[selectedItemInx]
@@ -186,16 +195,17 @@ const useRegistrationReducer = ({
   name: string
 }) => {
   const chainId = useChainId()
+  const referrer = useReferrer()
   const selected = { address: address!, name, chainId } as const
   const [state, dispatch] = useLocalStorageReducer<
     RegistrationReducerData,
     RegistrationReducerAction
-  >('registration-status', reducer, { items: [] })
+  >('registration-status', (state, action) => reducer(state, action, referrer), { items: [] })
 
   let item = defaultData
   if (isBrowser) {
     const itemIndex = getSelectedIndex(state, selected)
-    item = itemIndex === -1 ? makeDefaultData(selected) : state.items[itemIndex]
+    item = itemIndex === -1 ? makeDefaultData(selected, referrer) : state.items[itemIndex]
   }
 
   return { state, dispatch, item, selected }
