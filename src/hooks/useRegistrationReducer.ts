@@ -52,10 +52,7 @@ const getDefaultRegistrationDuration = () => {
     .otherwise(() => ONE_YEAR)
 }
 
-const makeDefaultData = (
-  selected: SelectedItemProperties,
-  referrer?: string,
-): RegistrationReducerDataItem => ({
+const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
   queue: ['pricing', 'info', 'transactions', 'complete'],
   seconds: getDefaultRegistrationDuration(),
@@ -68,7 +65,7 @@ const makeDefaultData = (
   externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   durationType: 'years',
-  referrer: referrer ? stringToHex(referrer, { size: 32 }) : EMPTY_BYTES32,
+  referrer: EMPTY_BYTES32,
   ...selected,
 })
 
@@ -85,17 +82,13 @@ export const getSelectedIndex = (
   )
 
 /* eslint-disable no-param-reassign */
-const reducer = (
-  state: RegistrationReducerData,
-  action: RegistrationReducerAction,
-  referrer?: string,
-) => {
+const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
   let selectedItemInx = getSelectedIndex(state, action.selected)
 
   if (!isBrowser) return state
 
   if (selectedItemInx === -1) {
-    selectedItemInx = state.items.push(makeDefaultData(action.selected, referrer)) - 1
+    selectedItemInx = state.items.push(makeDefaultData(action.selected)) - 1
   }
 
   const item = state.items[selectedItemInx]
@@ -200,12 +193,19 @@ const useRegistrationReducer = ({
   const [state, dispatch] = useLocalStorageReducer<
     RegistrationReducerData,
     RegistrationReducerAction
-  >('registration-status', (state, action) => reducer(state, action, referrer), { items: [] })
+  >('registration-status', reducer, { items: [] })
 
   let item = defaultData
   if (isBrowser) {
     const itemIndex = getSelectedIndex(state, selected)
-    item = itemIndex === -1 ? makeDefaultData(selected, referrer) : state.items[itemIndex]
+    item = itemIndex === -1 ? makeDefaultData(selected) : state.items[itemIndex]
+
+    // Set referrer if it exists and hasn't been set yet
+    if (referrer && item.referrer === EMPTY_BYTES32) {
+      const referrerHex = stringToHex(referrer, { size: 32 })
+      dispatch({ name: 'setReferrer', payload: referrerHex, selected })
+      item = { ...item, referrer: referrerHex }
+    }
   }
 
   return { state, dispatch, item, selected }
