@@ -1,14 +1,21 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import dappwright from '@tenkeylabs/dappwright'
 import type { Dappwright } from '@tenkeylabs/dappwright'
 
 import { SafeEnsConfig } from './config/safe-ens-config'
-import { confirmTransactionWithMetaMask, connectWalletToEns } from './config/wallet-ens-config'
+import {
+  closeTransactionModal,
+  navigateToHome,
+  openWalletAndConfirm,
+  searchForName,
+  waitForTransactionComplete,
+} from './config/test-utilities'
+import { connectWalletToEns } from './config/wallet-ens-config'
 
 // Global variables to share state
 let metaMask: Dappwright
-let page: Page
-let context: BrowserContext
+let page: any // Using any to avoid Playwright version conflicts with dappwright
+let context: any
 let ensName: string
 
 // Create subname
@@ -18,10 +25,7 @@ async function createSubName(name: string): Promise<void> {
   console.log(`🎯 Creating a new subname for ${walletName}`)
 
   // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(walletName)
-  await searchInput.press('Enter')
+  await searchForName(page, walletName)
 
   // Navigate to subname tab
   const subnameTab = page.getByTestId('subnames-tab')
@@ -44,13 +48,11 @@ async function createSubName(name: string): Promise<void> {
   const subnameProfileNext = page.getByTestId('create-subname-profile-next')
   await subnameProfileNext.click()
 
-  // Start and confirm transaction
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
-  await confirmTransactionWithMetaMask(page)
+  // Open wallet and confirm transaction
+  await openWalletAndConfirm(page, { type: 'subname creation' })
 
-  // Wait for transaction to complete
-  await page.waitForTimeout(25000)
+  // Wait for transaction to complete using event-driven approach
+  await waitForTransactionComplete(page, { action: 'subname creation' })
 
   // Check subname is opened after transaction complete
   const nameProfileName = page.getByTestId('profile-snippet-name')
@@ -66,14 +68,12 @@ async function createSubName(name: string): Promise<void> {
 // Delete subname
 async function deleteSubName(name: string): Promise<void> {
   const walletName = 'subname-test.eth'
+  const fullSubname = `${name}.subname-test.eth`
 
-  console.log(`🎯 Deleting ${name}.subname-test.eth`)
+  console.log(`🎯 Deleting ${fullSubname}`)
 
   // Access created subname through search bar
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(`${name}.subname-test.eth`)
-  await searchInput.press('Enter')
+  await searchForName(page, fullSubname)
 
   // Confirm subname then click delete
   const profileName = page.getByTestId('profile-snippet-name')
@@ -83,17 +83,14 @@ async function deleteSubName(name: string): Promise<void> {
   const deleteSubnameButton = page.getByTestId('profile-action-Delete subname')
   await deleteSubnameButton.click()
 
-  // Start and confirm transaction
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
-  await confirmTransactionWithMetaMask(page)
+  // Open wallet and confirm transaction
+  await openWalletAndConfirm(page, { type: 'subname deletion' })
 
-  // Wait for transaction to complete
-  await page.waitForTimeout(25000)
+  // Wait for transaction to complete using event-driven approach
+  await waitForTransactionComplete(page, { action: 'subname deletion' })
 
-  // Click done to return to subname profile
-  const transactionCompleteButton = page.getByTestId('transaction-modal-complete-button')
-  await transactionCompleteButton.click()
+  // Close the completion modal
+  await closeTransactionModal(page)
 
   // Check expiry has no expiry
   const expiryBox = page.getByTestId('owner-profile-button-name.expiry')
@@ -101,9 +98,7 @@ async function deleteSubName(name: string): Promise<void> {
 
   // Enter parent name profile
   const parentSubnameTab = page.getByTestId('subnames-tab')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(walletName)
-  await searchInput.press('Enter')
+  await searchForName(page, walletName)
   await expect(profileName).toHaveText(walletName, { timeout: 10000 })
 
   // Switch to subname tab
@@ -113,7 +108,7 @@ async function deleteSubName(name: string): Promise<void> {
   const subnameItem = page.getByTestId(`name-item-${ensName}.subname-test.eth`)
   await expect(subnameItem).not.toBeVisible({ timeout: 15000 })
 
-  console.log(`⚔️ {name} has been deleted`)
+  console.log(`⚔️ ${name} has been deleted`)
 }
 
 test.describe('ENS Subname Checks', () => {
@@ -157,9 +152,8 @@ test.describe('ENS Subname Checks', () => {
   })
 
   test.beforeEach('Navigate to home page', async () => {
-    // Navigate back to home page before each test to ensure clean state
-    await page.goto('http://localhost:3000/')
-    await page.waitForTimeout(2000)
+    // Use utility function instead of manual navigation + timeout
+    await navigateToHome(page)
   })
 
   test('Connect MetaMask to ENS localhost', async () => {
