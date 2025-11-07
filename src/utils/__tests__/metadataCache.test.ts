@@ -263,8 +263,7 @@ describe('metadataCache', () => {
 
       bustMediaCache('test.eth', mockClient, 'avatar')
 
-      const avatarUrl =
-        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/avatar/test.eth'
+      const avatarUrl = 'https://metadata.ens.domains/mainnet/avatar/test.eth'
       expect(getCacheBustExpiry(avatarUrl)).toBeDefined()
     })
 
@@ -275,8 +274,7 @@ describe('metadataCache', () => {
 
       bustMediaCache('test.eth', mockClient, 'header')
 
-      const headerUrl =
-        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/header/test.eth'
+      const headerUrl = 'https://metadata.ens.domains/mainnet/header/test.eth'
       expect(getCacheBustExpiry(headerUrl)).toBeDefined()
     })
 
@@ -287,10 +285,8 @@ describe('metadataCache', () => {
 
       bustMediaCache('test.eth', mockClient)
 
-      const avatarUrl =
-        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/avatar/test.eth'
-      const headerUrl =
-        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/header/test.eth'
+      const avatarUrl = 'https://metadata.ens.domains/mainnet/avatar/test.eth'
+      const headerUrl = 'https://metadata.ens.domains/mainnet/header/test.eth'
 
       expect(getCacheBustExpiry(avatarUrl)).toBeDefined()
       expect(getCacheBustExpiry(headerUrl)).toBeDefined()
