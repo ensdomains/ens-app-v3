@@ -1,6 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { clearCacheBustExpiries, getCacheBustExpiry, setCacheBustExpiry } from '../metadataCache'
+import type { ClientWithEns } from '@app/types'
+
+import {
+  bustMediaCache,
+  clearCacheBustExpiries,
+  getCacheBustExpiry,
+  setCacheBustExpiry,
+} from '../metadataCache'
 
 describe('metadataCache', () => {
   beforeEach(() => {
@@ -245,6 +252,48 @@ describe('metadataCache', () => {
       const result = getCacheBustExpiry(url)
       expect(result).toBeDefined()
       expect(result).toBeGreaterThanOrEqual(timestamp)
+    })
+  })
+
+  describe('bustMediaCache', () => {
+    it('should bust avatar cache when mediaKey is avatar', () => {
+      const mockClient = {
+        chain: { id: 1, name: 'Mainnet' },
+      } as ClientWithEns
+
+      bustMediaCache('test.eth', mockClient, 'avatar')
+
+      const avatarUrl =
+        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/avatar/test.eth'
+      expect(getCacheBustExpiry(avatarUrl)).toBeDefined()
+    })
+
+    it('should bust header cache when mediaKey is header', () => {
+      const mockClient = {
+        chain: { id: 1, name: 'Mainnet' },
+      } as ClientWithEns
+
+      bustMediaCache('test.eth', mockClient, 'header')
+
+      const headerUrl =
+        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/header/test.eth'
+      expect(getCacheBustExpiry(headerUrl)).toBeDefined()
+    })
+
+    it('should bust both avatar and header when mediaKey is omitted', () => {
+      const mockClient = {
+        chain: { id: 1, name: 'Mainnet' },
+      } as ClientWithEns
+
+      bustMediaCache('test.eth', mockClient)
+
+      const avatarUrl =
+        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/avatar/test.eth'
+      const headerUrl =
+        'https://20251105t165549-dot-ens-metadata-service.appspot.com/mainnet/header/test.eth'
+
+      expect(getCacheBustExpiry(avatarUrl)).toBeDefined()
+      expect(getCacheBustExpiry(headerUrl)).toBeDefined()
     })
   })
 })
