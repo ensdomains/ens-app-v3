@@ -1,5 +1,6 @@
 import posthog from 'posthog-js'
 import { match, P } from 'ts-pattern'
+import { isHex, pad } from 'viem'
 import { useChainId } from 'wagmi'
 
 import { EMPTY_ADDRESS, EMPTY_BYTES32, randomSecret } from '@ensdomains/ensjs/utils'
@@ -59,21 +60,19 @@ const getDefaultRegistrationDuration = () => {
 const getReferrerHex = (referrer: string | undefined): `0x${string}` => {
   if (!referrer) return EMPTY_BYTES32
 
-  // Check if it's a valid hex string (starts with 0x and contains only hex chars)
-  if (!/^0x[0-9a-fA-F]*$/.test(referrer)) {
+  // Check if it's a valid hex string using viem's isHex
+  if (!isHex(referrer)) {
     return EMPTY_BYTES32
   }
 
-  // Remove '0x' prefix, pad to 64 hex chars (32 bytes), and add '0x' back
-  const hexWithoutPrefix = referrer.slice(2)
-  const paddedHex = hexWithoutPrefix.padEnd(64, '0')
-
-  // Ensure it's exactly 64 chars (32 bytes)
-  if (paddedHex.length > 64) {
+  // Check if the hex string is too long (> 32 bytes)
+  const hexLength = (referrer.length - 2) / 2 // Remove '0x' and divide by 2 for byte length
+  if (hexLength > 32) {
     return EMPTY_BYTES32
   }
 
-  return `0x${paddedHex}` as `0x${string}`
+  // Use viem's pad utility to pad to 32 bytes
+  return pad(referrer, { size: 32 })
 }
 
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({

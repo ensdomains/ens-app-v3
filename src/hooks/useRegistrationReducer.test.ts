@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { isHex, pad } from 'viem'
 
 import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
 
@@ -10,18 +11,16 @@ describe('useRegistrationReducer - referrer storage', () => {
   const getReferrerHex = (referrer: string | undefined): `0x${string}` => {
     if (!referrer) return EMPTY_BYTES32
 
-    if (!/^0x[0-9a-fA-F]*$/.test(referrer)) {
+    if (!isHex(referrer)) {
       return EMPTY_BYTES32
     }
 
-    const hexWithoutPrefix = referrer.slice(2)
-    const paddedHex = hexWithoutPrefix.padEnd(64, '0')
-
-    if (paddedHex.length > 64) {
+    const hexLength = (referrer.length - 2) / 2
+    if (hexLength > 32) {
       return EMPTY_BYTES32
     }
 
-    return `0x${paddedHex}` as `0x${string}`
+    return pad(referrer, { size: 32 })
   }
 
   it('should validate and pad valid hex strings to 32 bytes', () => {
@@ -31,8 +30,9 @@ describe('useRegistrationReducer - referrer storage', () => {
     // Should be 32 bytes (66 chars including '0x')
     expect(result.length).toBe(66)
     expect(result).toMatch(/^0x[0-9a-f]{64}$/i)
-    expect(result.startsWith('0x1234abcd')).toBe(true)
-    expect(result.endsWith('0')).toBe(true) // padded with zeros
+    // Viem's pad pads on the left (prepends zeros)
+    expect(result.endsWith('1234abcd')).toBe(true)
+    expect(result.startsWith('0x00')).toBe(true) // padded with zeros on left
   })
 
   it('should handle empty referrer by returning EMPTY_BYTES32', () => {
@@ -61,8 +61,9 @@ describe('useRegistrationReducer - referrer storage', () => {
     const result = getReferrerHex(shortReferrer)
 
     expect(result.length).toBe(66)
-    expect(result).toBe('0xabc' + '0'.repeat(61))
-    expect(result.startsWith('0xabc')).toBe(true)
+    // Viem pads on the left, so 0xabc becomes 0x0000...0abc
+    expect(result.endsWith('abc')).toBe(true)
+    expect(result.startsWith('0x00')).toBe(true)
   })
 
   it('should reject hex strings longer than 32 bytes', () => {
@@ -112,6 +113,7 @@ describe('useRegistrationReducer - referrer storage', () => {
     expect(registrationDataItem.referrer).toBe(paddedReferrer)
     expect(registrationDataItem.referrer).not.toBe(EMPTY_BYTES32)
     expect(registrationDataItem.referrer.length).toBe(66)
-    expect(registrationDataItem.referrer.startsWith('0x1234abcd')).toBe(true)
+    // Viem pads on the left, so value ends with original hex
+    expect(registrationDataItem.referrer.endsWith('1234abcd')).toBe(true)
   })
 })
