@@ -5,7 +5,7 @@ import type { RecordOptions } from '@ensdomains/ensjs/utils'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { bustAvatarCache, bustHeaderCache } from '@app/utils/bustMetadataCache'
+import { bustMediaCache } from '@app/utils/metadataCache'
 
 import { recordOptionsToToupleList, recordsWithCointypeCoins } from '../../utils/records'
 
@@ -67,8 +67,8 @@ const transaction = ({ client, connectorClient, data }: TransactionFunctionParam
   const hasHeaderChange = records.texts?.some((t) => t.key === 'header')
 
   // Bust cache for modified media records
-  if (hasAvatarChange) bustAvatarCache(name, client)
-  if (hasHeaderChange) bustHeaderCache(name, client)
+  if (hasAvatarChange) bustMediaCache(name, client, 'avatar')
+  if (hasHeaderChange) bustMediaCache(name, client, 'header')
 
   return setRecords.makeFunctionData(connectorClient, {
     name: data.name,

@@ -7,7 +7,7 @@ import { getSubgraphRecords } from '@ensdomains/ensjs/subgraph'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { bustAvatarCache, bustHeaderCache } from '@app/utils/bustMetadataCache'
+import { bustMediaCache } from '@app/utils/metadataCache'
 import { profileRecordsToKeyValue, recordsWithCointypeCoins } from '@app/utils/records'
 
 type Data = {
@@ -66,8 +66,8 @@ const transaction = async ({
   const hasHeaderChange = profile.texts?.some((t) => t.key === 'header')
 
   // Bust cache for migrated media records
-  if (hasAvatarChange) bustAvatarCache(data.name, client)
-  if (hasHeaderChange) bustHeaderCache(data.name, client)
+  if (hasAvatarChange) bustMediaCache(data.name, client, 'avatar')
+  if (hasHeaderChange) bustMediaCache(data.name, client, 'header')
 
   return setRecords.makeFunctionData(connectorClient, {
     name: data.name,

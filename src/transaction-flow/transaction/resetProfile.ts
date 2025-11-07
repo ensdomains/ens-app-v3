@@ -4,7 +4,7 @@ import type { Address } from 'viem'
 import { clearRecords } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { bustMediaCache } from '@app/utils/bustMetadataCache'
+import { bustMediaCache } from '@app/utils/metadataCache'
 
 type Data = {
   name: string
