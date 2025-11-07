@@ -5,7 +5,7 @@
  * Extracted to break dependency cycle between useEnsAvatar and metadataCache.
  */
 
-export const META_DATA_BASE_URL = 'https://20251105t165549-dot-ens-metadata-service.appspot.com'
+export const META_DATA_BASE_URL = 'https://metadata.ens.domains'
 
 /**
  * Creates a metadata service URL for ENS names
