@@ -9,9 +9,25 @@
  * This simplifies expiry checks and automatically handles expired entries at runtime.
  */
 
+import { createMetaDataUrl } from '@app/hooks/useEnsAvatar'
+import type { ClientWithEns } from '@app/types'
+
 const MAX_CACHE_SIZE = 100 // Maximum number of URLs to track
 const STORAGE_KEY = 'ens-metadata-cache-expiries'
 export const TTL_MS = 60 * 60 * 1000 // 1 hour
+
+/**
+ * Extracts and normalizes chain name from a Viem client
+ * Uses the same pattern as getChainName.ts for consistency
+ * @param client - Viem client with chain information
+ * @returns Normalized chain name (e.g., 'mainnet', 'sepolia')
+ */
+const getChainName = (client: ClientWithEns): string => {
+  const chainId = client.chain.id
+  if (chainId === 1 || !chainId) return 'mainnet'
+  // Client is already from config.getClient(), so this is consistent
+  return client.chain.name.toLowerCase()
+}
 
 /**
  * Loads cache-bust expiry timestamps from localStorage
@@ -109,4 +125,31 @@ export const setCacheBustExpiry = (url: string, timestamp: number): void => {
  */
 export const clearCacheBustExpiries = (): void => {
   cacheBustExpiries.clear()
+}
+
+/**
+ * Busts the cache for ENS metadata images
+ * Sets cache-bust expiry for avatar and/or header images
+ *
+ * @param name - ENS name (e.g., 'vitalik.eth')
+ * @param client - Viem client with chain information
+ * @param mediaKey - Optional specific media to bust ('avatar' or 'header')
+ *                   If omitted, busts both avatar and header
+ */
+export const bustMediaCache = (
+  name: string,
+  client: ClientWithEns,
+  mediaKey?: 'avatar' | 'header',
+): void => {
+  const timestamp = Date.now()
+  const chainName = getChainName(client)
+
+  const mediaKeys = mediaKey ? [mediaKey] : (['avatar', 'header'] as const)
+
+  for (const key of mediaKeys) {
+    const url = createMetaDataUrl({ name, chainName, mediaKey: key })
+    if (url) {
+      setCacheBustExpiry(url, timestamp)
+    }
+  }
 }
