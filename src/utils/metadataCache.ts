@@ -9,8 +9,9 @@
  * This simplifies expiry checks and automatically handles expired entries at runtime.
  */
 
-import { createMetaDataUrl } from '@app/hooks/useEnsAvatar'
 import type { ClientWithEns } from '@app/types'
+
+import { createMetaDataUrl } from './metadataUrl'
 
 const MAX_CACHE_SIZE = 100 // Maximum number of URLs to track
 const STORAGE_KEY = 'ens-metadata-cache-expiries'

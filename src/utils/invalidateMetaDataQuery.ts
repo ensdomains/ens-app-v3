@@ -1,7 +1,8 @@
 import { QueryClient } from '@tanstack/react-query'
 
-import { createMetaDataUrl, META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
+import { META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 import { setCacheBustExpiry } from '@app/utils/metadataCache'
+import { createMetaDataUrl } from '@app/utils/metadataUrl'
 
 /**
  * Invalidates ENS metadata queries and injects cache-busting timestamps

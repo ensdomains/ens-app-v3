@@ -1,27 +1,13 @@
 import { QueryFunctionContext, useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 import { getCacheBustExpiry, TTL_MS } from '@app/utils/metadataCache'
+import { createMetaDataUrl } from '@app/utils/metadataUrl'
 
 import { useChainName } from './chain/useChainName'
 
 export const META_DATA_QUERY_KEY = 'ensMetaData'
 
-const META_DATA_BASE_URL = 'https://20251105t165549-dot-ens-metadata-service.appspot.com'
-
 const STALE_TIME = TTL_MS + 10 * 60 * 1000 // Metadata cache expirty time plus 10 minutes for transaction time
-
-export const createMetaDataUrl = ({
-  name,
-  chainName,
-  mediaKey = 'avatar',
-}: {
-  name?: string
-  chainName: string
-  mediaKey?: 'avatar' | 'header'
-}): string | null => {
-  if (!name || !chainName || !mediaKey) return null
-  return `${META_DATA_BASE_URL}/${chainName}/${mediaKey}/${name}`
-}
 
 const checkImageExists = async (
   context: QueryFunctionContext<[string, string | null]>,
