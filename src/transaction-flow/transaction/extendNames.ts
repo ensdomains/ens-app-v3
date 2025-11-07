@@ -1,4 +1,5 @@
 import type { TFunction } from 'react-i18next'
+import type { Hex } from 'viem'
 
 import { getPrice } from '@ensdomains/ensjs/public'
 import { renewNames } from '@ensdomains/ensjs/wallet'
@@ -12,6 +13,7 @@ type Data = {
   duration: number
   startDateTimestamp?: number
   displayPrice?: string
+  referrer?: Hex
 }
 
 const displayItems = (
@@ -57,7 +59,7 @@ const transaction = async ({
   connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const { names, duration } = data
+  const { names, duration, referrer } = data
   const price = await getPrice(client, {
     nameOrNames: names,
     duration,
@@ -69,6 +71,7 @@ const transaction = async ({
     nameOrNames: names,
     duration,
     value: priceWithBuffer,
+    referrer,
   })
 }
 export default { transaction, displayItems } satisfies Transaction<Data>
