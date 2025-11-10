@@ -7,7 +7,7 @@ import {
   clearCacheBustExpiries,
   getCacheBustExpiry,
   setCacheBustExpiry,
-} from '../metadataCache'
+} from './metadataCache'
 
 describe('metadataCache', () => {
   beforeEach(() => {
