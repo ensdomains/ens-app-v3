@@ -3,11 +3,6 @@ import { useRouter } from 'next/router'
 import { getDestination } from '@app/routes'
 import { createUrlObject } from '@app/utils/urlObject'
 
-const urlObjectToDecorativeUrl = (urlObject: Exclude<ReturnType<typeof getDestination>, string>) =>
-  urlObject.query?.referrer
-    ? `${urlObject.pathname}?referrer=${urlObject.query.referrer}`
-    : urlObject.pathname
-
 export const useRouterWithHistory = () => {
   const router = useRouter()
   const referrer = router.query.referrer as string | undefined
@@ -30,7 +25,6 @@ export const useRouterWithHistory = () => {
       referrer,
     })
 
-    alert('replace')
     const destination = getDestination(urlObject)
     router.replace(
       destination,
@@ -42,7 +36,6 @@ export const useRouterWithHistory = () => {
   const push = (pathname: string, query?: Record<string, any>, shallow?: boolean) => {
     const urlObject = createUrlObject(pathname, { ...query, referrer })
     const destination = getDestination(urlObject)
-    alert('push')
     router.push(destination, undefined, { shallow })
   }
 
@@ -52,14 +45,8 @@ export const useRouterWithHistory = () => {
       from: router.asPath,
       referrer,
     })
-    alert('pushwithhistory')
     const destination = getDestination(urlObject)
-    router.push(
-      destination,
-      typeof destination === 'string'
-        ? undefined
-        : { ...destination, query: { ...query, referrer } },
-    )
+    router.push(destination, typeof destination === 'string' ? undefined : destination.pathname)
   }
 
   return { ...router, push, pushWithHistory, replace, _replace }

@@ -3,7 +3,6 @@ import { UrlObject } from 'url'
 const stringToUrlObject = (url: string): UrlObject => {
   const _url = new URL(url, 'https://app.ens.domains')
   const query = _url.searchParams ? Object.fromEntries(_url.searchParams.entries()) : undefined
-
   return {
     pathname: _url.pathname,
     query,
