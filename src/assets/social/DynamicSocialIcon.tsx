@@ -14,6 +14,8 @@ export const socialIconTypes = {
   'org.telegram': dynamic(() => import('./SocialTelegram.svg')),
   'xyz.mirror': dynamic(() => import('./SocialMirrorColour.svg')),
   'xyz.poap': dynamic(() => import('./SocialPoap.svg')),
+  'xyz.farcaster': dynamic(() => import('./SocialFarcaster.svg')),
+  'co.zora': dynamic(() => import('./SocialZora.svg')),
   email: dynamic(() => import('@ensdomains/thorin').then((m) => m.EnvelopeSVG)),
 }
 
@@ -29,6 +31,8 @@ export const socialIconColors = {
   'org.telegram': '#2BABEE',
   'xyz.mirror': undefined,
   'xyz.poap': '#6534FF',
+  'xyz.farcaster': '##6A3CFF',
+  'co.zora': undefined,
   email: '#000000',
 }
 

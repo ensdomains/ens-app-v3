@@ -7,6 +7,7 @@
  */
 
 import { type SocialIconType } from '@app/assets/social/DynamicSocialIcon'
+import { normaliseTwitterRecordValue } from '@app/utils/records/normaliseTwitterRecordValue'
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
@@ -16,10 +17,11 @@ import { type SocialIconType } from '@app/assets/social/DynamicSocialIcon'
 export type CustomAccountConfig<K extends string = string> = {
   key: K
   icon: SocialIconType
-  color: string
+  color?: string
   label: string
   type: 'link' | 'copy'
   getUrl?: (value: string) => string
+  getValue?: (value: string) => string
 }
 
 /**
@@ -39,6 +41,22 @@ const customAccountRegistry = {
     label: 'POAP',
     type: 'link',
     getUrl: (value) => `https://collectors.poap.xyz/scan/${value}`,
+  },
+  'xyz.farcaster': {
+    key: 'xyz.farcaster',
+    icon: 'xyz.farcaster',
+    color: '#6A3CFF',
+    label: 'Farcaster',
+    type: 'link',
+    getUrl: (value) => `https://farcaster.xyz/${value}`,
+  },
+  'co.zora': {
+    key: 'co.zora',
+    icon: 'co.zora',
+    label: 'Zora',
+    type: 'link',
+    getValue: normaliseTwitterRecordValue,
+    getUrl: (value) => `https://zora.co/@${value}`,
   },
 } as const satisfies Record<string, CustomAccountConfig>
 
@@ -86,7 +104,7 @@ export function getCustomAccountData(key: string, value: string) {
     icon: config.icon,
     color: config.color,
     label: config.label,
-    value,
+    value: config.getValue ? config.getValue(value) : value,
     type: config.type,
     urlFormatter: config.getUrl?.(value),
   }
