@@ -2,7 +2,7 @@ import { useConnectModal } from '@getpara/rainbowkit'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import type { Address } from 'viem'
-import { useConnections, useDisconnect, useEnsAvatar } from 'wagmi'
+import { useConnections, useDisconnect } from 'wagmi'
 
 import { Button, PersonSVG, Profile } from '@ensdomains/thorin'
 
@@ -10,10 +10,10 @@ import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useCopied } from '@app/hooks/useCopied'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { hasParaConnection } from '@app/utils/utils'
 
 import { getDropdownItems } from './utils'
@@ -113,7 +113,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   const { t } = useTranslation('common')
 
   const { data: primary } = usePrimaryName({ address })
-  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name: primary?.name })
+  const { data: avatar } = useEnsAvatar({ name: primary?.name })
   const zorb = useZorb(address, 'address')
 
   const router = useRouterWithHistory()

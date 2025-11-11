@@ -55,6 +55,17 @@
               "description": "I'm a yield farmer from rural Tennessee."
             }
           },
+          "media": {
+            "label": "Media",
+            "items": {
+              "avatar": "Avatar",
+              "header": "Header"
+            },
+            "placeholder": {
+              "avatar": "https://example.com/avatar.png",
+              "banner": "https://example.com/banner.png"
+            }
+          },
           "social": {
             "label": "Social",
             "items": {
@@ -130,7 +141,8 @@
         "labelRequired": "A record key is required",
         "duplicateRecord": "Duplicate record key",
         "avatarReserved": "Key is being used by avatar manager",
-        "invalidValue": "Invalid value"
+        "invalidValue": "Invalid value",
+        "reservedKey": "This key is reserved"
       },
       "confirmations": {
         "publicNotice": {
@@ -187,8 +199,8 @@
         "default": "You will need to complete two transactions to secure your name. The second transaction must be completed within 24 hours of the first.",
         "commitSent": "<strong>Your first transaction is in progress.</strong><br> The second transaction must be completed within 24 hours of the first.",
         "commiting": "This wait prevents others from <tooltip>front running</tooltip> your transaction. You will be prompted to complete a second transaction when the timer is complete.",
-        "commitComplete": "<strong>Your name is not registered until you’ve completed the second transaction.</strong><br> You have {{duration}} remaining to complete it.",
-        "commitCompleteNoDuration": "<strong>Your name is not registered until you’ve completed the second transaction.</strong>",
+        "commitComplete": "<strong>Your name is not registered until you've completed the second transaction.</strong><br> You have {{duration}} remaining to complete it.",
+        "commitCompleteNoDuration": "<strong>Your name is not registered until you've completed the second transaction.</strong>",
         "commitExpired": "Your registration has expired. You will need to start the process again.",
         "frontRunning": "When someone sees your transaction and registers the name before your transaction can complete."
       },

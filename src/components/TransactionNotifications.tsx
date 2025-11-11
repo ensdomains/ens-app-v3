@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -5,6 +6,7 @@ import styled, { css } from 'styled-components'
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
+import { META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
@@ -33,6 +35,7 @@ export const TransactionNotifications = () => {
   const breakpoints = useBreakpoint()
 
   const chainName = useChainName()
+  const queryClient = useQueryClient()
 
   const [open, setOpen] = useState(false)
 
@@ -54,6 +57,10 @@ export const TransactionNotifications = () => {
             break
           case 'extendNames':
             trackEvent('renew', chainName)
+            break
+          case 'updateProfileRecords':
+          case 'updateProfile':
+            queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
           default:
             break
@@ -91,7 +98,7 @@ export const TransactionNotifications = () => {
 
       setNotificationQueue((queue) => [...queue, item])
     },
-    [chainName, getResumable, resumeTransactionFlow, t],
+    [chainName, getResumable, resumeTransactionFlow, t, queryClient],
   )
 
   useCallbackOnTransaction(updateCallback)
