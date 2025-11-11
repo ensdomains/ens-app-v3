@@ -3,6 +3,11 @@ import { useRouter } from 'next/router'
 import { getDestination } from '@app/routes'
 import { createUrlObject } from '@app/utils/urlObject'
 
+const urlObjectToDecorativeUrl = (urlObject: Exclude<ReturnType<typeof getDestination>, string>) =>
+  urlObject.query?.referrer
+    ? `${urlObject.pathname}?referrer=${urlObject.query.referrer}`
+    : urlObject.pathname
+
 export const useRouterWithHistory = () => {
   const router = useRouter()
   const referrer = router.query.referrer as string | undefined
@@ -46,7 +51,10 @@ export const useRouterWithHistory = () => {
       referrer,
     })
     const destination = getDestination(urlObject)
-    router.push(destination)
+    router.push(
+      destination,
+      typeof destination === 'string' ? undefined : urlObjectToDecorativeUrl(destination),
+    )
   }
 
   return { ...router, push, pushWithHistory, replace, _replace }
