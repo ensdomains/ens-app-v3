@@ -36,7 +36,6 @@ export const DesyncedMessage = ({
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const referrer = useReferrer()
   const referrerHex = getReferrerHex(referrer)
-  const { data: isWrapped } = useIsWrapped({ name })
 
   return (
     <BannerMessageWithAction
@@ -61,7 +60,7 @@ export const DesyncedMessage = ({
                     isSelf: true,
                     minSeconds,
                     seconds: minSeconds,
-                    hasWrapped: isWrapped ?? false,
+                    hasWrapped: true,
                   })
                 } else {
                   createTransactionFlow(createKey(name), {
@@ -69,7 +68,7 @@ export const DesyncedMessage = ({
                       createTransactionItem('repairDesyncedName', {
                         name,
                         referrer: referrerHex,
-                        hasWrapped: isWrapped ?? false,
+                        hasWrapped: true,
                       }),
                     ],
                   })

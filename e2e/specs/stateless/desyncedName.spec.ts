@@ -9,15 +9,9 @@ test.describe('Desynced Name Repair', () => {
     page,
     login,
     makePageObject,
-    makeName,
   }) => {
     // Create a wrapped name that will become desynced
-    const name = await makeName({
-      label: 'desynced-wrapped-referreral',
-      type: 'wrapped',
-      owner: 'user',
-      duration: -24 * 60 * 60, // Expired
-    })
+    const name = 'desynced-wrapped-referreral.eth'
 
     const transactionModal = makePageObject('TransactionModal')
 
