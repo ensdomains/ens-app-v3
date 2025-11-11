@@ -46,7 +46,12 @@ export const useRouterWithHistory = () => {
       referrer,
     })
     const destination = getDestination(urlObject)
-    router.push(destination, typeof destination === 'string' ? undefined : destination.pathname)
+    router.push(
+      destination,
+      typeof destination === 'string'
+        ? undefined
+        : { ...destination, query: { ...query, from: undefined } },
+    )
   }
 
   return { ...router, push, pushWithHistory, replace, _replace }
