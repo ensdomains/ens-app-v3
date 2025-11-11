@@ -31,7 +31,7 @@ test.describe('Desynced Name Repair', () => {
       await transactionModal.autoComplete()
 
       // Verify success
-      await expect(page.getByText('Your transaction was successful')).toBeVisible({
+      await expect(page.getByText('Your "Repair name" transaction was successful')).toBeVisible({
         timeout: 10000,
       })
     })
