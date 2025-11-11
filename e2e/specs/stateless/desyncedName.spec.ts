@@ -11,7 +11,7 @@ test.describe('Desynced Name Repair', () => {
     makePageObject,
   }) => {
     // Create a wrapped name that will become desynced
-    const name = 'desynced-wrapped-referreral.eth'
+    const name = 'desynced-wrapped-referral.eth'
 
     const transactionModal = makePageObject('TransactionModal')
 
