@@ -5,8 +5,11 @@ import { useAccount } from 'wagmi'
 import { ButtonProps } from '@ensdomains/thorin'
 
 import { BannerMessageWithAction } from '@app/components/@atoms/BannerMessageWithAction/BannerMessageWithAction'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
+import { useReferrer } from '@app/hooks/useReferrer'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_DAY } from '@app/utils/time'
 
 const createKey = (name: string) => `repair-desynced-name-${name}`
@@ -31,6 +34,9 @@ export const DesyncedMessage = ({
   const { isConnected } = useAccount()
   const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
+  const referrer = useReferrer()
+  const referrerHex = getReferrerHex(referrer)
+  const { data: isWrapped } = useIsWrapped({ name })
 
   return (
     <BannerMessageWithAction
@@ -55,10 +61,17 @@ export const DesyncedMessage = ({
                     isSelf: true,
                     minSeconds,
                     seconds: minSeconds,
+                    hasWrapped: isWrapped ?? false,
                   })
                 } else {
                   createTransactionFlow(createKey(name), {
-                    transactions: [createTransactionItem('repairDesyncedName', { name })],
+                    transactions: [
+                      createTransactionItem('repairDesyncedName', {
+                        name,
+                        referrer: referrerHex,
+                        hasWrapped: isWrapped ?? false,
+                      }),
+                    ],
                   })
                 }
               },

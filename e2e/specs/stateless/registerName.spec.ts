@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { Hash } from 'viem'
+import { Hash, pad } from 'viem'
 
 import { ethRegistrarControllerCommitSnippet } from '@ensdomains/ensjs/contracts'
 import { setPrimaryName } from '@ensdomains/ensjs/wallet'
@@ -10,10 +10,18 @@ import { dateToDateInput } from '@app/utils/date'
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import {
+  publicClient,
   testClient,
   waitForTransaction,
   walletClient,
 } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+
+// Helper function to convert address to bytes32 for referrer parameter
+const addressToBytes32 = (address: string): string => {
+  // Remove '0x' prefix if present, pad to 64 characters (32 bytes), and add '0x' back
+  const cleanAddress = address.toLowerCase().replace('0x', '')
+  return pad(`0x${cleanAddress}`, { size: 32 })
+}
 
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
@@ -1813,5 +1821,111 @@ test('should allow registering a premium name for two months, user should connec
 
   await test.step('confirm name is not wrapped', async () => {
     await expect(page.getByTestId('permissions-tab')).not.toBeVisible()
+  })
+})
+
+test.describe('Registration with Referrer', () => {
+  test('should register a name with referrer', async ({
+    page,
+    login,
+    time,
+    makePageObject,
+  }) => {
+    await time.sync(500)
+
+    const name = `registration-with-referrer-${Date.now()}.eth`
+    const referrerAddress = '0x1234567890123456789012345678901234567890'
+
+    const transactionModal = makePageObject('TransactionModal')
+
+    await test.step('should navigate to registration page with referrer parameter', async () => {
+      await page.goto(`/${name}/register?referrer=${referrerAddress}`)
+      await login.connect()
+
+      // Verify referrer is in URL
+      expect(page.url()).toContain(`referrer=${referrerAddress}`)
+    })
+
+    await test.step('should complete pricing step', async () => {
+      await page.getByTestId('payment-choice-ethereum').check()
+      await page.getByTestId('primary-name-toggle').uncheck()
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('should skip profile editor', async () => {
+      if (await page.getByTestId('profile-submit-button').isVisible()) {
+        await page.getByTestId('profile-submit-button').click()
+      }
+    })
+
+    await test.step('should complete commit transaction', async () => {
+      await page.getByTestId('next-button').click()
+      await transactionModal.confirm()
+      await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+      await testClient.increaseTime({ seconds: 60 })
+    })
+
+    await test.step('should complete register transaction', async () => {
+      await page.getByTestId('finish-button').click()
+      await transactionModal.confirm()
+
+      await expect(page.getByText('Your transaction was successful')).toBeVisible({
+        timeout: 10000,
+      })
+    })
+
+    await test.step('should verify referrer in transaction calldata', async () => {
+      const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+      const referrerHex = addressToBytes32(referrerAddress)
+      expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
+    })
+  })
+
+  test('should register a name without referrer', async ({
+    page,
+    login,
+    time,
+    makePageObject,
+  }) => {
+    await time.sync(500)
+
+    const name = `registration-no-referrer-${Date.now()}.eth`
+    const transactionModal = makePageObject('TransactionModal')
+
+    await test.step('should navigate to registration page without referrer', async () => {
+      await page.goto(`/${name}/register`)
+      await login.connect()
+
+      // Verify no referrer in URL
+      expect(page.url()).not.toContain('referrer=')
+    })
+
+    await test.step('should complete pricing step', async () => {
+      await page.getByTestId('payment-choice-ethereum').check()
+      await page.getByTestId('primary-name-toggle').uncheck()
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('should skip profile editor', async () => {
+      if (await page.getByTestId('profile-submit-button').isVisible()) {
+        await page.getByTestId('profile-submit-button').click()
+      }
+    })
+
+    await test.step('should complete commit transaction', async () => {
+      await page.getByTestId('next-button').click()
+      await transactionModal.confirm()
+      await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+      await testClient.increaseTime({ seconds: 60 })
+    })
+
+    await test.step('should complete register transaction', async () => {
+      await page.getByTestId('finish-button').click()
+      await transactionModal.confirm()
+
+      await expect(page.getByText('Your transaction was successful')).toBeVisible({
+        timeout: 10000,
+      })
+    })
   })
 })

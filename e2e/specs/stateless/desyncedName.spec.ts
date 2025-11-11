@@ -5,7 +5,54 @@ import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/
 import { test } from '../../../playwright'
 
 // NOTE: DO NOT MERGE UNTIL THIS IS FIXED!
-test.describe.skip('Desynced Name Repair', () => {
+test.describe('Desynced Name Repair', () => {
+  test('should repair wrapped desynced name with referrer support', async ({
+    page,
+    login,
+    makePageObject,
+    makeName,
+  }) => {
+    // Create a wrapped name that will become desynced
+    const name = await makeName({
+      label: 'desynced-wrapped-test',
+      type: 'wrapped',
+      owner: 'user',
+      duration: -24 * 60 * 60, // Expired
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    // Add referrer to URL
+    const referrerAddress = '0x1234567890123456789012345678901234567890'
+
+    await page.goto(`/${name}?referrer=${referrerAddress}`)
+    await login.connect()
+
+    await test.step('should show desynced banner with repair option', async () => {
+      await expect(page.getByText('Name misconfigured')).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Repair' })).toBeVisible()
+    })
+
+    await test.step('should complete repair with referrer', async () => {
+      await page.getByRole('button', { name: 'Repair' }).click()
+      await transactionModal.autoComplete()
+
+      // Verify success
+      await expect(page.getByText('Your transaction was successful')).toBeVisible({
+        timeout: 10000,
+      })
+    })
+
+    await test.step('should verify name is no longer desynced', async () => {
+      // Reload page
+      await page.reload()
+
+      // Desynced banner should no longer be visible
+      await expect(page.getByText('Name misconfigured')).not.toBeVisible()
+    })
+  })
+
   test.describe('Regular Desynced Name', () => {
     test('should repair desynced-wrapped.eth successfully', async ({
       page,

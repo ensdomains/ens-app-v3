@@ -8,6 +8,7 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { isValidBanner } from '@app/validators/validateBanner'
 
@@ -207,6 +208,7 @@ export const ProfileSnippet = ({
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
+  const { data: isWrapped } = useIsWrapped({ name })
 
   // Always call the hook but conditionally use its result
   const hookBeautifiedName = useBeautifiedName(name)
@@ -235,6 +237,7 @@ export const ProfileSnippet = ({
             showExtendNamesInput(`extend-names-${name}`, {
               names: [name],
               isSelf: canSelfExtend,
+              hasWrapped: isWrapped ?? false,
             })
           }}
         >
@@ -262,7 +265,7 @@ export const ProfileSnippet = ({
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, canSelfExtend])
+  }, [button, name, canSelfExtend, isWrapped])
 
   return (
     <Container data-testid="profile-snippet">

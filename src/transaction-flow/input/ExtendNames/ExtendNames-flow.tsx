@@ -164,6 +164,7 @@ const NamesList = ({ names }: NamesListProps) => {
 
 type Data = {
   names: string[]
+  hasWrapped: boolean
   seconds?: number
   isSelf?: boolean
   minSeconds?: number
@@ -174,7 +175,7 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 const ExtendNames = ({
-  data: { seconds: defaultSeconds, names, isSelf, minSeconds = ONE_DAY },
+  data: { seconds: defaultSeconds, names, isSelf, minSeconds = ONE_DAY, hasWrapped },
   dispatch,
   onDismiss,
 }: Props) => {
@@ -232,6 +233,7 @@ const ExtendNames = ({
           names,
           startDateTimestamp: expiryDate?.getTime(),
           referrer: referrerHex,
+          hasWrapped,
         },
         stateOverride: [
           {
@@ -323,6 +325,7 @@ const ExtendNames = ({
               currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
             }),
             referrer: referrerHex,
+            hasWrapped,
           })
           dispatch({ name: 'setTransactions', payload: [transactions] })
           dispatch({ name: 'setFlowStage', payload: 'transaction' })

@@ -52,6 +52,9 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
       nameWrapperEthRegistrarController: {
         address: deploymentAddresses_.WrappedEthRegistrarController,
       },
+      universalRegistrarRenewalWithReferrer: {
+        address: deploymentAddresses_.UniversalRegistrarRenewalWithReferrer,
+      },
     },
     subgraphs: {
       ens: {
