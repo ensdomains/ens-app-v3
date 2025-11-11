@@ -9,7 +9,7 @@ export const supportedAddresses = [
   'matic',
   'linea',
   'scr',
-  'celo'
+  'celo',
 ] as const
 
 export type SupportedAddress = (typeof supportedAddresses)[number]
