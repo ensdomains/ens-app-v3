@@ -5,7 +5,6 @@ import { useAccount } from 'wagmi'
 import { ButtonProps } from '@ensdomains/thorin'
 
 import { BannerMessageWithAction } from '@app/components/@atoms/BannerMessageWithAction/BannerMessageWithAction'
-import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useReferrer } from '@app/hooks/useReferrer'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
