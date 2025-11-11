@@ -3,6 +3,13 @@ import { useRouter } from 'next/router'
 import { getDestination } from '@app/routes'
 import { createUrlObject } from '@app/utils/urlObject'
 
+const createDecorativeUrlObject = (urlObject: ReturnType<typeof getDestination>) => {
+  if (!urlObject || typeof urlObject === 'string') return undefined
+  const { query = {}, ...rest } = urlObject
+  const { from, ...cleanQuery } = query
+  return { ...rest, query: cleanQuery }
+}
+
 export const useRouterWithHistory = () => {
   const router = useRouter()
   const referrer = router.query.referrer as string | undefined
@@ -26,11 +33,7 @@ export const useRouterWithHistory = () => {
     })
 
     const destination = getDestination(urlObject)
-    router.replace(
-      destination,
-      typeof destination === 'string' ? undefined : destination.pathname,
-      opts,
-    )
+    router.replace(destination, createDecorativeUrlObject(destination), opts)
   }
 
   const push = (pathname: string, query?: Record<string, any>, shallow?: boolean) => {
@@ -46,12 +49,7 @@ export const useRouterWithHistory = () => {
       referrer,
     })
     const destination = getDestination(urlObject)
-    router.push(
-      destination,
-      typeof destination === 'string'
-        ? undefined
-        : { ...destination, query: { ...query, from: undefined } },
-    )
+    router.push(destination, createDecorativeUrlObject(destination))
   }
 
   return { ...router, push, pushWithHistory, replace, _replace }
