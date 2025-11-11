@@ -383,7 +383,10 @@ export const OwnerProfileButton = ({
           {
             icon: UpRightArrowIcon,
             label: 'View address',
-            href: getDestination(`/${addressOrNameOrDate}`) as string,
+            href: getDestination({
+              pathname: `/${addressOrNameOrDate}`,
+              query: { referrer },
+            }) as string,
           },
           {
             icon: CopyIcon,

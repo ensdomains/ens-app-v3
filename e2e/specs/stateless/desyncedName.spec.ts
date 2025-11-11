@@ -4,7 +4,6 @@ import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/
 
 import { test } from '../../../playwright'
 
-// NOTE: DO NOT MERGE UNTIL THIS IS FIXED!
 test.describe('Desynced Name Repair', () => {
   test('should repair wrapped desynced name with referrer support', async ({
     page,
@@ -14,13 +13,12 @@ test.describe('Desynced Name Repair', () => {
   }) => {
     // Create a wrapped name that will become desynced
     const name = await makeName({
-      label: 'desynced-wrapped-test',
+      label: 'desynced-wrapped-referreral',
       type: 'wrapped',
       owner: 'user',
       duration: -24 * 60 * 60, // Expired
     })
 
-    const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
 
     // Add referrer to URL
@@ -140,7 +138,7 @@ test.describe('Desynced Name Repair', () => {
   })
 
   // NOTE: DO NOT MERGE UNTIL THIS IS FIXED
-  test.describe.skip('Grace Period Desynced Name', () => {
+  test.describe('Grace Period Desynced Name', () => {
     test('should repair desynced-wrapped-grace-period.eth via extend dialog', async ({
       page,
       login,
@@ -224,7 +222,7 @@ test.describe('Desynced Name Repair', () => {
   })
 
   // NOTE: DO NOT MERGE UNTIL THIS IS FIXED
-  test.describe.skip('Regular Desynced Name Extend Button', () => {
+  test.describe('Regular Desynced Name Extend Button', () => {
     test('should repair desynced-normal-test.eth using the extend modal', async ({
       page,
       login,
@@ -324,7 +322,7 @@ test.describe('Desynced Name Repair', () => {
   })
 
   // NOTE: DO NOT MERGE UNTIL THIS IS FIXED
-  test.describe.skip('Grace Period Desynced Name Extend Button', () => {
+  test.describe('Grace Period Desynced Name Extend Button', () => {
     test('should repair desynced-normal-test.eth using the extend modal', async ({
       page,
       login,

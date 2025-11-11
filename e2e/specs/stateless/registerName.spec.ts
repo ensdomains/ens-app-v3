@@ -1825,12 +1825,7 @@ test('should allow registering a premium name for two months, user should connec
 })
 
 test.describe('Registration with Referrer', () => {
-  test('should register a name with referrer', async ({
-    page,
-    login,
-    time,
-    makePageObject,
-  }) => {
+  test('should register a name with referrer', async ({ page, login, time, makePageObject }) => {
     await time.sync(500)
 
     const name = `registration-with-referrer-${Date.now()}.eth`
@@ -1881,12 +1876,7 @@ test.describe('Registration with Referrer', () => {
     })
   })
 
-  test('should register a name without referrer', async ({
-    page,
-    login,
-    time,
-    makePageObject,
-  }) => {
+  test('should register a name without referrer', async ({ page, login, time, makePageObject }) => {
     await time.sync(500)
 
     const name = `registration-no-referrer-${Date.now()}.eth`

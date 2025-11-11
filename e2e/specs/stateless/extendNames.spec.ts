@@ -1,12 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
-import {
-  publicClient,
-  testClient,
-  walletClient,
-} from '@root/playwright/fixtures/contracts/utils/addTestContracts'
-import { Hash, pad } from 'viem'
-import { getBlock } from 'viem/actions'
+import { publicClient } from '@root/playwright/fixtures/contracts/utils/addTestContracts'
+import { pad } from 'viem'
 
 import {
   dateToDateInput,

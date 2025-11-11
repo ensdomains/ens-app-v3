@@ -110,6 +110,23 @@ const names: Name[] = [
       ],
     },
   },
+  {
+    name: 'desynced-wrapped-referral',
+    namedOwner: 'owner',
+    reverseRecord: false,
+    customDuration: MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
+    renewalDuration: ONE_YEAR, // 1 year renewal via legacy controller
+    records: {
+      texts: [
+        {
+          key: 'description',
+          value: 'A name that demonstrates desync between wrapper and registry',
+        },
+        { key: 'url', value: 'https://ens.domains' },
+      ],
+      coins: [{ coin: 'ETH', value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' }],
+    },
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
