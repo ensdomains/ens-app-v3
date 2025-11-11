@@ -242,6 +242,7 @@ export const rewrites = [
   },
 ]
 export const getDestination = (url: UrlObject) => {
+  console.log('getDestination', url)
   const isIPFS = !!process.env.NEXT_PUBLIC_IPFS
   let href = url.pathname!
   const query = new URLSearchParams((url.query || '') as any)
@@ -267,6 +268,7 @@ export const getDestination = (url: UrlObject) => {
     }
   }
   const makeURLString = () => {
+    console.error('make url string')
     const parsedQuery = query.toString()
     return `${href}${parsedQuery ? `?${parsedQuery}` : ''}`
   }

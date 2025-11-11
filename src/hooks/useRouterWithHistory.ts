@@ -30,6 +30,7 @@ export const useRouterWithHistory = () => {
       referrer,
     })
 
+    alert('replace')
     const destination = getDestination(urlObject)
     router.replace(
       destination,
@@ -41,6 +42,7 @@ export const useRouterWithHistory = () => {
   const push = (pathname: string, query?: Record<string, any>, shallow?: boolean) => {
     const urlObject = createUrlObject(pathname, { ...query, referrer })
     const destination = getDestination(urlObject)
+    alert('push')
     router.push(destination, undefined, { shallow })
   }
 
@@ -50,10 +52,13 @@ export const useRouterWithHistory = () => {
       from: router.asPath,
       referrer,
     })
+    alert('pushwithhistory')
     const destination = getDestination(urlObject)
     router.push(
       destination,
-      typeof destination === 'string' ? undefined : urlObjectToDecorativeUrl(destination),
+      typeof destination === 'string'
+        ? undefined
+        : { ...destination, query: { ...query, referrer } },
     )
   }
 

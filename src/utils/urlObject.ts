@@ -1,5 +1,15 @@
 import { UrlObject } from 'url'
 
+const stringToUrlObject = (url: string): UrlObject => {
+  const _url = new URL(url, 'https://app.ens.domains')
+  const query = _url.searchParams ? Object.fromEntries(_url.searchParams.entries()) : undefined
+
+  return {
+    pathname: _url.pathname,
+    query,
+  }
+}
+
 /**
  * Normalizes href to UrlObject format and optionally adds query parameters.
  * Undefined values in additionalQuery are automatically filtered out.
@@ -32,7 +42,7 @@ export const createUrlObject = (
   href: string | UrlObject,
   additionalQuery?: Record<string, string | undefined>,
 ): UrlObject => {
-  const urlObject = typeof href === 'string' ? { pathname: href } : href
+  const urlObject = typeof href === 'string' ? stringToUrlObject(href) : href
   if (!additionalQuery) return urlObject
 
   // Filter out undefined values from additionalQuery
