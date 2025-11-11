@@ -111,7 +111,7 @@ const names: Name[] = [
     },
   },
   {
-    name: 'desynced-wrapped-referral',
+    name: 'desynced-wrapped-referral.eth',
     namedOwner: 'owner',
     reverseRecord: false,
     customDuration: MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
