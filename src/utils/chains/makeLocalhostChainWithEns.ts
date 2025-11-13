@@ -38,7 +38,7 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
         address: deploymentAddresses_.ReverseRegistrar,
       },
       ensBulkRenewal: {
-        address: deploymentAddresses_.StaticBulkRenewal,
+        address: deploymentAddresses_.WrappedStaticBulkRenewal,
       },
       ensDnssecImpl: {
         address: deploymentAddresses_.DNSSECImpl,
