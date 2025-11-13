@@ -35,7 +35,7 @@ const transaction = async ({ connectorClient, data }: TransactionFunctionParamet
     duration: 0,
     value: 0n,
     referrer: data.referrer,
-    hasWrapped: data.hasWrapped ?? false,
+    hasWrapped: true,
   })
 }
 

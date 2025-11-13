@@ -131,7 +131,6 @@ test.describe('Desynced Name Repair', () => {
     })
   })
 
-  // NOTE: DO NOT MERGE UNTIL THIS IS FIXED
   test.describe('Grace Period Desynced Name', () => {
     test('should repair desynced-wrapped-grace-period.eth via extend dialog', async ({
       page,
@@ -215,7 +214,6 @@ test.describe('Desynced Name Repair', () => {
     })
   })
 
-  // NOTE: DO NOT MERGE UNTIL THIS IS FIXED
   test.describe('Regular Desynced Name Extend Button', () => {
     test('should repair desynced-normal-test.eth using the extend modal', async ({
       page,
@@ -315,7 +313,6 @@ test.describe('Desynced Name Repair', () => {
     })
   })
 
-  // NOTE: DO NOT MERGE UNTIL THIS IS FIXED
   test.describe('Grace Period Desynced Name Extend Button', () => {
     test('should repair desynced-normal-test.eth using the extend modal', async ({
       page,
@@ -415,8 +412,7 @@ test.describe('Desynced Name Repair', () => {
     })
   })
 
-  // NOTE: DO NOT MERGE UNTIL THIS IS FIXED
-  test.describe.skip('Regular Desynced Name Extend Button 1 day', () => {
+  test.describe('Regular Desynced Name Extend Button 1 day', () => {
     test('should repair desynced-normal-1-day-test.eth using the extend modal', async ({
       page,
       login,
