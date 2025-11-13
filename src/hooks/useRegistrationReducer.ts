@@ -78,8 +78,7 @@ export const getSelectedIndex = (
       x.address === selected.address &&
       x.name === selected.name &&
       x.chainId === selected.chainId &&
-      x.version === REGISTRATION_REDUCER_DATA_ITEM_VERSION &&
-      x.referrer === (selected.referrer || EMPTY_BYTES32),
+      x.version === REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   )
 
 /* eslint-disable no-param-reassign */
