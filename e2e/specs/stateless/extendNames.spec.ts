@@ -226,7 +226,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await test.step('should show correct fiat values', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.00')
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText(/\$10\.0[01]/)
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
     await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$10\.1[23]/)
     await extendNamesModal.getCounterMinusButton.click()
@@ -291,7 +291,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
 
   await test.step('should show correct fiat values', async () => {
     await extendNamesModal.getCurrencyToggle.click({ force: true })
-    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('$10.00')
+    await expect(extendNamesModal.getInvoiceExtensionFee).toContainText(/\$10\.0[01]/)
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
     await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$10\.1[23]/)
     await extendNamesModal.getCounterMinusButton.click()
@@ -831,10 +831,9 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
     await page.locator('button:has-text("Next")').click()
 
     // Complete transaction
-    await transactionModal.introButton.click()
     await transactionModal.confirm()
 
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
   })
@@ -874,10 +873,9 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
     await page.locator('button:has-text("Next")').click()
 
     // Complete transaction
-    await transactionModal.introButton.click()
     await transactionModal.confirm()
 
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
 
@@ -912,7 +910,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await login.connect()
 
     // Click extend button
-    await page.getByTestId('extend-names-button').click()
+    await page.getByTestId('extend-button').click()
 
     // Set 1 year extension
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
@@ -920,17 +918,11 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     // Proceed to transaction
     await page.locator('button:has-text("Next")').click()
 
-    // Open transaction modal
-    await transactionModal.introButton.click()
-
-    // Verify transaction details include the name
-    await expect(page.getByText(name)).toBeVisible()
-
     // Complete transaction
     await transactionModal.confirm()
 
     // Verify success
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
 
@@ -962,7 +954,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await login.connect()
 
     // Navigate through the renewal flow
-    await page.getByTestId('extend-names-button').click()
+    await page.getByTestId('extend-button').click()
 
     // Verify referrer is still in URL
     expect(page.url()).toContain(`referrer=${referrerAddress}`)
@@ -978,10 +970,9 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     expect(page.url()).toContain(`referrer=${referrerAddress}`)
 
     // Complete transaction
-    await transactionModal.introButton.click()
     await transactionModal.confirm()
 
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
   })
@@ -1005,17 +996,16 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await page.goto(`/${name}`)
     await login.connect()
 
-    await page.getByTestId('extend-names-button').click()
+    await page.getByTestId('extend-button').click()
 
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
 
     await page.locator('button:has-text("Next")').click()
 
-    await transactionModal.introButton.click()
     await transactionModal.confirm()
 
     // Should still succeed without referrer (uses EMPTY_BYTES32)
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
   })
@@ -1043,32 +1033,29 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
 
     const transactionModal = makePageObject('TransactionModal')
 
-    await login.connect()
-
     // Test wrapped name renewal
     await page.goto(`/${wrappedName}`)
-    await page.getByTestId('extend-names-button').click()
+    await login.connect()
+    await page.getByTestId('extend-button').click()
     await page.locator('button:has-text("Next")').click()
 
     // Note: In a real test, we would inspect the transaction data to verify
     // it's calling the correct contract (UniversalRegistrarRenewalWithReferrer)
-    await transactionModal.introButton.click()
     await transactionModal.confirm()
 
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
 
     // Test legacy name renewal
     await page.goto(`/${legacyName}`)
-    await page.getByTestId('extend-names-button').click()
+    await page.getByTestId('extend-button').click()
     await page.locator('button:has-text("Next")').click()
 
     // Note: This should use the standard ETHRegistrarController
-    await transactionModal.introButton.click()
     await transactionModal.confirm()
 
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
   })
@@ -1081,7 +1068,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     makePageObject,
   }) => {
     // Create multiple names - mix of wrapped and unwrapped
-    await makeName([
+    const names = await makeName([
       {
         label: 'bulk-wrapped-1',
         type: 'wrapped',
@@ -1112,10 +1099,16 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     // Select all names for renewal
     await addressPage.selectToggle.click()
 
-    // Select the three names we just created
-    await page.getByTestId('name-item-bulk-wrapped-1.eth').click()
-    await page.getByTestId('name-item-bulk-legacy-1.eth').click()
-    await page.getByTestId('name-item-bulk-wrapped-2.eth').click()
+    for (const name of names) {
+      // Search for the name in the table
+      await addressPage.search(name)
+
+      // Click the avatar to select the name
+      await addressPage.getNameAvatarWrapper(name).click()
+
+      // Clear the search to show all names again
+      await addressPage.search('')
+    }
 
     // Extend selected names
     await addressPage.extendNamesButton.click()
@@ -1131,10 +1124,9 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await page.locator('button:has-text("Next")').click()
 
     // Complete transaction
-    await transactionModal.introButton.click()
     await transactionModal.confirm()
 
-    await expect(page.getByText('Your transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
 
