@@ -9,6 +9,7 @@ import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { isValidBanner } from '@app/validators/validateBanner'
 
@@ -29,7 +30,6 @@ const Container = styled.div(
     align-items: flex-start;
     justify-content: center;
     gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
     overflow: hidden;
 
     @media (min-width: ${theme.breakpoints.sm}px) {
@@ -85,7 +85,6 @@ const TextStack = styled.div(
     align-items: flex-start;
     justify-content: center;
     gap: ${theme.space['1']};
-    flex-gap: ${theme.space['1']};
     width: 100%;
     overflow: hidden;
   `,
@@ -205,6 +204,8 @@ export const ProfileSnippet = ({
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
+  const { registrationStatus } = useNameDetails({ name })
+
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
@@ -225,6 +226,9 @@ export const ProfileSnippet = ({
 
   const { canSelfExtend, canEdit } = abilities.data ?? {}
 
+  const isDesynced =
+    !!registrationStatus && ['desynced', 'desynced:gracePeriod'].includes(registrationStatus)
+
   const ActionButton = useMemo(() => {
     if (button === 'extend')
       return (
@@ -237,7 +241,7 @@ export const ProfileSnippet = ({
             showExtendNamesInput(`extend-names-${name}`, {
               names: [name],
               isSelf: canSelfExtend,
-              hasWrapped: isWrapped ?? false,
+              hasWrapped: isWrapped || isDesynced,
             })
           }}
         >

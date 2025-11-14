@@ -75,17 +75,25 @@ describe('useRouterWithHistory', () => {
 
   describe('pushWithHistory', () => {
     it('should preserve referrer and add from parameter', () => {
-      const { result } = renderHook(() => useRouterWithHistory())
+      const { result} = renderHook(() => useRouterWithHistory())
 
       result.current.pushWithHistory('/profile/test.eth')
 
-      expect(mockPush).toHaveBeenCalledWith({
-        pathname: '/profile/test.eth',
-        query: {
-          from: '/current-path',
-          referrer: 'test-partner',
+      expect(mockPush).toHaveBeenCalledWith(
+        {
+          pathname: '/profile/test.eth',
+          query: {
+            from: '/current-path',
+            referrer: 'test-partner',
+          },
         },
-      })
+        {
+          pathname: '/profile/test.eth',
+          query: {
+            referrer: 'test-partner',
+          },
+        },
+      )
     })
 
     it('should merge additional query params with referrer and from', () => {
@@ -93,14 +101,23 @@ describe('useRouterWithHistory', () => {
 
       result.current.pushWithHistory('/profile/test.eth', { tab: 'records' })
 
-      expect(mockPush).toHaveBeenCalledWith({
-        pathname: '/profile/test.eth',
-        query: {
-          tab: 'records',
-          from: '/current-path',
-          referrer: 'test-partner',
+      expect(mockPush).toHaveBeenCalledWith(
+        {
+          pathname: '/profile/test.eth',
+          query: {
+            tab: 'records',
+            from: '/current-path',
+            referrer: 'test-partner',
+          },
         },
-      })
+        {
+          pathname: '/profile/test.eth',
+          query: {
+            tab: 'records',
+            referrer: 'test-partner',
+          },
+        },
+      )
     })
 
     it('should not pass second parameter to router.push (regression test)', () => {
@@ -108,15 +125,23 @@ describe('useRouterWithHistory', () => {
 
       result.current.pushWithHistory('/profile/test.eth')
 
-      // This is the key regression test - should only have 1 argument
+      // This test verifies decorative URL (second param) excludes 'from'
       expect(mockPush).toHaveBeenCalledTimes(1)
-      expect(mockPush).toHaveBeenCalledWith({
-        pathname: '/profile/test.eth',
-        query: {
-          from: '/current-path',
-          referrer: 'test-partner',
+      expect(mockPush).toHaveBeenCalledWith(
+        {
+          pathname: '/profile/test.eth',
+          query: {
+            from: '/current-path',
+            referrer: 'test-partner',
+          },
         },
-      })
+        {
+          pathname: '/profile/test.eth',
+          query: {
+            referrer: 'test-partner',
+          },
+        },
+      )
     })
   })
 
@@ -126,13 +151,15 @@ describe('useRouterWithHistory', () => {
 
       result.current.replace('/profile/test.eth')
 
-      // Note: replace still passes pathname as second arg (needs fixing)
       expect(mockReplace).toHaveBeenCalledWith(
         {
           pathname: '/profile/test.eth',
           query: { referrer: 'test-partner' },
         },
-        '/profile/test.eth',
+        {
+          pathname: '/profile/test.eth',
+          query: { referrer: 'test-partner' },
+        },
         {},
       )
     })
@@ -147,7 +174,10 @@ describe('useRouterWithHistory', () => {
           pathname: '/profile/test.eth',
           query: { referrer: 'test-partner' },
         },
-        '/profile/test.eth',
+        {
+          pathname: '/profile/test.eth',
+          query: { referrer: 'test-partner' },
+        },
         {},
       )
     })

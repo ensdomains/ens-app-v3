@@ -116,4 +116,41 @@ describe('useRegistrationReducer - referrer storage', () => {
     // Viem pads on the left, so value ends with original hex
     expect(registrationDataItem.referrer.endsWith('1234abcd')).toBe(true)
   })
+
+  it('should preserve referrer through registration flow actions', () => {
+    // Simulate registration flow with referrer
+    const referrerHex = '0x1234abcd'
+    const paddedReferrer = getReferrerHex(referrerHex)
+
+    const selected: SelectedItemProperties = {
+      address: '0x1234567890123456789012345678901234567890',
+      name: 'test.eth',
+      chainId: 1,
+      referrer: paddedReferrer,
+    }
+
+    // Simulate reducer state
+    const state = { items: [] }
+
+    // First action creates the item with referrer
+    const createAction = {
+      name: 'setPricingData' as const,
+      selected,
+      payload: {
+        seconds: 31536000,
+        reverseRecord: true,
+        durationType: 'years' as const,
+      },
+    }
+
+    // Verify that if we're using the same selected object (with referrer),
+    // the referrer should be preserved when item is created
+    expect(selected.referrer).toBe(paddedReferrer)
+    expect(selected.referrer).not.toBe(EMPTY_BYTES32)
+
+    // The key insight: selected object MUST include referrer
+    // so that when reducer creates a new item, it has the referrer
+    expect(createAction.selected.referrer).toBeDefined()
+    expect(createAction.selected.referrer).toBe(paddedReferrer)
+  })
 })

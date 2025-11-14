@@ -9,6 +9,7 @@ describe('createUrlObject', () => {
 
       expect(result).toEqual({
         pathname: '/profile/vitalik.eth',
+        query: {},
       })
     })
 
@@ -96,6 +97,7 @@ describe('createUrlObject', () => {
 
       expect(result).toEqual({
         pathname: '/profile/vitalik.eth',
+        query: {},
       })
     })
 
@@ -104,6 +106,7 @@ describe('createUrlObject', () => {
 
       expect(result).toEqual({
         pathname: '/profile/vitalik.eth',
+        query: {},
       })
     })
 
@@ -146,8 +149,8 @@ describe('createUrlObject', () => {
       const result = createUrlObject('/profile/vitalik.eth?tab=records', { referrer: 'partner123' })
 
       expect(result).toEqual({
-        pathname: '/profile/vitalik.eth?tab=records',
-        query: { referrer: 'partner123' },
+        pathname: '/profile/vitalik.eth',
+        query: { tab: 'records', referrer: 'partner123' },
       })
     })
   })

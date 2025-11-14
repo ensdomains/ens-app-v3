@@ -1864,7 +1864,7 @@ test.describe('Registration with Referrer', () => {
       await page.getByTestId('finish-button').click()
       await transactionModal.confirm()
 
-      await expect(page.getByText('Your transaction was successful')).toBeVisible({
+      await expect(page.getByText('Your "Register name" transaction was successful')).toBeVisible({
         timeout: 10000,
       })
     })
@@ -1913,7 +1913,7 @@ test.describe('Registration with Referrer', () => {
       await page.getByTestId('finish-button').click()
       await transactionModal.confirm()
 
-      await expect(page.getByText('Your transaction was successful')).toBeVisible({
+      await expect(page.getByText('Your "Register name" transaction was successful')).toBeVisible({
         timeout: 10000,
       })
     })

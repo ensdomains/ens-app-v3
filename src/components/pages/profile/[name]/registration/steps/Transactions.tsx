@@ -394,6 +394,7 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
       stopCurrentFlow()
       callback({ back: false })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [callback, registerTx?.stage, checkRegistered])
 
   const NormalBackButton = useMemo(

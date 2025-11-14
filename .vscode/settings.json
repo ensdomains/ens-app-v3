@@ -16,7 +16,7 @@
   "prettier.prettierPath": "./node_modules/prettier/index.cjs",
   "prettier.configPath": "./.prettierrc.json",
   "[svg]": {
-    "editor.defaultFormatter": "jock.svg"
+    "editor.defaultFormatter": null
   },
   "jest.jestCommandLine": "pnpm run test",
   "cSpell.words": [
