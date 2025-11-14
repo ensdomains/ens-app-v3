@@ -1096,18 +1096,12 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await page.goto(`/my/names?address=${address}`)
     await login.connect()
 
-    // Select all names for renewal
-    await addressPage.selectToggle.click()
+    // Wait for the name table to load
+    await expect(page.locator('.name-detail-item').first()).toBeVisible({ timeout: 10000 })
 
     for (const name of names) {
-      // Search for the name in the table
       await addressPage.search(name)
-
-      // Click the avatar to select the name
       await addressPage.getNameAvatarWrapper(name).click()
-
-      // Clear the search to show all names again
-      await addressPage.search('')
     }
 
     // Extend selected names
@@ -1119,7 +1113,8 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
       await confirmButton.click()
     }
 
-    await expect(page.getByText('Extend 3 Names')).toBeVisible()
+    // Check that we're extending at least 3 names (the ones we created)
+    await expect(page.getByText(/Extend 3 Names/)).toBeVisible()
 
     await page.locator('button:has-text("Next")').click()
 
