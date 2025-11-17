@@ -182,7 +182,7 @@ const OuterRatioLabel = styled(AspectRatioLabel)(
 
 const InnerRatioLabel = styled(AspectRatioLabel)(
   () => css`
-    top: 28%;
+    top: 26%;
     right: 12%;
   `,
 )
