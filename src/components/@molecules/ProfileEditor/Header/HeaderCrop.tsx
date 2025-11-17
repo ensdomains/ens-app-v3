@@ -158,6 +158,35 @@ const ImageCropGuides = styled.div(
   `,
 )
 
+const AspectRatioLabel = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    background-color: ${theme.colors.backgroundSecondary};
+    color: ${theme.colors.textSecondary};
+    padding: ${theme.space['1']} ${theme.space['2']};
+    border-radius: ${theme.radii.large};
+    font-size: ${theme.fontSizes.small};
+    font-weight: ${theme.fontWeights.medium};
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.9;
+  `,
+)
+
+const OuterRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    top: 12%;
+    right: 12%;
+  `,
+)
+
+const InnerRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    top: 28%;
+    right: 12%;
+  `,
+)
+
 const StyledCanvas = styled.canvas(
   () => css`
     width: 100%;
@@ -515,6 +544,8 @@ export const CropComponent = ({
             <ImageContainer>
               <ImageCropBorder as={CropBorderSVG} />
               <ImageCropFrame as={CropFrameSVG} />
+              <OuterRatioLabel>3:1</OuterRatioLabel>
+              <InnerRatioLabel>6:1</InnerRatioLabel>
               <ImageCropGuides>
                 <span />
                 <span />
