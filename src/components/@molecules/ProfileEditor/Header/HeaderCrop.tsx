@@ -176,14 +176,14 @@ const AspectRatioLabel = styled.div(
 const OuterRatioLabel = styled(AspectRatioLabel)(
   () => css`
     top: 12%;
-    left: 12%;
+    left: 1%;
   `,
 )
 
 const InnerRatioLabel = styled(AspectRatioLabel)(
   () => css`
     top: 26%;
-    left: 12%;
+    left: 1%;
   `,
 )
 
