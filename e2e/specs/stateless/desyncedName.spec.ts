@@ -1,8 +1,17 @@
 import { expect } from '@playwright/test'
+import { publicClient } from '@root/playwright/fixtures/contracts/utils/addTestContracts'
+import { pad } from 'viem'
 
 import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
 
 import { test } from '../../../playwright'
+
+// Helper function to convert address to bytes32 for referrer parameter
+const addressToBytes32 = (address: string): string => {
+  // Remove '0x' prefix if present, pad to 64 characters (32 bytes), and add '0x' back
+  const cleanAddress = address.toLowerCase().replace('0x', '')
+  return pad(`0x${cleanAddress}`, { size: 32 })
+}
 
 test.describe('Desynced Name Repair', () => {
   test('should repair wrapped desynced name with referrer support', async ({
@@ -34,6 +43,13 @@ test.describe('Desynced Name Repair', () => {
       await expect(page.getByText('Your "Repair name" transaction was successful')).toBeVisible({
         timeout: 10000,
       })
+    })
+
+    await test.step('verify referrer is included in transaction calldata', async () => {
+      // Verify referrer is included in the transaction calldata
+      const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+      const referrerHex = addressToBytes32(referrerAddress)
+      expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
     })
 
     await test.step('should verify name is no longer desynced', async () => {

@@ -132,15 +132,12 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
 
   const handleExtend = () => {
     if (selectedNames.length === 0) return
-    // For bulk renewals, hasWrapped should be true if any of the names are wrapped
-    // Note: The renewNames override handles bulk renewals separately
-    const hasAnyWrapped = selectedNames.some((n) => !!n.wrappedOwner)
     showExtendNamesInput(`extend-names-${selectedNames.join('-')}`, {
       names: selectedNames.map((n) => n.name!),
       isSelf: selectedNames.every(
         (n) => n.registrant === selfAddress || n.wrappedOwner === selfAddress,
       ),
-      hasWrapped: hasAnyWrapped,
+      hasWrapped: true,
     })
   }
 

@@ -40,10 +40,9 @@ const txRequest = renewNames.makeFunctionData(connectorClient, {
 
 These overrides should be removed once:
 
-1. ENS contracts v1.6.0 are fully deployed to all networks
-2. The wrapped name registrar controller is integrated into the main controller
-3. The bulk renewal contract supports referrals
-4. ENS.js is updated to handle these cases natively
+1. ENS contracts are updated and support referrer for both wrapped and unwrapped names
+2. The bulk renewal contract supports referrals
+3. ENS.js is updated to handle these cases natively
 
 ## Updating Contract Addresses
 

@@ -118,7 +118,6 @@ export const makeFunctionData = <TChain extends ChainWithEns, TAccount extends A
     referrer = EMPTY_BYTES32,
     value,
     hasWrapped = false,
-    wrappedRenewalContract,
   }: RenewNamesDataParameters,
 ): RenewNamesDataReturnType => {
   const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames]
@@ -126,30 +125,11 @@ export const makeFunctionData = <TChain extends ChainWithEns, TAccount extends A
 
   // Case 1: Single wrapped name - route to wrapped name registrar controller
   if (hasWrapped && names.length === 1) {
-    // Get the contract address from chain config or use provided override
-    // The contract name 'universalRegistrarRenewalWithReferrer' is registered in chain config
-    let contractAddress = wrappedRenewalContract
-
-    if (!contractAddress) {
-      try {
-        // Try to get from chain contracts if available
-        contractAddress = (wallet.chain?.contracts as any)?.universalRegistrarRenewalWithReferrer
-          ?.address
-      } catch {
-        // Fallback to hardcoded address if not in chain config
-        // This address should match the deployed UniversalRegistrarRenewalWithReferrer
-        contractAddress = '0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6'
-      }
-    }
-
-    if (!contractAddress) {
-      throw new Error(
-        'No contract address found for wrapped name renewal. Please provide wrappedRenewalContract parameter.',
-      )
-    }
-
     return {
-      to: contractAddress,
+      to: getChainContractAddress({
+        client: wallet,
+        contract: 'wrappedRenewalWithReferrer',
+      }),
       data: encodeFunctionData({
         abi: wrappedNameRenewalAbi,
         functionName: 'renew',

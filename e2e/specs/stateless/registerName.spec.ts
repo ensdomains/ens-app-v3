@@ -1274,8 +1274,6 @@ test('should allow normal registration for a month', async ({
   expect(estimate2).toBeLessThanOrEqual(estimate)
   await registrationPage.primaryNameToggle.click()
 
-  await page.pause()
-
   // should show cost comparison accurately
   await expect(registrationPage.yearMarker(0)).toHaveText(/1[01]% gas/)
   await expect(registrationPage.yearMarker(1)).toHaveText(/[56]% gas/)

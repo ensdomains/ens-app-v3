@@ -280,7 +280,6 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
   })
 
-  await page.pause()
   await test.step('should work correctly with plus minus control', async () => {
     await expect(extendNamesModal.getCounterMinusButton).toBeDisabled()
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
