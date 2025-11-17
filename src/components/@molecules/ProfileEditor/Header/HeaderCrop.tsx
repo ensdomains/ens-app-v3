@@ -544,8 +544,8 @@ export const CropComponent = ({
             <ImageContainer>
               <ImageCropBorder as={CropBorderSVG} />
               <ImageCropFrame as={CropFrameSVG} />
-              <OuterRatioLabel>3:1</OuterRatioLabel>
-              <InnerRatioLabel>6:1</InnerRatioLabel>
+              <OuterRatioLabel aria-label="Outer crop frame aspect ratio 3:1">3:1</OuterRatioLabel>
+              <InnerRatioLabel aria-label="Inner grid lines aspect ratio 6:1">6:1</InnerRatioLabel>
               <ImageCropGuides>
                 <span />
                 <span />
