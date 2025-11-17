@@ -2,16 +2,15 @@
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from 'wagmi'
 
 import { CrossSVG, LeftChevronSVG, PersonSVG } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination, getRoute, legacyFavouritesRoute } from '@app/routes'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { createUrlObject } from '@app/utils/urlObject'
 
 import { DisconnectButton, RouteItem } from './@atoms/RouteItem/RouteItem'
@@ -184,7 +183,7 @@ const TabBarProfile = ({
   name?: string
 }) => {
   const router = useRouter()
-  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(address, 'address')
   const hasPendingTransactions = useHasPendingTransactions()
 

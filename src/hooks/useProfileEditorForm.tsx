@@ -24,6 +24,7 @@ const SUPPORTED_AVUP_ENDPOINTS = [
   'https://euc.li',
   'https://ens.xyz',
   'https://avatar-upload.ens-cf.workers.dev',
+  ...(process.env.NEXT_PUBLIC_AVUP_ENDPOINT ? [process.env.NEXT_PUBLIC_AVUP_ENDPOINT] : []),
 ]
 
 export type ProfileEditorForm = {
@@ -63,6 +64,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const labelForRecord = (record: ProfileRecord) => {
     if (record.group === 'general')
       return t(`steps.profile.options.groups.general.items.${record.key}`)
+    if (record.group === 'media') return t(`steps.profile.options.groups.media.items.${record.key}`)
     if (record.group === 'social')
       return t(`steps.profile.options.groups.social.items.${record.key}`)
     if (record.group === 'address')
@@ -121,9 +123,8 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
       return (key?: string) => {
         if (!key) return t('steps.profile.errors.keyRequired') as string
         const trimmedKey = key.trim()
-        if (trimmedKey === 'avatar') {
-          const avatar = getValues('avatar')
-          if (avatar) return t('steps.profile.errors.avatarReserved') as string
+        if (['avatar', 'header'].includes(trimmedKey)) {
+          return t('steps.profile.errors.reservedKey', { ns: 'register' }) as string
         }
         const allTextRecords = getValues('records').filter((r) => r.type === 'text')
         if (
@@ -176,8 +177,21 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     }
   }
 
+  const setHeader = (header?: string) => {
+    const existingRecord = existingRecords.find((r) => r.group === 'media' && r.key === 'header')
+    const headerIsChanged = !(
+      existingRecord &&
+      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => existingRecord.value?.startsWith(endpoint)) &&
+      SUPPORTED_AVUP_ENDPOINTS.some((endpoint) => header?.startsWith(endpoint))
+    )
+    if (headerIsChanged) {
+      setValue('header', header || '', { shouldDirty: true, shouldTouch: true })
+    }
+  }
+
   const removeRecordByGroupAndKey = (group: ProfileRecordGroup, key: string) => {
     if (group === 'media' && key === 'avatar') return setAvatar('')
+    if (group === 'media' && key === 'header') return setHeader('')
     const index = getValues('records').findIndex((r) => r.group === group && r.key === key)
     if (index >= 0) removeRecordAtIndex(index)
   }
@@ -215,6 +229,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   }
 
   const getAvatar = () => getValues('avatar')
+  const getHeader = () => getValues('header')
 
   return {
     isDirty: formState.isDirty,
@@ -231,7 +246,9 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     updateRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,
+    setHeader,
     getAvatar,
+    getHeader,
     labelForRecord,
     secondaryLabelForRecord,
     placeholderForRecord,

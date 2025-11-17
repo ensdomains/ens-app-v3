@@ -248,7 +248,7 @@ test.describe.serial('normal registration', () => {
       await time.increaseTime({ seconds: 60 })
       await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
       await expect(page.getByTestId('transactions-subheading')).toHaveText(
-        /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+        /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
       )
       await expect(page.getByTestId('finish-button')).toBeEnabled()
     })
@@ -261,7 +261,7 @@ test.describe.serial('normal registration', () => {
     await test.step('should be able to start registration step', async () => {
       await expect(page.getByTestId('transactions-subheading')).toBeVisible()
       await expect(page.getByTestId('transactions-subheading')).toHaveText(
-        /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+        /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
       )
       await page.getByTestId('finish-button').click()
     })
@@ -579,7 +579,7 @@ test('should allow normal registration, from disconnected to connected state', a
     await time.increaseTime({ seconds: 60 })
     await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
     await expect(page.getByTestId('transactions-subheading')).toHaveText(
-      /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+      /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
     )
     await expect(page.getByTestId('finish-button')).toBeEnabled()
   })
@@ -592,7 +592,7 @@ test('should allow normal registration, from disconnected to connected state', a
   await test.step('should be able to start registration step', async () => {
     await expect(page.getByTestId('transactions-subheading')).toBeVisible()
     await expect(page.getByTestId('transactions-subheading')).toHaveText(
-      /Your name is not registered until you’ve completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
+      /Your name is not registered until you've completed the second transaction. You have (23 hours|1 day) remaining to complete it./,
     )
     await page.getByTestId('finish-button').click()
   })
@@ -1917,5 +1917,440 @@ test.describe('Registration with Referrer', () => {
         timeout: 10000,
       })
     })
+  })
+})
+
+test('should change profile submit button text from "Skip profile" to "Next" when a header record is added', async ({
+  page,
+  login,
+  time,
+  makePageObject,
+}) => {
+  const name = `registration-with-images-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
+  await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Upload header - directly set files on hidden input
+  await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
+  await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('header-manual-input').fill('https://image.com/header.jpg')
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 30000 })
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+})
+
+test('should change profile submit button text from "Skip profile" to "Next" when an avatar record is added', async ({
+  page,
+  login,
+  time,
+  makePageObject,
+}) => {
+  const name = `registration-with-avatar-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
+  await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add avatar
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('avatar-uri-input').fill('https://image.com/avatar.jpg')
+  await page.getByRole('button', { name: 'Confirm' }).click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+})
+
+test('should change profile submit button text from "Skip profile" to "Next" when avatar and header record is added', async ({
+  page,
+  login,
+  time,
+  makePageObject,
+}) => {
+  const name = `registration-with-avatar-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
+  await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add avatar
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('avatar-uri-input').fill('https://image.com/avatar.jpg')
+  await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 30000 })
+
+  // Add header
+  await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
+  await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('header-manual-input').fill('https://image.com/header.jpg')
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 30000 })
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+})
+
+test('should change profile submit button text from "Skip profile" to "Next" when any record is added', async ({
+  page,
+  login,
+  time,
+  makePageObject,
+}) => {
+  const name = `registration-with-record-${Date.now()}.eth`
+  const homePage = makePageObject('HomePage')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
+  await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add a text record
+  await page.getByTestId('show-add-profile-records-modal-button').click()
+  await page.getByTestId('confirmation-dialog-confirm-button').click()
+  await page.getByTestId('profile-record-option-name').click()
+  await page.getByTestId('add-profile-records-button').click()
+  await page.getByTestId('profile-record-input-input-name').fill('Test Name')
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+})
+
+test('should allow the user to register with an avatar image manually set', async ({
+  page,
+  login,
+  accounts,
+  time,
+  makePageObject,
+}) => {
+  const name = `avatar-reg-${Date.now()}.eth`
+  const avatarUrl =
+    'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
+
+  await setPrimaryName(walletClient, {
+    name: '',
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+
+  const homePage = makePageObject('HomePage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
+  await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add avatar
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('avatar-uri-input').fill(avatarUrl)
+  await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 5000 })
+
+  // Show ETH record by default
+  await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+    accounts.getAddress('user'),
+  )
+
+  // Go to info step
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+  await page.getByTestId('profile-submit-button').click()
+
+  // Begin transactions
+  await expect(page.getByTestId('next-button')).toHaveText('Begin')
+  await page.getByTestId('next-button').click()
+  await expect(page.getByTestId('transaction-modal-inner')).toBeVisible()
+  await transactionModal.closeButton.click()
+
+  // Confirm commit transaction
+  await page.getByTestId('start-timer-button').click()
+  await expect(page.getByText('Open Wallet')).toBeVisible()
+  await transactionModal.confirm()
+
+  // Countdown text
+  await expect(
+    page.getByText(
+      'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+    ),
+  ).toBeVisible()
+
+  // Wait for countdown
+  await time.sync()
+  await expect(page.getByTestId('countdown-circle')).toBeVisible()
+  await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
+  const waitButton = page.getByTestId('wait-button')
+  await expect(waitButton).toBeVisible()
+  await expect(waitButton).toBeDisabled()
+
+  // Finish countdown
+  await time.increaseTime({ seconds: 60 })
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+  // Confirm registration transaction
+  await page.getByTestId('finish-button').click()
+  await expect(page.getByText('Open Wallet')).toBeVisible()
+  await transactionModal.confirm()
+
+  // Verify completion
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    accounts.getAddress('user', 5),
+  )
+
+  await test.step('confirm avatar is set', async () => {
+    const recordsPage = makePageObject('RecordsPage')
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(avatarUrl)
+  })
+})
+
+test('should allow the user to register with a header image manually set', async ({
+  page,
+  login,
+  accounts,
+  time,
+  makePageObject,
+}) => {
+  const name = `header-reg-${Date.now()}.eth`
+  const headerUrl =
+    'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
+
+  await setPrimaryName(walletClient, {
+    name: '',
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+
+  const homePage = makePageObject('HomePage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
+  await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add header
+  await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
+  await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('header-manual-input').fill(headerUrl)
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 5000 })
+
+  // Show ETH record by default
+  await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+    accounts.getAddress('user'),
+  )
+
+  // Go to info step
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+  await page.getByTestId('profile-submit-button').click()
+
+  // Begin transactions
+  await expect(page.getByTestId('next-button')).toHaveText('Begin')
+  await page.getByTestId('next-button').click()
+  await expect(page.getByTestId('transaction-modal-inner')).toBeVisible()
+  await transactionModal.closeButton.click()
+
+  // Confirm commit transaction
+  await page.getByTestId('start-timer-button').click()
+  await expect(page.getByText('Open Wallet')).toBeVisible()
+  await transactionModal.confirm()
+
+  // Countdown text
+  await expect(
+    page.getByText(
+      'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+    ),
+  ).toBeVisible()
+
+  // Wait for countdown
+  await time.sync()
+  await expect(page.getByTestId('countdown-circle')).toBeVisible()
+  await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
+  const waitButton = page.getByTestId('wait-button')
+  await expect(waitButton).toBeVisible()
+  await expect(waitButton).toBeDisabled()
+
+  // Finish countdown
+  await time.increaseTime({ seconds: 60 })
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+  // Confirm registration transaction
+  await page.getByTestId('finish-button').click()
+  await expect(page.getByText('Open Wallet')).toBeVisible()
+  await transactionModal.confirm()
+
+  // Verify completion
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    accounts.getAddress('user', 5),
+  )
+
+  await test.step('confirm header is set', async () => {
+    const recordsPage = makePageObject('RecordsPage')
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(headerUrl)
+  })
+})
+
+test('should allow the user to register with both avatar and header manually set', async ({
+  page,
+  login,
+  accounts,
+  time,
+  makePageObject,
+}) => {
+  const name = `avatar-header-reg-${Date.now()}.eth`
+  const avatar2 =
+    'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
+  const header2 =
+    'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
+
+  await setPrimaryName(walletClient, {
+    name: '',
+    account: createAccounts().getAddress('user') as `0x${string}`,
+  })
+
+  const homePage = makePageObject('HomePage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await time.sync()
+  await homePage.goto()
+  await login.connect()
+
+  await homePage.searchInput.fill(name)
+  await homePage.searchInput.press('Enter')
+
+  await page.getByTestId('primary-name-toggle').uncheck()
+  await page.getByTestId('next-button').click()
+  await page.getByText("I'd like to set up my profile first").click()
+
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Skip profile')
+
+  // Add avatar
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
+  await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('avatar-uri-input').fill(avatar2)
+  await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 5000 })
+
+  // Add header
+  await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
+  await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
+  await page.getByTestId('header-manual-input').fill(header2)
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 5000 })
+
+  // Show ETH record by default
+  await expect(page.getByTestId('profile-record-input-input-eth')).toHaveValue(
+    accounts.getAddress('user'),
+  )
+
+  // Go to info step
+  await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
+  await page.getByTestId('profile-submit-button').click()
+
+  // Begin transactions
+  await expect(page.getByTestId('next-button')).toHaveText('Begin')
+  await page.getByTestId('next-button').click()
+  await expect(page.getByTestId('transaction-modal-inner')).toBeVisible()
+  await transactionModal.closeButton.click()
+
+  // Confirm commit transaction
+  await page.getByTestId('start-timer-button').click()
+  await expect(page.getByText('Open Wallet')).toBeVisible()
+  await transactionModal.confirm()
+
+  // Countdown text
+  await expect(
+    page.getByText(
+      'This wait prevents others from front running your transaction. You will be prompted to complete a second transaction when the timer is complete.',
+    ),
+  ).toBeVisible()
+
+  // Wait for countdown
+  await time.sync()
+  await expect(page.getByTestId('countdown-circle')).toBeVisible()
+  await expect(page.getByTestId('countdown-complete-check')).not.toBeVisible()
+  const waitButton = page.getByTestId('wait-button')
+  await expect(waitButton).toBeVisible()
+  await expect(waitButton).toBeDisabled()
+
+  // Finish countdown
+  await time.increaseTime({ seconds: 60 })
+  await expect(page.getByTestId('countdown-complete-check')).toBeVisible()
+  await expect(page.getByTestId('finish-button')).toBeEnabled()
+
+  // Confirm registration transaction
+  await page.getByTestId('finish-button').click()
+  await expect(page.getByText('Open Wallet')).toBeVisible()
+  await transactionModal.confirm()
+
+  // Verify completion
+  await page.getByTestId('view-name').click()
+  await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
+    accounts.getAddress('user', 5),
+  )
+
+  await test.step('confirm avatar and header is set', async () => {
+    const recordsPage = makePageObject('RecordsPage')
+    await recordsPage.goto(name)
+    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(avatar2)
+    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(header2)
   })
 })

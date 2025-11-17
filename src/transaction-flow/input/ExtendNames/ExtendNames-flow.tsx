@@ -4,7 +4,7 @@ import { usePreviousDistinct } from 'react-use'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { parseEther } from 'viem'
-import { useAccount, useBalance, useEnsAvatar } from 'wagmi'
+import { useAccount, useBalance } from 'wagmi'
 
 import { Avatar, Button, CurrencyToggle, Dialog, Helper, Typography } from '@ensdomains/thorin'
 
@@ -17,13 +17,13 @@ import { DateSelection } from '@app/components/@molecules/DateSelection/DateSele
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -115,7 +115,7 @@ const CenteredMessage = styled(Typography)(
 )
 
 const NamesListItem = ({ name }: { name: string }) => {
-  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(name, 'name')
   const { data: expiry, isLoading: isExpiryLoading } = useExpiry({ name })
 

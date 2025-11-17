@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
 
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { getDestination } from '@app/routes'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 import { createUrlObject } from '@app/utils/urlObject'
 
 const Container = styled.a(
@@ -63,7 +62,7 @@ type Props = {
 
 export const AvatarWithLink = ({ name, label }: Props) => {
   const router = useRouter()
-  const { data: avatar } = useEnsAvatar({ ...ensAvatarConfig, name })
+  const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(name || '', 'name')
   const referrer = router.query.referrer as string | undefined
   const profileURL = getDestination(createUrlObject(`/profile/${name}`, { referrer })) as string
