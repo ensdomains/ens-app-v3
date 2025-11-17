@@ -49,11 +49,11 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
       legacyPublicResolver: {
         address: deploymentAddresses_.LegacyPublicResolver,
       },
-      nameWrapperEthRegistrarController: {
+      wrappedEthRegistrarController: {
         address: deploymentAddresses_.WrappedEthRegistrarController,
       },
-      universalRegistrarRenewalWithReferrer: {
-        address: deploymentAddresses_.UniversalRegistrarRenewalWithReferrer,
+      wrappedPublicResolver: {
+        address: deploymentAddresses_.NameWrapperPublicResolver,
       },
     },
     subgraphs: {

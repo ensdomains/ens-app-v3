@@ -176,13 +176,13 @@ export const commitName = {
   ) => {
     const commitment = makeCommitment(params)
     const contracts = client.chain?.contracts
-    const controllerContract = contracts?.nameWrapperEthRegistrarController as any
+    const controllerContract = contracts?.wrappedEthRegistrarController as any
     const controllerAddress = controllerContract?.address ||
                              (controllerContract && typeof controllerContract === 'object' &&
                               Object.values(controllerContract)[0] as any)?.address
 
     if (!controllerAddress) {
-      throw new Error('NameWrapper ETH Registrar Controller address not found in chain config')
+      throw new Error('Wrapped ETH Registrar Controller address not found in chain config')
     }
 
     return {
@@ -206,13 +206,13 @@ export const registerName = {
   ) => {
     const registrationTuple = makeRegistrationTuple(params)
     const contracts = client.chain?.contracts
-    const controllerContract = contracts?.nameWrapperEthRegistrarController as any
+    const controllerContract = contracts?.wrappedEthRegistrarController as any
     const controllerAddress = controllerContract?.address ||
                              (controllerContract && typeof controllerContract === 'object' &&
                               Object.values(controllerContract)[0] as any)?.address
 
     if (!controllerAddress) {
-      throw new Error('NameWrapper ETH Registrar Controller address not found in chain config')
+      throw new Error('Wrapped ETH Registrar Controller address not found in chain config')
     }
 
     return {
