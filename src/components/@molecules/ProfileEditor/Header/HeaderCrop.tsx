@@ -161,11 +161,10 @@ const ImageCropGuides = styled.div(
 const AspectRatioLabel = styled.div(
   ({ theme }) => css`
     position: absolute;
-    background-color: ${theme.colors.backgroundSecondary};
     color: ${theme.colors.textSecondary};
     padding: ${theme.space['1']} ${theme.space['2']};
     border-radius: ${theme.radii.large};
-    font-size: ${theme.fontSizes.small};
+    font-size: ${theme.fontSizes.extraSmall};
     font-weight: ${theme.fontWeights.normal};
     pointer-events: none;
     z-index: 10;
@@ -176,14 +175,14 @@ const AspectRatioLabel = styled.div(
 const OuterRatioLabel = styled(AspectRatioLabel)(
   () => css`
     top: 12%;
-    left: 1%;
+    right: 90%;
   `,
 )
 
 const InnerRatioLabel = styled(AspectRatioLabel)(
   () => css`
     top: 26%;
-    left: 1%;
+    right: 90%;
   `,
 )
 
