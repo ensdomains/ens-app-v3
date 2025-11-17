@@ -105,6 +105,59 @@ const ImageCropFrame = styled.div(
   `,
 )
 
+const ImageCropGuides = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    pointer-events: none;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background-color: ${theme.colors.accent};
+      opacity: 0.3;
+    }
+
+    /* Vertical lines - positioned within the frame (10% left margin + 80% width) */
+    &::before {
+      left: calc(10% + 80% / 3);
+      top: 10%;
+      width: 1px;
+      height: 80%;
+    }
+
+    &::after {
+      left: calc(10% + 80% * 2 / 3);
+      top: 10%;
+      width: 1px;
+      height: 80%;
+    }
+
+    /* Horizontal lines - positioned within the frame for 6:1 aspect ratio (25% 50% 25%) */
+    & > span:nth-child(1) {
+      position: absolute;
+      left: 10%;
+      top: calc(10% + 80% * 0.25);
+      width: 80%;
+      height: 1px;
+      background-color: ${theme.colors.accent};
+      opacity: 0.3;
+    }
+
+    & > span:nth-child(2) {
+      position: absolute;
+      left: 10%;
+      top: calc(10% + 80% * 0.75);
+      width: 80%;
+      height: 1px;
+      background-color: ${theme.colors.accent};
+      opacity: 0.3;
+    }
+  `,
+)
+
 const StyledCanvas = styled.canvas(
   () => css`
     width: 100%;
@@ -462,6 +515,10 @@ export const CropComponent = ({
             <ImageContainer>
               <ImageCropBorder as={CropBorderSVG} />
               <ImageCropFrame as={CropFrameSVG} />
+              <ImageCropGuides>
+                <span />
+                <span />
+              </ImageCropGuides>
               <StyledCanvas width={1200} height={400} ref={canvasRef} />
             </ImageContainer>
           </ImageWrapper>
