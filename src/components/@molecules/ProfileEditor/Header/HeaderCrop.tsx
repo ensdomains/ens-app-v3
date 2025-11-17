@@ -166,7 +166,7 @@ const AspectRatioLabel = styled.div(
     padding: ${theme.space['1']} ${theme.space['2']};
     border-radius: ${theme.radii.large};
     font-size: ${theme.fontSizes.small};
-    font-weight: ${theme.fontWeights.medium};
+    font-weight: ${theme.fontWeights.normal};
     pointer-events: none;
     z-index: 10;
     opacity: 0.9;
