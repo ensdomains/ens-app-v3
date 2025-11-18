@@ -57,6 +57,12 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
       wrappedPublicResolver: {
         address: deploymentAddresses_.NameWrapperPublicResolver as Address,
       },
+      ensDefaultReverseRegistrar: {
+        address: deploymentAddresses_.DefaultReverseRegistrar as Address,
+      },
+      wrappedBulkRenewal: {
+        address: deploymentAddresses_.WrappedStaticBulkRenewal as Address,
+      },
     },
     subgraphs: {
       ens: {
