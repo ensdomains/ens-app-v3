@@ -50,16 +50,6 @@ const addresses = {
 
 export type AdditionalContracts = Record<OverrideContracts, { address: Address }>
 
-/**
- * Wrapper function for addEnsContractsWithSubgraph that allows additional contract overrides.
- *
- * This function currently passes through the results from addEnsContractsWithSubgraph,
- * but provides a central location for adding contract address overrides or additional
- * contract information in the future.
- *
- * @param params - Chain configuration with subgraph details
- * @returns Chain with ENS contracts and subgraph configuration
- */
 export const addEnsContractsWithSubgraphAndOverrides = <const TChain extends Chain>({
   chain,
   subgraphId,

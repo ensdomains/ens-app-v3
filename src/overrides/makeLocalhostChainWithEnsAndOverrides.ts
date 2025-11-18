@@ -7,17 +7,6 @@ import {
 } from '@app/overrides/addEnsContractsWithSubgraphAndOverrides'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
 
-/**
- * Wrapper function for makeLocalhostChainWithEns that allows additional contract overrides.
- *
- * This function adds contract address overrides to the localhost chain configuration,
- * providing a central location for managing custom contract addresses alongside the
- * standard ENS contracts for local development.
- *
- * @param localhost - The localhost chain configuration
- * @param deploymentAddresses - Contract addresses from local deployment
- * @returns Chain with ENS contracts and overrides for localhost
- */
 export const makeLocalhostChainWithEnsAndOverrides = <const T extends Chain>(
   localhost: T,
   deploymentAddresses: Register['deploymentAddresses'],

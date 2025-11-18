@@ -2,11 +2,6 @@ import { isHex, pad } from 'viem'
 
 import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
 
-/**
- * Validates and pads a referrer hex string to 32 bytes.
- * The referrer should already be a hex string from the query parameter.
- * Returns EMPTY_BYTES32 if the referrer is undefined or invalid.
- */
 export const getReferrerHex = (referrer: string | undefined): `0x${string}` => {
   if (!referrer) return EMPTY_BYTES32
 
