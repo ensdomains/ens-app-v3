@@ -1,7 +1,12 @@
-import type { Chain } from 'viem'
+import type { Address, Chain } from 'viem'
 
 import type { Register } from '@app/local-contracts'
+import { LocalhostChainWithEnsAndContracts } from '@app/overrides/addEnsContractsWithSubgraphAndOverrides'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
+
+type AdditionalContracts = {
+  wrappedRenewalWithReferrer: { address: Address }
+}
 
 /**
  * Wrapper function for makeLocalhostChainWithEns that allows additional contract overrides.
@@ -17,7 +22,7 @@ import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainW
 export const makeLocalhostChainWithEnsAndOverrides = <const T extends Chain>(
   localhost: T,
   deploymentAddresses: Register['deploymentAddresses'],
-) => {
+): LocalhostChainWithEnsAndContracts<T, AdditionalContracts> => {
   const chainWithEns = makeLocalhostChainWithEns(localhost, deploymentAddresses)
 
   return {
@@ -25,11 +30,11 @@ export const makeLocalhostChainWithEnsAndOverrides = <const T extends Chain>(
     contracts: {
       ...chainWithEns.contracts,
       ensBulkRenewal: {
-        address: deploymentAddresses.WrappedStaticBulkRenewal,
+        address: deploymentAddresses.WrappedStaticBulkRenewal as Address,
       },
       wrappedRenewalWithReferrer: {
-        address: deploymentAddresses.UniversalRegistrarRenewalWithReferrer,
+        address: deploymentAddresses.UniversalRegistrarRenewalWithReferrer as Address,
       },
     },
-  } as const
+  } as LocalhostChainWithEnsAndContracts<T, AdditionalContracts>
 }
