@@ -1,12 +1,11 @@
 import type { Address, Chain } from 'viem'
 
 import type { Register } from '@app/local-contracts'
-import { LocalhostChainWithEnsAndContracts } from '@app/overrides/addEnsContractsWithSubgraphAndOverrides'
+import {
+  AdditionalContracts,
+  LocalhostChainWithEnsAndContracts,
+} from '@app/overrides/addEnsContractsWithSubgraphAndOverrides'
 import { makeLocalhostChainWithEns } from '@app/utils/chains/makeLocalhostChainWithEns'
-
-type AdditionalContracts = {
-  wrappedRenewalWithReferrer: { address: Address }
-}
 
 /**
  * Wrapper function for makeLocalhostChainWithEns that allows additional contract overrides.

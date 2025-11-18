@@ -48,7 +48,7 @@ const addresses = {
   },
 } as const satisfies Record<SupportedChain, Record<OverrideContracts, { address: Address }>>
 
-type AdditionalContracts = Record<OverrideContracts, { address: Address }>
+export type AdditionalContracts = Record<OverrideContracts, { address: Address }>
 
 /**
  * Wrapper function for addEnsContractsWithSubgraph that allows additional contract overrides.
