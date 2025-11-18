@@ -53,7 +53,7 @@ const profiles = [
         type: 'other',
         key: 'avatar',
         value: 'https://euc.li/...',
-        fullValue: 'https://euc.li/holesky/wrapmebaby.eth',
+        fullValue: 'https://euc.li/wrapmebaby.eth',
       },
       {
         type: 'account',
