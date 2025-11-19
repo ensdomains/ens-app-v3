@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { getDestination } from '@app/routes'
 import { createUrlObject } from '@app/utils/urlObject'
 
-const createDecorativeUrlObject = (urlObject: ReturnType<typeof getDestination>) => {
+export const createDecorativeUrlObject = (urlObject?: ReturnType<typeof getDestination>) => {
   if (!urlObject || typeof urlObject === 'string') return undefined
   const { query = {}, ...rest } = urlObject
   const { from, ...cleanQuery } = query

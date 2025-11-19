@@ -1,9 +1,8 @@
-import { UrlObject } from 'url'
-
 import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren, useMemo } from 'react'
 
+import { createDecorativeUrlObject } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
 import { createUrlObject } from '@app/utils/urlObject'
 
@@ -32,10 +31,10 @@ export const BaseLinkWithHistory = ({
       from: router.asPath,
       referrer: router.query.referrer as string | undefined,
     })
-    return getDestination(urlObject) as UrlObject
+    return getDestination(urlObject)
   }, [href, router.asPath, router.query.referrer])
 
-  return <Link {...rest} legacyBehavior href={newHref} as={newHref.pathname!} />
+  return <Link {...rest} legacyBehavior href={newHref} as={createDecorativeUrlObject(newHref)} />
 }
 
 export default BaseLink

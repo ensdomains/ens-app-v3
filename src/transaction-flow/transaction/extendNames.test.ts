@@ -1,6 +1,7 @@
 import { mockFunction } from '@app/test-utils'
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Address, Hex } from 'viem'
 
 import { getPrice } from '@ensdomains/ensjs/public'
 import * as  renewNames from '@app/overrides/ensjs/renewNames'
@@ -39,6 +40,7 @@ describe('extendNamesTransaction', () => {
         duration: ONE_YEAR_SECONDS,
         startDateTimestamp: JAN_1_2022_TIMESTAMP,
         displayPrice: '0.1 ETH',
+        hasWrapped: false
       }
 
       const result = extendNamesTransaction.displayItems(data, mockT)
@@ -77,6 +79,7 @@ describe('extendNamesTransaction', () => {
         duration: ONE_YEAR_SECONDS,
         startDateTimestamp: JAN_1_2022_TIMESTAMP,
         displayPrice: '0.2 ETH',
+        hasWrapped: false
       }
 
       const result = extendNamesTransaction.displayItems(data, mockT)
@@ -138,6 +141,7 @@ describe('extendNamesTransaction', () => {
           duration,
           startDateTimestamp: JAN_1_2022_TIMESTAMP,
           displayPrice: '0.1 ETH',
+          hasWrapped: false,
         }
 
         const result = extendNamesTransaction.displayItems(data, mockT)
@@ -157,10 +161,14 @@ describe('extendNamesTransaction', () => {
         names: ['test.eth'],
         duration: 31536000,
         displayPrice: '1.02',
+        hasWrapped: false,
       }
 
       const result = extendNamesTransaction.displayItems(data, mockT)
-      expect(result[2].value.newExpiry).toBeUndefined()
+      const durationItem = result[2]
+      if (durationItem.type === 'duration') {
+        expect(durationItem.value.newExpiry).toBeUndefined()
+      }
     })
   })
 
@@ -174,14 +182,15 @@ describe('extendNamesTransaction', () => {
       const data = {
         names: ['test.eth'],
         duration: 31536000, // 1 year
+        hasWrapped: false,
       }
 
-      mockGetPrice.mockResolvedValue({ base: BigInt('1000000000000000000'), premium: 0n }) // 1 ETH
+      mockGetPrice.mockResolvedValue({ base: BigInt('1000000000000000000'), premium: 0n } as any) // 1 ETH
       mockRenewNames.mockResolvedValue({
         to: '0x123' as Address,
         data: '0x456' as Hex,
         value: BigInt('1020000000000000000'), // 1.02 ETH (with 2% buffer)
-      })
+      } as any)
 
       const result = await extendNamesTransaction.transaction({
         client: mockClient,
@@ -197,6 +206,8 @@ describe('extendNamesTransaction', () => {
         nameOrNames: ['test.eth'],
         duration: 31536000,
         value: BigInt('1020000000000000000'),
+        hasWrapped: false,
+        referrer: undefined,
       })
       expect(result).toEqual({
         to: '0x123',
@@ -209,9 +220,10 @@ describe('extendNamesTransaction', () => {
       const data = {
         names: ['test.eth'],
         duration: 31536000,
+        hasWrapped: false,
       }
 
-      mockGetPrice.mockResolvedValue(null)
+      mockGetPrice.mockResolvedValue(null as any)
 
       await expect(
         extendNamesTransaction.transaction({
