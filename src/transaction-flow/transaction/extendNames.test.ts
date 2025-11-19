@@ -3,7 +3,7 @@ import { mockFunction } from '@app/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getPrice } from '@ensdomains/ensjs/public'
-import { renewNames } from '@ensdomains/ensjs/wallet'
+import * as  renewNames from '@app/overrides/ensjs/renewNames'
 
 import { ClientWithEns, ConnectorClientWithEns } from '@app/types'
 
@@ -11,6 +11,7 @@ import extendNamesTransaction from './extendNames'
 
 vi.mock('@ensdomains/ensjs/public')
 vi.mock('@ensdomains/ensjs/wallet')
+vi.mock('@app/overrides/ensjs/renewNames')
 
 const mockGetPrice = mockFunction(getPrice)
 const mockRenewNames = mockFunction(renewNames.makeFunctionData)

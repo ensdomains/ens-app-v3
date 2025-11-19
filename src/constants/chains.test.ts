@@ -223,13 +223,13 @@ describe('chains', () => {
   describe('chain configurations', () => {
     it('should have correct contract addresses for sepolia', () => {
       expect(sepoliaWithEns.contracts.ensEthRegistrarController?.address).toBe(
-        '', //0xfb3cE5D01e0f33f41DbB39035dB9745962F1f968
+        '0xfb3cE5D01e0f33f41DbB39035dB9745962F1f968',      
       )
       expect(sepoliaWithEns.contracts.ensPublicResolver?.address).toBe(
-        '', //0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5
+        '0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5',
       )
       expect(sepoliaWithEns.contracts.ensReverseRegistrar?.address).toBe(
-        '', // 0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6
+        '0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6',
       )
     })
 
