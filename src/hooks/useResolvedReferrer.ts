@@ -22,9 +22,7 @@ type UseResolvedReferrerResult = {
  * @param referrer - ENS name or hex address to resolve
  * @returns Query result with resolved hex value
  */
-export const useResolvedReferrer = (
-  referrer: string | undefined,
-): UseResolvedReferrerResult => {
+export const useResolvedReferrer = (referrer: string | undefined): UseResolvedReferrerResult => {
   const publicClient = usePublicClient()
 
   const query = useQuery({
