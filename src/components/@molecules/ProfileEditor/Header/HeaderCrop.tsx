@@ -175,14 +175,32 @@ const AspectRatioLabel = styled.div(
 const OuterRatioLabel = styled(AspectRatioLabel)(
   () => css`
     top: 10%;
-    right: 90%;
+    right: calc(90% + 0.25rem);
+    transform: translateY(-50%);
   `,
 )
 
 const InnerRatioLabel = styled(AspectRatioLabel)(
   () => css`
     top: calc(10% + 80% * 0.25);
-    right: 90%;
+    right: calc(90% + 0.25rem);
+    transform: translateY(-50%);
+  `,
+)
+
+const BottomInnerRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    top: calc(10% + 80% * 0.75);
+    right: calc(90% + 0.25rem);
+    transform: translateY(-50%);
+  `,
+)
+
+const BottomOuterRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    bottom: 10%;
+    right: calc(90% + 0.25rem);
+    transform: translateY(50%);
   `,
 )
 
@@ -545,6 +563,8 @@ export const CropComponent = ({
               <ImageCropFrame as={CropFrameSVG} />
               <OuterRatioLabel aria-label="Outer crop frame aspect ratio 3:1">3:1</OuterRatioLabel>
               <InnerRatioLabel aria-label="Inner grid lines aspect ratio 6:1">6:1</InnerRatioLabel>
+              <BottomInnerRatioLabel aria-label="Bottom inner grid line aspect ratio 6:1">6:1</BottomInnerRatioLabel>
+              <BottomOuterRatioLabel aria-label="Bottom outer crop frame aspect ratio 3:1">3:1</BottomOuterRatioLabel>
               <ImageCropGuides>
                 <span />
                 <span />
