@@ -120,16 +120,16 @@ const ImageCropGuides = styled.div(
       opacity: 0.3;
     }
 
-    /* Vertical lines - positioned within the frame (10% left margin + 80% width) */
+    /* Vertical lines - positioned within the frame for 25% 50% 25% spacing */
     &::before {
-      left: calc(10% + 80% / 3);
+      left: calc(10% + 80% * 0.25);
       top: 10%;
       width: 1px;
       height: 80%;
     }
 
     &::after {
-      left: calc(10% + 80% * 2 / 3);
+      left: calc(10% + 80% * 0.75);
       top: 10%;
       width: 1px;
       height: 80%;
