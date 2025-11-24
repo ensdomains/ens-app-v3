@@ -21,6 +21,7 @@ import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestination } from '@app/routes'
 import { emptyAddress } from '@app/utils/constants'
+import { createUrlObject } from '@app/utils/urlObject'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
 import { useRoleActions } from '../hooks/useRoleActions'
@@ -91,12 +92,19 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     ? actions?.find(({ type, disabled }) => type === 'sync-manager' && !disabled)
     : null
 
+  const referrer = router.query.referrer as string | undefined
+
   const items: DropdownItem[] = [
     ...(primary.data?.name
       ? ([
           {
             label: t('wallet.viewProfile'),
-            onClick: () => router.push(getDestination(`/profile/${primary.data!.name}`) as string),
+            onClick: () =>
+              router.push(
+                getDestination(
+                  createUrlObject(`/profile/${primary.data!.name}`, { referrer }),
+                ) as string,
+              ),
             color: 'text',
             icon: () => <UpRightArrowSVG height={16} width={16} />,
           },
@@ -110,7 +118,8 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
       : []),
     {
       label: t('address.viewAddress'),
-      onClick: () => router.push(getDestination(`/address/${address}`) as string),
+      onClick: () =>
+        router.push(getDestination(createUrlObject(`/address/${address}`, { referrer })) as string),
       color: 'text',
       icon: () => <UpRightArrowSVG height={16} width={16} />,
     },
