@@ -137,6 +137,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
       isSelf: selectedNames.every(
         (n) => n.registrant === selfAddress || n.wrappedOwner === selfAddress,
       ),
+      hasWrapped: true,
     })
   }
 
