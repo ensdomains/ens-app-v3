@@ -302,5 +302,5 @@
       "@ensdomains/dnsprovejs@0.5.1": "patches/@ensdomains__dnsprovejs@0.5.1.patch"
     }
   },
-  "packageManager": "pnpm@9.3.0"
+  "packageManager": "pnpm@10.23.0"
 }
