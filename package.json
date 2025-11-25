@@ -118,7 +118,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
-    "@ensdomains/buffer": "^0.1.1",
+    "@ensdomains/buffer": "^0.1.3",
     "@ensdomains/ens-test-env": "0.6.0",
     "@ensdomains/hardhat-toolbox-viem-extended": "^0.0.5",
     "@ensdomains/headless-web3-provider": "^1.0.8",
@@ -193,6 +193,11 @@
     "ws": "^8.16.0"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "fsevents",
+      "husky"
+    ],
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@wagmi/core": "2.13.3",
