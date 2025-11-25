@@ -1,4 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { ContractFunctionExecutionError } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { universalResolverReverseSnippet } from '@ensdomains/ensjs/contracts'
@@ -37,8 +38,14 @@ export const getPrimaryNameQueryFn =
 
     const client = config.getClient({ chainId })
 
-    // Get the standard getName response
-    const res = await getName(client, { address, ...params })
+    let res: Awaited<ReturnType<typeof getName>>
+    try {
+      // Get the standard getName response
+      res = await getName(client, { address, ...params })
+    } catch (e) {
+      if (e instanceof ContractFunctionExecutionError) return null
+      throw e
+    }
 
     if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
 
