@@ -174,7 +174,7 @@
     "next-dev-https": "^0.1.2",
     "next-router-mock": "^0.9.10",
     "pako": "^2.1.0",
-    "playwright-core": "^1.55.0",
+    "playwright-core": "^1.56.1",
     "postcss-styled-syntax": "^0.7.1",
     "prettier": "3.0.3",
     "sitemap": "^7.1.1",
@@ -302,5 +302,5 @@
       "@ensdomains/dnsprovejs@0.5.1": "patches/@ensdomains__dnsprovejs@0.5.1.patch"
     }
   },
-  "packageManager": "pnpm@9.3.0"
+  "packageManager": "pnpm@10.23.0"
 }
