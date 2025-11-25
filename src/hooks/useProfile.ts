@@ -15,6 +15,8 @@ import {
   UseSubgraphRecordsReturnType,
 } from './ensjs/subgraph/useSubgraphRecords'
 
+const CUSTOM_RECORD_ADDITIONS = ['avatar']
+
 type UseProfileParameters = {
   name?: string
   enabled?: boolean
@@ -43,6 +45,7 @@ const getProfileRecordsParameters = ({
       ...new Set([
         ...supportedSocialRecordKeys,
         ...supportedGeneralRecordKeys,
+        ...CUSTOM_RECORD_ADDITIONS,
         ...(subgraphRecords?.texts || []),
       ]),
     ] as [string, ...string[]],

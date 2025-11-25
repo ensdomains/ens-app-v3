@@ -1,0 +1,10 @@
+<svg 
+    width="100%" 
+    height="100%" 
+    viewBox="0 0 300 100" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="none"
+>
+    <rect x="30" y="10" width="240" height="80" stroke="currentColor" stroke-width="4"/>
+</svg>

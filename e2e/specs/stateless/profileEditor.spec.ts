@@ -145,6 +145,7 @@ test.describe('profile', () => {
 
 test.describe('legacy resolver', () => {
   test('should be able to add/update profile records without migration', async ({
+    page,
     login,
     makeName,
     makePageObject,
@@ -156,6 +157,11 @@ test.describe('legacy resolver', () => {
       resolver: legacyResolver,
       records: await makeRecords(),
     })
+
+    const avatarUrl =
+      'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
+    const headerUrl =
+      'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
 
     const morePage = makePageObject('MorePage')
     const profilePage = makePageObject('ProfilePage')
@@ -178,6 +184,23 @@ test.describe('legacy resolver', () => {
     await profilePage.editProfileButton.click()
 
     // await profilePage.profileEditor.getByTestId('warning-overlay-skip-button').click()
+
+    // Add avatar
+    await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
+    await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
+    await page.getByTestId('avatar-uri-input').fill(avatarUrl)
+    await page.getByRole('button', { name: 'Confirm' }).click()
+    await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 20000 })
+
+    // Add header
+    await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
+    await expect(
+      page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }),
+    ).toBeVisible({ timeout: 10000 })
+    await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
+    await page.getByTestId('header-manual-input').fill(headerUrl)
+    await page.getByRole('button', { name: 'Save' }).click()
+    await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 20000 })
 
     // Update records
     await profilePage.profileEditorInput('eth').fill(createAccounts().getAddress('user2'))
@@ -206,6 +229,12 @@ test.describe('legacy resolver', () => {
       'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
     )
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
+    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(avatarUrl)
+    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(headerUrl)
+
+    await profilePage.goto(name)
+    await expect(profilePage.record('text', 'avatar')).toContainText('https://turquoi...')
+    await expect(profilePage.record('text', 'header')).toContainText('https://cdn-med...')
   })
 
   test('should be able to delete profile records without migration', async ({
@@ -287,6 +316,7 @@ test.describe('legacy resolver', () => {
 
 test.describe('custom legacy resolver', () => {
   test('should be able to add/update profile records without migration', async ({
+    page,
     login,
     makeName,
     makePageObject,
@@ -298,6 +328,11 @@ test.describe('custom legacy resolver', () => {
       resolver: customLegacyResolver,
       records: await makeRecords(),
     })
+
+    const avatarUrl =
+      'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
+    const headerUrl =
+      'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
 
     const morePage = makePageObject('MorePage')
     const profilePage = makePageObject('ProfilePage')
@@ -320,6 +355,23 @@ test.describe('custom legacy resolver', () => {
     await profilePage.editProfileButton.click()
 
     // await profilePage.profileEditor.getByTestId('warning-overlay-skip-button').click()
+
+    // Add avatar
+    await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
+    await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
+    await page.getByTestId('avatar-uri-input').fill(avatarUrl)
+    await page.getByRole('button', { name: 'Confirm' }).click()
+    await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 20000 })
+
+    // Add header
+    await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
+    await expect(
+      page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }),
+    ).toBeVisible({ timeout: 10000 })
+    await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
+    await page.getByTestId('header-manual-input').fill(headerUrl)
+    await page.getByRole('button', { name: 'Save' }).click()
+    await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 20000 })
 
     // Update records
     await profilePage.profileEditorInput('eth').fill(createAccounts().getAddress('user2'))
@@ -348,6 +400,12 @@ test.describe('custom legacy resolver', () => {
       'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
     )
     await expect(recordsPage.getRecordValue('text', 'email')).toHaveText('fakeemail@fake.com')
+    await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(avatarUrl)
+    await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(headerUrl)
+
+    await profilePage.goto(name)
+    await expect(profilePage.record('text', 'avatar')).toContainText('https://turquoi...')
+    await expect(profilePage.record('text', 'header')).toContainText('https://cdn-med...')
   })
 
   test('should be able to delete profile records without migration', async ({

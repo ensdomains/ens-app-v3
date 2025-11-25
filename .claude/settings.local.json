@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run:*)",
+      "Bash(rg:*)",
+      "Bash(pnpm lint:types:*)",
+      "Bash(npx eslint:*)",
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(git mv:*)",
+      "Bash(pnpm test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm lint:fix:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(git checkout:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(git rm:*)",
+      "Bash(node:*)",
+      "Bash(pnpm unlink:*)",
+      "Bash(timeout 60 pnpm lint:types:*)",
+      "Bash(gh pr list:*)",
+      "Bash(ls:*)",
+      "mcp__github__list_workflow_runs",
+      "mcp__github__list_workflows",
+      "mcp__github__list_workflow_jobs",
+      "mcp__github__get_job_logs",
+      "mcp__github__get_pull_request_diff",
+      "mcp__github__get_pull_request"
+    ],
+    "deny": []
+  }
+}

@@ -47,6 +47,22 @@ export const profileRecordsToRecordOptions = (
         }
       }
 
+      if (record.key === 'header') {
+        const currentHeaderValue = options.texts?.find((r) => r.key === 'header')?.value || ''
+        const defaultHeaderValue =
+          !!currentHeaderValue && !!recordItem.value && group === 'media'
+            ? recordItem.value
+            : currentHeaderValue
+        const newHeaderValue = defaultHeaderValue || currentHeaderValue || recordItem.value
+        return {
+          ...options,
+          texts: [
+            ...(options.texts?.filter((r) => r.key !== 'header') || []),
+            { key: 'header', value: newHeaderValue },
+          ],
+        }
+      }
+
       if (record.type === 'text') {
         return {
           ...options,
@@ -131,14 +147,26 @@ export const profileEditorFormToProfileRecords = (data: ProfileEditorForm): Prof
           } as ProfileRecord,
         ]
       : []),
+    ...(data.header
+      ? [
+          {
+            key: 'header',
+            type: 'text',
+            group: 'media',
+            value: data.header,
+          } as ProfileRecord,
+        ]
+      : []),
   ]
 }
 
 export const profileRecordsToProfileEditorForm = (records: ProfileRecord[]): ProfileEditorForm => {
-  return records.reduce<{ avatar: string; records: ProfileRecord[] }>(
+  return records.reduce<{ avatar: string; header: string; records: ProfileRecord[] }>(
     (result, record) => {
       if (record.key === 'avatar' && record.group === 'media')
         return { ...result, avatar: record.value || '' }
+      if (record.key === 'header' && record.group === 'media')
+        return { ...result, header: record.value || '' }
       const normalizedRecord = {
         ...record,
         value: record.value || '',
@@ -148,7 +176,7 @@ export const profileRecordsToProfileEditorForm = (records: ProfileRecord[]): Pro
         records: [...result.records, normalizedRecord],
       }
     },
-    { avatar: '', records: [] },
+    { avatar: '', header: '', records: [] },
   )
 }
 
@@ -174,6 +202,14 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
   const texts: ProfileRecord[] =
     records.texts?.map(({ key, value }) => {
       if (key === 'avatar') {
+        return {
+          key: key as string,
+          type: 'text',
+          group: 'media',
+          value,
+        }
+      }
+      if (key === 'header') {
         return {
           key: key as string,
           type: 'text',
