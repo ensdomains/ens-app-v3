@@ -1,30 +1,36 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import dappwright from '@tenkeylabs/dappwright'
 import type { Dappwright } from '@tenkeylabs/dappwright'
 
 import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
 
 import { SafeEnsConfig } from './config/safe-ens-config'
-import { confirmTransactionWithMetaMask, connectWalletToEns } from './config/wallet-ens-config'
+import {
+  closeTransactionModal,
+  navigateToHome,
+  openWalletAndConfirm,
+  searchForName,
+  waitForTransactionComplete,
+} from './config/test-utilities'
+import { connectWalletToEns } from './config/wallet-ens-config'
 
 // Global variables to share state
 let metaMask: Dappwright
-let page: Page
-let context: BrowserContext
+let page: any // Using any to avoid Playwright version conflicts with dappwright
+let context: any
 
-// Extend owned name
+/**
+ * Extends an owned ENS name by one day.
+ * Uses event-driven waiting instead of arbitrary timeouts.
+ */
 async function extendOwnedName(): Promise<void> {
   const name = 'extend-name-test.eth'
-
   console.log(`🎯 Starting extension for ${name}`)
 
   // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(name)
-  await searchInput.press('Enter')
+  await searchForName(page, name)
 
-  // Grab the current expiry timestamp from profile
+  // Wait for expiry element to be visible and get current expiry
   const expiryElement = page.getByTestId('owner-profile-button-name.expiry')
   await expiryElement.waitFor({ state: 'visible', timeout: 15000 })
 
@@ -34,7 +40,7 @@ async function extendOwnedName(): Promise<void> {
   const currentExpiryTimestamp = parseInt(timestampAttr, 10)
   console.log(`📅 Current expiry: ${new Date(currentExpiryTimestamp).toISOString()}`)
 
-  // Click "extend"
+  // Click extend button
   const extendButton = page.getByTestId('extend-button')
   await extendButton.waitFor({ state: 'visible', timeout: 15000 })
   await extendButton.click()
@@ -44,10 +50,10 @@ async function extendOwnedName(): Promise<void> {
   await expect(dateSelection).toHaveText('Pick by date')
   await dateSelection.click()
 
-  // Fill the calendar with a date one day later
+  // Calculate and fill new date (one day later)
   const expiryTime = currentExpiryTimestamp / 1000
   const calendar = page.getByTestId('calendar')
-  const dayLater = await page.evaluate((ts) => {
+  const dayLater = await page.evaluate((ts: number) => {
     const expiryDate = new Date(ts)
     expiryDate.setDate(expiryDate.getDate() + 1)
     return expiryDate
@@ -62,22 +68,19 @@ async function extendOwnedName(): Promise<void> {
   const confirmButton = page.getByTestId('extend-names-confirm')
   await confirmButton.click()
 
-  // Transaction modal check BEFORE confirming
+  // Verify transaction details are shown
   await expect(page.getByText('1 day')).toBeVisible()
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
 
-  // Confirm in Metamask pop up
-  await confirmTransactionWithMetaMask(page)
+  // Open wallet and confirm transaction
+  await openWalletAndConfirm(page, { type: 'extend', name })
 
-  // Wait for transaction to complete
-  await page.waitForTimeout(25000)
+  // Wait for transaction to complete using event-driven approach
+  await waitForTransactionComplete(page, { action: 'extension' })
 
-  // Close transaction complete modal
-  const transactionCompleteButton = page.getByTestId('transaction-modal-complete-button')
-  await transactionCompleteButton.click()
+  // Close the completion modal
+  await closeTransactionModal(page)
 
-  // Verify new expiry is +1 day
+  // Verify new expiry is correctly updated
   const newTimestampAttr = await expiryElement.getAttribute('data-timestamp')
   if (!newTimestampAttr) throw new Error('❌ Could not read new expiry timestamp')
 
@@ -94,19 +97,18 @@ async function extendOwnedName(): Promise<void> {
   )
 }
 
-// Extend unowned name
+/**
+ * Extends an unowned ENS name (one not owned by the connected wallet).
+ * Demonstrates handling of the additional confirmation step.
+ */
 async function extendUnownedName(): Promise<void> {
   const name = 'user1-extend.eth'
-
   console.log(`🎯 Starting extension for ${name}`)
 
   // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(name)
-  await searchInput.press('Enter')
+  await searchForName(page, name)
 
-  // Grab the current expiry timestamp from profile
+  // Get current expiry
   const expiryElement = page.getByTestId('owner-profile-button-name.expiry')
   await expiryElement.waitFor({ state: 'visible', timeout: 15000 })
 
@@ -116,12 +118,12 @@ async function extendUnownedName(): Promise<void> {
   const currentExpiryTimestamp = parseInt(timestampAttr, 10)
   console.log(`📅 Current expiry: ${new Date(currentExpiryTimestamp).toISOString()}`)
 
-  // Click "extend"
+  // Click extend button
   const extendButton = page.getByTestId('extend-button')
   await extendButton.waitFor({ state: 'visible', timeout: 15000 })
   await extendButton.click()
 
-  // Acknowledge extension of unowned name
+  // For unowned names, acknowledge the warning first
   const extendUnownedConfirm = page.getByTestId('extend-names-confirm')
   await extendUnownedConfirm.waitFor({ state: 'visible', timeout: 5000 })
   await extendUnownedConfirm.click()
@@ -131,10 +133,10 @@ async function extendUnownedName(): Promise<void> {
   await expect(dateSelection).toHaveText('Pick by date', { timeout: 5000 })
   await dateSelection.click()
 
-  // Fill the calendar with a date one day later
+  // Calculate and fill new date (one day later)
   const expiryTime = currentExpiryTimestamp / 1000
   const calendar = page.getByTestId('calendar')
-  const dayLater = await page.evaluate((ts) => {
+  const dayLater = await page.evaluate((ts: number) => {
     const expiryDate = new Date(ts)
     expiryDate.setDate(expiryDate.getDate() + 1)
     return expiryDate
@@ -149,22 +151,19 @@ async function extendUnownedName(): Promise<void> {
   const confirmButton = page.getByTestId('extend-names-confirm')
   await confirmButton.click()
 
-  // Transaction modal check BEFORE confirming
+  // Verify transaction details
   await expect(page.getByText('1 day')).toBeVisible()
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
 
-  // Confirm in Metamask pop up
-  await confirmTransactionWithMetaMask(page)
+  // Open wallet and confirm transaction
+  await openWalletAndConfirm(page, { type: 'extend', name })
 
   // Wait for transaction to complete
-  await page.waitForTimeout(15000)
+  await waitForTransactionComplete(page, { action: 'extension' })
 
-  // Close transaction complete modal
-  const transactionCompleteButton = page.getByTestId('transaction-modal-complete-button')
-  await transactionCompleteButton.click()
+  // Close the completion modal
+  await closeTransactionModal(page)
 
-  // Verify new expiry is +1 day
+  // Verify new expiry
   const newTimestampAttr = await expiryElement.getAttribute('data-timestamp')
   if (!newTimestampAttr) throw new Error('❌ Could not read new expiry timestamp')
 
@@ -219,9 +218,8 @@ test.describe('ENS Sepolia Extend Name', () => {
   })
 
   test.beforeEach('Navigate to home page', async () => {
-    // Navigate back to home page before each test to ensure clean state
-    await page.goto('http://localhost:3000/')
-    await page.waitForTimeout(2000)
+    // Use utility function instead of manual navigation + timeout
+    await navigateToHome(page)
   })
 
   test('Connect MetaMask to ENS localhost app', async () => {
@@ -238,5 +236,13 @@ test.describe('ENS Sepolia Extend Name', () => {
 
   test('Extend not user owned ENS name', async () => {
     await extendUnownedName()
+  })
+
+  test.afterAll('Cleanup', async () => {
+    // Proper cleanup to avoid resource leaks
+    if (context) {
+      await context.close()
+      console.log('✅ Browser context closed')
+    }
   })
 })
