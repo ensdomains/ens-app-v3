@@ -31,6 +31,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "skipDefaultLibCheck": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "rootDir": ".",
