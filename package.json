@@ -193,6 +193,7 @@
       "fsevents"
     ],
     "overrides": {
+      "clones-with-immutable-args": "npm:empty-npm-package@*",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@wagmi/core": "2.13.3",
       "@walletconnect/ethereum-provider": "2.11.1",
