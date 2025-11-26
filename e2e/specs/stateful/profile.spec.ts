@@ -5,12 +5,12 @@ import { test } from '../../../playwright/index.js'
 
 const profiles = [
   {
-    name: 'mrdriver.eth',
+    name: 'wrapmebaby.eth',
     records: [
       {
         type: 'snippet',
         key: 'name',
-        value: 'mrdriver',
+        value: 'wrap',
       },
       {
         type: 'snippet',
@@ -53,7 +53,7 @@ const profiles = [
         type: 'other',
         key: 'avatar',
         value: 'https://euc.li/...',
-        fullValue: 'https://euc.li/holesky/mrdriver.eth',
+        fullValue: 'https://euc.li/holesky/wrapmebaby.eth',
       },
       {
         type: 'account',
@@ -64,16 +64,16 @@ const profiles = [
     owners: [
       {
         type: 'manager',
-        value: 'wrapmebaby.eth',
+        value: '1.phantombug01.eth',
         address: '0xFc5958B4B6F9a06D21E06429c8833f865577acf0',
       },
       {
         type: 'owner',
-        value: 'wrapmebaby.eth',
+        value: '1.phantombug01.eth',
         address: '0xFc5958B4B6F9a06D21E06429c8833f865577acf0',
       },
     ],
-    expiry: 'Jul 31, 2027',
+    expiry: 'Jun 20, 2026',
     contentHash: undefined,
   },
 ]
@@ -90,19 +90,19 @@ test.describe('Profile', () => {
   })
 
   test('should show a warning if name is not supported', async ({ page }) => {
-    await page.goto('/name.nottld?chain=holesky')
+    await page.goto('/name.nottld/')
     await expect(page.getByText('This TLD is not supported')).toBeVisible({ timeout: 25000 })
   })
 
   test('should load emoji domain pages', async ({ page }) => {
-    await page.goto('/%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F.eth?chain=holesky')
+    await page.goto('/%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F.eth/')
     await expect(page.getByTestId('profile-snippet-name')).toContainText('❤️❤️❤️.eth', {
       timeout: 25000,
     })
   })
 
   test('should allow searching for emoji domain', async ({ page, login }) => {
-    await page.goto('/?chain=holesky')
+    await page.goto('/')
     await login.connect()
 
     await page.getByPlaceholder('Search for a name').fill('❤️❤️❤️❤️❤️❤️.eth')
@@ -114,7 +114,7 @@ test.describe('Profile', () => {
 
   for (const profile of profiles) {
     test(`should load profile for: ${profile.name}`, async ({ page, login }) => {
-      await page.goto('/?chain=holesky')
+      await page.goto('/')
       await login.connect()
 
       await page.getByPlaceholder('Search for a name').fill(profile.name)
@@ -164,7 +164,7 @@ test.describe('Profile', () => {
         }
       }
 
-      // should show other recrods
+      // should show other records
       if (otherRecords.length > 0) {
         await expect(page.getByText('Other Records')).toBeVisible()
         for (const other of otherRecords) {
@@ -222,7 +222,7 @@ test.describe('Profile', () => {
       await page.getByTestId('ownership-tab').click()
       await expect(page.getByTestId('etherscan-registration-link')).toHaveAttribute(
         'href',
-        /https:\/\/holesky\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/,
+        /https:\/\/sepolia\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/,
       )
 
       // should show the expiry of the name if available
@@ -233,22 +233,22 @@ test.describe('Profile', () => {
   }
 
   test('should decode an unknown label', async ({ page, login }) => {
-    await page.goto('/?chain=holesky')
+    await page.goto('/')
     await login.connect()
     await page.goto(
       // eslint-disable-next-line no-restricted-syntax
-      '/[7341ac1bb319f2a2c8c165ac27eb6b08ccf2ad0f8ba334cfc84d76ace85e98e4].eth?chain=holesky',
+      '/[8df9cfc425ad5e1853259e1cef0a8d1d44591fbec8e3feb6f930d9dfacd5eff2].eth/',
     )
-    await expect(page.getByTestId('profile-snippet')).toContainText('mrdriver.eth', {
+    await expect(page.getByTestId('profile-snippet')).toContainText('wrapmebaby.eth', {
       timeout: 25000,
     })
   })
 
   test('should show wrapped DNS name warning', async ({ page, login }) => {
-    await page.goto('/?chain=holesky')
+    await page.goto('/')
     await login.connect()
 
-    await page.goto('/wrappeddnsname.com?chain=holesky')
+    await page.goto('/wrappeddnsname.com/')
     await expect(page.getByTestId('profile-snippet')).toContainText('wrappeddnsname.com')
   })
 })

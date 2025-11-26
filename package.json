@@ -14,6 +14,9 @@
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
     "dev:glocal": "SWC_CACHE=false rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:42069/subgraph NEXT_PUBLIC_ETH_NODE=anvil pnpm dev:nlocal",
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.studio.thegraph.com/query/49574/ensholesky/version/latest pnpm dev",
+    "dev:avlocal": "NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
+    "dev:avsepolia": "NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev pnpm dev:sepolia",
+    "dev:avmainnet": "NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev pnpm dev:mainnet",
     "build": "next build",
     "build:preview": "NEXT_PUBLIC_ENSJS_DEBUG=true next build --profile",
     "build:local": "ANALYZE=true next build",
@@ -38,10 +41,12 @@
     "e2e:install": "npx playwright install chromium",
     "e2e": "npx playwright test --project=stateless",
     "e2e:stateful": "playwright test --project=stateful",
+    "e2e:wallet": "playwright test --project=wallets",
+    "e2e:wallet:debug": "playwright test --project=wallets --debug",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000 --verbosity 1",
-    "postinstall": "husky install",
     "wrangle": "wrangler pages dev ./out --local --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
+    "wrangle:dev:https": "wrangler pages dev --local-protocol=https ./next",
     "wrangle:list": "wrangler deployments list",
     "generate:sitemaps": "node ./scripts/generate-site-map.mjs",
     "generate:coinMapper": "ts-node ./scripts/coin-mapper.ts",
@@ -52,14 +57,14 @@
     "hh": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only' hardhat"
   },
   "dependencies": {
-    "@ensdomains/address-encoder": "1.1.1",
+    "@ensdomains/address-encoder": "1.1.3",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
-    "@ensdomains/ens-contracts": "1.4.0-beta.2",
+    "@ensdomains/ens-contracts": "1.5.2",
     "@ensdomains/ens-test-env": "1.0.1",
-    "@ensdomains/ensjs": "4.0.3-alpha.12",
+    "@ensdomains/ensjs": "4.1.1",
     "@ensdomains/thorin": "1.0.0-beta.28",
-    "@getpara/rainbowkit": "1.3.0",
-    "@getpara/rainbowkit-wallet": "1.3.0",
+    "@getpara/rainbowkit": "1.4.0",
+    "@getpara/rainbowkit-wallet": "1.4.0",
     "@metamask/post-message-stream": "^6.1.2",
     "@metamask/providers": "^14.0.2",
     "@noble/hashes": "^1.3.2",
@@ -70,6 +75,7 @@
     "@tanstack/react-query": "5.22.2",
     "@tanstack/react-query-devtools": "^5.59.0",
     "@tanstack/react-query-persist-client": "5.22.2",
+    "@thirdweb-dev/wagmi-adapter": "^0.2.151",
     "@wagmi/core": "2.13.3",
     "calendar-link": "^2.8.0",
     "dequal": "2.0.3",
@@ -87,7 +93,7 @@
     "next": "14.2.30",
     "node-fetch": "^3.3.2",
     "node-forge": "1.3.1",
-    "posthog-js": "^1.217.0",
+    "posthog-js": "^1.236.8",
     "react": "*",
     "react-confetti": "6.1.0",
     "react-dom": "*",
@@ -98,6 +104,7 @@
     "react-use-error-boundary": "^3.0.0",
     "react-use-intercom": "^5.1.4",
     "styled-components": "^5.3.5",
+    "thirdweb": "^5.108.1",
     "tinyglobby": "^0.2.6",
     "ts-pattern": "^4.3.0",
     "use-immer": "^0.7.0",
@@ -110,7 +117,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
-    "@ensdomains/buffer": "^0.1.1",
+    "@ensdomains/buffer": "^0.1.3",
     "@ensdomains/ens-test-env": "0.6.0",
     "@ensdomains/hardhat-toolbox-viem-extended": "^0.0.5",
     "@ensdomains/headless-web3-provider": "^1.0.8",
@@ -119,7 +126,8 @@
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
     "@nomicfoundation/hardhat-viem": "2.0.3",
     "@openzeppelin/contracts": "4.9.6",
-    "@playwright/test": "^1.48.2",
+    "@playwright/test": "1.50.1",
+    "@tenkeylabs/dappwright": "^2.11.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^16.2.0",
@@ -158,13 +166,13 @@
     "hardhat": "^2.22.18",
     "hardhat-dependency-compiler": "^1.1.3",
     "hardhat-deploy": "^0.12.4",
-    "husky": "^7.0.4",
     "jsdom": "^24.1.0",
     "knip": "^5.44.0",
     "msw": "^2.7.0",
     "next-dev-https": "^0.1.2",
     "next-router-mock": "^0.9.10",
     "pako": "^2.1.0",
+    "playwright-core": "^1.56.1",
     "postcss-styled-syntax": "^0.7.1",
     "prettier": "3.0.3",
     "sitemap": "^7.1.1",
@@ -183,6 +191,10 @@
     "ws": "^8.18.2"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "fsevents"
+    ],
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@wagmi/core": "2.13.3",
@@ -286,9 +298,11 @@
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
       "node-forge@1.3.1": "patches/node-forge@1.3.1.patch",
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
+      "viem@2.19.4": "patches/viem@2.19.4.patch",
       "hardhat-deploy@0.12.4": "patches/hardhat-deploy@0.12.4.patch",
-      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch"
+      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch",
+      "@ensdomains/dnsprovejs@0.5.1": "patches/@ensdomains__dnsprovejs@0.5.1.patch"
     }
   },
-  "packageManager": "pnpm@9.3.0"
+  "packageManager": "pnpm@10.23.0"
 }

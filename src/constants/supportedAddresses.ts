@@ -1,4 +1,5 @@
 export const supportedAddresses = [
+  'default',
   'eth',
   'btc',
   'sol',
@@ -8,6 +9,7 @@ export const supportedAddresses = [
   'matic',
   'linea',
   'scr',
+  'celo',
 ] as const
 
 export type SupportedAddress = (typeof supportedAddresses)[number]
