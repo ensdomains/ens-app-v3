@@ -55,6 +55,17 @@
               "description": "Я фермер из села в Теннесси."
             }
           },
+          "media": {
+            "label": "Медиа",
+            "items": {
+              "avatar": "Аватар",
+              "header": "Баннер"
+            },
+            "placeholder": {
+              "avatar": "https://example.com/avatar.png",
+              "banner": "https://example.com/banner.png"
+            }
+          },
           "social": {
             "label": "Социальные сети",
             "items": {
@@ -83,7 +94,9 @@
               "op": "0xb8c2C2...",
               "arb1": "0xb8c2C2...",
               "base": "0xb8c2C2...",
-              "matic": "0xb8c2C2..."
+              "matic": "0xb8c2C2...",
+              "linea": "0xb8c2C2...",
+              "scr": "0xb8c2C2..."
             }
           },
           "website": {
@@ -127,7 +140,8 @@
         "labelRequired": "Требуется ключ записи",
         "duplicateRecord": "Повторяющийся ключ записи",
         "avatarReserved": "Ключ используется менеджером аватаров",
-        "invalidValue": "Неверное значение"
+        "invalidValue": "Неверное значение",
+        "reservedKey": "Этот ключ зарезервирован"
       },
       "confirmations": {
         "publicNotice": {

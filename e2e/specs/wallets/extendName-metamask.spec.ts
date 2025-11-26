@@ -1,142 +1,36 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import dappwright from '@tenkeylabs/dappwright'
 import type { Dappwright } from '@tenkeylabs/dappwright'
 
 import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
 
 import { SafeEnsConfig } from './config/safe-ens-config'
+import {
+  closeTransactionModal,
+  navigateToHome,
+  openWalletAndConfirm,
+  searchForName,
+  waitForTransactionComplete,
+} from './config/test-utilities'
+import { connectWalletToEns } from './config/wallet-ens-config'
 
 // Global variables to share state
 let metaMask: Dappwright
-let page: Page
-let context: BrowserContext
+let page: any // Using any to avoid Playwright version conflicts with dappwright
+let context: any
 
-// Connect wallet to ENS app Sepolia
-async function connectWalletToEns(): Promise<void> {
-  console.log('🔗 Connecting MetaMask to Sepolia ENS...')
-  await page.goto('https://sepolia.app.ens.domains')
-  await page.waitForTimeout(3000)
-
-  // Wait for "Connect Wallet" button and click
-  const connectButton = page
-    .locator(
-      'button:has-text("Connect"), button:has-text("Connect Wallet"), [data-testid="connect-button"]',
-    )
-    .first()
-  await connectButton.waitFor({ timeout: 15000 })
-  await connectButton.click()
-  console.log('🔘 Connect Wallet button clicked')
-  await page.waitForTimeout(1000)
-
-  // Wait for wallet modal
-  const modal = page.locator('[role="dialog"], .wallet-modal')
-  await modal.waitFor({ timeout: 15000 })
-  console.log('💬 Wallet modal detected')
-
-  // Wait for MetaMask option inside modal
-  const metamaskOption = modal.locator('button', { hasText: 'MetaMask' }).first()
-  await metamaskOption.waitFor({ timeout: 15000 })
-  await metamaskOption.click()
-  console.log('🦊 MetaMask option clicked, waiting for extension popup...')
-
-  // Poll for MetaMask notification popup
-  let mmPage
-  let attempts = 0
-
-  while (attempts < 20 && !mmPage) {
-    mmPage = context
-      .pages()
-      .find((p) => p.url().includes('chrome-extension://') && p.url().includes('notification.html'))
-
-    if (mmPage) break
-    // eslint-disable-next-line no-await-in-loop
-    await page.waitForTimeout(500)
-
-    attempts += 1
-  }
-
-  if (!mmPage) {
-    throw new Error('MetaMask popup not found')
-  }
-
-  await mmPage.bringToFront()
-
-  // Optional: select first account if visible
-  const accountButton = mmPage.locator('div.account-list button').first()
-  if (await accountButton.isVisible({ timeout: 5000 })) {
-    await accountButton.click()
-    const nextButton = mmPage.locator('button:has-text("Next")').first()
-    if (await nextButton.isVisible({ timeout: 3000 })) {
-      await nextButton.click()
-    }
-  }
-
-  // Confirm connection
-  const confirmButton = mmPage
-    .locator('button:has-text("Connect"), button:has-text("Confirm"), .btn-primary')
-    .first()
-  await confirmButton.waitFor({ timeout: 5000 })
-  await confirmButton.click()
-  console.log('✅ MetaMask connection confirmed')
-
-  // Bring main page to front and wait a few seconds
-  await page.bringToFront()
-  await page.waitForTimeout(3000)
-
-  // Optional: verify connection
-  const stillVisible = await page
-    .locator('button:has-text("Connect"), [data-testid="connect-button"]')
-    .isVisible()
-  if (stillVisible) {
-    console.log('⚠️ Wallet may not have connected — check MetaMask popup manually')
-  } else {
-    console.log('✅ Wallet successfully connected on ENS site')
-  }
-}
-
-// Confirm transaction helper
-async function confirmTransactionWithMetaMask(): Promise<void> {
-  console.log(`🦊 Waiting for MetaMask popup...`)
-
-  // Listen for a new popup page to open
-  const [mmPage] = await Promise.all([
-    page.context().waitForEvent('page', { timeout: 15000 }), // wait up to 15s
-    // Ensure we click or trigger the action that opens the popup BEFORE this function is called
-  ])
-
-  // Verify this is actually a MetaMask notification page
-  if (
-    !mmPage.url().includes('chrome-extension://') ||
-    !mmPage.url().includes('notification.html')
-  ) {
-    throw new Error(`Unexpected popup detected: ${mmPage.url()}`)
-  }
-
-  await mmPage.bringToFront()
-
-  // Wait for confirm button to appear and click it
-  const confirmButton = mmPage.locator('button:has-text("Confirm")')
-  await confirmButton.waitFor({ timeout: 10000 })
-  await confirmButton.click()
-
-  console.log(`✅ MetaMask transaction confirmed`)
-
-  await page.bringToFront()
-}
-
-// Extend owned name
-async function extendOwnedNameOnSepoliaApp(): Promise<void> {
+/**
+ * Extends an owned ENS name by one day.
+ * Uses event-driven waiting instead of arbitrary timeouts.
+ */
+async function extendOwnedName(): Promise<void> {
   const name = 'extend-name-test.eth'
-
   console.log(`🎯 Starting extension for ${name}`)
 
   // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(name)
-  await searchInput.press('Enter')
+  await searchForName(page, name)
 
-  // Grab the current expiry timestamp from profile
+  // Wait for expiry element to be visible and get current expiry
   const expiryElement = page.getByTestId('owner-profile-button-name.expiry')
   await expiryElement.waitFor({ state: 'visible', timeout: 15000 })
 
@@ -146,7 +40,7 @@ async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   const currentExpiryTimestamp = parseInt(timestampAttr, 10)
   console.log(`📅 Current expiry: ${new Date(currentExpiryTimestamp).toISOString()}`)
 
-  // Click "extend"
+  // Click extend button
   const extendButton = page.getByTestId('extend-button')
   await extendButton.waitFor({ state: 'visible', timeout: 15000 })
   await extendButton.click()
@@ -156,10 +50,10 @@ async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   await expect(dateSelection).toHaveText('Pick by date')
   await dateSelection.click()
 
-  // Fill the calendar with a date one day later
+  // Calculate and fill new date (one day later)
   const expiryTime = currentExpiryTimestamp / 1000
   const calendar = page.getByTestId('calendar')
-  const dayLater = await page.evaluate((ts) => {
+  const dayLater = await page.evaluate((ts: number) => {
     const expiryDate = new Date(ts)
     expiryDate.setDate(expiryDate.getDate() + 1)
     return expiryDate
@@ -174,22 +68,19 @@ async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   const confirmButton = page.getByTestId('extend-names-confirm')
   await confirmButton.click()
 
-  // Transaction modal check BEFORE confirming
+  // Verify transaction details are shown
   await expect(page.getByText('1 day')).toBeVisible()
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
 
-  // Confirm in Metamask pop up
-  await confirmTransactionWithMetaMask()
+  // Open wallet and confirm transaction
+  await openWalletAndConfirm(page, { type: 'extend', name })
 
-  // Wait for transaction to complete
-  await page.waitForTimeout(25000)
+  // Wait for transaction to complete using event-driven approach
+  await waitForTransactionComplete(page, { action: 'extension' })
 
-  // Close transaction complete modal
-  const transactionCompleteButton = page.getByTestId('transaction-modal-complete-button')
-  await transactionCompleteButton.click()
+  // Close the completion modal
+  await closeTransactionModal(page)
 
-  // Verify new expiry is +1 day
+  // Verify new expiry is correctly updated
   const newTimestampAttr = await expiryElement.getAttribute('data-timestamp')
   if (!newTimestampAttr) throw new Error('❌ Could not read new expiry timestamp')
 
@@ -206,19 +97,18 @@ async function extendOwnedNameOnSepoliaApp(): Promise<void> {
   )
 }
 
-// Extend unowned name
-async function extendUnownedNameSepolia(): Promise<void> {
+/**
+ * Extends an unowned ENS name (one not owned by the connected wallet).
+ * Demonstrates handling of the additional confirmation step.
+ */
+async function extendUnownedName(): Promise<void> {
   const name = 'user1-extend.eth'
-
   console.log(`🎯 Starting extension for ${name}`)
 
   // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(name)
-  await searchInput.press('Enter')
+  await searchForName(page, name)
 
-  // Grab the current expiry timestamp from profile
+  // Get current expiry
   const expiryElement = page.getByTestId('owner-profile-button-name.expiry')
   await expiryElement.waitFor({ state: 'visible', timeout: 15000 })
 
@@ -228,12 +118,12 @@ async function extendUnownedNameSepolia(): Promise<void> {
   const currentExpiryTimestamp = parseInt(timestampAttr, 10)
   console.log(`📅 Current expiry: ${new Date(currentExpiryTimestamp).toISOString()}`)
 
-  // Click "extend"
+  // Click extend button
   const extendButton = page.getByTestId('extend-button')
   await extendButton.waitFor({ state: 'visible', timeout: 15000 })
   await extendButton.click()
 
-  // Acknowledge extension of unowned name
+  // For unowned names, acknowledge the warning first
   const extendUnownedConfirm = page.getByTestId('extend-names-confirm')
   await extendUnownedConfirm.waitFor({ state: 'visible', timeout: 5000 })
   await extendUnownedConfirm.click()
@@ -243,10 +133,10 @@ async function extendUnownedNameSepolia(): Promise<void> {
   await expect(dateSelection).toHaveText('Pick by date', { timeout: 5000 })
   await dateSelection.click()
 
-  // Fill the calendar with a date one day later
+  // Calculate and fill new date (one day later)
   const expiryTime = currentExpiryTimestamp / 1000
   const calendar = page.getByTestId('calendar')
-  const dayLater = await page.evaluate((ts) => {
+  const dayLater = await page.evaluate((ts: number) => {
     const expiryDate = new Date(ts)
     expiryDate.setDate(expiryDate.getDate() + 1)
     return expiryDate
@@ -261,22 +151,19 @@ async function extendUnownedNameSepolia(): Promise<void> {
   const confirmButton = page.getByTestId('extend-names-confirm')
   await confirmButton.click()
 
-  // Transaction modal check BEFORE confirming
+  // Verify transaction details
   await expect(page.getByText('1 day')).toBeVisible()
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
 
-  // Confirm in Metamask pop up
-  await confirmTransactionWithMetaMask()
+  // Open wallet and confirm transaction
+  await openWalletAndConfirm(page, { type: 'extend', name })
 
   // Wait for transaction to complete
-  await page.waitForTimeout(15000)
+  await waitForTransactionComplete(page, { action: 'extension' })
 
-  // Close transaction complete modal
-  const transactionCompleteButton = page.getByTestId('transaction-modal-complete-button')
-  await transactionCompleteButton.click()
+  // Close the completion modal
+  await closeTransactionModal(page)
 
-  // Verify new expiry is +1 day
+  // Verify new expiry
   const newTimestampAttr = await expiryElement.getAttribute('data-timestamp')
   if (!newTimestampAttr) throw new Error('❌ Could not read new expiry timestamp')
 
@@ -327,10 +214,15 @@ test.describe('ENS Sepolia Extend Name', () => {
     }
 
     // Connect wallet to ENS Sepolia
-    await connectWalletToEns()
+    await connectWalletToEns(page, context)
   })
 
-  test('Connect MetaMask to ENS Sepolia', async () => {
+  test.beforeEach('Navigate to home page', async () => {
+    // Use utility function instead of manual navigation + timeout
+    await navigateToHome(page)
+  })
+
+  test('Connect MetaMask to ENS localhost app', async () => {
     await expect(
       page.locator('button:has-text("Connect"), [data-testid="connect-button"]'),
     ).toBeHidden({ timeout: 5000 })
@@ -338,11 +230,19 @@ test.describe('ENS Sepolia Extend Name', () => {
     console.log('✅ Wallet is connected and ready')
   })
 
-  test('Extend user owned ENS name on Sepolia', async () => {
-    await extendOwnedNameOnSepoliaApp()
+  test('Extend user owned ENS name', async () => {
+    await extendOwnedName()
   })
 
-  test('Extend not user owned ENS name on Sepolia', async () => {
-    await extendUnownedNameSepolia()
+  test('Extend not user owned ENS name', async () => {
+    await extendUnownedName()
+  })
+
+  test.afterAll('Cleanup', async () => {
+    // Proper cleanup to avoid resource leaks
+    if (context) {
+      await context.close()
+      console.log('✅ Browser context closed')
+    }
   })
 })
