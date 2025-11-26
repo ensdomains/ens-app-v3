@@ -55,6 +55,17 @@
               "description": "Я фермер з сільської місцевості Теннессі."
             }
           },
+          "media": {
+            "label": "Медіа",
+            "items": {
+              "avatar": "Аватар",
+              "header": "Банер"
+            },
+            "placeholder": {
+              "avatar": "https://example.com/avatar.png",
+              "banner": "https://example.com/banner.png"
+            }
+          },
           "social": {
             "label": "Соціальні",
             "items": {
@@ -83,7 +94,9 @@
               "op": "0xb8c2C2...",
               "arb1": "0xb8c2C2...",
               "base": "0xb8c2C2...",
-              "matic": "0xb8c2C2..."
+              "matic": "0xb8c2C2...",
+              "linea": "0xb8c2C2...",
+              "scr": "0xb8c2C2..."
             }
           },
           "website": {
@@ -127,7 +140,8 @@
         "labelRequired": "Ключ запису обов'язковий",
         "duplicateRecord": "Дубльований ключ запису",
         "avatarReserved": "Ключ використовується менеджером аватара",
-        "invalidValue": "Неправильне значення"
+        "invalidValue": "Неправильне значення",
+        "reservedKey": "Цей ключ зарезервовано"
       },
       "confirmations": {
         "publicNotice": {

@@ -55,6 +55,17 @@
               "description": "我是一个来自田纳西州的农民。"
             }
           },
+          "media": {
+            "label": "媒体",
+            "items": {
+              "avatar": "头像",
+              "header": "横幅"
+            },
+            "placeholder": {
+              "avatar": "https://example.com/avatar.png",
+              "banner": "https://example.com/banner.png"
+            }
+          },
           "social": {
             "label": "社交",
             "items": {
@@ -129,7 +140,8 @@
         "labelRequired": "记录键是必填项",
         "duplicateRecord": "重复的记录键",
         "avatarReserved": "该键已被头像管理员使用",
-        "invalidValue": "无效的值"
+        "invalidValue": "无效的值",
+        "reservedKey": "该键已被保留"
       },
       "confirmations": {
         "publicNotice": {
