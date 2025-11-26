@@ -1,4 +1,4 @@
-import { QuestionCircleSVG } from '@ensdomains/thorin'
+import CoinSVG from '@app/assets/Coin.svg'
 
 import { DynamicAddressIconName, dynamicAddressIcons } from './dynamicAddressIcons'
 
@@ -16,7 +16,7 @@ export const DynamicAddressIcon = ({
     return <Icon {...props} />
   }
   if (showDefault) {
-    return <QuestionCircleSVG {...props} />
+    return <CoinSVG {...props} />
   }
   return null
 }

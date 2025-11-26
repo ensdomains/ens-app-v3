@@ -1,4 +1,4 @@
-import { DecodedText } from '@ensdomains/ensjs/dist/types/types'
+import type { DecodedText } from '@ensdomains/ensjs/dist/types'
 
 import { SupportedSocialRecordKey } from '@app/constants/supportedSocialRecordKeys'
 

@@ -4,6 +4,7 @@ import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { supportedContentHashKeys } from '@app/constants/supportedContentHashKeys'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedMediaRecordKeys } from '@app/constants/supportedMediaRecordKeys'
 import { supportedOtherRecordKeys } from '@app/constants/supportedOtherRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
@@ -31,6 +32,13 @@ const general: ProfileRecord[] = supportedGeneralRecordKeys.map((key) => ({
   type: 'text',
 }))
 
+// NOTE: Removed because avatar and header are not build into profile. Leaving this here as reference.
+// const media: ProfileRecord[] = supportedMediaRecordKeys.map((key) => ({
+//   key,
+//   group: 'media',
+//   type: 'text',
+// }))
+
 const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
   key,
   group: 'social',
@@ -39,7 +47,7 @@ const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
 
 const coinShortNameToLongName = (coin: string) => {
   const coinType = coinNameToTypeMap[coin as CoinName]
-  const coinLongName = coinTypeToNameMap[coinType][1]
+  const coinLongName = coinTypeToNameMap[coinType]?.[1] ?? coin
   return coinLongName
 }
 
@@ -93,9 +101,10 @@ export const grouped = [
 ] as const
 
 export const sortValues: { [key: string]: { [key: string]: number } } = {
-  media: {
-    avatar: 1,
-  },
+  media: supportedMediaRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
+    acc[key] = index + 1
+    return acc
+  }, {}),
   general: supportedGeneralRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
     acc[key] = index + 100
     return acc

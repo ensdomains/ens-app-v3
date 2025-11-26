@@ -1,9 +1,10 @@
 import type { TFunction } from 'react-i18next'
 import { Address } from 'viem'
 
-import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+import { setResolver } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { getReverseNode } from '@app/utils/reverse'
 
 type Data = {
   address: Address
@@ -24,7 +25,12 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ connectorClient }: TransactionFunctionParameters<Data>) =>
-  setPrimaryName.makeFunctionData(connectorClient, { name: '' })
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  return setResolver.makeFunctionData(connectorClient, {
+    name: getReverseNode(data.address),
+    contract: 'registry',
+    resolverAddress: '0x0000000000000000000000000000000000000000',
+  })
+}
 
 export default { displayItems, transaction } satisfies Transaction<Data>

@@ -2,14 +2,14 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { isValidBanner } from '@app/validators/validateBanner'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -38,14 +38,14 @@ const Container = styled.div(
   `,
 )
 
-const BannerContainer = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) => css`
+const HeaderContainer = styled.div<{ $header?: string }>(
+  ({ theme, $header }) => css`
     position: absolute;
     top: -1px;
     left: 0;
     width: 100%;
     height: ${theme.space['28']};
-    background-image: ${$banner ? `url("${encodeURI($banner)}")` : theme.colors.blueGradient};
+    background-image: ${$header ? `url("${encodeURI($header)}")` : theme.colors.blueGradient};
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -190,13 +190,15 @@ export const ProfileSnippet = ({
   // network,
   isPrimary,
   isVerified,
+  hasMismatch,
   children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
-  button?: 'viewProfile' | 'extend' | 'register'
+  button?: 'viewProfile' | 'extend' | 'register' | undefined
   isPrimary?: boolean
   isVerified?: boolean
+  hasMismatch?: boolean
   children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
@@ -206,11 +208,13 @@ export const ProfileSnippet = ({
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
 
-  const beautifiedName = useBeautifiedName(name)
+  // Always call the hook but conditionally use its result
+  const hookBeautifiedName = useBeautifiedName(name)
+  const beautifiedName = hasMismatch ? name : hookBeautifiedName
 
-  const bannerUrl = isValidBanner(getTextRecord?.('banner')?.value ?? '')
-    ? getTextRecord?.('banner')?.value
-    : undefined
+  // We are overriding the key parameter here to get the header url. This will break the type checker
+  // @ts-ignore
+  const { data: headerUrl } = useEnsAvatar({ name, key: 'header' })
 
   const description = getTextRecord?.('description')?.value
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
@@ -262,7 +266,7 @@ export const ProfileSnippet = ({
 
   return (
     <Container data-testid="profile-snippet">
-      <BannerContainer $banner={bannerUrl} />
+      <HeaderContainer $header={headerUrl ?? undefined} />
       <FirstItems>
         <NameAvatar
           size={{ min: '24', sm: '32' }}
@@ -309,12 +313,19 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
-      {isPrimary && (
+      {(isPrimary || hasMismatch) && (
         <TagsContainer>
-          <PrimaryNameTag size="medium" colorStyle="greenSecondary">
-            <NametagSVG />
-            {t('name.yourPrimaryName')}
-          </PrimaryNameTag>
+          {isPrimary && (
+            <PrimaryNameTag size="medium" colorStyle="greenSecondary">
+              <NametagSVG />
+              {t('name.yourPrimaryName')}
+            </PrimaryNameTag>
+          )}
+          {hasMismatch && (
+            <Helper alert="warning" alignment="horizontal">
+              {t('name.unnormalized')}
+            </Helper>
+          )}
         </TagsContainer>
       )}
       {children}

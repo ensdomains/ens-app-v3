@@ -63,6 +63,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: 'v3.57.1'
+          packageManager: 'pnpm'
           command: pages deploy --project-name=ens-app-v3
           secrets: |
             GITHUB_TOKEN
