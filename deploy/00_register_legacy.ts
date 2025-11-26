@@ -363,6 +363,24 @@ const names: Name[] = [
       ],
     },
   },
+  {
+    label: 'with-testnet-records',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    records: {
+      addr: [
+        { key: 61n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0n, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2n, value: '0x0000000000000000000000000000000000000000' },
+        { key: 2147568180n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2147905262n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2158639068n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2147542789n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2148017999n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 2147500648n, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+      ],
+    },
+  },
 ] as const
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

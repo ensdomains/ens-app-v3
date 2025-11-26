@@ -1,0 +1,69 @@
+name: Wallet Tests (Container)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      #all files
+      - '**'
+
+env:
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+jobs:
+  wallets-container:
+    name: wallets (container)
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-jammy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y parallel
+
+      - name: Verify Playwright installation
+        run: |
+          echo "Checking Playwright installation..."
+          pnpm exec playwright --version
+
+          echo "Checking browser installations..."
+          pnpm exec playwright show-report || true
+
+          echo "Cache contents:"
+          ls -la ~/.cache/ms-playwright/ || echo "No cache found"
+
+      - name: Run wallet tests
+        env:
+          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+        run: |
+          parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm dev" \
+          "pnpm wait-on http://localhost:3000 && xvfb-run --auto-servernum pnpm e2e:wallet"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wallets-report-playwright-action
+          path: |
+            playwright-report/
+            test-results/
+            *.png
+          retention-days: 30

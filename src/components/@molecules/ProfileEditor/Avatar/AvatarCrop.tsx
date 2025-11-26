@@ -158,11 +158,18 @@ export const CropComponent = ({
   const draw = useCallback(() => {
     const image = imageRef.current
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas || !image || !image.complete || !image.naturalWidth) return
+
     const { max, cropSize } = getVars(canvas)
     // eslint-disable-next-line prefer-const
     let { x, y, w, h, mx, my, moving } = coordinatesRef.current
-    const ctx = canvas.getContext('2d')!
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to get canvas context')
+      }
+      return
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     x += mx
     y += my

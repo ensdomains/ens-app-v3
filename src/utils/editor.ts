@@ -1,6 +1,6 @@
 import { match, P } from 'ts-pattern'
 
-import { EncodedAbi } from '@ensdomains/ensjs/dist/types/utils/encoders/encodeAbi'
+import type { EncodedAbi } from '@ensdomains/ensjs/utils'
 
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
@@ -17,7 +17,7 @@ export const convertFormSafeKey = (key: string) => decodeURIComponent(key)
 
 export type ProfileFormObject = {
   avatar?: string
-  banner?: string
+  header?: string
   website?: string
   general: {
     [key: string]: string
@@ -64,9 +64,9 @@ export const convertProfileToProfileFormObject = async (
           avatar: record.value,
           ...map,
         }
-      if (record.key === 'banner')
+      if (record.key === 'header')
         return {
-          banner: record.value,
+          header: record.value,
           ...map,
         }
       const key = record.key.toString()

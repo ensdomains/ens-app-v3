@@ -223,7 +223,7 @@ const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: 
             onClose={() => setView('profile-editor')}
           />
         ))
-        .with('upload', 'nft', (type) => (
+        .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={name}
             avatarFile={avatarFile}

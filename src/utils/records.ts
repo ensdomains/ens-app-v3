@@ -1,5 +1,7 @@
 import { Address, hexToString } from 'viem'
 
+import { getCoderByCoinName, getCoderByCoinType } from '@ensdomains/address-encoder'
+import { GetRecordsReturnType } from '@ensdomains/ensjs/public'
 import {
   contentTypeToEncodeAs,
   DecodedContentHash,
@@ -7,6 +9,7 @@ import {
   RecordOptions,
 } from '@ensdomains/ensjs/utils'
 
+import { testnetNetworks } from '@app/constants/networks'
 import { AddressRecord, Profile, TextRecord } from '@app/types'
 
 import { contentHashToString } from './contenthash'
@@ -169,4 +172,78 @@ export const checkProfileRecordsContains = ({
   if (type === 'address')
     return !!profile?.coins?.some((coin) => coin.id === match.id && coin.value === match.value)
   return false
+}
+
+/* NOTE: These functions are used to add testnet support. */
+
+const hasCoins = (
+  records: unknown,
+): records is GetRecordsReturnType<any, (string | number)[], any, any> => {
+  return typeof records === 'object' && !!records && 'coins' in records
+}
+
+export const addTestnetRecords = (records: unknown) => {
+  if (hasCoins(records)) {
+    return {
+      ...records,
+      coins: records.coins.map((coin) => {
+        return {
+          ...coin,
+          name: testnetNetworks.find(({ coinType }) => coinType === coin.id)?.name || coin.name,
+        }
+      }),
+    }
+  }
+  return records
+}
+
+// coinNames are all lowercase except for legacy names which end with Legacy
+export const normalizeCoinName = (coinName: string) => {
+  if (/.+legacy$/i.test(coinName)) return `${coinName.replace(/legacy$/i, '').toLowerCase()}Legacy`
+  return coinName.toLowerCase()
+}
+
+export const getCoderByCoinNameWithTestnetSupport = (_coinName: string) => {
+  const coinName = normalizeCoinName(_coinName)
+  const extendedCoin = testnetNetworks.find(({ name }) => name === coinName)
+  if (extendedCoin) {
+    const evmCoder = getCoderByCoinName('eth')
+    return {
+      ...evmCoder,
+      name: extendedCoin.name,
+      coinType: extendedCoin.coinType,
+    }
+  }
+  return getCoderByCoinName(coinName)
+}
+
+export const getCoinTypeByCoinNameWithTestnetSupport = (coinName: string) => {
+  return getCoderByCoinNameWithTestnetSupport(coinName).coinType
+}
+
+export const getCoderByCoinTypeWithTestnetSupport = (coinType: number) => {
+  const extendedCoin = testnetNetworks.find(({ coinType: coinType2 }) => coinType === coinType2)
+  if (extendedCoin) {
+    return {
+      ...getCoderByCoinType(60),
+      name: extendedCoin.name,
+      coinType: extendedCoin.coinType,
+    }
+  }
+  return getCoderByCoinType(coinType)
+}
+
+export const recordsWithCointypeCoins = (records: RecordOptions): RecordOptions => {
+  return {
+    ...records,
+    coins: records.coins?.map((coin) => {
+      if (typeof coin.coin === 'string') {
+        return {
+          ...coin,
+          coin: getCoinTypeByCoinNameWithTestnetSupport(coin.coin),
+        }
+      }
+      return coin
+    }),
+  }
 }
