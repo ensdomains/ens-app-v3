@@ -62,6 +62,54 @@ const names: Name[] = [
     customDuration: MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
     renewalDuration: 5011200 - MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
   },
+  {
+    name: 'desynced-normal-test.eth', // new one, same config as desynced-wrapped.eth
+    namedOwner: 'owner',
+    reverseRecord: false,
+    customDuration: MIN_REGISTRATION_DURATION,
+    renewalDuration: ONE_YEAR,
+    records: {
+      texts: [
+        {
+          key: 'description',
+          value: 'A normal desynced name used for testing',
+        },
+        { key: 'url', value: 'https://ens.domains' },
+      ],
+      coins: [{ coin: 'ETH', value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' }],
+    },
+  },
+  {
+    name: 'desynced-grace-test.eth', // new one, grace period
+    namedOwner: 'owner',
+    reverseRecord: false,
+    customDuration: MIN_REGISTRATION_DURATION,
+    renewalDuration: 5011200 - MIN_REGISTRATION_DURATION,
+    records: {
+      texts: [
+        {
+          key: 'description',
+          value: 'A grace period desynced name used for testing',
+        },
+      ],
+    },
+  },
+  {
+    name: 'desynced-normal-1-day-test.eth', // normal desync name, for 1 day extend test
+    namedOwner: 'owner',
+    reverseRecord: false,
+    customDuration: MIN_REGISTRATION_DURATION,
+    renewalDuration: ONE_YEAR,
+    records: {
+      texts: [
+        {
+          key: 'description',
+          value: 'A normal desynced name used for testing 1 day extension',
+        },
+        { key: 'url', value: 'https://ens.domains' },
+      ],
+    },
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

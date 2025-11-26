@@ -55,6 +55,17 @@
               "description": "Sou um yield farmer de uma área rural de Tennessee."
             }
           },
+          "media": {
+            "label": "Mídia",
+            "items": {
+              "avatar": "Avatar",
+              "header": "Cabeçalho"
+            },
+            "placeholder": {
+              "avatar": "https://exemplo.com/avatar.png",
+              "banner": "https://exemplo.com/banner.png"
+            }
+          },
           "social": {
             "label": "Social",
             "items": {
@@ -129,7 +140,8 @@
         "labelRequired": "É necessária uma chave de registro",
         "duplicateRecord": "Chave de registro duplicada",
         "avatarReserved": "Esta chave está sendo utilizada pelo gerenciador de avatar",
-        "invalidValue": "Valor inválido"
+        "invalidValue": "Valor inválido",
+        "reservedKey": "Esta chave está reservada"
       },
       "confirmations": {
         "publicNotice": {

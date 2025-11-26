@@ -6,7 +6,7 @@ import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
-import { recordOptionsToToupleList } from '../../utils/records'
+import { recordOptionsToToupleList, recordsWithCointypeCoins } from '../../utils/records'
 
 type Data = {
   name: string
@@ -62,7 +62,7 @@ const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Da
   return setRecords.makeFunctionData(connectorClient, {
     name: data.name,
     resolverAddress: data.resolverAddress,
-    ...data.records,
+    ...recordsWithCointypeCoins(data.records),
   })
 }
 export default {

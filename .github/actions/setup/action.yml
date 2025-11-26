@@ -6,7 +6,7 @@ runs:
     - name: Install pnpm
       uses: pnpm/action-setup@v4
       with:
-        version: 9.3.0
+        version: 10.23.0
 
     - name: Install Node.js
       uses: actions/setup-node@v4
@@ -17,7 +17,3 @@ runs:
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
-
-    - name: Install Playwright Browsers and Dependencies
-      shell: bash
-      run: pnpm exec playwright install --with-deps

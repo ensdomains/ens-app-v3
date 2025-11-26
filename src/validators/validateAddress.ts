@@ -1,6 +1,5 @@
-import { getCoderByCoinName } from '@ensdomains/address-encoder'
-
 import { normalizeCoinAddress } from '@app/utils/coin'
+import { getCoderByCoinNameWithTestnetSupport } from '@app/utils/records'
 
 export const validateCryptoAddress = ({
   coin,
@@ -12,7 +11,7 @@ export const validateCryptoAddress = ({
   try {
     if (!address) return 'addressRequired'
     const _address = normalizeCoinAddress({ coin, address })
-    const coinTypeInstance = getCoderByCoinName(coin)
+    const coinTypeInstance = getCoderByCoinNameWithTestnetSupport(coin)
     coinTypeInstance.decode(_address)
     return true
   } catch (e: any) {
