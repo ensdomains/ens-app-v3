@@ -38,7 +38,9 @@
     ],
     "deny": [
       "Bash(pnpm i --no-frozen-lockfile:*)",
-      "Bash(pnpm install --no-frozen-lockfile:*)"
+      "Bash(pnpm install --no-frozen-lockfile:*)",
+      "Bash(npm i --no-frozen-lockfile:*)",
+      "Bash(npm install --no-frozen-lockfile:*)"
     ]
   },
   "sandbox": {

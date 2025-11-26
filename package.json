@@ -44,7 +44,6 @@
     "e2e:wallet": "playwright test --project=wallets",
     "e2e:wallet:debug": "playwright test --project=wallets --debug",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000 --verbosity 1",
-    "postinstall": "husky install",
     "wrangle": "wrangler pages dev ./out --local --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
     "wrangle:dev:https": "wrangler pages dev --local-protocol=https ./next",
@@ -167,7 +166,6 @@
     "hardhat": "^2.22.18",
     "hardhat-dependency-compiler": "^1.1.3",
     "hardhat-deploy": "^0.12.4",
-    "husky": "^7.0.4",
     "jsdom": "^24.1.0",
     "knip": "^5.44.0",
     "msw": "^2.7.0",
@@ -195,8 +193,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
-      "fsevents",
-      "husky"
+      "fsevents"
     ],
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
