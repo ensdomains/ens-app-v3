@@ -1872,6 +1872,23 @@ test.describe('Registration with Referrer', () => {
       const referrerHex = addressToBytes32(referrerAddress)
       expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
     })
+
+    await test.step('should persist referrer when navigating after registration', async () => {
+      await page.getByTestId('home-button').click()
+      await page.waitForTimeout(500)
+      expect(page.url()).toContain(`referrer=${referrerAddress}`)
+    })
+
+    await test.step('should persist referrer when navigating to settings', async () => {
+      // Wait for success toast to disappear before clicking dropdown
+      // Toast briefly covers the header-profile dropdown menu
+      await page.getByTestId('toast-desktop').waitFor({ state: 'hidden', timeout: 10000 })
+
+      await page.getByTestId('header-profile').click()
+      await page.getByText('Settings', { exact: true }).click()
+      await page.waitForTimeout(500)
+      expect(page.url()).toContain(`referrer=${referrerAddress}`)
+    })
   })
 
   test('should register a name without referrer', async ({ page, login, time, makePageObject }) => {

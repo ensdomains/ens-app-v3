@@ -945,12 +945,29 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     })
 
     const transactionModal = makePageObject('TransactionModal')
-
-    const referrerAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
+    const referrerAddress = '0x1234567890123456789012345678901234567890'
 
     // Start on profile page with referrer
     await page.goto(`/${name}?referrer=${referrerAddress}`)
     await login.connect()
+
+    // Navigate to different profile tabs
+    await page.getByTestId('records-tab').click()
+    await page.waitForTimeout(500)
+    expect(page.url()).toContain(`referrer=${referrerAddress}`)
+
+    await page.getByTestId('ownership-tab').click()
+    await page.waitForTimeout(500)
+    expect(page.url()).toContain(`referrer=${referrerAddress}`)
+
+    await page.getByTestId('subnames-tab').click()
+    await page.waitForTimeout(500)
+    expect(page.url()).toContain(`referrer=${referrerAddress}`)
+
+    // Navigate back to profile page
+    await page.getByTestId('profile-tab').click()
+    await page.waitForTimeout(500)
+    expect(page.url()).toContain(`referrer=${referrerAddress}`)
 
     // Navigate through the renewal flow
     await page.getByTestId('extend-button').click()
