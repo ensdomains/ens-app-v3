@@ -4,6 +4,7 @@
 node_modules
 /.pnp
 .pnp.js
+.pnpm-store
 
 # testing
 /coverage
@@ -76,5 +77,4 @@ tsconfig.vitest-temp.json
 certificates
 
 # Claude
-.claude
 .playwright-mcp
