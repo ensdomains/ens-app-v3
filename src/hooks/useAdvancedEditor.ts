@@ -187,7 +187,7 @@ const useAdvancedEditor = ({ name, profile, isLoading, overwrites, callback }: P
       const newDefaultValues = {
         text: {
           ...(formObject.avatar ? { avatar: formObject.avatar } : {}),
-          ...(formObject.banner ? { banner: formObject.banner } : {}),
+          ...(formObject.header ? { header: formObject.header } : {}),
           ...formObject.general,
           ...formObject.accounts,
           ...formObject.other,

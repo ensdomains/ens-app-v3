@@ -66,6 +66,8 @@ const filterByChainDependentQuery =
       | never[]
 
     // useEnsAvatar query from wagmi
+    // Note: This catches both avatar and header queries since headers use
+    // useEnsAvatar({ name, key: 'header' }) which still produces an 'ensAvatar' query key
     if (queryKey[0] === 'ensAvatar' && queryKey[1]?.chainId === chainId) return true
 
     // internal queries

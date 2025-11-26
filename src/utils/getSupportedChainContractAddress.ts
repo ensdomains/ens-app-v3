@@ -4,7 +4,6 @@ import { ClientWithEns } from '@app/types'
 
 export const getSupportedChainContractAddress = <
   TContract extends Extract<keyof ClientWithEns['chain']['contracts'], string>,
-  TContractObject extends ClientWithEns['chain']['contracts'][TContract],
 >({
   client,
   contract,
@@ -18,4 +17,4 @@ export const getSupportedChainContractAddress = <
     chain: client.chain,
     contract,
     blockNumber,
-  }) as TContractObject['address']
+  })

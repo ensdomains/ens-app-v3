@@ -1,6 +1,8 @@
 [
+  "default",
   "eth",
   "btc",
+  "celo",
   "bnb",
   "xrp",
   "matic",
@@ -23,7 +25,6 @@
   "bcn",
   "btg",
   "bts",
-  "celo",
   "ckb",
   "clo",
   "cro",
