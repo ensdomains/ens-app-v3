@@ -32,8 +32,25 @@
       "mcp__github__list_workflow_jobs",
       "mcp__github__get_job_logs",
       "mcp__github__get_pull_request_diff",
-      "mcp__github__get_pull_request"
+      "mcp__github__get_pull_request",
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:github.com)"
     ],
-    "deny": []
+    "deny": [
+      "Bash(pnpm i --no-frozen-lockfile:*)",
+      "Bash(pnpm install --no-frozen-lockfile:*)",
+      "Bash(npm i --no-frozen-lockfile:*)",
+      "Bash(npm install --no-frozen-lockfile:*)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowUnixSockets": [],
+      "allowLocalBinding": true
+    },
+    "excludedCommands": []
   }
 }
