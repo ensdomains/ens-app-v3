@@ -105,23 +105,26 @@ overrides:
 
 patchedDependencies:
   '@ensdomains/dnsprovejs@0.5.1':
-    hash: dgob3meb73tkxsoa44yxrlgffu
+    hash: 613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22
     path: patches/@ensdomains__dnsprovejs@0.5.1.patch
   '@nomicfoundation/hardhat-viem@2.0.3':
-    hash: znglrikwqnjywwr7ebopjjz3mm
+    hash: a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a
     path: patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch
   hardhat-deploy@0.12.4:
-    hash: tlkqdaxsrdu4rtoksxd5dvmjze
+    hash: 2f096aa3a9c613df141fcc353a505c2742a3f0363a2c2839106e47dabc388e2f
     path: patches/hardhat-deploy@0.12.4.patch
   next-dev-https@0.1.2:
-    hash: q5l3x5627ujg3rak6l6v24c2cq
+    hash: 54dc50f58f30a1eaca9a26796418a5cba9328987d069b821a03b38c8384c48be
     path: patches/next-dev-https@0.1.2.patch
   node-forge@1.3.1:
-    hash: nfdrir6ttlr77nd4pr3kkewsuy
+    hash: e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd
     path: patches/node-forge@1.3.1.patch
   react-confetti@6.1.0:
-    hash: bbuxkxhxbyez4jmqgptuoucij4
+    hash: 548f8d8a65ec1bb10a868f7dfd84a4e4dd15fbc6cf59c8ff53573018de2a3190
     path: patches/react-confetti@6.1.0.patch
+  viem@2.19.4:
+    hash: 459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff
+    path: patches/viem@2.19.4.patch
 
 importers:
 
@@ -141,16 +144,16 @@ importers:
         version: 1.0.1
       '@ensdomains/ensjs':
         specifier: 4.1.1
-        version: 4.1.1(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+        version: 4.1.1(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
       '@ensdomains/thorin':
         specifier: 1.0.0-beta.28
         version: 1.0.0-beta.28(@vanilla-extract/css@1.15.5(babel-plugin-macros@3.1.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@getpara/rainbowkit':
         specifier: 1.4.0
-        version: 1.4.0(@emotion/is-prop-valid@1.3.1)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
+        version: 1.4.0(@emotion/is-prop-valid@1.3.1)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
       '@getpara/rainbowkit-wallet':
         specifier: 1.4.0
-        version: 1.4.0(j32smjfesfdjpcc3bci3l6c6re)
+        version: 1.4.0(17a4645eec46fe567053b0616e57f5ca)
       '@metamask/post-message-stream':
         specifier: ^6.1.2
         version: 6.2.0
@@ -183,10 +186,10 @@ importers:
         version: 5.22.2(@tanstack/react-query@5.22.2(react@18.3.1))(react@18.3.1)
       '@thirdweb-dev/wagmi-adapter':
         specifier: ^0.2.151
-        version: 0.2.156(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(thirdweb@5.108.6(@solana/sysvars@2.3.0(typescript@5.7.3))(@tanstack/query-core@5.81.5)(@types/react-dom@18.3.5(@types/react@18.3.12))(@types/react@18.3.12)(bufferutil@4.0.9)(ethers@5.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(typescript@5.7.3)
+        version: 0.2.156(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(thirdweb@5.108.6(@solana/sysvars@2.3.0(typescript@5.7.3))(@tanstack/query-core@5.81.5)(@types/react-dom@18.3.5(@types/react@18.3.12))(@types/react@18.3.12)(bufferutil@4.0.9)(ethers@5.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(typescript@5.7.3)
       '@wagmi/core':
         specifier: 2.13.3
-        version: 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+        version: 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       calendar-link:
         specifier: ^2.8.0
         version: 2.8.0
@@ -234,7 +237,7 @@ importers:
         version: 3.3.2
       node-forge:
         specifier: 1.3.1
-        version: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
+        version: 1.3.1(patch_hash=e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd)
       posthog-js:
         specifier: ^1.236.8
         version: 1.268.9
@@ -243,7 +246,7 @@ importers:
         version: 18.3.1
       react-confetti:
         specifier: 6.1.0
-        version: 6.1.0(patch_hash=bbuxkxhxbyez4jmqgptuoucij4)(react@18.3.1)
+        version: 6.1.0(patch_hash=548f8d8a65ec1bb10a868f7dfd84a4e4dd15fbc6cf59c8ff53573018de2a3190)(react@18.3.1)
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
@@ -282,23 +285,23 @@ importers:
         version: 0.7.0(immer@9.0.21)(react@18.3.1)
       viem:
         specifier: 2.19.4
-        version: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+        version: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
       wagmi:
         specifier: 2.12.4
-        version: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+        version: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^3.14.1
         version: 3.19.0
       '@ensdomains/buffer':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.1.3
+        version: 0.1.3
       '@ensdomains/hardhat-toolbox-viem-extended':
         specifier: ^0.0.5
-        version: 0.0.5(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(hardhat-deploy@0.12.4(patch_hash=tlkqdaxsrdu4rtoksxd5dvmjze)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)
+        version: 0.0.5(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(hardhat-deploy@0.12.4(patch_hash=2f096aa3a9c613df141fcc353a505c2742a3f0363a2c2839106e47dabc388e2f)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)
       '@ensdomains/headless-web3-provider':
         specifier: ^1.0.8
-        version: 1.0.8(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+        version: 1.0.8(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.1.0
         version: 4.4.1(prettier@3.0.3)
@@ -307,10 +310,10 @@ importers:
         version: 13.5.8(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@nomicfoundation/hardhat-toolbox-viem':
         specifier: ^3.0.0
-        version: 3.0.0(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+        version: 3.0.0(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       '@nomicfoundation/hardhat-viem':
         specifier: 2.0.3
-        version: 2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+        version: 2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
       '@openzeppelin/contracts':
         specifier: ^4.7.3
         version: 4.9.6
@@ -319,7 +322,7 @@ importers:
         version: 1.50.1
       '@tenkeylabs/dappwright':
         specifier: ^2.11.2
-        version: 2.11.2(playwright-core@1.55.0)
+        version: 2.11.2(playwright-core@1.56.1)
       '@testing-library/dom':
         specifier: ^10.4.0
         version: 10.4.0
@@ -385,13 +388,13 @@ importers:
         version: 8.50.0
       eslint-config-airbnb:
         specifier: ^19.0.4
-        version: 19.0.4(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint-plugin-jsx-a11y@6.10.2(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.37.4(eslint@8.50.0))(eslint@8.50.0)
+        version: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.37.4(eslint@8.50.0))(eslint@8.50.0)
       eslint-config-airbnb-base:
         specifier: ^15.0.0
-        version: 15.0.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint@8.50.0)
+        version: 15.0.0(eslint-plugin-import@2.31.0)(eslint@8.50.0)
       eslint-config-airbnb-typescript:
         specifier: ^17.1.0
-        version: 17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0)(typescript@5.7.3))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint@8.50.0)
+        version: 17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0)(typescript@5.7.3))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-plugin-import@2.31.0)(eslint@8.50.0)
       eslint-config-next:
         specifier: ^13.4.19
         version: 13.5.8(eslint@8.50.0)(typescript@5.7.3)
@@ -433,10 +436,7 @@ importers:
         version: 1.2.1(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))
       hardhat-deploy:
         specifier: ^0.12.4
-        version: 0.12.4(patch_hash=tlkqdaxsrdu4rtoksxd5dvmjze)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      husky:
-        specifier: ^7.0.4
-        version: 7.0.4
+        version: 0.12.4(patch_hash=2f096aa3a9c613df141fcc353a505c2742a3f0363a2c2839106e47dabc388e2f)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       jsdom:
         specifier: ^24.1.0
         version: 24.1.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -448,7 +448,7 @@ importers:
         version: 2.7.3(@types/node@20.17.19)(typescript@5.7.3)
       next-dev-https:
         specifier: ^0.1.2
-        version: 0.1.2(patch_hash=q5l3x5627ujg3rak6l6v24c2cq)(next@13.5.8(@babel/core@7.26.9)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 0.1.2(patch_hash=54dc50f58f30a1eaca9a26796418a5cba9328987d069b821a03b38c8384c48be)(next@13.5.8(@babel/core@7.26.9)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       next-router-mock:
         specifier: ^0.9.10
         version: 0.9.13(next@13.5.8(@babel/core@7.26.9)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -459,8 +459,8 @@ importers:
         specifier: ^2.0.2
         version: 2.5.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(winston@3.18.3)
       playwright-core:
-        specifier: ^1.55.0
-        version: 1.55.0
+        specifier: ^1.56.1
+        version: 1.56.1
       postcss-styled-syntax:
         specifier: ^0.7.1
         version: 0.7.1(postcss@8.5.3)
@@ -1374,8 +1374,8 @@ packages:
   '@ensdomains/address-encoder@1.1.3':
     resolution: {integrity: sha512-QS4ax0YkA8tsbQcWgBNmLLtb3aG0jsOQtED9SRyX9Ixflt1jDMuC/0i3ONMnNJNG5HTIko0Te4Y1JIGXjNcnUg==}
 
-  '@ensdomains/buffer@0.1.1':
-    resolution: {integrity: sha512-92SfSiNS8XorgU7OUBHo/i1ZU7JV7iz/6bKuLPNVsMxV79/eI7fJR6jfJJc40zAHjs3ha+Xo965Idomlq3rqnw==}
+  '@ensdomains/buffer@0.1.3':
+    resolution: {integrity: sha512-L/GoCkQFePjSn4DeVnBNfkGdm2CI8UxTxwgQztcZ1L9aHaFefRD+mTUXxtikk946KwwMHRQJDn38wo1IWtEpSg==}
 
   '@ensdomains/content-hash@3.0.0':
     resolution: {integrity: sha512-5ongDPX9qDkemcYZ2rPXsRzCRDneoR2xujm2Tq3u0ZefQa49ZAURVKGqbJdjoL0VIZDfceLkBXekYKqkfrR5Ww==}
@@ -6302,11 +6302,6 @@ packages:
   humanize-ms@1.2.1:
     resolution: {integrity: sha512-Fl70vYtsAFb/C06PTS9dZBo7ihau+Tu/DNCk/OyHhea07S+aeMWpFFkUaXRa8fI+ScZbEI8dfSxwY7gxZ9SAVQ==}
 
-  husky@7.0.4:
-    resolution: {integrity: sha512-vbaCKN2QLtP/vD4yvs6iz6hBEo6wkSzs8HpRah1Z6aGmF2KW5PdYuAd7uX5a+OyBZHBhd+TFLqgjUgytQr4RvQ==}
-    engines: {node: '>=12'}
-    hasBin: true
-
   hyper-async@1.2.0:
     resolution: {integrity: sha512-7wvJxzAEBREKotXGuHOSri8/J+D0oURqCbNmn8g7Ym8hVMJQkGCMMS9y2/GktMtRyxPVcw2xWFh2oPa970PmXQ==}
     engines: {node: '>=18'}
@@ -7370,8 +7365,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright-core@1.55.0:
-    resolution: {integrity: sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==}
+  playwright-core@1.56.1:
+    resolution: {integrity: sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -10654,7 +10649,7 @@ snapshots:
       '@noble/hashes': 1.7.1
       '@scure/base': 1.2.4
 
-  '@ensdomains/buffer@0.1.1': {}
+  '@ensdomains/buffer@0.1.3': {}
 
   '@ensdomains/content-hash@3.0.0':
     dependencies:
@@ -10667,7 +10662,7 @@ snapshots:
       '@noble/curves': 1.8.1
       '@scure/base': 1.2.4
 
-  '@ensdomains/dnsprovejs@0.5.1(patch_hash=dgob3meb73tkxsoa44yxrlgffu)':
+  '@ensdomains/dnsprovejs@0.5.1(patch_hash=613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22)':
     dependencies:
       '@noble/hashes': 1.7.1
       dns-packet: 5.6.1
@@ -10675,7 +10670,7 @@ snapshots:
 
   '@ensdomains/ens-contracts@1.5.2':
     dependencies:
-      '@ensdomains/buffer': 0.1.1
+      '@ensdomains/buffer': 0.1.3
       '@ensdomains/solsha1': 0.0.3
       '@openzeppelin/contracts': 4.9.6
       dns-packet: 5.6.1
@@ -10696,35 +10691,35 @@ snapshots:
       - bare-buffer
       - debug
 
-  '@ensdomains/ensjs@4.1.1(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
+  '@ensdomains/ensjs@4.1.1(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
       '@ensdomains/address-encoder': 1.1.3
       '@ensdomains/content-hash': 3.1.0-rc.1
-      '@ensdomains/dnsprovejs': 0.5.1(patch_hash=dgob3meb73tkxsoa44yxrlgffu)
+      '@ensdomains/dnsprovejs': 0.5.1(patch_hash=613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22)
       abitype: 1.0.5(typescript@5.7.3)(zod@3.25.75)
       dns-packet: 5.6.1
       graphql: 16.11.0
       graphql-request: 7.1.2(graphql@16.11.0)
       pako: 2.1.0
       ts-pattern: 5.6.2
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     transitivePeerDependencies:
       - typescript
       - zod
 
-  '@ensdomains/hardhat-toolbox-viem-extended@0.0.5(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(hardhat-deploy@0.12.4(patch_hash=tlkqdaxsrdu4rtoksxd5dvmjze)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)':
+  '@ensdomains/hardhat-toolbox-viem-extended@0.0.5(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(hardhat-deploy@0.12.4(patch_hash=2f096aa3a9c613df141fcc353a505c2742a3f0363a2c2839106e47dabc388e2f)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)':
     dependencies:
-      '@nomicfoundation/hardhat-viem': 2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+      '@nomicfoundation/hardhat-viem': 2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
       hardhat: 2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
-      hardhat-deploy: 0.12.4(patch_hash=tlkqdaxsrdu4rtoksxd5dvmjze)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      hardhat-deploy: 0.12.4(patch_hash=2f096aa3a9c613df141fcc353a505c2742a3f0363a2c2839106e47dabc388e2f)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       typescript: 5.7.3
 
-  '@ensdomains/headless-web3-provider@1.0.8(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
+  '@ensdomains/headless-web3-provider@1.0.8(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
     dependencies:
       '@metamask/json-rpc-engine': 9.0.3
       '@metamask/utils': 9.3.0
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     transitivePeerDependencies:
       - supports-color
 
@@ -11250,18 +11245,18 @@ snapshots:
       '@noble/hashes': 1.7.1
       base64url: 3.0.1
       libphonenumber-js: 1.11.2
-      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
+      node-forge: 1.3.1(patch_hash=e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd)
       uuid: 11.1.0
     transitivePeerDependencies:
       - debug
 
-  '@getpara/rainbowkit-wallet@1.4.0(j32smjfesfdjpcc3bci3l6c6re)':
+  '@getpara/rainbowkit-wallet@1.4.0(17a4645eec46fe567053b0616e57f5ca)':
     dependencies:
-      '@getpara/rainbowkit': 1.4.0(@emotion/is-prop-valid@1.3.1)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
+      '@getpara/rainbowkit': 1.4.0(@emotion/is-prop-valid@1.3.1)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
       '@getpara/react-sdk': 1.15.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@getpara/wagmi-v2-integration': 1.15.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
-      wagmi: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+      '@getpara/wagmi-v2-integration': 1.15.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      wagmi: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
       - '@types/react'
@@ -11271,7 +11266,7 @@ snapshots:
       - react
       - react-dom
 
-  '@getpara/rainbowkit@1.4.0(@emotion/is-prop-valid@1.3.1)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))':
+  '@getpara/rainbowkit@1.4.0(@emotion/is-prop-valid@1.3.1)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))':
     dependencies:
       '@getpara/react-sdk': 1.15.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query': 5.22.2(react@18.3.1)
@@ -11284,8 +11279,8 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-remove-scroll: 2.6.2(@types/react@18.3.12)(react@18.3.1)
       ua-parser-js: 1.0.40
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
-      wagmi: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      wagmi: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
       - '@types/react'
@@ -11341,21 +11336,21 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@getpara/viem-v2-integration@1.15.0(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
+  '@getpara/viem-v2-integration@1.15.0(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
     dependencies:
       '@getpara/core-sdk': 1.15.0
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     transitivePeerDependencies:
       - debug
 
-  '@getpara/wagmi-v2-integration@1.15.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))':
+  '@getpara/wagmi-v2-integration@1.15.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))':
     dependencies:
       '@getpara/react-sdk': 1.15.0(@emotion/is-prop-valid@1.3.1)(@types/react@18.3.12)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@getpara/viem-v2-integration': 1.15.0(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+      '@getpara/viem-v2-integration': 1.15.0(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
-      wagmi: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      wagmi: 2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
       - '@types/react'
@@ -11370,7 +11365,7 @@ snapshots:
       base64url: 3.0.1
       buffer: 6.0.3
       cbor-web: 8.1.0
-      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
+      node-forge: 1.3.1(patch_hash=e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd)
       ua-parser-js: 2.0.2
     transitivePeerDependencies:
       - debug
@@ -12101,24 +12096,24 @@ snapshots:
       '@nomicfoundation/ethereumjs-rlp': 5.0.4
       ethereum-cryptography: 0.1.3
 
-  '@nomicfoundation/hardhat-toolbox-viem@3.0.0(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
+  '@nomicfoundation/hardhat-toolbox-viem@3.0.0(@nomicfoundation/hardhat-viem@2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(@types/node@20.17.19)(chai@4.5.0)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
     dependencies:
-      '@nomicfoundation/hardhat-viem': 2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+      '@nomicfoundation/hardhat-viem': 2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
       '@types/node': 20.17.19
       chai: 4.5.0
       chai-as-promised: 7.1.2(chai@4.5.0)
       hardhat: 2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
       ts-node: 10.9.2(@types/node@20.17.19)(typescript@5.7.3)
       typescript: 5.7.3
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
 
-  '@nomicfoundation/hardhat-viem@2.0.3(patch_hash=znglrikwqnjywwr7ebopjjz3mm)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
+  '@nomicfoundation/hardhat-viem@2.0.3(patch_hash=a959a4ffb0cc64cf976094f071be14daec8caf74f0df0696d631155b0121ed4a)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
     dependencies:
       abitype: 0.9.10(typescript@5.7.3)(zod@3.25.75)
       hardhat: 2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
       lodash.memoize: 4.1.2
       typescript: 5.7.3
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     transitivePeerDependencies:
       - zod
 
@@ -12558,7 +12553,7 @@ snapshots:
   '@safe-global/safe-apps-sdk@9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)':
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.22.9
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -13438,10 +13433,10 @@ snapshots:
       '@tanstack/query-core': 5.81.5
       react: 18.3.1
 
-  '@tenkeylabs/dappwright@2.11.2(playwright-core@1.55.0)':
+  '@tenkeylabs/dappwright@2.11.2(playwright-core@1.56.1)':
     dependencies:
       node-stream-zip: 1.15.0
-      playwright-core: 1.55.0
+      playwright-core: 1.56.1
 
   '@testing-library/dom@10.4.0':
     dependencies:
@@ -13499,9 +13494,9 @@ snapshots:
     optionalDependencies:
       typescript: 5.7.3
 
-  '@thirdweb-dev/wagmi-adapter@0.2.156(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(thirdweb@5.108.6(@solana/sysvars@2.3.0(typescript@5.7.3))(@tanstack/query-core@5.81.5)(@types/react-dom@18.3.5(@types/react@18.3.12))(@types/react@18.3.12)(bufferutil@4.0.9)(ethers@5.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(typescript@5.7.3)':
+  '@thirdweb-dev/wagmi-adapter@0.2.156(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(thirdweb@5.108.6(@solana/sysvars@2.3.0(typescript@5.7.3))(@tanstack/query-core@5.81.5)(@types/react-dom@18.3.5(@types/react@18.3.12))(@types/react@18.3.12)(bufferutil@4.0.9)(ethers@5.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(typescript@5.7.3)':
     dependencies:
-      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       thirdweb: 5.108.6(@solana/sysvars@2.3.0(typescript@5.7.3))(@tanstack/query-core@5.81.5)(@types/react-dom@18.3.5(@types/react@18.3.12))(@types/react@18.3.12)(bufferutil@4.0.9)(ethers@5.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
     optionalDependencies:
       typescript: 5.7.3
@@ -13940,17 +13935,17 @@ snapshots:
       loupe: 3.1.3
       tinyrainbow: 2.0.0
 
-  '@wagmi/connectors@5.1.4(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
+  '@wagmi/connectors@5.1.4(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
     dependencies:
       '@coinbase/wallet-sdk': 4.0.4
       '@metamask/sdk': 0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(utf-8-validate@5.0.10)
       '@safe-global/safe-apps-provider': 0.18.3(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
       '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
-      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       '@walletconnect/ethereum-provider': 2.11.1(@types/react@18.3.12)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
       '@walletconnect/modal': 2.6.2(@types/react@18.3.12)(react@18.3.1)
       cbw-sdk: '@coinbase/wallet-sdk@3.9.3'
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     optionalDependencies:
       typescript: 5.7.3
     transitivePeerDependencies:
@@ -13984,7 +13979,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@wagmi/connectors@5.11.2(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(zod@3.25.75)':
+  '@wagmi/connectors@5.11.2(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(zod@3.25.75)':
     dependencies:
       '@base-org/account': 1.1.1(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(zod@3.25.75)
       '@coinbase/wallet-sdk': 4.3.6(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(zod@3.25.75)
@@ -13992,10 +13987,10 @@ snapshots:
       '@metamask/sdk': 0.33.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@safe-global/safe-apps-provider': 0.18.6(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
       '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
-      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       '@walletconnect/ethereum-provider': 2.11.1(@types/react@18.3.12)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
       cbw-sdk: '@coinbase/wallet-sdk@3.9.3'
-      porto: 0.2.19(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
+      porto: 0.2.19(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))
       viem: 2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     optionalDependencies:
       typescript: 5.7.3
@@ -14030,11 +14025,11 @@ snapshots:
       - wagmi
       - zod
 
-  '@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
+  '@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@5.7.3)
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
       zustand: 4.4.1(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)
     optionalDependencies:
       '@tanstack/query-core': 5.81.5
@@ -15926,7 +15921,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-config-airbnb-base@15.0.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint@8.50.0):
+  eslint-config-airbnb-base@15.0.0(eslint-plugin-import@2.31.0)(eslint@8.50.0):
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 8.50.0
@@ -15935,18 +15930,18 @@ snapshots:
       object.entries: '@socketregistry/object.entries@1.0.5'
       semver: 6.3.1
 
-  eslint-config-airbnb-typescript@17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0)(typescript@5.7.3))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint@8.50.0):
+  eslint-config-airbnb-typescript@17.1.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0)(typescript@5.7.3))(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-plugin-import@2.31.0)(eslint@8.50.0):
     dependencies:
       '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0)(typescript@5.7.3)
       '@typescript-eslint/parser': 6.21.0(eslint@8.50.0)(typescript@5.7.3)
       eslint: 8.50.0
-      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint@8.50.0)
+      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.31.0)(eslint@8.50.0)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.3)(eslint@8.50.0)
 
-  eslint-config-airbnb@19.0.4(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint-plugin-jsx-a11y@6.10.2(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.37.4(eslint@8.50.0))(eslint@8.50.0):
+  eslint-config-airbnb@19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@8.50.0))(eslint-plugin-react-hooks@4.6.2(eslint@8.50.0))(eslint-plugin-react@7.37.4(eslint@8.50.0))(eslint@8.50.0):
     dependencies:
       eslint: 8.50.0
-      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint@8.50.0))(eslint@8.50.0)
+      eslint-config-airbnb-base: 15.0.0(eslint-plugin-import@2.31.0)(eslint@8.50.0)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.3)(eslint@8.50.0)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.50.0)
       eslint-plugin-react: 7.37.4(eslint@8.50.0)
@@ -16000,7 +15995,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.3(eslint-plugin-import@2.31.0)(eslint@8.50.0))(eslint@8.50.0):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.3)(eslint@8.50.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -16022,7 +16017,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.50.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.3(eslint-plugin-import@2.31.0)(eslint@8.50.0))(eslint@8.50.0)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.50.0)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.3)(eslint@8.50.0)
       hasown: '@socketregistry/hasown@1.0.5'
       is-core-module: '@socketregistry/is-core-module@1.0.7'
       is-glob: 4.0.3
@@ -16687,7 +16682,7 @@ snapshots:
     dependencies:
       hardhat: 2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
 
-  hardhat-deploy@0.12.4(patch_hash=tlkqdaxsrdu4rtoksxd5dvmjze)(bufferutil@4.0.9)(utf-8-validate@5.0.10):
+  hardhat-deploy@0.12.4(patch_hash=2f096aa3a9c613df141fcc353a505c2742a3f0363a2c2839106e47dabc388e2f)(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -16861,8 +16856,6 @@ snapshots:
   humanize-ms@1.2.1:
     dependencies:
       ms: 2.1.3
-
-  husky@7.0.4: {}
 
   hyper-async@1.2.0: {}
 
@@ -17644,7 +17637,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-dev-https@0.1.2(patch_hash=q5l3x5627ujg3rak6l6v24c2cq)(next@13.5.8(@babel/core@7.26.9)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
+  next-dev-https@0.1.2(patch_hash=54dc50f58f30a1eaca9a26796418a5cba9328987d069b821a03b38c8384c48be)(next@13.5.8(@babel/core@7.26.9)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
     dependencies:
       arg: 5.0.2
       next: 13.5.8(@babel/core@7.26.9)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -17709,7 +17702,7 @@ snapshots:
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
 
-  node-forge@1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy): {}
+  node-forge@1.3.1(patch_hash=e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd): {}
 
   node-gyp-build@4.8.4: {}
 
@@ -18020,7 +18013,7 @@ snapshots:
 
   playwright-core@1.50.1: {}
 
-  playwright-core@1.55.0: {}
+  playwright-core@1.56.1: {}
 
   playwright@1.50.1:
     dependencies:
@@ -18036,9 +18029,9 @@ snapshots:
 
   pony-cause@2.1.11: {}
 
-  porto@0.2.19(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)):
+  porto@0.2.19(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)):
     dependencies:
-      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       hono: 4.9.9
       idb-keyval: 6.2.1
       mipd: 0.0.7(typescript@5.7.3)
@@ -18215,7 +18208,7 @@ snapshots:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
-  react-confetti@6.1.0(patch_hash=bbuxkxhxbyez4jmqgptuoucij4)(react@18.3.1):
+  react-confetti@6.1.0(patch_hash=548f8d8a65ec1bb10a868f7dfd84a4e4dd15fbc6cf59c8ff53573018de2a3190)(react@18.3.1):
     dependencies:
       react: 18.3.1
       tween-functions: 1.2.0
@@ -18593,7 +18586,7 @@ snapshots:
   selfsigned@2.4.1:
     dependencies:
       '@types/node-forge': 1.3.11
-      node-forge: 1.3.1(patch_hash=nfdrir6ttlr77nd4pr3kkewsuy)
+      node-forge: 1.3.1(patch_hash=e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd)
 
   semver@5.7.2: {}
 
@@ -19530,7 +19523,7 @@ snapshots:
       '@types/react': 18.3.12
       react: 18.3.1
 
-  viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75):
+  viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75):
     dependencies:
       '@adraffy/ens-normalize': 1.10.0
       '@noble/curves': 1.4.0
@@ -19701,14 +19694,14 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75):
+  wagmi@2.12.4(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.22.2(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75):
     dependencies:
       '@tanstack/react-query': 5.22.2(react@18.3.1)
-      '@wagmi/connectors': 5.1.4(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
-      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
+      '@wagmi/connectors': 5.1.4(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.34.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+      '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       react: 18.3.1
       use-sync-external-store: 1.2.0(react@18.3.1)
-      viem: 2.19.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
+      viem: 2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)
     optionalDependencies:
       typescript: 5.7.3
     transitivePeerDependencies:
@@ -19746,7 +19739,7 @@ snapshots:
   wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75):
     dependencies:
       '@tanstack/react-query': 5.81.5(react@18.3.1)
-      '@wagmi/connectors': 5.11.2(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(zod@3.25.75)
+      '@wagmi/connectors': 5.11.2(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(@wagmi/core@2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.19.4(patch_hash=459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75)))(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(wagmi@2.17.5(@tanstack/query-core@5.81.5)(@tanstack/react-query@5.81.5(react@18.3.1))(@types/react@18.3.12)(bufferutil@4.0.9)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75))(zod@3.25.75)
       '@wagmi/core': 2.13.3(@tanstack/query-core@5.81.5)(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)(typescript@5.7.3)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))
       react: 18.3.1
       use-sync-external-store: 1.4.0(react@18.3.1)

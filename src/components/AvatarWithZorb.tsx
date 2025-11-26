@@ -1,12 +1,11 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
-import { useEnsAvatar } from 'wagmi'
 
 import { Avatar, Space } from '@ensdomains/thorin'
 
+import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
-import { ensAvatarConfig } from '@app/utils/query/ipfsGateway'
 
 const Wrapper = styled.div<{ $size?: QuerySpace }>(
   ({ theme, $size }) => css`
@@ -77,9 +76,8 @@ export const NameAvatar = ({
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
   const { data: avatar } = useEnsAvatar({
-    ...ensAvatarConfig,
     name,
-    query: { gcTime: noCache ? 0 : undefined },
+    gcTime: noCache ? 0 : undefined,
   })
   const zorb = useZorb(name, 'name')
 
@@ -99,9 +97,8 @@ export const AvatarWithZorb = ({
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
   const { data: avatar } = useEnsAvatar({
-    ...ensAvatarConfig,
     name,
-    query: { gcTime: noCache ? 0 : undefined },
+    gcTime: noCache ? 0 : undefined,
   })
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
