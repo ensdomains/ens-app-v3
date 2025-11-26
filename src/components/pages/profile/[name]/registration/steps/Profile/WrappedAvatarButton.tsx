@@ -13,5 +13,5 @@ export const WrappedAvatarButton = ({ control, ...props }: Props) => {
     control,
     name: 'avatar',
   })
-  return <AvatarButton {...props} validated={!!avatar} />
+  return <AvatarButton {...props} validated={!!avatar} avatarValue={avatar as string} />
 }
