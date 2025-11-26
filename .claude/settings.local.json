@@ -33,7 +33,8 @@
       "mcp__github__get_job_logs",
       "mcp__github__get_pull_request_diff",
       "mcp__github__get_pull_request",
-      "WebFetch(domain:registry.npmjs.org)"
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [
       "Bash(pnpm i --no-frozen-lockfile:*)",
