@@ -6,9 +6,9 @@ settings:
 
 overrides:
   '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
-  '@wagmi/core': 2.13.3
   '@walletconnect/ethereum-provider': 2.11.1
   '@walletconnect/modal': 2.6.2
+  ox: npm:ox@0.8.7
   aggregate-error: npm:@socketregistry/aggregate-error@^1
   array-buffer-byte-length: npm:@socketregistry/array-buffer-byte-length@^1
   array-flatten: npm:@socketregistry/array-flatten@^1
@@ -125,6 +125,9 @@ patchedDependencies:
   viem@2.19.4:
     hash: 459ff6674e27f2eb2b856948748da6c10623d32d4bbda67b2f2635ac46351dff
     path: patches/viem@2.19.4.patch
+  ox@0.8.7:
+    hash: i6lrjvp6n7jcjrmtnyd6uz4orq
+    path: patches/ox@0.8.7.patch
 
 importers:
 
