@@ -17,10 +17,14 @@
     "minutesAgo_other": "{{count}} 分钟前检查过"
   },
   "steps": {
+    "importError": {
+      "message": "不支持导入非 ASCII 字符的域名"
+    },
     "selectType": {
       "title": "认领 {{name}}",
       "subtitle": "导入域名后可以将其用作 ENS 名称。",
       "learnMore": "了解更多关于导入名称的信息",
+      "customizedTld": ".{{tld}} 的团队已对其 ENS 的使用方式进行了自定义，因此我们目前无法帮助您导入该名称",
       "select": {
         "heading": "您想如何导入您的域名？",
         "offchain": {
