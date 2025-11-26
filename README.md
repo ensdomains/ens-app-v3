@@ -1,5 +1,5 @@
 # ENS App V3
-
+by Edgar Manuel Ruiz Arias 
 The all new, all cool version of the ENS manager.
 
 ## EXTERNAL CONTRIBUTOR NOTICE
