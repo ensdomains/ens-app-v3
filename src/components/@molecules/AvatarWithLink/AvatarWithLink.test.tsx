@@ -26,7 +26,7 @@ vi.mock('next/router', () => ({
 }))
 
 vi.mock('@app/routes', () => ({
-  getDestination: (urlObject: any) => urlObject.pathname,
+  getDestinationAsHref: (urlObject: any) => urlObject.pathname,
 }))
 
 describe('AvatarWithLink', () => {

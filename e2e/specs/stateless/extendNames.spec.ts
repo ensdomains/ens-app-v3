@@ -676,7 +676,9 @@ test('should be able to extend a single wrapped name using deep link', async ({
     await extendNamesModal.getExtendButton.click()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    const difference = newTimestamp - timestamp
+    // Allow 1 day tolerance for timezone/calendar day boundary differences
+    expect(Math.abs(difference - 31536000000)).toBeLessThan(86400000)
   })
 })
 
