@@ -33,7 +33,7 @@ import {
   TransactionFlowAction,
   TransactionStage,
 } from '@app/transaction-flow/types'
-import { ConfigWithEns, TransactionDisplayItem } from '@app/types'
+import { ConfigWithEns } from '@app/types'
 import { sendEvent } from '@app/utils/analytics/events'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
