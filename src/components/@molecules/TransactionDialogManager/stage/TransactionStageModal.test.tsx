@@ -117,6 +117,7 @@ const ComponentWithDefaultProps = ({
     actionName={actionName}
     displayItems={displayItems}
     transaction={transaction}
+    transactions={[transaction] as const}
     onDismiss={mockOnDismiss}
     dispatch={mockDispatch}
     backToInput={false}
