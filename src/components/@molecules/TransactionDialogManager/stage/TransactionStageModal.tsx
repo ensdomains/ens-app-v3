@@ -275,16 +275,16 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
 
 const getSubnameFromTransactions = (transactions: ReadonlyArray<GenericTransaction>) => {
   const createSubname = transactions.find((t) => t.name === 'createSubname')
-  if (!createSubname) return ''
+  if (!createSubname) return null
   const { label, parent } =
     (createSubname?.data as GenericTransaction<'createSubname'>['data']) ?? {}
-  if (!label || !parent) return ''
+  if (!label || !parent) return null
   return `${label}.${parent}`
 }
 
 function useCreateSubnameRedirect(
   shouldTrigger: boolean,
-  subdomain?: TransactionDisplayItem['value'],
+  subdomain?: string | null,
   onDismiss?: () => void,
 ) {
   const router = useRouterWithHistory()
@@ -365,6 +365,7 @@ export const TransactionStageModal = ({
   onDismiss,
   backToInput,
 }: ManagedDialogProps) => {
+  console.log('rendering')
   const { t } = useTranslation()
   const chainName = useChainName()
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()
