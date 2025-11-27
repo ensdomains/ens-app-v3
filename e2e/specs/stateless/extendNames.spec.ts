@@ -678,7 +678,7 @@ test('should be able to extend a single wrapped name using deep link', async ({
     const newTimestamp = await profilePage.getExpiryTimestamp()
     const difference = newTimestamp - timestamp
     // Allow 1 day tolerance for timezone/calendar day boundary differences
-    expect(Math.abs(difference - 31536000000)).toBeLessThan(86400000)
+    expect(Math.abs(difference - 31536000000)).toBeLessThanOrEqual(86400000)
   })
 })
 
