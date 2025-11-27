@@ -26,6 +26,7 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import {
   ManagedDialogProps,
   TransactionFlowAction,
@@ -275,13 +276,15 @@ function useCreateSubnameRedirect(
   shouldTrigger: boolean,
   subdomain?: TransactionDisplayItem['value'],
 ) {
+  const router = useRouterWithHistory()
+
   useEffect(() => {
     if (shouldTrigger && typeof subdomain === 'string') {
       setTimeout(() => {
-        window.location.href = `/${subdomain}`
+        router.replace(`/${subdomain}`)
       }, 1000)
     }
-  }, [shouldTrigger, subdomain])
+  }, [shouldTrigger, subdomain, router])
 }
 
 const getPreTransactionError = ({
