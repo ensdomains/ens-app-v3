@@ -28,6 +28,7 @@ import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import {
+  GenericTransaction,
   ManagedDialogProps,
   TransactionFlowAction,
   TransactionStage,
@@ -272,9 +273,19 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
   dispatch({ name: 'resetTransactionStep' })
 }
 
+const getSubnameFromTransactions = (transactions: ReadonlyArray<GenericTransaction>) => {
+  const createSubname = transactions.find((t) => t.name === 'createSubname')
+  if (!createSubname) return ''
+  const { label, parent } =
+    (createSubname?.data as GenericTransaction<'createSubname'>['data']) ?? {}
+  if (!label || !parent) return ''
+  return `${label}.${parent}`
+}
+
 function useCreateSubnameRedirect(
   shouldTrigger: boolean,
   subdomain?: TransactionDisplayItem['value'],
+  onDismiss?: () => void,
 ) {
   const router = useRouterWithHistory()
 
@@ -282,9 +293,11 @@ function useCreateSubnameRedirect(
     if (shouldTrigger && typeof subdomain === 'string') {
       setTimeout(() => {
         router.push(`/${subdomain}`)
+        onDismiss?.()
       }, 1000)
     }
-  }, [shouldTrigger, subdomain, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldTrigger, subdomain])
 }
 
 const getPreTransactionError = ({
@@ -346,6 +359,7 @@ export const TransactionStageModal = ({
   helper,
   dispatch,
   stepCount,
+  transactions,
   transaction,
   txKey,
   onDismiss,
@@ -448,7 +462,8 @@ export const TransactionStageModal = ({
 
   useCreateSubnameRedirect(
     stage === 'complete' && currentStep + 1 === stepCount,
-    displayItems.find((i) => i.label === 'subname' && i.type === 'name')?.value,
+    getSubnameFromTransactions(transactions),
+    onDismiss,
   )
 
   const stepStatus = useMemo(() => {
