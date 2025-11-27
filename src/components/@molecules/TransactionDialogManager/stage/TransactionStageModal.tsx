@@ -281,7 +281,7 @@ function useCreateSubnameRedirect(
   useEffect(() => {
     if (shouldTrigger && typeof subdomain === 'string') {
       setTimeout(() => {
-        router.replace(`/${subdomain}`)
+        router.push(`/${subdomain}`)
       }, 1000)
     }
   }, [shouldTrigger, subdomain, router])

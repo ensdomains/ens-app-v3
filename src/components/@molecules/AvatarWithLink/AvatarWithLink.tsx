@@ -5,7 +5,7 @@ import { Avatar, UpRightArrowSVG } from '@ensdomains/thorin'
 
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { getDestination } from '@app/routes'
+import { getDestinationAsHref } from '@app/routes'
 import { createUrlObject } from '@app/utils/urlObject'
 
 const Container = styled.a(
@@ -65,7 +65,7 @@ export const AvatarWithLink = ({ name, label }: Props) => {
   const { data: avatar } = useEnsAvatar({ name })
   const zorb = useZorb(name || '', 'name')
   const referrer = router.query.referrer as string | undefined
-  const profileURL = getDestination(createUrlObject(`/profile/${name}`, { referrer })) as string
+  const profileURL = getDestinationAsHref(createUrlObject(`/profile/${name}`, { referrer }))
   return (
     <Container href={profileURL} data-testid="avatar-with-link">
       <Avatar src={avatar || zorb} label={label} />

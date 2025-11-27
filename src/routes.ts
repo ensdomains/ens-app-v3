@@ -295,3 +295,12 @@ export const getDestination = (url: UrlObject) => {
   }
   return makeURLString()
 }
+
+export const getDestinationAsHref = (url: UrlObject): string => {
+  const result = getDestination(url)
+  if (typeof result === 'string') return result
+  const queryString = result.query
+    ? `${new URLSearchParams(result.query as Record<string, string>).toString()}`
+    : ''
+  return `${result.pathname}${queryString ? `?${queryString}` : ''}`
+}
