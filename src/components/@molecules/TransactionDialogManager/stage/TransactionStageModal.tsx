@@ -365,7 +365,6 @@ export const TransactionStageModal = ({
   onDismiss,
   backToInput,
 }: ManagedDialogProps) => {
-  console.log('rendering')
   const { t } = useTranslation()
   const chainName = useChainName()
   const { data: isSafeApp, isLoading: safeAppStatusLoading } = useIsSafeApp()

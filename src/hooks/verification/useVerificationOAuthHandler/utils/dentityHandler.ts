@@ -7,7 +7,7 @@ import {
   VerificationErrorDialogProps,
 } from '@app/components/pages/VerificationErrorDialog'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { getDestination } from '@app/routes'
+import { getDestinationAsHref } from '@app/routes'
 import { CreateTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { createUrlObject } from '../../../../utils/urlObject'
@@ -99,7 +99,7 @@ export const dentityVerificationHandler =
               trailing: {
                 children: t('action.goToProfile'),
                 as: 'a',
-                href: getDestination(
+                href: getDestinationAsHref(
                   createUrlObject(`/${json.name}`, {
                     referrer: router.query.referrer as string | undefined,
                   }),
