@@ -58,7 +58,7 @@
     "@ensdomains/content-hash": "^3.0.0-beta.5",
     "@ensdomains/ens-contracts": "1.6.0",
     "@ensdomains/ens-test-env": "1.0.1",
-    "@ensdomains/ensjs": "https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@199de74",
+    "@ensdomains/ensjs": "https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@deab43b",
     "@ensdomains/thorin": "1.0.0-beta.28",
     "@getpara/rainbowkit": "1.4.0",
     "@getpara/rainbowkit-wallet": "1.4.0",
