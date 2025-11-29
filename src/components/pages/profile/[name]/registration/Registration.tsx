@@ -15,12 +15,12 @@ import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useReferrer } from '@app/hooks/useReferrer'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
+import { useResolvedReferrer } from '@app/hooks/useResolvedReferrer'
 import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { sendEvent } from '@app/utils/analytics/events'
-import { getReferrerHex } from '@app/utils/referrer'
 import { isLabelTooLong, secondsToYears } from '@app/utils/utils'
 
 import Complete from './steps/Complete'
@@ -112,11 +112,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
-  const referrer = useReferrer()
-  const referrerHex = getReferrerHex(referrer)
+  const referrerParam = useReferrer()
+  const { data: resolvedReferrerHex } = useResolvedReferrer(referrerParam)
+  // Note: referrer is not included in `selected` to prevent creating new registration
+  // sessions when the referrer changes. It's updated separately via setReferrer action.
   const selected = useMemo(
-    () => ({ name: nameDetails.normalisedName, address: address!, chainId, referrer: referrerHex }),
-    [address, chainId, nameDetails.normalisedName, referrerHex],
+    () => ({ name: nameDetails.normalisedName, address: address!, chainId }),
+    [address, chainId, nameDetails.normalisedName],
   )
   const { normalisedName, beautifiedName = '' } = nameDetails
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
@@ -128,6 +130,18 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
+
+  // Update referrer in registration data when resolved.
+  // This happens asynchronously and won't block the registration flow.
+  useEffect(() => {
+    if (resolvedReferrerHex) {
+      dispatch({
+        name: 'setReferrer',
+        selected,
+        payload: resolvedReferrerHex,
+      })
+    }
+  }, [resolvedReferrerHex, selected, dispatch])
 
   const keySuffix = `${nameDetails.normalisedName}-${address}`
   const commitKey = `commit-${keySuffix}`
@@ -172,11 +186,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     dispatch({
       name: 'setPricingData',
       payload: { seconds, reverseRecord, durationType },
-      selected,
-    })
-    dispatch({
-      name: 'setReferrer',
-      payload: referrerHex,
       selected,
     })
     if (!item.queue.includes('profile')) {

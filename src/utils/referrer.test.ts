@@ -1,8 +1,18 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { Address } from 'viem'
 
 import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
+import { getAddressRecord, getOwner } from '@ensdomains/ensjs/public'
 
-import { getReferrerHex } from './referrer'
+import { ClientWithEns } from '@app/types'
+
+import { getReferrerHex, resolveReferrerToHex } from './referrer'
+
+// Mock ensjs functions
+vi.mock('@ensdomains/ensjs/public', () => ({
+  getAddressRecord: vi.fn(),
+  getOwner: vi.fn(),
+}))
 
 describe('getReferrerHex', () => {
   it('should validate and pad valid hex strings to 32 bytes', () => {
@@ -60,5 +70,98 @@ describe('getReferrerHex', () => {
 
     expect(result).toBe(exactly32Bytes)
     expect(result.length).toBe(66)
+  })
+})
+
+describe('resolveReferrerToHex', () => {
+  const mockClient = {} as ClientWithEns
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('should resolve ENS name to ETH address record and convert to hex', async () => {
+    const ensName = 'vitalik.eth'
+    const mockAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045' as Address
+
+    vi.mocked(getAddressRecord).mockResolvedValueOnce({
+      value: mockAddress,
+      coin: 60, // ETH
+    } as any)
+
+    const result = await resolveReferrerToHex(mockClient, ensName)
+
+    expect(result).toBeDefined()
+    expect(result?.length).toBe(66) // 32 bytes = 64 hex chars + '0x'
+    expect(result?.startsWith('0x')).toBe(true)
+    expect(vi.mocked(getAddressRecord)).toHaveBeenCalledWith(mockClient, { name: ensName })
+    // Should not call getOwner if address record exists
+    expect(vi.mocked(getOwner)).not.toHaveBeenCalled()
+  })
+
+  it('should fall back to owner when no ETH address record exists', async () => {
+    const ensName = 'test.eth'
+    const mockOwnerAddress = '0x1234567890123456789012345678901234567890' as Address
+
+    // No address record
+    vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
+
+    // Has owner
+    vi.mocked(getOwner).mockResolvedValueOnce({
+      owner: mockOwnerAddress,
+      ownershipLevel: 'registrar',
+    } as any)
+
+    const result = await resolveReferrerToHex(mockClient, ensName)
+
+    expect(result).toBeDefined()
+    expect(result?.length).toBe(66)
+    expect(vi.mocked(getAddressRecord)).toHaveBeenCalledWith(mockClient, { name: ensName })
+    expect(vi.mocked(getOwner)).toHaveBeenCalledWith(mockClient, { name: ensName })
+  })
+
+  it('should return null when ENS name has neither address record nor owner', async () => {
+    vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
+    vi.mocked(getOwner).mockResolvedValueOnce(null)
+
+    const result = await resolveReferrerToHex(mockClient, 'nonexistent.eth')
+    expect(result).toBeNull()
+  })
+
+  it('should pass through valid hex addresses without resolution', async () => {
+    const hexAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+
+    const result = await resolveReferrerToHex(mockClient, hexAddress)
+
+    // Should not call ENS resolution functions for hex addresses
+    expect(vi.mocked(getAddressRecord)).not.toHaveBeenCalled()
+    expect(vi.mocked(getOwner)).not.toHaveBeenCalled()
+    expect(result?.length).toBe(66)
+  })
+
+  it('should handle empty or undefined referrer', async () => {
+    const result1 = await resolveReferrerToHex(mockClient, undefined)
+    expect(result1).toBeNull()
+
+    const result2 = await resolveReferrerToHex(mockClient, '')
+    expect(result2).toBeNull()
+  })
+
+  it('should handle resolution errors gracefully', async () => {
+    vi.mocked(getAddressRecord).mockRejectedValueOnce(new Error('Network error'))
+
+    const result = await resolveReferrerToHex(mockClient, 'test.eth')
+    expect(result).toBeNull()
+  })
+
+  it('should handle owner with no address', async () => {
+    vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
+    vi.mocked(getOwner).mockResolvedValueOnce({
+      owner: undefined,
+      ownershipLevel: 'registrar',
+    } as any)
+
+    const result = await resolveReferrerToHex(mockClient, 'test.eth')
+    expect(result).toBeNull()
   })
 })
