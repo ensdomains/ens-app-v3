@@ -3,15 +3,16 @@
 /* eslint-disable no-await-in-loop */
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { namehash } from 'viem'
+import { labelhash, namehash } from 'viem'
+
+import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
 
 const names = [
   {
     label: 'data',
     namedOwner: 'owner',
     data: [],
-    reverseRecord: false,
-    fuses: 0,
+    reverseRecord: 0,
     subnames: [
       {
         label: 'eth-usd',
@@ -19,6 +20,7 @@ const names = [
         contract: 'DummyOracle',
       },
     ],
+    referrer: EMPTY_BYTES32,
   },
 ] as const
 
@@ -31,23 +33,24 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
-  for (const { label, namedOwner, data, reverseRecord, fuses, subnames } of names) {
+  for (const { label, namedOwner, data, reverseRecord, subnames, referrer } of names) {
     // eslint-disable-next-line no-restricted-syntax
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const owner = allNamedClients[namedOwner].account
     const resolver = publicResolver.address
     const duration = 31536000n
-    const wrapperExpiry = 1659467455n + duration
 
     const commitment = await controller.read.makeCommitment([
-      label,
-      owner.address,
-      duration,
-      secret,
-      resolver,
-      data,
-      reverseRecord,
-      fuses,
+      {
+        label,
+        owner: owner.address,
+        duration,
+        secret,
+        resolver,
+        data,
+        reverseRecord,
+        referrer,
+      },
     ])
 
     const commitTx = await controller.write.commit([commitment])
@@ -58,7 +61,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { base: price } = await controller.read.rentPrice([label, duration])
 
     const registerTx = await controller.write.register(
-      [label, owner.address, duration, secret, resolver, data, reverseRecord, fuses],
+      [{ label, owner: owner.address, duration, secret, resolver, data, reverseRecord, referrer }],
       {
         value: price,
         account: owner,
@@ -68,7 +71,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     if (subnames) {
       console.log(`Setting subnames for ${label}.eth...`)
-      const nameWrapper = await viem.getContract('NameWrapper')
+      const nameWrapper = await viem.getContract('ENSRegistry')
       for (const {
         label: subnameLabel,
         namedOwner: namedSubnameOwner,
@@ -76,15 +79,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       } of subnames) {
         const subnameOwner = allNamedClients[namedSubnameOwner].account
         const setSubnameHash = await nameWrapper.write.setSubnodeRecord(
-          [
-            namehash(`${label}.eth`),
-            subnameLabel,
-            subnameOwner.address,
-            resolver,
-            0n,
-            0,
-            wrapperExpiry,
-          ],
+          [namehash(`${label}.eth`), labelhash(subnameLabel), subnameOwner.address, resolver, 0n],
           {
             account: subnameOwner,
           },

@@ -241,11 +241,10 @@ export const rewrites = [
     flattenedDestination: '/$2',
   },
 ]
-export const getDestination = (url: UrlObject | string) => {
+export const getDestination = (url: UrlObject) => {
   const isIPFS = !!process.env.NEXT_PUBLIC_IPFS
-  const isObj = typeof url !== 'string'
-  let href = isObj ? url.pathname! : url
-  const query = new URLSearchParams(isObj ? ((url.query || '') as any) : '')
+  let href = url.pathname!
+  const query = new URLSearchParams((url.query || '') as any)
   for (const rewrite of rewrites) {
     const regex = new RegExp(rewrite.source.replace(/:[^/]+/g, '([^/]+)'))
     const match = regex.exec(href)
@@ -273,13 +272,14 @@ export const getDestination = (url: UrlObject | string) => {
   }
 
   if (!isIPFS) {
-    if (isObj) {
-      return {
-        pathname: href,
-        query: query.toString(),
-      }
+    const queryObj: Record<string, string> = {}
+    query.forEach((value, key) => {
+      queryObj[key] = value
+    })
+    return {
+      pathname: href,
+      query: queryObj,
     }
-    return makeURLString()
   }
   // make absolute url relative
   // when displayed in url bar
@@ -294,4 +294,13 @@ export const getDestination = (url: UrlObject | string) => {
     }
   }
   return makeURLString()
+}
+
+export const getDestinationAsHref = (url: UrlObject): string => {
+  const result = getDestination(url)
+  if (typeof result === 'string') return result
+  const queryString = result.query
+    ? `${new URLSearchParams(result.query as Record<string, string>).toString()}`
+    : ''
+  return `${result.pathname}${queryString ? `?${queryString}` : ''}`
 }

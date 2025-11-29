@@ -81,6 +81,7 @@ export const useExpiryActions = ({
               showExtendNamesInput(`extend-names-${name}`, {
                 names: [name],
                 isSelf: isSelfExtendable({ ownerData, wrapperData, address }),
+                hasWrapped: !!wrapperData,
               })
             },
           },

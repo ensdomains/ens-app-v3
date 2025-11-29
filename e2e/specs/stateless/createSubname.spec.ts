@@ -350,3 +350,45 @@ test('should allow skipping records when creating a subname', async ({
   await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
   await expect(page.getByTestId('profile-empty-banner')).toBeVisible()
 })
+
+test('should persist referrer parameter after creating a subname and redirecting to subname profile', async ({
+  page,
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  test.slow()
+
+  const name = await makeName({
+    label: 'referrer-subname-test',
+    type: 'wrapped',
+    owner: 'user',
+  })
+
+  const referrer = '0x1234567890123456789012345678901234567890'
+  const subnamesPage = makePageObject('SubnamesPage')
+  const transactionModal = makePageObject('TransactionModal')
+
+  // Navigate to subnames page with referrer in URL
+  await page.goto(`/${name}?tab=subnames&referrer=${referrer}`)
+  await login.connect()
+
+  // Verify referrer is in URL
+  expect(page.url()).toContain(`referrer=${referrer}`)
+
+  // Create a new subname without adding records
+  await subnamesPage.getAddSubnameButton.click()
+  await subnamesPage.getAddSubnameInput.fill('test')
+  await subnamesPage.getSubmitSubnameButton.click()
+  await page.getByTestId('create-subname-profile-next').click()
+
+  // Complete the transaction
+  await transactionModal.autoComplete()
+
+  // After transaction completes, the app should redirect to the subname profile
+  const subname = `test.${name}`
+  await expect(page).toHaveURL(new RegExp(`/${subname}`), { timeout: 15000 })
+
+  // Verify referrer is still in the URL after redirect
+  expect(page.url()).toContain(`referrer=${referrer}`)
+})
