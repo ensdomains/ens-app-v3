@@ -90,8 +90,27 @@ const invalidateAllCurrentChainQueries = async ({
 }) => {
   // only invalidate all queries if a transaction has actually been confirmed
   if (!updatedTransactions.some((x) => x.status === 'confirmed')) return false
+
+  const confirmedTxs = updatedTransactions.filter((x) => x.status === 'confirmed')
+  console.log('[SyncProvider] Invalidating all chain queries after transaction confirmation:', {
+    chainId,
+    confirmedTransactions: confirmedTxs.map((tx) => ({
+      action: tx.action,
+      key: tx.key,
+      hash: tx.hash,
+    })),
+  })
+
   return queryClient.invalidateQueries({
-    predicate: filterByChainDependentQuery(chainId),
+    predicate: (query) => {
+      const shouldInvalidate = filterByChainDependentQuery(chainId)(query)
+      if (shouldInvalidate && query.queryKey[0] === 'ensMetaData') {
+        console.log('[SyncProvider] Invalidating avatar/header metadata query:', {
+          queryKey: query.queryKey,
+        })
+      }
+      return shouldInvalidate
+    },
   })
 }
 

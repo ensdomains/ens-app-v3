@@ -26,6 +26,12 @@ export const clearRelevantNameQueriesFromRegisterOrImport = ({
     return acc
   }, [])
   if (!namesFromTransactions.length) return
+
+  console.log('[clearRelevantNameQueriesFromRegisterOrImport] Removing queries for registered names:', {
+    names: namesFromTransactions,
+    chainId,
+  })
+
   // We use remove queries instead of invalidate queries because we do not want the possibility
   // of stale data to be used when the data is used for page redirects.
   return queryClient.removeQueries({
@@ -36,7 +42,14 @@ export const clearRelevantNameQueriesFromRegisterOrImport = ({
       if (typeof params !== 'object' || params === null) return false
       if (!('name' in params) || typeof params.name !== 'string') return false
       if (typeof chainId !== 'number' || chainId !== queryChainId) return false
-      return namesFromTransactions.includes(params.name)
+      const shouldRemove = namesFromTransactions.includes(params.name)
+      if (shouldRemove) {
+        console.log('[clearRelevantNameQueriesFromRegisterOrImport] Removing query:', {
+          queryKey: query.queryKey,
+          name: params.name,
+        })
+      }
+      return shouldRemove
     },
   })
 }

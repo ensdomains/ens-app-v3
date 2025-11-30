@@ -128,6 +128,11 @@ const UploadComponent = ({
         const fetched = (await response.json()) as AvatarUploadResult
 
         if ('message' in fetched && fetched.message === 'uploaded') {
+          console.log('[HeaderUpload] Upload successful, invalidating header cache:', {
+            name,
+            chainName,
+            queryKey: [META_DATA_QUERY_KEY, createMetaDataUrl({ name, chainName, mediaKey: 'header' })],
+          })
           queryClient.invalidateQueries({
             queryKey: [
               META_DATA_QUERY_KEY,

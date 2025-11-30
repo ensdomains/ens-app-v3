@@ -107,6 +107,11 @@ const UploadComponent = ({
       }).then((res) => res.json())) as AvatarUploadResult
 
       if ('message' in fetched && fetched.message === 'uploaded') {
+        console.log('[AvatarUpload] Upload successful, invalidating avatar cache:', {
+          name,
+          chainName,
+          queryKey: [META_DATA_QUERY_KEY, createMetaDataUrl({ name, chainName, mediaKey: 'avatar' })],
+        })
         queryClient.invalidateQueries({
           queryKey: [
             META_DATA_QUERY_KEY,
