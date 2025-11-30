@@ -80,6 +80,7 @@
             "ipfs": "ipfs://...",
             "skynet": "sia://...",
             "arweave": "ar://...",
+            "walrus": "walrus://...",
             "swarm": "bzz://..."
           }
         },
