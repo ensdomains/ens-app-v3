@@ -52,8 +52,9 @@ export const getNetworkFromUrl = (): 'mainnet' | 'sepolia' | 'localhost' | undef
     if (segments[0] === 'test') {
       return 'mainnet' as const
     }
+    // TODO: SWITCH BACK TO SEPOLIA LATER
     if (segments.slice(1).join('.') === 'ens-app-v3.pages.dev') {
-      return 'sepolia' as const
+      return 'mainnet' as const
     }
   }
 
