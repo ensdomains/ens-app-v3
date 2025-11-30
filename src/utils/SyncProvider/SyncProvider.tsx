@@ -102,11 +102,11 @@ const invalidateAllCurrentChainQueries = async ({
   })
 
   return queryClient.invalidateQueries({
-    predicate: (query) => {
-      const shouldInvalidate = filterByChainDependentQuery(chainId)(query)
-      if (shouldInvalidate && query.queryKey[0] === 'ensMetaData') {
+    predicate: (q) => {
+      const shouldInvalidate = filterByChainDependentQuery(chainId)(q)
+      if (shouldInvalidate && q.queryKey[0] === 'ensMetaData') {
         console.log('[SyncProvider] Invalidating avatar/header metadata query:', {
-          queryKey: query.queryKey,
+          queryKey: q.queryKey,
         })
       }
       return shouldInvalidate

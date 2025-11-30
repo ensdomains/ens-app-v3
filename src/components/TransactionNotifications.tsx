@@ -57,7 +57,9 @@ export const TransactionNotifications = () => {
         switch (action) {
           case 'registerName':
             trackEvent('register', chainName)
-            console.log('[TransactionNotifications] registerName confirmed, invalidating metadata cache')
+            console.log(
+              '[TransactionNotifications] registerName confirmed, invalidating metadata cache',
+            )
             queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
           case 'commitName':
@@ -68,7 +70,9 @@ export const TransactionNotifications = () => {
             break
           case 'updateProfileRecords':
           case 'updateProfile':
-            console.log('[TransactionNotifications] updateProfileRecords/updateProfile confirmed, invalidating metadata cache')
+            console.log(
+              '[TransactionNotifications] updateProfileRecords/updateProfile confirmed, invalidating metadata cache',
+            )
             queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
           default:

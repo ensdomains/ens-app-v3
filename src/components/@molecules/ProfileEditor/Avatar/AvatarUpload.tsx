@@ -110,7 +110,10 @@ const UploadComponent = ({
         console.log('[AvatarUpload] Upload successful, invalidating avatar cache:', {
           name,
           chainName,
-          queryKey: [META_DATA_QUERY_KEY, createMetaDataUrl({ name, chainName, mediaKey: 'avatar' })],
+          queryKey: [
+            META_DATA_QUERY_KEY,
+            createMetaDataUrl({ name, chainName, mediaKey: 'avatar' }),
+          ],
         })
         queryClient.invalidateQueries({
           queryKey: [
