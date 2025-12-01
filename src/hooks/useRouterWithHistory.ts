@@ -13,6 +13,8 @@ export const createDecorativeUrlObject = (urlObject?: ReturnType<typeof getDesti
 export const useRouterWithHistory = () => {
   const router = useRouter()
   const referrer = router.query.referrer as string | undefined
+  console.log('[useRouterWithHistory] Full router.query:', JSON.stringify(router.query, null, 2))
+  console.log('[useRouterWithHistory] referrer value:', referrer)
 
   const _replace = router?.replace
 

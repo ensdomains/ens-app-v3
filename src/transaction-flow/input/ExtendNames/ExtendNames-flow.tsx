@@ -188,7 +188,9 @@ const ExtendNames = ({
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
   const referrer = useReferrer()
+  console.log('[ExtendNames] referrer from useReferrer:', referrer)
   const referrerHex = getReferrerHex(referrer)
+  console.log('[ExtendNames] referrerHex:', referrerHex)
 
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
   const { address, isConnected: isAccountConnected } = useAccount()

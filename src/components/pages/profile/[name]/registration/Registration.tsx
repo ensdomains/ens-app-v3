@@ -113,7 +113,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
   const referrer = useReferrer()
+  console.log('[Registration] referrer from useReferrer:', referrer)
   const referrerHex = getReferrerHex(referrer)
+  console.log('[Registration] referrerHex:', referrerHex)
   const selected = useMemo(
     () => ({ name: nameDetails.normalisedName, address: address!, chainId, referrer: referrerHex }),
     [address, chainId, nameDetails.normalisedName, referrerHex],

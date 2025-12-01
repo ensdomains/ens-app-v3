@@ -189,7 +189,9 @@ const useRegistrationReducer = ({
 }) => {
   const chainId = useChainId()
   const referrer = useReferrer()
+  console.log('[useRegistrationReducer] referrer from useReferrer:', referrer)
   const referrerHex = getReferrerHex(referrer)
+  console.log('[useRegistrationReducer] referrerHex:', referrerHex)
   const selected = { address: address!, name, chainId, referrer: referrerHex } as const
   const [state, dispatch] = useLocalStorageReducer<
     RegistrationReducerData,
