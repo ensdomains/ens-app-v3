@@ -20,7 +20,7 @@ import { generateLegacySubname, LegacySubname } from './generateLegacySubname.js
 import { generateRecords } from './generateRecords.js'
 
 const LEGACY_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
-const PUBLIC_RESOLVER = testClient.chain.contracts.publicResolver.address as Address
+const PUBLIC_RESOLVER = testClient.chain.contracts.ensPublicResolver.address as Address
 const DEFAULT_DURATION = 31536000
 const DEFAULT_RESOLVER = testClient.chain.contracts.legacyPublicResolver.address as Address
 
@@ -69,7 +69,7 @@ export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) =>
     const _resolver = hasValidResolver ? resolver : DEFAULT_RESOLVER
 
     const { data: commitment } = await publicClient.call({
-      to: walletClient.chain.contracts.legacyRegistrarController.address,
+      to: walletClient.chain.contracts.legacyEthRegistrarController.address,
       data: encodeFunctionData({
         abi: legacyEthRegistrarControllerAbi,
         functionName: 'makeCommitmentWithConfig',
@@ -78,7 +78,7 @@ export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) =>
     })
 
     const preparedTransaction = await walletClient.prepareTransactionRequest({
-      to: walletClient.chain.contracts.legacyRegistrarController.address,
+      to: walletClient.chain.contracts.legacyEthRegistrarController.address,
       data: encodeFunctionData({
         abi: legacyEthRegistrarControllerAbi,
         functionName: 'commit',
@@ -106,7 +106,7 @@ export const makeLegacyWithConfigNameGenerator = ({ accounts }: Dependencies) =>
     const price = await getLegacyRentPrice({ label, duration })
 
     const prepared = await walletClient.prepareTransactionRequest({
-      to: walletClient.chain.contracts.legacyRegistrarController.address,
+      to: walletClient.chain.contracts.legacyEthRegistrarController.address,
       data: encodeFunctionData({
         abi: legacyEthRegistrarControllerAbi,
         functionName: 'registerWithConfig',

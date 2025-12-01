@@ -1,7 +1,6 @@
 import { Address, Hex } from 'viem'
 
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
-import { CurrentChildFuses } from '@app/types'
 
 export type RegistrationStep = 'pricing' | 'profile' | 'info' | 'transactions' | 'complete'
 
@@ -31,7 +30,6 @@ export type RegistrationStepData = {
     records: ProfileRecord[]
     clearRecords?: boolean
     resolverAddress?: Address
-    permissions?: CurrentChildFuses
   }
   info: {}
   transactions: {
@@ -49,6 +47,7 @@ export type SelectedItemProperties = {
   address: string
   name: string
   chainId: number
+  referrer?: Hex
 }
 
 export type RegistrationReducerDataItem = Prettify<
@@ -58,6 +57,7 @@ export type RegistrationReducerDataItem = Prettify<
     isMoonpayFlow: boolean
     externalTransactionId: string
     version: number
+    referrer?: Hex
   } & SelectedItemProperties
 >
 
@@ -118,6 +118,11 @@ export type RegistrationReducerAction =
   | {
       name: 'moonpayTransactionCompleted'
       selected: SelectedItemProperties
+    }
+  | {
+      name: 'setReferrer'
+      selected: SelectedItemProperties
+      payload: Hex
     }
 
 export type MoonpayTransactionStatus = 'pending' | 'completed' | 'failed' | 'waitingAuthorization'
