@@ -25,21 +25,10 @@ const checkImageExists = async ({
   if (!imageUrl) return null
 
   const imageUrlWithTimestamp = `${imageUrl}?timestamp=${Date.now()}`
-  console.log('[useEnsAvatar] Fetching metadata:', {
-    url: imageUrlWithTimestamp,
-    baseUrl: imageUrl,
-    timestamp: Date.now(),
-  })
   try {
     const response = await fetch(imageUrlWithTimestamp, { method: 'HEAD' })
-    console.log('[useEnsAvatar] Metadata response:', {
-      url: imageUrl,
-      ok: response.ok,
-      status: response.status,
-    })
     return response.ok ? imageUrlWithTimestamp : null
-  } catch (error) {
-    console.log('[useEnsAvatar] Metadata fetch error:', { url: imageUrl, error })
+  } catch {
     return null
   }
 }
@@ -52,14 +41,6 @@ type UseEnsAvatarParameters = Omit<UseQueryOptions, 'queryFn' | 'queryKey'> & {
 export const useEnsAvatar = ({ name, key, staleTime, enabled = true }: UseEnsAvatarParameters) => {
   const chainName = useChainName()
   const url = createMetaDataUrl({ name, chainName, mediaKey: key })
-
-  console.log('[useEnsAvatar] Hook called:', {
-    name,
-    mediaKey: key ?? 'avatar',
-    url,
-    enabled: enabled && !!url,
-    staleTime: staleTime ?? 15 * 60 * 1000,
-  })
 
   return useQuery({
     queryKey: [META_DATA_QUERY_KEY, url],
