@@ -90,7 +90,6 @@ const invalidateAllCurrentChainQueries = async ({
 }) => {
   // only invalidate all queries if a transaction has actually been confirmed
   if (!updatedTransactions.some((x) => x.status === 'confirmed')) return false
-
   return queryClient.invalidateQueries({
     predicate: filterByChainDependentQuery(chainId),
   })

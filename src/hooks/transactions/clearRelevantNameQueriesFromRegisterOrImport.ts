@@ -26,7 +26,6 @@ export const clearRelevantNameQueriesFromRegisterOrImport = ({
     return acc
   }, [])
   if (!namesFromTransactions.length) return
-
   // We use remove queries instead of invalidate queries because we do not want the possibility
   // of stale data to be used when the data is used for page redirects.
   return queryClient.removeQueries({

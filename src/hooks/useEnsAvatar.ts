@@ -28,7 +28,7 @@ const checkImageExists = async ({
   try {
     const response = await fetch(imageUrlWithTimestamp, { method: 'HEAD' })
     return response.ok ? imageUrlWithTimestamp : null
-  } catch {
+  } catch (error) {
     return null
   }
 }
