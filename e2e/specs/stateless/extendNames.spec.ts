@@ -1188,7 +1188,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
       timeout: 10000,
     })
 
-    // Verify referrer is included in the transaction calldata
+    // Verify referrer included in the transaction calldata
     const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
     const referrerHex = addressToBytes32(referrerAddress)
     expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
