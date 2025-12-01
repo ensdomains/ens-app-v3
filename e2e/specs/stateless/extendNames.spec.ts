@@ -1146,4 +1146,51 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     // Note: Bulk renewals should use the legacy bulk renewal contract
     // which doesn't support referrers
   })
+
+  test('should extend wrapped name in grace period with referrer', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped-grace-referrer',
+      type: 'wrapped',
+      owner: 'user',
+      duration: -24 * 60 * 60, // Expired 1 day ago
+    })
+
+    const referrerAddress = '0x1234567890123456789012345678901234567890'
+
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    // Verify name is in grace period
+    await expect(page.getByText(`${name} has expired`)).toBeVisible()
+
+    // Add referrer to URL and navigate
+    await page.goto(`/${name}?referrer=${referrerAddress}`)
+
+    // Click extend button
+    await profilePage.getExtendButton.click()
+
+    // Set extension and proceed
+    await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
+    await page.locator('button:has-text("Next")').click()
+
+    // Complete transaction
+    await transactionModal.confirm()
+
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
+      timeout: 10000,
+    })
+
+    // Verify referrer is included in the transaction calldata
+    const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+    const referrerHex = addressToBytes32(referrerAddress)
+    expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
+  })
 })
