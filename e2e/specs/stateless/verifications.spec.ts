@@ -7,8 +7,8 @@ import { Hash } from 'viem'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import {
-  DENTITY_ISS,
   DENTITY_BASE_ENDPOINT,
+  DENTITY_ISS,
   VERIFICATION_OAUTH_BASE_URL,
   VERIFICATION_RECORD_KEY,
 } from '@app/constants/verification'

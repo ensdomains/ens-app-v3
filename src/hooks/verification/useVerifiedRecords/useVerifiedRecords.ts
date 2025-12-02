@@ -1,6 +1,7 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { Hash } from 'viem'
 
+import { DENTITY_BASE_ENDPOINT } from '@app/constants/verification'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
@@ -12,7 +13,6 @@ import {
   parseVerificationData,
   VerifiedRecord,
 } from './utils/parseVerificationData/parseVerificationData'
-import { DENTITY_BASE_ENDPOINT } from '@app/constants/verification'
 
 type UseVerifiedRecordsParameters = {
   verificationsRecord?: string
@@ -50,7 +50,9 @@ export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParam
   const verifiablePresentationUris = parseVerificationRecord(verificationsRecord)
 
   // Filter to only allow Dentity verification URLs
-  const validUris = verifiablePresentationUris.filter((uri) => uri.startsWith(DENTITY_BASE_ENDPOINT))
+  const validUris = verifiablePresentationUris.filter((uri) =>
+    uri.startsWith(DENTITY_BASE_ENDPOINT),
+  )
 
   const responses = await Promise.allSettled(
     validUris.map((uri) => fetch(uri).then((resp) => resp.json())),
