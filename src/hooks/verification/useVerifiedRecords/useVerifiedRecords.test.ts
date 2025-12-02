@@ -2,7 +2,11 @@ import { makeMockVerifiablePresentationData } from '@root/test/mock/makeMockVeri
 import { match } from 'ts-pattern'
 import { describe, expect, it, vi } from 'vitest'
 
+import { DENTITY_BASE_ENDPOINT } from '@app/constants/verification'
+
 import { getVerifiedRecords, parseVerificationRecord } from './useVerifiedRecords'
+
+const mockUrl = (path: string) => `${DENTITY_BASE_ENDPOINT}/${path}`
 
 describe('parseVerificationRecord', () => {
   it('should return empty array if undefined', () => {
@@ -25,7 +29,7 @@ describe('parseVerificationRecord', () => {
 describe('getVerifiedRecords', () => {
   const mockFetch = vi.fn().mockImplementation(async (uri) =>
     match(uri)
-      .with('error', () => Promise.reject('error'))
+      .with(mockUrl('error'), () => Promise.reject('error'))
       .otherwise(() =>
         Promise.resolve({
           json: () => Promise.resolve(makeMockVerifiablePresentationData('openid')),
@@ -36,14 +40,26 @@ describe('getVerifiedRecords', () => {
 
   it('should exclude fetches that error from results ', async () => {
     const result = await getVerifiedRecords({
-      queryKey: [{ verificationsRecord: '["error", "regular", "error"]' }, '0x123'],
+      queryKey: [
+        { verificationsRecord: JSON.stringify([mockUrl('error'), mockUrl('regular'), mockUrl('error')]) },
+        '0x123',
+      ],
     } as any)
     expect(result).toHaveLength(7)
   })
 
   it('should return a flat array of verified credentials', async () => {
     const result = await getVerifiedRecords({
-      queryKey: [{ verificationsRecord: '["one", "two", "error", "three"]' }],
+      queryKey: [
+        {
+          verificationsRecord: JSON.stringify([
+            mockUrl('one'),
+            mockUrl('two'),
+            mockUrl('error'),
+            mockUrl('three'),
+          ]),
+        },
+      ],
     } as any)
     expect(result).toHaveLength(21)
     expect(result.every((item) => !Array.isArray(item))).toBe(true)
