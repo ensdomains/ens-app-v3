@@ -167,6 +167,7 @@ export type TransactionDialogPassthrough = {
 export type ManagedDialogProps = {
   dispatch: Dispatch<TransactionFlowAction>
   onDismiss: () => void
+  transactions: ReadonlyArray<GenericTransaction>
   transaction: GenericTransaction
   actionName: string
   txKey: string | null

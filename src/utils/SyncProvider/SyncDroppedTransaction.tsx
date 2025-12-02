@@ -93,7 +93,7 @@ export const findDroppedTransactions = async (
   const etherscanJson: EtherscanMinedData[] = etherscanResponse.ok
     ? await etherscanResponse.json()
     : []
-  const accountTransactionHistory = etherscanJson
+  const accountTransactionHistory = Array.isArray(etherscanJson) ? etherscanJson : []
 
   // Skip if etherscan api fails or returns no history
   if (accountTransactionHistory.length === 0) return
