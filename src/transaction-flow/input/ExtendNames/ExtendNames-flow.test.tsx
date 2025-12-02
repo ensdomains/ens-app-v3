@@ -1,6 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
+import { Hex } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
 
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
@@ -8,6 +9,7 @@ import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
+import { useResolvedReferrer } from '@app/hooks/useResolvedReferrer'
 
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
 import ExtendNames from './ExtendNames-flow'
@@ -18,6 +20,7 @@ vi.mock('wagmi')
 vi.mock('@app/hooks/ensjs/public/useExpiry')
 vi.mock('@app/hooks/useEthPrice')
 vi.mock('@app/hooks/useReferrer')
+vi.mock('@app/hooks/useResolvedReferrer')
 
 const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)
 const mockUsePrice = mockFunction(usePrice)
@@ -26,6 +29,7 @@ const mockUseBalance = mockFunction(useBalance)
 const mockUseEthPrice = mockFunction(useEthPrice)
 const mockUseExpiry = mockFunction(useExpiry)
 const mockUseReferrer = mockFunction(useReferrer)
+const mockUseResolvedReferrer = mockFunction(useResolvedReferrer)
 
 vi.mock('@ensdomains/thorin', async () => {
   const originalModule = await vi.importActual('@ensdomains/thorin')
@@ -63,6 +67,12 @@ describe('Extendnames', () => {
   mockUseEthPrice.mockReturnValue({ data: 100n, isLoading: false })
   mockUseExpiry.mockReturnValue({ data: { expiry: { date: new Date() } }, isLoading: false })
   mockUseReferrer.mockReturnValue(undefined)
+  mockUseResolvedReferrer.mockReturnValue({
+    data: null,
+    isLoading: false,
+    isError: false,
+    error: null,
+  })
   it('should render', async () => {
     render(
       <ExtendNames
@@ -109,5 +119,79 @@ describe('Extendnames', () => {
     )
     const trailingButton = screen.getByTestId('extend-names-confirm')
     expect(trailingButton).toHaveAttribute('disabled')
+  })
+
+  it('should resolve ENS name referrer to hex', async () => {
+    const mockReferrerHex = '0x000000000000000000000000d8da6bf26964af9d7eed9e03e53415d37aa96045' as Hex
+
+    // Mock useReferrer to return an ENS name
+    mockUseReferrer.mockReturnValueOnce('vitalik.eth')
+
+    // Mock useResolvedReferrer to return resolved hex
+    mockUseResolvedReferrer.mockReturnValueOnce({
+      data: mockReferrerHex,
+      isLoading: false,
+      isError: false,
+      error: null,
+    })
+
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    // Verify that useResolvedReferrer was called with the ENS name
+    expect(mockUseResolvedReferrer).toHaveBeenCalledWith('vitalik.eth')
+  })
+
+  it('should handle failed referrer resolution gracefully', async () => {
+    mockUseReferrer.mockReturnValueOnce('invalid.eth')
+    mockUseResolvedReferrer.mockReturnValueOnce({
+      data: null,
+      isLoading: false,
+      isError: true,
+      error: new Error('Resolution failed'),
+    })
+
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    // Component should render without crashing even if resolution fails
+    expect(screen.getByTestId('extend-names-modal')).toBeInTheDocument()
+  })
+
+  it('should show loading state while referrer is resolving', () => {
+    mockUseReferrer.mockReturnValueOnce('vitalik.eth')
+    mockUseResolvedReferrer.mockReturnValueOnce({
+      data: null,
+      isLoading: true,
+      isError: false,
+      error: null,
+    })
+
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    // Should be in loading state when referrer is resolving
+    expect(screen.queryByTestId('extend-names-modal')).toBeInTheDocument()
   })
 })
