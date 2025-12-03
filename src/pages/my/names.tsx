@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 import { Banner, QuestionCircleSVG } from '@ensdomains/thorin'
 
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
+import { getSupportLink } from '@app/utils/supportLinks'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -42,7 +43,7 @@ export default function Page() {
               as="a"
               target="_blank"
               rel="noopener noreferrer"
-              href="https://support.ens.domains/en/articles/9375254-why-is-my-ens-name-not-in-my-names"
+              href={getSupportLink('offchain-not-in-names')}
               icon={QuestionCircleSVG}
               title={t('offchainWarning.title')}
             >
