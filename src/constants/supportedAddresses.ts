@@ -9,6 +9,7 @@ export const supportedAddresses = [
   'matic',
   'linea',
   'scr',
+  'sui',
   'celo',
 ] as const
 
