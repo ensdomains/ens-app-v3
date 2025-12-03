@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCopyToClipboard } from 'react-use'
@@ -24,8 +23,10 @@ import { DynamicVerificationIcon } from '@app/assets/verification/DynamicVerific
 import { VerificationBadgeAccountTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeAccountTooltipContent'
 import { VerificationBadgeVerifierTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeVerifierTooltipContent'
 import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/VerificationBadge'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestinationAsHref } from '@app/routes'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -120,7 +121,7 @@ export const AddressProfileButton = ({
   iconKey: string
   value: string
 }) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
   const [, copy] = useCopyToClipboard()
@@ -139,7 +140,8 @@ export const AddressProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: 'View address',
-          href: getDestinationAsHref(createUrlObject(`/${address}`, { referrer })),
+          onClick: () =>
+            router.push(getDestinationAsHref(createUrlObject(`/${address}`, { referrer }))),
         }
       : undefined,
     {
@@ -151,7 +153,12 @@ export const AddressProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: `View on ${defaultBlockExplorer?.name}`,
-          href: `${defaultBlockExplorer?.url}/address/${address}`,
+          onClick: () =>
+            window.open(
+              `${defaultBlockExplorer?.url}/address/${address}`,
+              '_blank',
+              'noopener,noreferrer',
+            ),
         }
       : undefined,
   ].filter((item) => item !== undefined) as DropdownItem[]
@@ -278,7 +285,8 @@ export const OwnerProfileButton = ({
   value: string
   timestamp?: number
 }) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
+  const chainName = useChainName()
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
   const referrer = router.query.referrer as string | undefined
@@ -362,7 +370,7 @@ export const OwnerProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: 'View profile',
-          href: link,
+          onClick: () => router.push(link),
         }
       : undefined,
     primary.data?.name
@@ -377,10 +385,10 @@ export const OwnerProfileButton = ({
           {
             icon: UpRightArrowIcon,
             label: 'View address',
-            href: getDestinationAsHref({
-              pathname: `/${addressOrNameOrDate}`,
-              query: { referrer },
-            }),
+            onClick: () =>
+              router.push(
+                getDestinationAsHref(createUrlObject(`/${addressOrNameOrDate}`, { referrer })),
+              ),
           },
           {
             icon: CopyIcon,
@@ -390,7 +398,12 @@ export const OwnerProfileButton = ({
           {
             icon: UpRightArrowIcon,
             label: 'View on Etherscan',
-            href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
+            onClick: () =>
+              window.open(
+                makeEtherscanLink(addressOrNameOrDate, chainName, 'address'),
+                '_blank',
+                'noopener,noreferrer',
+              ),
           },
         ] as DropdownItem[])
       : []),
