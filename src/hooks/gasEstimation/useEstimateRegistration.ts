@@ -37,10 +37,6 @@ export const useEstimateFullRegistration = ({
     contract: 'ensEthRegistrarController',
   })
 
-  const legacyEthRegistrarControllerAddress = useContractAddress({
-    contract: 'legacyEthRegistrarController',
-  })
-
   const { data: blockTimestamp } = useBlockTimestamp()
   // default to use block timestamp as reference
   // if no block timestamp, use local time as fallback
@@ -58,7 +54,6 @@ export const useEstimateFullRegistration = ({
   const transactions = calculateTransactions({
     registrationParams,
     ethRegistrarControllerAddress,
-    legacyEthRegistrarControllerAddress,
     fiveMinutesAgoInSeconds,
     price,
   })

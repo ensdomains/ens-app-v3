@@ -9,6 +9,8 @@ import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
+import { useIsWrapped } from '@app/hooks/useIsWrapped'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
@@ -28,7 +30,6 @@ const Container = styled.div(
     align-items: flex-start;
     justify-content: center;
     gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
     overflow: hidden;
 
     @media (min-width: ${theme.breakpoints.sm}px) {
@@ -84,7 +85,6 @@ const TextStack = styled.div(
     align-items: flex-start;
     justify-content: center;
     gap: ${theme.space['1']};
-    flex-gap: ${theme.space['1']};
     width: 100%;
     overflow: hidden;
   `,
@@ -204,9 +204,12 @@ export const ProfileSnippet = ({
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
+  const { registrationStatus } = useNameDetails({ name })
+
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const abilities = useAbilities({ name })
+  const { data: isWrapped } = useIsWrapped({ name })
 
   // Always call the hook but conditionally use its result
   const hookBeautifiedName = useBeautifiedName(name)
@@ -223,6 +226,9 @@ export const ProfileSnippet = ({
 
   const { canSelfExtend, canEdit } = abilities.data ?? {}
 
+  const isDesynced =
+    !!registrationStatus && ['desynced', 'desynced:gracePeriod'].includes(registrationStatus)
+
   const ActionButton = useMemo(() => {
     if (button === 'extend')
       return (
@@ -235,6 +241,7 @@ export const ProfileSnippet = ({
             showExtendNamesInput(`extend-names-${name}`, {
               names: [name],
               isSelf: canSelfExtend,
+              hasWrapped: isWrapped || isDesynced,
             })
           }}
         >
@@ -262,7 +269,7 @@ export const ProfileSnippet = ({
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, canSelfExtend])
+  }, [button, name, canSelfExtend, isWrapped])
 
   return (
     <Container data-testid="profile-snippet">

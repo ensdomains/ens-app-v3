@@ -4,14 +4,14 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { type Account } from 'viem'
 
+import { type RecordOptions } from '@ensdomains/ensjs/utils'
+
+import { ONE_YEAR } from '../src/utils/time'
 import {
   makeCommitment as generateCommitment,
   makeRegistrationTuple,
-  RecordOptions,
   RegistrationParameters,
-} from '@ensdomains/ensjs/utils'
-
-import { ONE_YEAR } from '../src/utils/time'
+} from './.utils/nameWrapperRegisterHelpers'
 import { nonceManager } from './.utils/nonceManager'
 
 const MIN_REGISTRATION_DURATION = 28 * 24 * 60 * 60 // 28 Days
@@ -110,6 +110,23 @@ const names: Name[] = [
       ],
     },
   },
+  {
+    name: 'desynced-wrapped-referral.eth',
+    namedOwner: 'owner',
+    reverseRecord: false,
+    customDuration: MIN_REGISTRATION_DURATION, // 28 days initial registration (minimum)
+    renewalDuration: ONE_YEAR, // 1 year renewal via legacy controller
+    records: {
+      texts: [
+        {
+          key: 'description',
+          value: 'A name that demonstrates desync between wrapper and registry',
+        },
+        { key: 'url', value: 'https://ens.domains' },
+      ],
+      coins: [{ coin: 'ETH', value: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' }],
+    },
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -118,8 +135,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const publicClient = await viem.getPublicClient()
 
   // Get contracts for wrapped registration
-  const controller = await viem.getContract('ETHRegistrarController')
-  const publicResolver = await viem.getContract('PublicResolver')
+  const controller = await viem.getContract('WrappedEthRegistrarController' as any)
+  const publicResolver = await viem.getContract('NameWrapperPublicResolver' as any)
 
   // Get legacy controller for renewal
   const legacyController = await viem.getContract('LegacyETHRegistrarController')
@@ -180,6 +197,54 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       return 1
     }
 
+  // const makeRecords =
+  //   (nonce: number) =>
+  //   async ({ name, records, owner }: ProcessedNameData, index: number) => {
+  //     if (!records) return 0
+
+  //     let nonceRef = nonce + index
+  //     const hash = namehash(name)
+
+  //     console.log(`Setting records for ${name}...`)
+
+  //     if (records.texts) {
+  //       console.log('TEXT')
+  //       for (const { key, value } of records.texts) {
+  //         const setTextHash = await publicResolver.write.setText([hash, key, value], {
+  //           account: owner,
+  //           nonce: nonceRef,
+  //         })
+  //         console.log(` - ${key}: ${value} (tx: ${setTextHash})...`)
+  //         nonceRef += 1
+  //       }
+  //     }
+
+  //     if (records.coins) {
+  //       console.log('COINS')
+  //       for (const { coin, value } of records.coins) {
+  //         const coinType = typeof coin === 'string' ? BigInt(coin) : BigInt(coin)
+  //         const setAddrHash = await publicResolver.write.setAddr([hash, coinType, value], {
+  //           account: owner,
+  //           nonce: nonceRef,
+  //         })
+  //         console.log(` - ${coin}: ${value} (tx: ${setAddrHash})...`)
+  //         nonceRef += 1
+  //       }
+  //     }
+
+  //     if (records.contentHash) {
+  //       console.log('CONTENTHASH')
+  //       const setContenthashHash = await publicResolver.write.setContenthash(
+  //         [hash, records.contentHash],
+  //         { account: owner, nonce: nonceRef },
+  //       )
+  //       console.log(` - ${records.contentHash} (tx: ${setContenthashHash})...`)
+  //       nonceRef += 1
+  //     }
+
+  //     return nonceRef - nonce - index
+  //   }
+
   const makeLegacyRenewal =
     (nonce: number) =>
     async ({ owner, label, renewalDuration }: ProcessedNameData, index: number) => {
@@ -218,7 +283,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await getNonceAndApply('owner', makeWrappedRegistration)
   await network.provider.send('evm_mine')
 
-  console.log('Phase 1 complete: Name registered as wrapped')
+  // // Set records
+  // await getNonceAndApply('owner', makeRecords)
+  // await network.provider.send('evm_mine')
+
+  console.log('Phase 1 complete: Name registered as wrapped with records set')
 
   // Phase 2: Legacy Renewal (creates desync)
   console.log('Phase 2: Legacy Renewal to create desync')

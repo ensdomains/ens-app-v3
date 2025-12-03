@@ -10,6 +10,27 @@ import { formatExpiry, shortenAddress } from '@app/utils/utils'
 
 import { AddressProfileButton, OwnerProfileButton } from './ProfileButton'
 
+vi.mock('next/router', () => ({
+  useRouter: () => ({
+    query: {},
+    pathname: '/',
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    reload: vi.fn(),
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+      emit: vi.fn(),
+    },
+    isFallback: false,
+    isLocaleDomain: false,
+    isReady: true,
+    isPreview: false,
+  }),
+}))
+
 vi.mock('@app/utils/BreakpointProvider')
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 vi.mock('@app/hooks/chain/useCoinChain')
