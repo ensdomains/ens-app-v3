@@ -7,10 +7,10 @@ import { useAccount } from 'wagmi'
 import { Banner, QuestionCircleSVG } from '@ensdomains/thorin'
 
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
-import { getSupportLink } from '@app/utils/supportLinks'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 const ContentContainer = styled.div(
   ({ theme }) => css`
