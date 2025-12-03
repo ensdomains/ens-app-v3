@@ -27,11 +27,12 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { getDestination } from '@app/routes'
+import { getDestinationAsHref } from '@app/routes'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
+import { createUrlObject } from '@app/utils/urlObject'
 import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
 import { getVerifierData } from '@app/utils/verification/getVerifierData'
 import { isVerificationProtocol } from '@app/utils/verification/isVerificationProtocol'
@@ -127,6 +128,7 @@ export const AddressProfileButton = ({
   const coinChainResults = useCoinChain({ coinName: iconKey })
   const { data } = coinChainResults
   const defaultBlockExplorer = data?.blockExplorers?.default
+  const referrer = router.query.referrer as string | undefined
 
   const IconComponent = useMemo(
     () => () => <StyledAddressIconComponent name={iconKey} />,
@@ -138,7 +140,7 @@ export const AddressProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: 'View address',
-          onClick: () => router.push(getDestination(`/${address}`) as string),
+          onClick: () => router.push(getDestinationAsHref(createUrlObject(`/${address}`, { referrer }))),
         }
       : undefined,
     {
@@ -286,6 +288,7 @@ export const OwnerProfileButton = ({
   const chainName = useChainName()
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
+  const referrer = router.query.referrer as string | undefined
 
   const dataType = useMemo(() => {
     if (!addressOrNameOrDate)
@@ -337,15 +340,15 @@ export const OwnerProfileButton = ({
       return {
         ...base,
         link: primary.data?.name
-          ? (getDestination(`/profile/${primary.data?.name}`) as string)
-          : (getDestination(`/address/${addressOrNameOrDate}`) as string),
+          ? getDestinationAsHref(createUrlObject(`/profile/${primary.data?.name}`, { referrer }))
+          : getDestinationAsHref(createUrlObject(`/address/${addressOrNameOrDate}`, { referrer })),
         children:
           primary.data?.beautifiedName ||
           (breakpoints.sm ? shortenAddress(addressOrNameOrDate) : addressOrNameOrDate.slice(0, 5)),
       } as const
     return {
       ...base,
-      link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
+      link: getDestinationAsHref(createUrlObject(`/profile/${addressOrNameOrDate}`, { referrer })),
       children: addressOrNameOrDate,
     } as const
   }, [
@@ -355,6 +358,7 @@ export const OwnerProfileButton = ({
     breakpoints,
     primary.data?.name,
     primary.data?.beautifiedName,
+    referrer,
     t,
   ])
 
@@ -380,7 +384,7 @@ export const OwnerProfileButton = ({
           {
             icon: UpRightArrowIcon,
             label: 'View address',
-            onClick: () => router.push(getDestination(`/${addressOrNameOrDate}`) as string),
+            onClick: () => router.push(getDestinationAsHref(createUrlObject(`/${addressOrNameOrDate}`, { referrer }))),
           },
           {
             icon: CopyIcon,
