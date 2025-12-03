@@ -140,7 +140,8 @@ export const AddressProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: 'View address',
-          onClick: () => router.push(getDestinationAsHref(createUrlObject(`/${address}`, { referrer }))),
+          onClick: () =>
+            router.push(getDestinationAsHref(createUrlObject(`/${address}`, { referrer }))),
         }
       : undefined,
     {
@@ -384,7 +385,10 @@ export const OwnerProfileButton = ({
           {
             icon: UpRightArrowIcon,
             label: 'View address',
-            onClick: () => router.push(getDestinationAsHref(createUrlObject(`/${addressOrNameOrDate}`, { referrer }))),
+            onClick: () =>
+              router.push(
+                getDestinationAsHref(createUrlObject(`/${addressOrNameOrDate}`, { referrer })),
+              ),
           },
           {
             icon: CopyIcon,
