@@ -719,14 +719,6 @@ test.describe('OAuth flow', () => {
       manager: 'user2',
     })
 
-    // Wait for any modals to close and page to be ready
-    await page.waitForTimeout(1000)
-    const backdrop = page.getByTestId('backdrop-surface')
-    if (await backdrop.isVisible()) {
-      await backdrop.click({ force: true })
-      await page.waitForTimeout(500)
-    }
-
     await page.route(`${VERIFICATION_OAUTH_BASE_URL}/dentity/token`, async (route) => {
       await route.fulfill({
         status: 200,
