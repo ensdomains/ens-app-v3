@@ -118,25 +118,27 @@ describe('<CropComponent /> - Zoom Functionality', () => {
     })
   })
 
-  it('displays 3:1 aspect ratio label', async () => {
+  it('displays 3:1 aspect ratio labels', async () => {
     const mockFile = await createTestImage()
     render(
       <CropComponent header={mockFile} handleCancel={mockHandleCancel} setDataURL={mockSetDataURL} />
     )
 
     await waitFor(() => {
-      expect(screen.getByText(/3:1/i)).toBeInTheDocument()
+      const labels = screen.getAllByText(/3:1/i)
+      expect(labels).toHaveLength(2)
     })
   })
 
-  it('displays 6:1 aspect ratio label', async () => {
+  it('displays 6:1 aspect ratio labels', async () => {
     const mockFile = await createTestImage()
     render(
       <CropComponent header={mockFile} handleCancel={mockHandleCancel} setDataURL={mockSetDataURL} />
     )
 
     await waitFor(() => {
-      expect(screen.getByText(/6:1/i)).toBeInTheDocument()
+      const labels = screen.getAllByText(/6:1/i)
+      expect(labels).toHaveLength(2)
     })
   })
 })
