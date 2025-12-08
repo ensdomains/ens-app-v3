@@ -980,7 +980,7 @@ test('should allow registering with a specific date', async ({ page, login, make
   })
 })
 
-test('should allow registering a premium name with a specific date', async ({
+test('should allow registering a premium name with a specific date with referrer', async ({
   page,
   login,
   accounts,
@@ -998,9 +998,15 @@ test('should allow registering a premium name with a specific date', async ({
   )
 
   const transactionModal = makePageObject('TransactionModal')
+  const referrerAddress = '0x1234567890123456789012345678901234567890'
 
-  await page.goto(`/${premiumName}/register`)
-  await login.connect()
+  await test.step('should start with referrer in URL', async () => {
+    await page.goto(`/${premiumName}/register?referrer=${referrerAddress}`)
+    await login.connect()
+
+    // Verify referrer is in URL
+    expect(page.url()).toContain(`referrer=${referrerAddress}`)
+  })
 
   await test.step('should be able to pick by date', async () => {
     const dateSelection = page.getByTestId('date-selection')
@@ -1045,6 +1051,20 @@ test('should allow registering a premium name with a specific date', async ({
   await testClient.increaseTime({ seconds: 120 })
   await page.getByTestId('finish-button').click()
   await transactionModal.confirm()
+
+  await expect(page.getByText('Your "Register name" transaction was successful')).toBeVisible({
+    timeout: 10000,
+  })
+
+  await test.step('should verify referrer in transaction calldata', async () => {
+    const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+    const referrerHex = addressToBytes32(referrerAddress)
+    expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
+  })
+
+  await test.step('should persist referrer in URL after registration', async () => {
+    expect(page.url()).toContain(`referrer=${referrerAddress}`)
+  })
 
   await page.getByTestId('view-name').click()
   await expect(page.getByTestId('address-profile-button-eth')).toHaveText(
@@ -1871,6 +1891,23 @@ test.describe('Registration with Referrer', () => {
       const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
       const referrerHex = addressToBytes32(referrerAddress)
       expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
+    })
+
+    await test.step('should persist referrer when navigating after registration', async () => {
+      await page.getByTestId('home-button').click()
+      await page.waitForTimeout(500)
+      expect(page.url()).toContain(`referrer=${referrerAddress}`)
+    })
+
+    await test.step('should persist referrer when navigating to settings', async () => {
+      // Wait for success toast to disappear before clicking dropdown
+      // Toast briefly covers the header-profile dropdown menu
+      await page.getByTestId('toast-desktop').waitFor({ state: 'hidden', timeout: 10000 })
+
+      await page.getByTestId('header-profile').click()
+      await page.getByText('Settings', { exact: true }).click()
+      await page.waitForTimeout(500)
+      expect(page.url()).toContain(`referrer=${referrerAddress}`)
     })
   })
 

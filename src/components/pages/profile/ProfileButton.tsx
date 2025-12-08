@@ -26,7 +26,7 @@ import { VerificationBadgeVerifierTooltipContent } from '@app/components/@molecu
 import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/VerificationBadge'
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { getDestination } from '@app/routes'
+import { getDestinationAsHref } from '@app/routes'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
@@ -139,7 +139,7 @@ export const AddressProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: 'View address',
-          href: getDestination(createUrlObject(`/${address}`, { referrer })) as string,
+          href: getDestinationAsHref(createUrlObject(`/${address}`, { referrer })),
         }
       : undefined,
     {
@@ -333,21 +333,15 @@ export const OwnerProfileButton = ({
       return {
         ...base,
         link: primary.data?.name
-          ? (getDestination(
-              createUrlObject(`/profile/${primary.data?.name}`, { referrer }),
-            ) as string)
-          : (getDestination(
-              createUrlObject(`/address/${addressOrNameOrDate}`, { referrer }),
-            ) as string),
+          ? getDestinationAsHref(createUrlObject(`/profile/${primary.data?.name}`, { referrer }))
+          : getDestinationAsHref(createUrlObject(`/address/${addressOrNameOrDate}`, { referrer })),
         children:
           primary.data?.beautifiedName ||
           (breakpoints.sm ? shortenAddress(addressOrNameOrDate) : addressOrNameOrDate.slice(0, 5)),
       } as const
     return {
       ...base,
-      link: getDestination(
-        createUrlObject(`/profile/${addressOrNameOrDate}`, { referrer }),
-      ) as string,
+      link: getDestinationAsHref(createUrlObject(`/profile/${addressOrNameOrDate}`, { referrer })),
       children: addressOrNameOrDate,
     } as const
   }, [
@@ -383,10 +377,10 @@ export const OwnerProfileButton = ({
           {
             icon: UpRightArrowIcon,
             label: 'View address',
-            href: getDestination({
+            href: getDestinationAsHref({
               pathname: `/${addressOrNameOrDate}`,
               query: { referrer },
-            }) as string,
+            }),
           },
           {
             icon: CopyIcon,
