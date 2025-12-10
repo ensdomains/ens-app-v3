@@ -1,17 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { Address } from 'viem'
+import { describe, expect, it } from 'vitest'
 
 import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
-import { getAddressRecord } from '@ensdomains/ensjs/public'
 
-import { ClientWithEns } from '@app/types'
-
-import { getReferrerHex, resolveReferrer } from './referrer'
-
-// Mock ensjs functions
-vi.mock('@ensdomains/ensjs/public', () => ({
-  getAddressRecord: vi.fn(),
-}))
+import { getReferrerHex } from './referrer'
 
 describe('getReferrerHex', () => {
   it('should validate and pad valid hex strings to 32 bytes', () => {
@@ -69,72 +60,5 @@ describe('getReferrerHex', () => {
 
     expect(result).toBe(exactly32Bytes)
     expect(result.length).toBe(66)
-  })
-})
-
-describe('resolveReferrer', () => {
-  const mockClient = {} as ClientWithEns
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('should resolve ENS name to ETH address record and convert to hex', async () => {
-    const ensName = 'vitalik.eth'
-    const mockAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045' as Address
-
-    vi.mocked(getAddressRecord).mockResolvedValueOnce({
-      value: mockAddress,
-      coin: 60, // ETH
-    } as any)
-
-    const result = await resolveReferrer(mockClient, ensName)
-
-    expect(result).toBeDefined()
-    expect(result?.length).toBe(66) // 32 bytes = 64 hex chars + '0x'
-    expect(result?.startsWith('0x')).toBe(true)
-    expect(vi.mocked(getAddressRecord)).toHaveBeenCalledWith(mockClient, { name: ensName })
-  })
-
-  it('should return null when ENS name has no address record', async () => {
-    vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
-
-    const result = await resolveReferrer(mockClient, 'nonexistent.eth')
-    expect(result).toBeNull()
-  })
-
-  it('should pass through valid hex addresses without resolution', async () => {
-    const hexAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
-
-    const result = await resolveReferrer(mockClient, hexAddress)
-
-    // Should not call ENS resolution functions for hex addresses
-    expect(vi.mocked(getAddressRecord)).not.toHaveBeenCalled()
-    expect(result?.length).toBe(66)
-  })
-
-  it('should handle empty or undefined referrer', async () => {
-    const result1 = await resolveReferrer(mockClient, undefined)
-    expect(result1).toBeNull()
-
-    const result2 = await resolveReferrer(mockClient, '')
-    expect(result2).toBeNull()
-  })
-
-  it('should handle resolution errors gracefully', async () => {
-    vi.mocked(getAddressRecord).mockRejectedValueOnce(new Error('Network error'))
-
-    const result = await resolveReferrer(mockClient, 'test.eth')
-    expect(result).toBeNull()
-  })
-
-  it('should return null when address record has no value', async () => {
-    vi.mocked(getAddressRecord).mockResolvedValueOnce({
-      value: undefined,
-      coin: 60,
-    } as any)
-
-    const result = await resolveReferrer(mockClient, 'test.eth')
-    expect(result).toBeNull()
   })
 })

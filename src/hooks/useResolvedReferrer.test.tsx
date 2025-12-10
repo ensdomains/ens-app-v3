@@ -2,83 +2,86 @@ import { renderHook, waitFor } from '@app/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Address } from 'viem'
 
-import { resolveReferrer } from '@app/utils/referrer'
-
-vi.mock('@app/utils/referrer', () => ({
-  resolveReferrer: vi.fn(),
-}))
+import { getAddressRecord } from '@ensdomains/ensjs/public'
+import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
 
 import { useResolvedReferrer } from './useResolvedReferrer'
+
+vi.mock('@ensdomains/ensjs/public', () => ({
+  getAddressRecord: vi.fn(),
+}))
 
 describe('useResolvedReferrer', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should return null when no referrer provided', () => {
+  it('should return undefined when no referrer provided', () => {
     const { result } = renderHook(() => useResolvedReferrer({ referrer: undefined }))
 
-    expect(result.current.data).toBeNull()
+    expect(result.current.data).toBeUndefined()
     expect(result.current.isLoading).toBe(false)
   })
 
   it('should resolve ENS name to hex', async () => {
-    const mockHex = '0x000000000000000000000000d8da6bf26964af9d7eed9e03e53415d37aa96045' as Address
-    vi.mocked(resolveReferrer).mockResolvedValueOnce(mockHex)
+    const mockAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045' as Address
+    vi.mocked(getAddressRecord).mockResolvedValueOnce({
+      value: mockAddress,
+      coin: 60,
+    } as any)
 
     const { result } = renderHook(() => useResolvedReferrer({ referrer: 'vitalik.eth' }))
 
     await waitFor(() => {
-      expect(result.current.data).toBe(mockHex)
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data?.length).toBe(66)
       expect(result.current.isLoading).toBe(false)
     })
 
-    expect(vi.mocked(resolveReferrer)).toHaveBeenCalledWith(expect.anything(), 'vitalik.eth')
+    expect(vi.mocked(getAddressRecord)).toHaveBeenCalled()
   })
 
   it('should handle resolution errors gracefully', async () => {
-    vi.mocked(resolveReferrer).mockRejectedValueOnce(new Error('Resolution failed'))
+    vi.mocked(getAddressRecord).mockRejectedValueOnce(new Error('Resolution failed'))
 
     const { result } = renderHook(() => useResolvedReferrer({ referrer: 'invalid.eth' }))
 
     await waitFor(() => {
-      expect(result.current.data).toBeNull()
+      expect(result.current.data).toBeUndefined()
       expect(result.current.isError).toBe(true)
     })
   })
 
-  it('should handle null resolution result', async () => {
-    vi.mocked(resolveReferrer).mockResolvedValueOnce(null)
+  it('should return EMPTY_BYTES32 when name has no address', async () => {
+    vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
 
     const { result } = renderHook(() => useResolvedReferrer({ referrer: 'nonexistent.eth' }))
 
     await waitFor(() => {
-      expect(result.current.data).toBeNull()
+      expect(result.current.data).toBe(EMPTY_BYTES32)
       expect(result.current.isLoading).toBe(false)
     })
   })
 
-  it('should return null when referrer is empty string', () => {
+  it('should return undefined when referrer is empty string', () => {
     const { result } = renderHook(() => useResolvedReferrer({ referrer: '' }))
 
-    expect(result.current.data).toBeNull()
+    expect(result.current.data).toBeUndefined()
     expect(result.current.isLoading).toBe(false)
-    expect(vi.mocked(resolveReferrer)).not.toHaveBeenCalled()
+    expect(vi.mocked(getAddressRecord)).not.toHaveBeenCalled()
   })
 
-  it('should resolve hex address to padded 32-byte hex', async () => {
+  it('should resolve hex address without calling getAddressRecord', async () => {
     const hexAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
-    const paddedHex =
-      '0x000000000000000000000000d8da6bf26964af9d7eed9e03e53415d37aa96045' as Address
-    vi.mocked(resolveReferrer).mockResolvedValueOnce(paddedHex)
 
     const { result } = renderHook(() => useResolvedReferrer({ referrer: hexAddress }))
 
     await waitFor(() => {
-      expect(result.current.data).toBe(paddedHex)
+      expect(result.current.data?.length).toBe(66)
       expect(result.current.isLoading).toBe(false)
     })
 
-    expect(vi.mocked(resolveReferrer)).toHaveBeenCalledWith(expect.anything(), hexAddress)
+    // Should not call getAddressRecord for hex addresses
+    expect(vi.mocked(getAddressRecord)).not.toHaveBeenCalled()
   })
 })

@@ -1,17 +1,20 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { Hex } from 'viem'
+import { Hex, isHex } from 'viem'
+
+import { getAddressRecord } from '@ensdomains/ensjs/public'
+import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
-import { resolveReferrer } from '@app/utils/referrer'
+import { getReferrerHex } from '@app/utils/referrer'
 
 type UseResolvedReferrerParameters = {
   referrer?: string
 }
 
-type UseResolvedReferrerReturnType = Hex | null
+type UseResolvedReferrerReturnType = Hex | undefined
 
 type UseResolvedReferrerConfig = QueryConfig<UseResolvedReferrerReturnType, Error>
 
@@ -24,23 +27,17 @@ const resolveReferrerQueryFn =
   async <TParams extends UseResolvedReferrerParameters>({
     queryKey: [{ referrer }, chainId],
   }: QueryFunctionContext<UseResolvedReferrerQueryKey<TParams>>) => {
-    if (!referrer) return null
+    if (!referrer) return EMPTY_BYTES32
+
+    if (isHex(referrer)) {
+      return getReferrerHex(referrer)
+    }
 
     const client = config.getClient({ chainId })
-    return resolveReferrer(client, referrer)
+    const addressRecord = await getAddressRecord(client, { name: referrer })
+    return addressRecord?.value ? getReferrerHex(addressRecord.value) : EMPTY_BYTES32
   }
 
-/**
- * Hook to resolve a referrer (ENS name or hex address) to a 32-byte hex value.
- *
- * For ENS names, attempts to:
- * 1. Get ETH address record from the name
- * 2. Fall back to owner/registrant if no address record
- * 3. Convert resolved address to 32-byte hex
- *
- * @param referrer - ENS name or hex address to resolve
- * @returns Query result with resolved hex value
- */
 export const useResolvedReferrer = <TParams extends UseResolvedReferrerParameters>({
   enabled = true,
   gcTime,
@@ -72,7 +69,7 @@ export const useResolvedReferrer = <TParams extends UseResolvedReferrerParameter
   const query = useQuery(preparedOptions)
 
   return {
-    data: query.data ?? null,
+    data: query.data,
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,

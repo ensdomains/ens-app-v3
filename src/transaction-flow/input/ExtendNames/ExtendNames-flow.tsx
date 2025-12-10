@@ -234,7 +234,7 @@ const ExtendNames = ({
           duration: seconds,
           names,
           startDateTimestamp: expiryDate?.getTime(),
-          referrer: resolvedReferrer ?? undefined,
+          referrer: resolvedReferrer,
           hasWrapped,
         },
         stateOverride: [
@@ -286,12 +286,9 @@ const ExtendNames = ({
   const view = flow[viewIdx]
 
   const isBaseDataLoading =
-    !isAccountConnected ||
-    isBalanceLoading ||
-    isExpiryEnabledAndLoading ||
-    isEthPriceLoading ||
-    isReferrerResolving
-  const isRegisterLoading = isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError)
+    !isAccountConnected || isBalanceLoading || isExpiryEnabledAndLoading || isEthPriceLoading
+  const isRegisterLoading =
+    isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError) || isReferrerResolving
 
   const { title, alert, buttonProps } = match(view)
     .with('no-ownership-warning', () => ({
@@ -318,6 +315,7 @@ const ExtendNames = ({
       alert: undefined,
       buttonProps: {
         disabled: isRegisterLoading,
+        loading: isRegisterLoading,
         onClick: () => {
           if (!totalRentFee) return
           const transactions = createTransactionItem('extendNames', {
@@ -330,7 +328,7 @@ const ExtendNames = ({
               bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
               currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
             }),
-            referrer: resolvedReferrer ?? undefined,
+            referrer: resolvedReferrer,
             hasWrapped,
           })
           dispatch({ name: 'setTransactions', payload: [transactions] })

@@ -68,7 +68,7 @@ describe('Extendnames', () => {
   mockUseExpiry.mockReturnValue({ data: { expiry: { date: new Date() } }, isLoading: false })
   mockUseReferrer.mockReturnValue(undefined)
   mockUseResolvedReferrer.mockReturnValue({
-    data: null,
+    data: undefined,
     isLoading: false,
     isError: false,
     error: null,
@@ -152,7 +152,7 @@ describe('Extendnames', () => {
   it('should handle failed referrer resolution gracefully', async () => {
     mockUseReferrer.mockReturnValueOnce('invalid.eth')
     mockUseResolvedReferrer.mockReturnValueOnce({
-      data: null,
+      data: undefined,
       isLoading: false,
       isError: true,
       error: new Error('Resolution failed'),
@@ -172,10 +172,10 @@ describe('Extendnames', () => {
     expect(screen.getByTestId('extend-names-modal')).toBeInTheDocument()
   })
 
-  it('should show loading state while referrer is resolving', () => {
+  it('should show disabled button but display pricing content while referrer is resolving', () => {
     mockUseReferrer.mockReturnValueOnce('vitalik.eth')
     mockUseResolvedReferrer.mockReturnValueOnce({
-      data: null,
+      data: undefined,
       isLoading: true,
       isError: false,
       error: null,
@@ -191,7 +191,11 @@ describe('Extendnames', () => {
       />,
     )
 
-    // Should be in loading state when referrer is resolving
-    expect(screen.queryByTestId('extend-names-modal')).toBeInTheDocument()
+    // Pricing content should be visible (Invoice is rendered)
+    expect(screen.getByText('Invoice')).toBeInTheDocument()
+
+    // Next button should be disabled while referrer is resolving
+    const trailingButton = screen.getByTestId('extend-names-confirm')
+    expect(trailingButton).toHaveAttribute('disabled')
   })
 })

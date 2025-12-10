@@ -31,7 +31,7 @@ describe('DesyncedMessage', () => {
     mockUseAccount.mockReturnValue({ isConnected: true })
     mockUseReferrer.mockReturnValue(undefined)
     mockUseResolvedReferrer.mockReturnValue({
-      data: null,
+      data: undefined,
       isLoading: false,
       isError: false,
       error: null,
@@ -45,7 +45,7 @@ describe('DesyncedMessage', () => {
   it('should disable action button when referrer is resolving', () => {
     mockUseReferrer.mockReturnValue('vitalik.eth')
     mockUseResolvedReferrer.mockReturnValue({
-      data: null,
+      data: undefined,
       isLoading: true,
       isError: false,
       error: null,
@@ -54,7 +54,7 @@ describe('DesyncedMessage', () => {
     render(
       <DesyncedMessage
         name="test.eth"
-        expiryDate={new Date(Date.now() - 1000)} // Past date - no minSeconds
+        expiryDate={new Date(Date.now() - 1000)}
         isGracePeriod={false}
       />,
     )
@@ -77,7 +77,7 @@ describe('DesyncedMessage', () => {
     render(
       <DesyncedMessage
         name="test.eth"
-        expiryDate={new Date(Date.now() - 1000)} // Past date - no minSeconds
+        expiryDate={new Date(Date.now() - 1000)}
         isGracePeriod={false}
       />,
     )
@@ -97,7 +97,6 @@ describe('DesyncedMessage', () => {
       error: null,
     })
 
-    // Set expiryDate far in the future so minSeconds calculates to 0 (triggers createTransactionFlow)
     const futureDate = new Date(Date.now() + ONE_DAY * 1000 + 10000)
 
     render(
@@ -127,13 +126,12 @@ describe('DesyncedMessage', () => {
   it('should pass undefined referrer when no referrer is resolved', async () => {
     mockUseReferrer.mockReturnValue(undefined)
     mockUseResolvedReferrer.mockReturnValue({
-      data: null,
+      data: undefined,
       isLoading: false,
       isError: false,
       error: null,
     })
 
-    // Set expiryDate far in the future so minSeconds calculates to 0 (triggers createTransactionFlow)
     const futureDate = new Date(Date.now() + ONE_DAY * 1000 + 10000)
 
     render(

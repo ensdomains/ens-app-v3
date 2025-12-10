@@ -53,6 +53,7 @@ export const DesyncedMessage = ({
               children: t('banner.desynced.action'),
               colorStyle: 'redPrimary',
               disabled: isReferrerResolving,
+              loading: isReferrerResolving,
               onClick: () => {
                 if (!name) return
                 const minSeconds = calculateMinSeconds(expiryDate)
@@ -69,7 +70,7 @@ export const DesyncedMessage = ({
                     transactions: [
                       createTransactionItem('repairDesyncedName', {
                         name,
-                        referrer: resolvedReferrer ?? undefined,
+                        referrer: resolvedReferrer,
                         hasWrapped: true,
                       }),
                     ],
