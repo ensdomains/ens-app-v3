@@ -113,9 +113,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
   const referrerParam = useReferrer()
-  const { data: resolvedReferrerHex } = useResolvedReferrer(referrerParam)
-  // Note: referrer is not included in `selected` to prevent creating new registration
-  // sessions when the referrer changes. It's updated separately via setReferrer action.
+  const { data: resolvedReferrerHex, isLoading: isResolvingReferrer } =
+    useResolvedReferrer(referrerParam)
   const selected = useMemo(
     () => ({ name: nameDetails.normalisedName, address: address!, chainId }),
     [address, chainId, nameDetails.normalisedName],
@@ -130,18 +129,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
-
-  // Update referrer in registration data when resolved.
-  // This happens asynchronously and won't block the registration flow.
-  useEffect(() => {
-    if (resolvedReferrerHex) {
-      dispatch({
-        name: 'setReferrer',
-        selected,
-        payload: resolvedReferrerHex,
-      })
-    }
-  }, [resolvedReferrerHex, selected, dispatch])
 
   const keySuffix = `${nameDetails.normalisedName}-${address}`
   const commitKey = `commit-${keySuffix}`
@@ -182,6 +169,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     if (paymentMethodChoice === PaymentMethod.moonpay) {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
       return
+    }
+    if (resolvedReferrerHex) {
+      dispatch({
+        name: 'setReferrer',
+        selected,
+        payload: resolvedReferrerHex,
+      })
     }
     dispatch({
       name: 'setPricingData',
@@ -356,6 +350,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 registrationData={item}
                 moonpayTransactionStatus={moonpayTransactionStatus}
                 initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}
+                isLoading={isResolvingReferrer}
               />
             ))
             .with([false, 'profile'], () => (
