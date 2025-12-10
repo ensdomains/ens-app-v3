@@ -146,7 +146,7 @@ describe('Extendnames', () => {
     )
 
     // Verify that useResolvedReferrer was called with the ENS name
-    expect(mockUseResolvedReferrer).toHaveBeenCalledWith('vitalik.eth')
+    expect(mockUseResolvedReferrer).toHaveBeenCalledWith({ referrer: 'vitalik.eth' })
   })
 
   it('should handle failed referrer resolution gracefully', async () => {

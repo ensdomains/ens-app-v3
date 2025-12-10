@@ -112,9 +112,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
   const primary = usePrimaryName({ address })
-  const referrerParam = useReferrer()
-  const { data: resolvedReferrerHex, isLoading: isResolvingReferrer } =
-    useResolvedReferrer(referrerParam)
+  const referrer = useReferrer()
+  const { data: resolvedReferrer, isLoading: isResolvingReferrer } = useResolvedReferrer({
+    referrer,
+  })
   const selected = useMemo(
     () => ({ name: nameDetails.normalisedName, address: address!, chainId }),
     [address, chainId, nameDetails.normalisedName],
@@ -170,11 +171,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
       return
     }
-    if (resolvedReferrerHex) {
+    if (resolvedReferrer) {
       dispatch({
         name: 'setReferrer',
         selected,
-        payload: resolvedReferrerHex,
+        payload: resolvedReferrer,
       })
     }
     dispatch({

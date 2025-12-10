@@ -187,8 +187,10 @@ const ExtendNames = ({
   const years = secondsToYears(seconds)
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
-  const referrerParam = useReferrer()
-  const { data: referrerHex, isLoading: isReferrerResolving } = useResolvedReferrer(referrerParam)
+  const referrer = useReferrer()
+  const { data: resolvedReferrer, isLoading: isReferrerResolving } = useResolvedReferrer({
+    referrer,
+  })
 
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
   const { address, isConnected: isAccountConnected } = useAccount()
@@ -232,7 +234,7 @@ const ExtendNames = ({
           duration: seconds,
           names,
           startDateTimestamp: expiryDate?.getTime(),
-          referrer: referrerHex ?? undefined,
+          referrer: resolvedReferrer ?? undefined,
           hasWrapped,
         },
         stateOverride: [
@@ -328,7 +330,7 @@ const ExtendNames = ({
               bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
               currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
             }),
-            referrer: referrerHex ?? undefined,
+            referrer: resolvedReferrer ?? undefined,
             hasWrapped,
           })
           dispatch({ name: 'setTransactions', payload: [transactions] })

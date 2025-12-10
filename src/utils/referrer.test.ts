@@ -2,16 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Address } from 'viem'
 
 import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
-import { getAddressRecord, getOwner } from '@ensdomains/ensjs/public'
+import { getAddressRecord } from '@ensdomains/ensjs/public'
 
 import { ClientWithEns } from '@app/types'
 
-import { getReferrerHex, resolveReferrerToHex } from './referrer'
+import { getReferrerHex, resolveReferrer } from './referrer'
 
 // Mock ensjs functions
 vi.mock('@ensdomains/ensjs/public', () => ({
   getAddressRecord: vi.fn(),
-  getOwner: vi.fn(),
 }))
 
 describe('getReferrerHex', () => {
@@ -73,7 +72,7 @@ describe('getReferrerHex', () => {
   })
 })
 
-describe('resolveReferrerToHex', () => {
+describe('resolveReferrer', () => {
   const mockClient = {} as ClientWithEns
 
   beforeEach(() => {
@@ -89,79 +88,53 @@ describe('resolveReferrerToHex', () => {
       coin: 60, // ETH
     } as any)
 
-    const result = await resolveReferrerToHex(mockClient, ensName)
+    const result = await resolveReferrer(mockClient, ensName)
 
     expect(result).toBeDefined()
     expect(result?.length).toBe(66) // 32 bytes = 64 hex chars + '0x'
     expect(result?.startsWith('0x')).toBe(true)
     expect(vi.mocked(getAddressRecord)).toHaveBeenCalledWith(mockClient, { name: ensName })
-    // Should not call getOwner if address record exists
-    expect(vi.mocked(getOwner)).not.toHaveBeenCalled()
   })
 
-  it('should fall back to owner when no ETH address record exists', async () => {
-    const ensName = 'test.eth'
-    const mockOwnerAddress = '0x1234567890123456789012345678901234567890' as Address
-
-    // No address record
+  it('should return null when ENS name has no address record', async () => {
     vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
 
-    // Has owner
-    vi.mocked(getOwner).mockResolvedValueOnce({
-      owner: mockOwnerAddress,
-      ownershipLevel: 'registrar',
-    } as any)
-
-    const result = await resolveReferrerToHex(mockClient, ensName)
-
-    expect(result).toBeDefined()
-    expect(result?.length).toBe(66)
-    expect(vi.mocked(getAddressRecord)).toHaveBeenCalledWith(mockClient, { name: ensName })
-    expect(vi.mocked(getOwner)).toHaveBeenCalledWith(mockClient, { name: ensName })
-  })
-
-  it('should return null when ENS name has neither address record nor owner', async () => {
-    vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
-    vi.mocked(getOwner).mockResolvedValueOnce(null)
-
-    const result = await resolveReferrerToHex(mockClient, 'nonexistent.eth')
+    const result = await resolveReferrer(mockClient, 'nonexistent.eth')
     expect(result).toBeNull()
   })
 
   it('should pass through valid hex addresses without resolution', async () => {
     const hexAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
 
-    const result = await resolveReferrerToHex(mockClient, hexAddress)
+    const result = await resolveReferrer(mockClient, hexAddress)
 
     // Should not call ENS resolution functions for hex addresses
     expect(vi.mocked(getAddressRecord)).not.toHaveBeenCalled()
-    expect(vi.mocked(getOwner)).not.toHaveBeenCalled()
     expect(result?.length).toBe(66)
   })
 
   it('should handle empty or undefined referrer', async () => {
-    const result1 = await resolveReferrerToHex(mockClient, undefined)
+    const result1 = await resolveReferrer(mockClient, undefined)
     expect(result1).toBeNull()
 
-    const result2 = await resolveReferrerToHex(mockClient, '')
+    const result2 = await resolveReferrer(mockClient, '')
     expect(result2).toBeNull()
   })
 
   it('should handle resolution errors gracefully', async () => {
     vi.mocked(getAddressRecord).mockRejectedValueOnce(new Error('Network error'))
 
-    const result = await resolveReferrerToHex(mockClient, 'test.eth')
+    const result = await resolveReferrer(mockClient, 'test.eth')
     expect(result).toBeNull()
   })
 
-  it('should handle owner with no address', async () => {
-    vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
-    vi.mocked(getOwner).mockResolvedValueOnce({
-      owner: undefined,
-      ownershipLevel: 'registrar',
+  it('should return null when address record has no value', async () => {
+    vi.mocked(getAddressRecord).mockResolvedValueOnce({
+      value: undefined,
+      coin: 60,
     } as any)
 
-    const result = await resolveReferrerToHex(mockClient, 'test.eth')
+    const result = await resolveReferrer(mockClient, 'test.eth')
     expect(result).toBeNull()
   })
 })

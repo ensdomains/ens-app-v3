@@ -33,8 +33,10 @@ export const DesyncedMessage = ({
   const { isConnected } = useAccount()
   const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
-  const referrerParam = useReferrer()
-  const { data: referrerHex, isLoading: isReferrerResolving } = useResolvedReferrer(referrerParam)
+  const referrer = useReferrer()
+  const { data: resolvedReferrer, isLoading: isReferrerResolving } = useResolvedReferrer({
+    referrer,
+  })
 
   return (
     <BannerMessageWithAction
@@ -67,7 +69,7 @@ export const DesyncedMessage = ({
                     transactions: [
                       createTransactionItem('repairDesyncedName', {
                         name,
-                        referrer: referrerHex ?? undefined,
+                        referrer: resolvedReferrer ?? undefined,
                         hasWrapped: true,
                       }),
                     ],
