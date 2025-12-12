@@ -9,6 +9,7 @@ import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
 import { getReferrerHex } from '@app/utils/referrer'
+import { isValidEnsName } from '@app/utils/ensValidation'
 
 type UseResolvedReferrerParameters = {
   referrer?: string
@@ -29,13 +30,17 @@ const resolveReferrerQueryFn =
   }: QueryFunctionContext<UseResolvedReferrerQueryKey<TParams>>) => {
     if (!referrer) return EMPTY_BYTES32
 
-    if (isHex(referrer)) {
-      return getReferrerHex(referrer)
+    if (isHex(referrer)) return getReferrerHex(referrer)
+
+    if (isValidEnsName(referrer)) {
+      const client = config.getClient({ chainId })
+      const addressRecord = await getAddressRecord(client, { name: referrer })
+      if (!addressRecord?.value)
+        throw new Error(`ENS name '${referrer}' did not resolve to an address`)
+      return getReferrerHex(addressRecord.value)
     }
 
-    const client = config.getClient({ chainId })
-    const addressRecord = await getAddressRecord(client, { name: referrer })
-    return addressRecord?.value ? getReferrerHex(addressRecord.value) : EMPTY_BYTES32
+    throw new Error(`The referrer '${referrer}' is not valid`)
   }
 
 export const useResolvedReferrer = <TParams extends UseResolvedReferrerParameters>({
@@ -69,7 +74,7 @@ export const useResolvedReferrer = <TParams extends UseResolvedReferrerParameter
   const query = useQuery(preparedOptions)
 
   return {
-    data: query.data,
+    data: query.isError ? undefined : query.data,
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,

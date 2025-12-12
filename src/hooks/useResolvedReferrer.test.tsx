@@ -3,12 +3,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Address } from 'viem'
 
 import { getAddressRecord } from '@ensdomains/ensjs/public'
-import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
+
+import { isValidEnsName } from '@app/utils/ensValidation'
 
 import { useResolvedReferrer } from './useResolvedReferrer'
 
 vi.mock('@ensdomains/ensjs/public', () => ({
   getAddressRecord: vi.fn(),
+}))
+
+vi.mock('@app/utils/ensValidation', () => ({
+  isValidEnsName: vi.fn(),
 }))
 
 describe('useResolvedReferrer', () => {
@@ -25,6 +30,7 @@ describe('useResolvedReferrer', () => {
 
   it('should resolve ENS name to hex', async () => {
     const mockAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045' as Address
+    vi.mocked(isValidEnsName).mockReturnValue(true)
     vi.mocked(getAddressRecord).mockResolvedValueOnce({
       value: mockAddress,
       coin: 60,
@@ -42,6 +48,7 @@ describe('useResolvedReferrer', () => {
   })
 
   it('should handle resolution errors gracefully', async () => {
+    vi.mocked(isValidEnsName).mockReturnValue(true)
     vi.mocked(getAddressRecord).mockRejectedValueOnce(new Error('Resolution failed'))
 
     const { result } = renderHook(() => useResolvedReferrer({ referrer: 'invalid.eth' }))
@@ -52,14 +59,18 @@ describe('useResolvedReferrer', () => {
     })
   })
 
-  it('should return EMPTY_BYTES32 when name has no address', async () => {
+  it('should return error when ENS name has no address', async () => {
+    vi.mocked(isValidEnsName).mockReturnValue(true)
     vi.mocked(getAddressRecord).mockResolvedValueOnce(null)
 
     const { result } = renderHook(() => useResolvedReferrer({ referrer: 'nonexistent.eth' }))
 
     await waitFor(() => {
-      expect(result.current.data).toBe(EMPTY_BYTES32)
-      expect(result.current.isLoading).toBe(false)
+      expect(result.current.data).toBeUndefined()
+      expect(result.current.isError).toBe(true)
+      expect(result.current.error?.message).toBe(
+        "ENS name 'nonexistent.eth' did not resolve to an address",
+      )
     })
   })
 
@@ -82,6 +93,20 @@ describe('useResolvedReferrer', () => {
     })
 
     // Should not call getAddressRecord for hex addresses
+    expect(vi.mocked(getAddressRecord)).not.toHaveBeenCalled()
+  })
+
+  it('should return error when referrer is not a valid ENS name or hex', async () => {
+    vi.mocked(isValidEnsName).mockReturnValue(false)
+
+    const { result } = renderHook(() => useResolvedReferrer({ referrer: 'invalid-referrer' }))
+
+    await waitFor(() => {
+      expect(result.current.data).toBeUndefined()
+      expect(result.current.isError).toBe(true)
+      expect(result.current.error?.message).toBe("The referrer 'invalid-referrer' is not valid")
+    })
+
     expect(vi.mocked(getAddressRecord)).not.toHaveBeenCalled()
   })
 })
