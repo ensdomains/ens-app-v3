@@ -1,10 +1,66 @@
 import { expect } from '@playwright/test'
+import { publicClient } from '@root/playwright/fixtures/contracts/utils/addTestContracts'
+import { pad } from 'viem'
 
 import { dateToDateInput, roundDurationWithDay, secondsToDateInput } from '@app/utils/date'
 
 import { test } from '../../../playwright'
 
+// Helper function to convert address to bytes32 for referrer parameter
+const addressToBytes32 = (address: string): string => {
+  // Remove '0x' prefix if present, pad to 64 characters (32 bytes), and add '0x' back
+  const cleanAddress = address.toLowerCase().replace('0x', '')
+  return pad(`0x${cleanAddress}`, { size: 32 })
+}
+
 test.describe('Desynced Name Repair', () => {
+  test('should repair wrapped desynced name with referrer support', async ({
+    page,
+    login,
+    makePageObject,
+  }) => {
+    // Create a wrapped name that will become desynced
+    const name = 'desynced-wrapped-referral.eth'
+
+    const transactionModal = makePageObject('TransactionModal')
+
+    // Add referrer to URL
+    const referrerAddress = '0x1234567890123456789012345678901234567890'
+
+    await page.goto(`/${name}?referrer=${referrerAddress}`)
+    await login.connect()
+
+    await test.step('should show desynced banner with repair option', async () => {
+      await expect(page.getByText('Name misconfigured')).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Repair' })).toBeVisible()
+    })
+
+    await test.step('should complete repair with referrer', async () => {
+      await page.getByRole('button', { name: 'Repair' }).click()
+      await transactionModal.autoComplete()
+
+      // Verify success
+      await expect(page.getByText('Your "Repair name" transaction was successful')).toBeVisible({
+        timeout: 10000,
+      })
+    })
+
+    await test.step('verify referrer is included in transaction calldata', async () => {
+      // Verify referrer is included in the transaction calldata
+      const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+      const referrerHex = addressToBytes32(referrerAddress)
+      expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
+    })
+
+    await test.step('should verify name is no longer desynced', async () => {
+      // Reload page
+      await page.reload()
+
+      // Desynced banner should no longer be visible
+      await expect(page.getByText('Name misconfigured')).not.toBeVisible()
+    })
+  })
+
   test.describe('Regular Desynced Name', () => {
     test('should repair desynced-wrapped.eth successfully', async ({
       page,

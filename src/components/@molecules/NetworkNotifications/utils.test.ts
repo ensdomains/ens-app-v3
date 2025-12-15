@@ -32,8 +32,8 @@ describe('shouldOpenModal', () => {
   })
 
   it('should return true when connected chain id is different from account chain id and account chain id is supported', () => {
-    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue({ id: 17000 } as any)
-    const result = shouldOpenModal(1, 17000)
+    vi.spyOn(chains, 'getSupportedChainById').mockReturnValue({ id: 11155111 } as any)
+    const result = shouldOpenModal(1, 11155111)
     expect(result).toBe(true)
   })
 })

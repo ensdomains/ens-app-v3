@@ -75,3 +75,6 @@ tsconfig.vitest-temp.json
 .dev.vars
 
 certificates
+
+# Claude
+.playwright-mcp

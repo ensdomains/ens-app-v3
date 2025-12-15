@@ -1,0 +1,50 @@
+diff --git a/build/deploy/ethregistrar/02_deploy_legacy_eth_registrar_controller.js b/build/deploy/ethregistrar/02_deploy_legacy_eth_registrar_controller.js
+index 18998f8b94eaf70065836ad976626f5e508c2fb4..50d593c3b8cf8f59f59ca1571a7e0d3122e51a07 100644
+--- a/build/deploy/ethregistrar/02_deploy_legacy_eth_registrar_controller.js
++++ b/build/deploy/ethregistrar/02_deploy_legacy_eth_registrar_controller.js
+@@ -29,5 +29,6 @@ func.dependencies = [
+     'BaseRegistrarImplementation',
+     'ExponentialPremiumPriceOracle',
+     'ReverseRegistrar',
++    'LegacyPublicResolver',
+ ];
+ export default func;
+diff --git a/build/deploy/ethregistrar/03_deploy_eth_registrar_controller.js b/build/deploy/ethregistrar/03_deploy_eth_registrar_controller.js
+index a6cef30b1a47ceb4620c446ec46c2afc4b012a06..f7a20f4784e48e33fc4d9d24472943bebc338eda 100644
+--- a/build/deploy/ethregistrar/03_deploy_eth_registrar_controller.js
++++ b/build/deploy/ethregistrar/03_deploy_eth_registrar_controller.js
+@@ -7,7 +7,7 @@ const func = async function (hre) {
+     const registrar = await viem.getContract('BaseRegistrarImplementation', owner);
+     const priceOracle = await viem.getContract('ExponentialPremiumPriceOracle', owner);
+     const reverseRegistrar = await viem.getContract('ReverseRegistrar', owner);
+-    const defaultReverseRegistrar = await viem.getContract('DefaultReverseRegistrar');
++    const defaultReverseRegistrar = await viem.getContract('DefaultReverseRegistrar', owner);
+     await viem.deploy('ETHRegistrarController', [
+         registrar.address,
+         priceOracle.address,
+@@ -61,9 +61,7 @@ const func = async function (hre) {
+         console.log(`No resolver set for .eth; not setting interface ${interfaceId} for ETH Registrar Controller`);
+         return;
+     }
+-    const ethOwnedResolver = await viem.getContractAt('OwnedResolver', resolver, {
+-        client: owner,
+-    });
++    const ethOwnedResolver = await viem.getContractAt('OwnedResolver', resolver);
+     const hasInterfaceSet = await ethOwnedResolver.read
+         .interfaceImplementer([namehash('eth'), interfaceId])
+         .then((v) => getAddress(v) === getAddress(controller.address));
+diff --git a/build/deploy/ethregistrar/04_deploy_static_bulk_renewal.js b/build/deploy/ethregistrar/04_deploy_static_bulk_renewal.js
+index 00755aff065c625d83687246a7d6153524bd1603..610fc6d5c0a2ff034d2d904b92fb23af4e21288e 100644
+--- a/build/deploy/ethregistrar/04_deploy_static_bulk_renewal.js
++++ b/build/deploy/ethregistrar/04_deploy_static_bulk_renewal.js
+@@ -18,9 +18,7 @@ const func = async function (hre) {
+         console.log(`No resolver set for .eth; not setting interface ${interfaceId} for BulkRenewal`);
+         return;
+     }
+-    const ethOwnedResolver = await viem.getContractAt('OwnedResolver', resolver, {
+-        client: owner,
+-    });
++    const ethOwnedResolver = await viem.getContractAt('OwnedResolver', resolver);
+     const setInterfaceHash = await ethOwnedResolver.write.setInterface([
+         namehash('eth'),
+         interfaceId,
