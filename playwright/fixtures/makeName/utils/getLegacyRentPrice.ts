@@ -10,7 +10,7 @@ export const getLegacyRentPrice = async ({
   duration,
 }: Pick<LegacyName | LegacyNameWithConfig, 'label' | 'duration'>) => {
   const { data: price } = await publicClient.call({
-    to: publicClient.chain.contracts.legacyRegistrarController.address,
+    to: publicClient.chain.contracts.legacyEthRegistrarController.address,
     data: encodeFunctionData({
       functionName: 'rentPrice',
       abi: legacyEthRegistrarControllerAbi,

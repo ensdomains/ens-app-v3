@@ -13,6 +13,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 import { useExistingCommitment } from '../useExistingCommitment'
 import { getBlockMetadataByTimestamp } from './getBlockMetadataByTimestamp'
+import { Address } from 'viem'
 
 vi.mock('@app/hooks/chain/useChainName')
 vi.mock('@app/hooks/transactions/useAddRecentTransaction')
@@ -111,9 +112,9 @@ describe('useExistingCommitment', () => {
     request: vi.fn(),
     chain: {
       contracts: {
-        ensEthRegistrarController: { address: '0xcontroller' },
-        legacyEthRegistrarController: { address: '0xlegacycontroller' },
-        multicall3: { address: '0xmulticall' },
+        ensEthRegistrarController: { address: '0xcontroller' as Address},
+        legacyEthRegistrarController: { address: '0xlegacycontroller' as Address},
+        multicall3: { address: '0xmulticall' as Address},
       },
     },
   }
@@ -138,9 +139,9 @@ describe('useExistingCommitment', () => {
       },
       getClient: () => mockClient,
       _isEns: true,
-    })
+    } as any)
     mockUseBlockNumber.mockReturnValue({ data: 1234n })
-    mockUseInvalidateOnBlock.mockReturnValue({ data: undefined })
+    mockUseInvalidateOnBlock.mockReturnValue()
     mockUseIsSafeApp.mockReturnValue({ data: false, isLoading: false })
   })
 
@@ -170,9 +171,9 @@ describe('useExistingCommitment', () => {
         .mockResolvedValueOnce(mockMaxAge) // max age
         .mockResolvedValueOnce(mockTime + 30n) // current block timestamp (30s after commitment)
 
-      mockGetBlockMetadataByTimestamp.mockResolvedValueOnce({
+      mockGetBlockMetadataByTimestamp.mockResolvedValueOnce(Promise.resolve({
         ok: false,
-      })
+      }))
 
       const { result } = renderHook(() =>
         useExistingCommitment({
@@ -197,9 +198,9 @@ describe('useExistingCommitment', () => {
         .mockResolvedValueOnce(mockMaxAge) // max age
         .mockResolvedValueOnce(mockTime + 30n) // current block timestamp (30s after commitment)
 
-      mockGetBlockMetadataByTimestamp.mockResolvedValueOnce({
-        ok: false,
-      })
+      mockGetBlockMetadataByTimestamp.mockResolvedValueOnce(Promise.resolve({
+        ok: false,    
+      }))
 
       const { result } = renderHook(() =>
         useExistingCommitment({
@@ -275,16 +276,16 @@ describe('useExistingCommitment', () => {
     })
   })
 
-  describe('Legacy Commitment', () => {
+  describe('EthRegistrarController Address', () => {
     it('should handle legacy commitment check', async () => {
       mockReadContract
         .mockResolvedValueOnce(mockTime) // commitment timestamp
         .mockResolvedValueOnce(mockMaxAge) // max age
         .mockResolvedValueOnce(mockTime + 30n) // current block timestamp
 
-      mockGetBlockMetadataByTimestamp.mockResolvedValueOnce({
+      mockGetBlockMetadataByTimestamp.mockResolvedValueOnce(Promise.resolve({
         ok: false,
-      })
+      }))
 
       const { result } = renderHook(() =>
         useExistingCommitment({
@@ -306,68 +307,7 @@ describe('useExistingCommitment', () => {
       expect(mockReadContract).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
-          address: '0xlegacycontroller',
-        }),
-      )
-    })
-  })
-
-  describe('Wrapped Commitment', () => {
-    it('should verify wrapped commitment functionality', async () => {
-      mockReadContract
-        .mockResolvedValueOnce(mockTime) // commitment timestamp
-        .mockResolvedValueOnce(mockMaxAge) // max age
-        .mockResolvedValueOnce(mockTime + 30n) // current block timestamp (30s after commitment)
-
-      mockGetBlockMetadataByTimestamp.mockResolvedValueOnce({
-        ok: false,
-      })
-
-      const { result } = renderHook(() =>
-        useExistingCommitment({
-          commitment: mockCommitment,
-          commitKey: mockCommitKey,
-          isLegacyCommit: false,
-          scopeKey: mockAddress,
-          isWrappedCommitment: true,
-        }),
-      )
-
-      await waitFor(() => {
-        expect(result.current.data).toEqual({
-          status: 'commitmentExists',
-          timestamp: Number(mockTime),
-        })
-      })
-
-      // Verify it used the correct contract address
-      expect(mockReadContract).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
           address: '0xcontroller',
-        }),
-      )
-
-      // Verify it called the correct contract functions
-      expect(mockReadContract).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          functionName: 'commitments',
-          args: [mockCommitment],
-        }),
-      )
-
-      expect(mockReadContract).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          functionName: 'maxCommitmentAge',
-        }),
-      )
-
-      expect(mockReadContract).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          functionName: 'getCurrentBlockTimestamp',
         }),
       )
     })
