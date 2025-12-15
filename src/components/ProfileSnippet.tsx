@@ -43,13 +43,12 @@ const HeaderContainer = styled.div<{ $header?: string }>(
     ${$header
       ? `
     background-image: url("${encodeURI($header)}")};
-    aspect-ratio: 3 / 1;
+    height: ${theme.space['32']};
     `
       : `
         background-image: ${theme.colors.blueGradient};
         height: ${theme.space['28']};
     `}
-    /* aspect-ratio: 3 / 1; */
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
