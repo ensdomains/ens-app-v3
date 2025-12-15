@@ -6,10 +6,10 @@ import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
+import { isValidEnsName } from '@app/utils/ensValidation'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
 import { getReferrerHex } from '@app/utils/referrer'
-import { isValidEnsName } from '@app/utils/ensValidation'
 
 type UseResolvedReferrerParameters = {
   referrer?: string

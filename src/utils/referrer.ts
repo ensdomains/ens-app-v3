@@ -19,4 +19,3 @@ export const getReferrerHex = (referrer: string | undefined): `0x${string}` => {
   // Use viem's pad utility to pad to 32 bytes
   return pad(referrer, { size: 32 })
 }
-
