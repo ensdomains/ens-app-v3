@@ -2460,3 +2460,73 @@ test('should allow the user to register with both avatar and header manually set
     await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(header2)
   })
 })
+
+test.describe('Referrer Error Notifications', () => {
+  test('should show error toast when referrer ENS name does not resolve', async ({
+    page,
+    login,
+    time,
+  }) => {
+    await time.sync(500)
+
+    const name = `registration-invalid-referrer-${Date.now()}.eth`
+    const invalidReferrer = 'nonexistent-name-that-does-not-exist.eth'
+
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+    await login.connect()
+
+    // Wait for the error toast to appear
+    await expect(page.getByTestId('toast-desktop')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByTestId('toast-desktop')).toContainText('Referrer Error')
+    await expect(page.getByTestId('toast-desktop')).toContainText('did not resolve')
+
+    // Close the toast
+    await page.getByTestId('toast-close-icon').click()
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
+  })
+
+  test('should show error toast when referrer is invalid format', async ({ page, login, time }) => {
+    await time.sync(500)
+
+    const name = `registration-invalid-format-referrer-${Date.now()}.eth`
+    const invalidReferrer = 'not-a-valid-address-or-name'
+
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+    await login.connect()
+
+    // Wait for the error toast to appear
+    await expect(page.getByTestId('toast-desktop')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByTestId('toast-desktop')).toContainText('Referrer Error')
+
+    // Close the toast
+    await page.getByTestId('toast-close-icon').click()
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
+  })
+
+  test('should only show referrer error toast once', async ({ page, login, time }) => {
+    await time.sync(500)
+
+    const name = `registration-toast-once-${Date.now()}.eth`
+    const invalidReferrer = 'nonexistent-referrer.eth'
+
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+    await login.connect()
+
+    // Wait for the error toast to appear
+    await expect(page.getByTestId('toast-desktop')).toBeVisible({ timeout: 10000 })
+
+    // Close the toast
+    await page.getByTestId('toast-close-icon').click()
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
+
+    // Navigate away and back - toast should not reappear
+    await page.goto('/')
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+
+    // Wait a bit to ensure toast would have appeared if it was going to
+    await page.waitForTimeout(2000)
+
+    // Toast should not be visible again for same referrer
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
+  })
+})
