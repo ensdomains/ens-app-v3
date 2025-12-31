@@ -11,7 +11,6 @@ import { shouldOpenModal } from './utils'
 const appLinks = {
   Ethereum: 'app.ens.domains',
   Sepolia: 'sepolia.app.ens.domains',
-  Holesky: 'holesky.app.ens.domains',
   Localhost: '',
 }
 

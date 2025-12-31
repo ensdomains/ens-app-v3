@@ -3,17 +3,14 @@
   "version": "0.1.123",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
-    "dev:holesky": "NEXT_PUBLIC_CHAIN_NAME=holesky pnpm dev",
     "dev:sepolia": "NEXT_PUBLIC_CHAIN_NAME=sepolia pnpm dev",
     "dev:mainnet": "NEXT_PUBLIC_CHAIN_NAME=mainnet pnpm dev",
     "dev:https": "next dev --experimental-https --port 443",
-    "dev:https:holesky": "NEXT_PUBLIC_CHAIN_NAME=holesky pnpm dev:https",
     "dev:https:sepolia": "NEXT_PUBLIC_CHAIN_NAME=sepolia pnpm dev:https",
     "dev:https:mainnet": "NEXT_PUBLIC_CHAIN_NAME=mainnet pnpm dev:https",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
     "dev:glocal": "SWC_CACHE=false rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:42069/subgraph NEXT_PUBLIC_ETH_NODE=anvil pnpm dev:nlocal",
-    "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.studio.thegraph.com/query/49574/ensholesky/version/latest pnpm dev",
     "dev:avlocal": "NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:avsepolia": "NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev pnpm dev:sepolia",
     "dev:avmainnet": "NEXT_PUBLIC_AVUP_ENDPOINT=https://avatar-upload-staging.ens-cf.workers.dev pnpm dev:mainnet",
@@ -59,9 +56,9 @@
   "dependencies": {
     "@ensdomains/address-encoder": "1.1.4",
     "@ensdomains/content-hash": "^3.0.0-beta.5",
-    "@ensdomains/ens-contracts": "1.5.2",
+    "@ensdomains/ens-contracts": "1.6.0",
     "@ensdomains/ens-test-env": "1.0.1",
-    "@ensdomains/ensjs": "4.1.1",
+    "@ensdomains/ensjs": "https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@deab43b",
     "@ensdomains/thorin": "1.0.0-beta.28",
     "@getpara/rainbowkit": "1.4.0",
     "@getpara/rainbowkit-wallet": "1.4.0",
@@ -90,7 +87,7 @@
     "immer": "^9.0.15",
     "iso-639-1": "^2.1.15",
     "markdown-to-jsx": "^7.7.3",
-    "next": "13.5.8",
+    "next": "13.5.8", 
     "node-fetch": "^3.3.2",
     "node-forge": "1.3.1",
     "posthog-js": "^1.236.8",
@@ -196,6 +193,7 @@
       "fsevents"
     ],
     "overrides": {
+      "clones-with-immutable-args": "npm:empty-npm-package@*",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@wagmi/core": "2.13.3",
       "@walletconnect/ethereum-provider": "2.11.1",
@@ -295,13 +293,15 @@
       "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz"
     },
     "patchedDependencies": {
+      "@ensdomains/dnsprovejs@0.5.1": "patches/@ensdomains__dnsprovejs@0.5.1.patch",
+      "@ensdomains/ens-contracts@1.6.0": "patches/@ensdomains__ens-contracts@1.6.0.patch",
+      "@ensdomains/ens-test-env@1.0.1": "patches/@ensdomains__ens-test-env@1.0.1.patch",
       "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
       "node-forge@1.3.1": "patches/node-forge@1.3.1.patch",
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "viem@2.19.4": "patches/viem@2.19.4.patch",
       "hardhat-deploy@0.12.4": "patches/hardhat-deploy@0.12.4.patch",
-      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch",
-      "@ensdomains/dnsprovejs@0.5.1": "patches/@ensdomains__dnsprovejs@0.5.1.patch"
+      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch"
     }
   },
   "packageManager": "pnpm@10.23.0"

@@ -15,6 +15,27 @@ import { createDateAndValue } from '@app/utils/utils'
 import { makeMockUseAbilitiesData } from '../../../../../../../test/mock/makeMockUseAbilitiesData'
 import { PermissionsTab } from './PermissionsTab'
 
+vi.mock('next/router', () => ({
+  useRouter: () => ({
+    query: {},
+    pathname: '/',
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    reload: vi.fn(),
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+      emit: vi.fn(),
+    },
+    isFallback: false,
+    isLocaleDomain: false,
+    isReady: true,
+    isPreview: false,
+  }),
+}))
+
 type WrapperData = GetWrapperDataReturnType
 
 const makeWrapperData = (override: DeepPartial<WrapperData> = {}) => {
