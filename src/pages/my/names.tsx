@@ -10,6 +10,7 @@ import { NameListView } from '@app/components/@molecules/NameListView/NameListVi
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 const ContentContainer = styled.div(
   ({ theme }) => css`
@@ -42,7 +43,7 @@ export default function Page() {
               as="a"
               target="_blank"
               rel="noopener noreferrer"
-              href="https://support.ens.domains/en/articles/9375254-why-is-my-ens-name-not-in-my-names"
+              href={getSupportLink('offchain-not-in-names')}
               icon={QuestionCircleSVG}
               title={t('offchainWarning.title')}
             >
