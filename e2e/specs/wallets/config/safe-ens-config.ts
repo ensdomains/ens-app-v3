@@ -37,7 +37,7 @@ export const SafeEnsConfig = {
 
   // MetaMask configuration
   METAMASK: {
-    VERSION: MetaMaskWallet.RECOMMENDED_VERSION, // Use recommended dappwright version
+    VERSION: '13.13.1', // Use recommended dappwright version
     SETUP_TIMEOUT: 30000,
     TRANSACTION_TIMEOUT: 60000,
   },

@@ -64,7 +64,7 @@ ENS_APP_URL="http://localhost:3000"  # For local development
 ```typescript
 const [metaMask, page, browserContext] = await dappwright.bootstrap('chromium', {
   wallet: 'metamask',
-  version: '12.23.0', // Recommended stable version
+  version: '13.13.1', // Recommended stable version
   seed: 'test test test test test test test test test test test junk',
   password: 'TestMetaMask',
   headless: false, // Required for extensions
@@ -114,7 +114,7 @@ The test uses configuration from `e2e/config/safe-ens-config.ts`:
 export const SafeEnsConfig = {
   NETWORK: 'sepolia', // Fixed for testing
   METAMASK: {
-    VERSION: '12.23.0', // Stable dappwright-recommended version
+    VERSION: 13.13.1', // Stable dappwright-recommended version
     SETUP_TIMEOUT: 30000,
     TRANSACTION_TIMEOUT: 60000,
   },
