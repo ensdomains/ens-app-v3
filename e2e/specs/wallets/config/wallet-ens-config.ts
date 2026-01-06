@@ -44,9 +44,9 @@ export async function connectWalletToEns(page: Page, context: BrowserContext): P
     attempts += 1
   }
 
-  if (!mmPage) {
-    throw new Error('❌ MetaMask popup not found')
-  }
+  // if (!mmPage) {
+  //   throw new Error('❌ MetaMask popup not found')
+  // }
 
   await mmPage.bringToFront()
 
@@ -116,4 +116,27 @@ export async function confirmTransactionWithMetaMask(
   console.log(`✅ MetaMask ${type || 'transaction'} confirmed`)
 
   await page.bringToFront()
+}
+
+// Switch to User 2 account + switch to Sepolia
+export async function switchToUser2AndSepolia(page: Page, metaMask: any): Promise<void> {
+  console.log('👤 Switching to User 2 account...')
+
+  // Switch to User 2 account
+  await page.click('[data-testid="account-menu-icon"]')
+  await page.click('[data-testid="add-multichain-account-button"]')
+  await page
+    .locator('.multichain-account-cell__account-name')
+    .filter({ hasText: 'account 2' })
+    .click()
+
+  console.log('✅ Switched to User 2 account')
+
+  // Switch to Sepolia network
+  try {
+    await metaMask.switchNetwork('Sepolia')
+    console.log('✅ Switched to Sepolia network')
+  } catch (error) {
+    console.log('⚠️ Could not switch to Sepolia:', error)
+  }
 }

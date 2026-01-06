@@ -12,7 +12,7 @@ import {
   searchForName,
   waitForTransactionComplete,
 } from './config/test-utilities'
-import { connectWalletToEns } from './config/wallet-ens-config'
+import { connectWalletToEns, switchToUser2AndSepolia } from './config/wallet-ens-config'
 
 // Global variables to share state
 let metaMask: Dappwright
@@ -198,20 +198,8 @@ test.describe('ENS Sepolia Extend Name', () => {
 
     console.log('✅ MetaMask setup complete')
 
-    // Switch to User 2 account
-    await page.click('[data-testid="account-menu-icon"]')
-    await page.click('[data-testid="multichain-account-menu-popover-action-button"]')
-    await page.click('[data-testid="multichain-account-menu-popover-add-account"]')
-    await page.click('[data-testid="submit-add-account-with-name"]')
-
-    console.log('✅ Switched to User 2 account')
-
-    try {
-      await metaMask.switchNetwork('Sepolia')
-      console.log('✅ Switched to Sepolia network')
-    } catch (error) {
-      console.log('⚠️ Could not switch to Sepolia:', error)
-    }
+    // Switch to User 2 account and Sepolia network
+    await switchToUser2AndSepolia(page, metaMask)
 
     // Connect wallet to ENS Sepolia
     await connectWalletToEns(page, context)
