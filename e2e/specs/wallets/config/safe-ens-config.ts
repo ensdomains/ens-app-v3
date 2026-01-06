@@ -1,5 +1,6 @@
 import * as path from 'path'
 
+import { MetaMaskWallet } from '@tenkeylabs/dappwright'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as dotenv from 'dotenv'
 
@@ -36,7 +37,7 @@ export const SafeEnsConfig = {
 
   // MetaMask configuration
   METAMASK: {
-    VERSION: '12.23.0', // Use recommended dappwright version
+    VERSION: MetaMaskWallet.RECOMMENDED_VERSION, // Use recommended dappwright version
     SETUP_TIMEOUT: 30000,
     TRANSACTION_TIMEOUT: 60000,
   },

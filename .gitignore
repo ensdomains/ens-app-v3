@@ -78,3 +78,7 @@ certificates
 
 # Claude
 .playwright-mcp
+
+# Test
+registration-error-*.png
+*debug.png
