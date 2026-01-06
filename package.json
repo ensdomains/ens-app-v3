@@ -124,7 +124,7 @@
     "@nomicfoundation/hardhat-viem": "2.0.3",
     "@openzeppelin/contracts": "^4.7.3",
     "@playwright/test": "1.50.1",
-    "@tenkeylabs/dappwright": "^2.11.2",
+    "@tenkeylabs/dappwright": "^2.13.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^16.2.0",
