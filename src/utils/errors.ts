@@ -8,7 +8,11 @@ import {
   TransactionRejectedRpcError,
 } from 'viem'
 
-import { ethRegistrarControllerErrors, nameWrapperErrors } from '@ensdomains/ensjs/contracts'
+import {
+  dnsRegistrarErrors,
+  ethRegistrarControllerErrors,
+  nameWrapperErrors,
+} from '@ensdomains/ensjs/contracts'
 
 type ReadableErrorType = 'insufficientFunds' | 'contract' | 'unknown'
 type ReadableError = {
@@ -22,7 +26,11 @@ export const getViemRevertErrorData = (err: unknown) => {
   return typeof error.data === 'object' ? error.data.data : error.data
 }
 
-export const allContractErrors = [...ethRegistrarControllerErrors, ...nameWrapperErrors]
+export const allContractErrors = [
+  ...ethRegistrarControllerErrors,
+  ...nameWrapperErrors,
+  ...dnsRegistrarErrors,
+]
 
 const insufficientFundsRegex =
   /insufficient funds for gas \* price \+ value: address (?<address>0x[a-fA-F0-9]{40}) have (?<availableBalance>\d*) want (?<requiredBalance>\d*)/
