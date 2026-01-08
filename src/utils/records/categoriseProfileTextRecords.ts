@@ -1,5 +1,6 @@
 import type { DecodedText } from '@ensdomains/ensjs/dist/types'
 
+import { isCustomAccountKey } from '@app/constants/customAccountRecordKeys'
 import {
   supportedGeneralRecordKeys,
   SupportedGeneralRecordsKey,
@@ -44,10 +45,12 @@ export const categoriseAndTransformTextRecords = ({
   }>(
     (acc, record) => {
       const normalisedRecord = normaliseProfileAccountsRecord(record)
+      // Check if it's a supported social record OR a custom account key
       if (
         supportedSocialRecordKeys.includes(
           normalisedRecord.normalisedKey as unknown as SupportedSocialRecordKey,
-        )
+        ) ||
+        isCustomAccountKey(record.key)
       ) {
         const normalisedRecordWithVerifications =
           appendVerificationProps?.(normalisedRecord) || normalisedRecord
