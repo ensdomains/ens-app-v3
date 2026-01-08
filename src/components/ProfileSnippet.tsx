@@ -12,6 +12,7 @@ import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { isDeceptiveUrl, getUrlDisplayText } from '@app/utils/security/validateUrl'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -180,7 +181,8 @@ export const getUserDefinedUrl = (url?: string) => {
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url
   }
-  return ``
+  // Don't add protocol to URLs that don't have one
+  return undefined
 }
 
 export const ProfileSnippet = ({
@@ -311,11 +313,23 @@ export const ProfileSnippet = ({
               </Typography>
             )}
             {url && (
-              <a href={url} data-testid="profile-snippet-url" target="_blank" rel="noreferrer">
-                <Typography color="blue" id="profile-url">
-                  {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
+              isDeceptiveUrl(url) ? (
+                <Typography
+                  color="greyPrimary"
+                  id="profile-url"
+                  data-testid="profile-snippet-url-disabled"
+                  style={{ textDecoration: 'line-through', cursor: 'not-allowed' }}
+                  title="This URL contains deceptive patterns and has been disabled for security"
+                >
+                  {getUrlDisplayText(url)}
                 </Typography>
-              </a>
+              ) : (
+                <a href={url} data-testid="profile-snippet-url" target="_blank" rel="noreferrer">
+                  <Typography color="blue" id="profile-url">
+                    {getUrlDisplayText(url)}
+                  </Typography>
+                </a>
+              )
             )}
           </LocationAndUrl>
         )}
