@@ -2,10 +2,10 @@ name: Wallet Tests (Container)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      #all files
-      - '**'
+  # push:
+  #   paths:
+  #     #all files
+  #     - '**'
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
