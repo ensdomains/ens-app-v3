@@ -1,3 +1,6 @@
+import { match } from 'ts-pattern'
+
+import { getNetworkFromUrl } from '@app/constants/chains'
 import type { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 
 /**
@@ -51,11 +54,12 @@ const DENTITY_ENV_CONFIGS = {
 
 type DentityEnvironment = keyof typeof DENTITY_ENV_CONFIGS
 
-const DENTITY_ENV: DentityEnvironment = 'production'
+const DENTITY_ENV: DentityEnvironment = match(getNetworkFromUrl())
+  .with('mainnet', () => 'production' as const)
+  .with('sepolia', () => 'staging' as const)
+  .otherwise(() => 'dev' as const)
 
 export const DENTITY_BASE_ENDPOINT = DENTITY_ENV_CONFIGS[DENTITY_ENV].endpoint
-
-export const DENTITY_VPTOKEN_ENDPOINT = `${DENTITY_BASE_ENDPOINT}/oidc/vp-token`
 
 export const DENTITY_CLIENT_ID = DENTITY_ENV_CONFIGS[DENTITY_ENV].clientId
 
