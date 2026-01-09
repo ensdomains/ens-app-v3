@@ -176,6 +176,30 @@ test.describe('Address page error handling', () => {
     expect(requestCount).toBeGreaterThanOrEqual(3) // At least 2 failures + 1 success
   })
 
+  test('should display no-profile-snippet when no primary name set with invalid resolver', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    // SETUP: Create name with invalid resolver (triggers ContractFunctionExecutionError)
+    // Deliberately NOT setting as primary name to test no-primary-name scenario
+    const name = await createUserName(makeName, 'no-primary-invalid-resolver')
+    await setInvalidResolver(page, name, login, makePageObject)
+
+    // ACTION: Navigate to address page
+    const userAddress = getUserAddress()
+    await page.goto(`/${userAddress}`)
+
+    // ASSERT: Page loads gracefully showing no-profile-snippet (not profile-snippet)
+    await expect(page.getByTestId('no-profile-snippet')).toBeVisible()
+
+    // ASSERT: Names list loads despite invalid resolver on owned name
+    await expect(page.getByTestId('names-list')).toBeVisible({ timeout: NAMES_LIST_TIMEOUT })
+  })
+
   test.afterEach(async () => {
     // Clean up: reset primary name after each test
     await setPrimaryName(walletClient, {
