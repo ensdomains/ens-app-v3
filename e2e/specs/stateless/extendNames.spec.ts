@@ -775,6 +775,7 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
 
     await page.goto(`/${name}?referrer=${referrerAddress}`)
     await login.connect()
@@ -787,12 +788,12 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
 
     // Set extension and proceed
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Complete transaction
     await transactionModal.confirm()
 
-    await expect(page.getByText('Your "Extend Names" transaction was successful')).toBeVisible({
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
 
@@ -817,6 +818,7 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
 
     await page.goto(`/${name}`)
     await login.connect()
@@ -829,7 +831,7 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
 
     // Set extension and proceed
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Complete transaction
     await transactionModal.confirm()
@@ -856,6 +858,7 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
 
     await profilePage.goto(name)
     await login.connect()
@@ -871,7 +874,7 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
 
     // Set extension and proceed
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Complete transaction
     await transactionModal.confirm()
@@ -883,6 +886,66 @@ test.describe('Legacy/Unwrapped Name Extension with Referrer', () => {
     // Verify referrer is included in the transaction calldata
     const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
     const referrerHex = addressToBytes32(referrerAddress)
+    expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
+  })
+
+  test('should extend unwrapped name with ENS name as referrer', async ({
+    page,
+    login,
+    accounts,
+    makeName,
+    makePageObject,
+  }) => {
+    // Create an ENS name that will be used as referrer (has an ETH address record)
+    const referrerName = await makeName({
+      label: 'legacy-ens-referrer-name',
+      type: 'legacy',
+      owner: 'user2',
+      records: {
+        coins: [
+          {
+            coin: 'ETH',
+            value: accounts.getAddress('user2'),
+          },
+        ],
+      },
+    })
+
+    const name = await makeName({
+      label: 'legacy-with-ens-referrer',
+      type: 'legacy',
+      owner: 'user',
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
+
+    await page.goto(`/${name}?referrer=${referrerName}`)
+    await login.connect()
+
+    // Verify referrer is in URL
+    expect(page.url()).toContain(`referrer=${referrerName}`)
+
+    // Click extend button
+    await profilePage.getExtendButton.click()
+
+    // Set extension and proceed
+    await page.getByTestId('plus-minus-control-plus').click()
+    // Wait for referrer to be resolved before clicking
+    await expect(extendNamesModal.getExtendButton).toBeEnabled({ timeout: 10000 })
+    await extendNamesModal.getExtendButton.click()
+
+    await transactionModal.confirm()
+
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
+      timeout: 10000,
+    })
+
+    // Verify resolved referrer address in transaction calldata
+    const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+    // The ENS name should have resolved to user2's address
+    const referrerHex = addressToBytes32(accounts.getAddress('user2'))
     expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
   })
 })
@@ -903,6 +966,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     })
 
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
 
     // Add referrer parameter to URL
     const referrerAddress = '0x1234567890123456789012345678901234567890'
@@ -917,7 +981,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
 
     // Proceed to transaction
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Complete transaction
     await transactionModal.confirm()
@@ -947,6 +1011,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     })
 
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
     const referrerAddress = '0x1234567890123456789012345678901234567890'
 
     // Start on profile page with referrer
@@ -982,7 +1047,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('2 years')
 
     // Proceed
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Verify referrer persisted
     expect(page.url()).toContain(`referrer=${referrerAddress}`)
@@ -1009,6 +1074,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     })
 
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
 
     // Navigate without referrer parameter
     await page.goto(`/${name}`)
@@ -1018,7 +1084,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
 
     await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
 
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     await transactionModal.confirm()
 
@@ -1026,6 +1092,68 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
       timeout: 10000,
     })
+  })
+
+  test('should extend wrapped name with ENS name as referrer', async ({
+    page,
+    login,
+    accounts,
+    makeName,
+    makePageObject,
+  }) => {
+    // Create an ENS name that will be used as referrer (has an ETH address record)
+    const referrerName = await makeName({
+      label: 'extend-referrer',
+      type: 'legacy',
+      owner: 'user2',
+      records: {
+        coins: [
+          {
+            coin: 'ETH',
+            value: accounts.getAddress('user2'),
+          },
+        ],
+      },
+    })
+
+    const name = await makeName({
+      label: 'wrapped-ens-referrer',
+      type: 'wrapped',
+      owner: 'user',
+      duration: daysToSeconds(30),
+    })
+
+    const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
+
+    await page.goto(`/${name}?referrer=${referrerName}`)
+    await login.connect()
+
+    // Verify referrer is in URL
+    expect(page.url()).toContain(`referrer=${referrerName}`)
+
+    // Click extend button
+    await page.getByTestId('extend-button').click()
+
+    // Set extension and proceed
+    await page.getByTestId('plus-minus-control-plus').click()
+    await expect(page.getByTestId('plus-minus-control-label')).toHaveText('2 years')
+
+    // Wait for referrer to be resolved before clicking
+    await expect(extendNamesModal.getExtendButton).toBeEnabled({ timeout: 10000 })
+    await extendNamesModal.getExtendButton.click()
+
+    await transactionModal.confirm()
+
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
+      timeout: 10000,
+    })
+
+    // Verify resolved referrer address in transaction calldata
+    const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+    // The ENS name should have resolved to user2's address
+    const referrerHex = addressToBytes32(accounts.getAddress('user2'))
+    expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
   })
 
   test('should use correct contract for wrapped vs unwrapped names', async ({
@@ -1050,12 +1178,13 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     })
 
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
 
     // Test wrapped name renewal
     await page.goto(`/${wrappedName}`)
     await login.connect()
     await page.getByTestId('extend-button').click()
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Note: In a real test, we would inspect the transaction data to verify
     // it's calling the correct contract (UniversalRegistrarRenewalWithReferrer)
@@ -1068,7 +1197,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     // Test legacy name renewal
     await page.goto(`/${legacyName}`)
     await page.getByTestId('extend-button').click()
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Note: This should use the standard ETHRegistrarController
     await transactionModal.confirm()
@@ -1110,6 +1239,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     const address = accounts.getAddress('user')
     const addressPage = makePageObject('AddressPage')
     const transactionModal = makePageObject('TransactionModal')
+    const extendNamesModal = makePageObject('ExtendNamesModal')
 
     await page.goto(`/my/names?address=${address}`)
     await login.connect()
@@ -1134,7 +1264,7 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
     // Check that we're extending at least 3 names (the ones we created)
     await expect(page.getByText(/Extend 3 Names/)).toBeVisible()
 
-    await page.locator('button:has-text("Next")').click()
+    await extendNamesModal.getExtendButton.click()
 
     // Complete transaction
     await transactionModal.confirm()

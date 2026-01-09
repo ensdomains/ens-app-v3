@@ -20,11 +20,11 @@ import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
+import { useResolvedReferrer } from '@app/hooks/useResolvedReferrer'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
-import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
 import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
@@ -188,7 +188,9 @@ const ExtendNames = ({
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
 
   const referrer = useReferrer()
-  const referrerHex = getReferrerHex(referrer)
+  const { data: resolvedReferrer, isLoading: isReferrerResolving } = useResolvedReferrer({
+    referrer,
+  })
 
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
   const { address, isConnected: isAccountConnected } = useAccount()
@@ -232,7 +234,7 @@ const ExtendNames = ({
           duration: seconds,
           names,
           startDateTimestamp: expiryDate?.getTime(),
-          referrer: referrerHex,
+          referrer: resolvedReferrer,
           hasWrapped,
         },
         stateOverride: [
@@ -285,7 +287,8 @@ const ExtendNames = ({
 
   const isBaseDataLoading =
     !isAccountConnected || isBalanceLoading || isExpiryEnabledAndLoading || isEthPriceLoading
-  const isRegisterLoading = isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError)
+  const isRegisterLoading =
+    isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError) || isReferrerResolving
 
   const { title, alert, buttonProps } = match(view)
     .with('no-ownership-warning', () => ({
@@ -312,6 +315,7 @@ const ExtendNames = ({
       alert: undefined,
       buttonProps: {
         disabled: isRegisterLoading,
+        loading: isRegisterLoading,
         onClick: () => {
           if (!totalRentFee) return
           const transactions = createTransactionItem('extendNames', {
@@ -324,7 +328,7 @@ const ExtendNames = ({
               bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
               currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
             }),
-            referrer: referrerHex,
+            referrer: resolvedReferrer,
             hasWrapped,
           })
           dispatch({ name: 'setTransactions', payload: [transactions] })
