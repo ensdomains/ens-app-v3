@@ -39,6 +39,21 @@ vi.mock('@app/utils/BreakpointProvider', () => ({
   }),
 }))
 
+vi.mock('@app/hooks/chain/useChainName', () => ({
+  useChainName: () => 'mainnet',
+}))
+
+vi.mock('@app/hooks/useRouterWithHistory', () => ({
+  useRouterWithHistory: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    pushWithHistory: vi.fn(),
+    asPath: '/',
+    pathname: '/',
+    query: {},
+  }),
+}))
+
 describe('onwershipInfoCalc', () => {
   it('should return no owner if PCC is expired', () => {
     const result = ownershipInfoCalc('', true, [], new Date(), new Date())

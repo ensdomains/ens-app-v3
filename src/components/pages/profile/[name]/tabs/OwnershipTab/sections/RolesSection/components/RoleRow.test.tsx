@@ -2,8 +2,6 @@ import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import { mainnetWithEns } from '@app/constants/chains'
-
 import { RoleRow } from './RoleRow'
 
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
@@ -16,9 +14,10 @@ vi.mock('@app/hooks/ensjs/public/usePrimaryName', () => ({
   }),
 }))
 
-vi.mock('@app/hooks/usePublicClient', () => ({
-  usePublicClient: () => ({
-    chain: mainnetWithEns,
+vi.mock('@app/hooks/chain/useBlockExplorer', () => ({
+  useBlockExplorer: () => ({
+    blockExplorer: { name: 'Etherscan', url: 'https://etherscan.io' },
+    buildAddressUrl: (address: string) => `https://etherscan.io/address/${address}`,
   }),
 }))
 
@@ -193,7 +192,7 @@ describe('RoleRow', () => {
     await waitFor(() => {
       expect(screen.getByText('address.viewAddress')).toBeVisible()
     })
-    expect(screen.queryByText('transaction.viewEtherscan')).toBeVisible()
+    expect(screen.queryByText('transaction.viewOnBlockExplorer')).toBeVisible()
   })
 
   it('should display view on etherscan if usePrimary returns subaname and name is wrapped', async () => {
@@ -214,7 +213,7 @@ describe('RoleRow', () => {
     await waitFor(() => {
       expect(screen.getByText('address.viewAddress')).toBeVisible()
     })
-    expect(screen.queryByText('transaction.viewEtherscan')).toBeVisible()
+    expect(screen.queryByText('transaction.viewOnBlockExplorer')).toBeVisible()
   })
 
   it('should display edit roles option if action type `edit-roles`', async () => {

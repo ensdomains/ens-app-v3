@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCopyToClipboard } from 'react-use'
@@ -24,15 +23,17 @@ import { DynamicVerificationIcon } from '@app/assets/verification/DynamicVerific
 import { VerificationBadgeAccountTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeAccountTooltipContent'
 import { VerificationBadgeVerifierTooltipContent } from '@app/components/@molecules/VerificationBadge/components/VerificationBadgeVerifierTooltipContent'
 import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/VerificationBadge'
+import { useBlockExplorer } from '@app/hooks/chain/useBlockExplorer'
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestinationAsHref } from '@app/routes'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { getSocialData } from '@app/utils/getSocialData'
 import { createUrlObject } from '@app/utils/urlObject'
-import { makeEtherscanLink, shortenAddress } from '@app/utils/utils'
+import { shortenAddress } from '@app/utils/utils'
 import { getVerifierData } from '@app/utils/verification/getVerifierData'
 import { isVerificationProtocol } from '@app/utils/verification/isVerificationProtocol'
 
@@ -120,13 +121,16 @@ export const AddressProfileButton = ({
   iconKey: string
   value: string
 }) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
   const [, copy] = useCopyToClipboard()
-  const coinChainResults = useCoinChain({ coinName: iconKey })
+  const { blockExplorer: currentChainBlockExplorer } = useBlockExplorer()
+  const coinChainResults = useCoinChain({ coinName: iconKey, enabled: iconKey !== 'eth' })
   const { data } = coinChainResults
-  const defaultBlockExplorer = data?.blockExplorers?.default
+  // For ETH addresses, use the current chain's block explorer; for other coins, use coin-specific explorer
+  const defaultBlockExplorer =
+    iconKey === 'eth' ? currentChainBlockExplorer : data?.blockExplorers?.default
   const referrer = router.query.referrer as string | undefined
 
   const IconComponent = useMemo(
@@ -139,7 +143,8 @@ export const AddressProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: 'View address',
-          href: getDestinationAsHref(createUrlObject(`/${address}`, { referrer })),
+          onClick: () =>
+            router.push(getDestinationAsHref(createUrlObject(`/${address}`, { referrer }))),
         }
       : undefined,
     {
@@ -151,7 +156,12 @@ export const AddressProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: `View on ${defaultBlockExplorer?.name}`,
-          href: `${defaultBlockExplorer?.url}/address/${address}`,
+          onClick: () =>
+            window.open(
+              `${defaultBlockExplorer?.url}/address/${address}`,
+              '_blank',
+              'noopener,noreferrer',
+            ),
         }
       : undefined,
   ].filter((item) => item !== undefined) as DropdownItem[]
@@ -278,19 +288,18 @@ export const OwnerProfileButton = ({
   value: string
   timestamp?: number
 }) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
+  const { blockExplorer, buildAddressUrl } = useBlockExplorer()
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
   const referrer = router.query.referrer as string | undefined
 
   const dataType = useMemo(() => {
-    if (!addressOrNameOrDate)
-      // eslint-disable-next-line no-nested-ternary
-      return label === 'name.expiry'
-        ? 'noExpiry'
-        : label === 'name.parent'
-        ? 'noParent'
-        : 'notOwned'
+    if (!addressOrNameOrDate) {
+      if (label === 'name.expiry') return 'noExpiry'
+      if (label === 'name.parent') return 'noParent'
+      return 'notOwned'
+    }
     if (label === 'name.expiry') return 'expiry'
     if (isAddress(addressOrNameOrDate)) return 'address'
     const isTLD = addressOrNameOrDate.split('.').length === 1
@@ -362,7 +371,7 @@ export const OwnerProfileButton = ({
       ? {
           icon: UpRightArrowIcon,
           label: 'View profile',
-          href: link,
+          onClick: () => router.push(link),
         }
       : undefined,
     primary.data?.name
@@ -377,21 +386,30 @@ export const OwnerProfileButton = ({
           {
             icon: UpRightArrowIcon,
             label: 'View address',
-            href: getDestinationAsHref({
-              pathname: `/${addressOrNameOrDate}`,
-              query: { referrer },
-            }),
+            onClick: () =>
+              router.push(
+                getDestinationAsHref(createUrlObject(`/${addressOrNameOrDate}`, { referrer })),
+              ),
           },
           {
             icon: CopyIcon,
             label: 'Copy address',
             onClick: () => copy(addressOrNameOrDate),
           },
-          {
-            icon: UpRightArrowIcon,
-            label: 'View on Etherscan',
-            href: makeEtherscanLink(addressOrNameOrDate, 'mainnet', 'address'),
-          },
+          ...(blockExplorer
+            ? [
+                {
+                  icon: UpRightArrowIcon,
+                  label: `View on ${blockExplorer.name}`,
+                  onClick: () =>
+                    window.open(
+                      buildAddressUrl(addressOrNameOrDate),
+                      '_blank',
+                      'noopener,noreferrer',
+                    ),
+                },
+              ]
+            : []),
         ] as DropdownItem[])
       : []),
   ].filter((item) => item !== undefined) as DropdownItem[]
