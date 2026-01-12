@@ -4,6 +4,7 @@ import { Address } from 'viem'
 import { setResolver } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { bustMediaCache } from '@app/utils/metadataCache'
 
 import { shortenAddress } from '../../utils/utils'
 
@@ -34,7 +35,11 @@ const displayItems = (
   },
 ]
 
-const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = ({ client, connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  // Bust cache for both avatar and header when changing resolver
+  // The new resolver may have different records
+  bustMediaCache(data.name, client)
+
   return setResolver.makeFunctionData(connectorClient, {
     name: data.name,
     contract: data.contract,

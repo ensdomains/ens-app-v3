@@ -4,6 +4,7 @@ import type { Address } from 'viem'
 import { clearRecords } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { bustMediaCache } from '@app/utils/metadataCache'
 
 type Data = {
   name: string
@@ -29,7 +30,12 @@ const displayItems = ({ name, resolverAddress }: Data, t: TFunction): Transactio
   ]
 }
 
-const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = ({ client, connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  const { name } = data
+
+  // Bust cache for both avatar and header (resetting clears all records)
+  bustMediaCache(name, client)
+
   return clearRecords.makeFunctionData(connectorClient, data)
 }
 

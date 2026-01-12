@@ -61,6 +61,13 @@ export const TransactionNotifications = () => {
             break
           case 'updateProfileRecords':
           case 'updateProfile':
+          case 'resetProfile':
+          case 'resetProfileWithRecords':
+          case 'migrateProfile':
+          case 'migrateProfileWithReset':
+          case 'updateResolver':
+            // Cache busting now handled in transaction files
+            // Still need to invalidate queries to trigger refetch
             queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
           default:
