@@ -349,6 +349,7 @@
       "unknown": "An unknown error occurred"
     },
     "viewEtherscan": "View on Etherscan",
+    "viewOnBlockExplorer": "View on {{blockExplorer}}",
     "viewMore": "View More"
   },
   "search": {
