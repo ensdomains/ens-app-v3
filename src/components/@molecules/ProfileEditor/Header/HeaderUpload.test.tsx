@@ -54,7 +54,7 @@ describe('<HeaderUpload />', () => {
   })
   it('calls handleCancel when cancel button is clicked', () => {
     render(<HeaderUpload {...props} />)
-    fireEvent.click(screen.getByTestId('avatar-cancel-button'))
+    fireEvent.click(screen.getByTestId('header-cancel-button'))
     expect(mockHandleCancel).toHaveBeenCalled()
   })
   it('calls handleSubmit with correct data if upload is successful on mainnet', async () => {
