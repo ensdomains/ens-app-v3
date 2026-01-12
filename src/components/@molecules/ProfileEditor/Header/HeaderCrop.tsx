@@ -1,10 +1,9 @@
 /* eslint-disable no-multi-assign */
-/* eslint-disable no-param-reassign */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Helper, Slider } from '@ensdomains/thorin'
+import { Button, Dialog, Slider } from '@ensdomains/thorin'
 
 import CropBorderSVG from '@app/assets/HeaderCropBorder.svg'
 import CropFrameSVG from '@app/assets/HeaderCropFrame.svg'
@@ -106,6 +105,105 @@ const ImageCropFrame = styled.div(
   `,
 )
 
+const ImageCropGuides = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    pointer-events: none;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background-color: ${theme.colors.accent};
+      opacity: 0.3;
+    }
+
+    /* Vertical lines - positioned within the frame for 25% 50% 25% spacing */
+    &::before {
+      left: calc(10% + 80% * 0.25);
+      top: 10%;
+      width: 1px;
+      height: 80%;
+    }
+
+    &::after {
+      left: calc(10% + 80% * 0.75);
+      top: 10%;
+      width: 1px;
+      height: 80%;
+    }
+
+    /* Horizontal lines - positioned within the frame for 6:1 aspect ratio (25% 50% 25%) */
+    & > span:nth-child(1) {
+      position: absolute;
+      left: 10%;
+      top: calc(10% + 80% * 0.25);
+      width: 80%;
+      height: 1px;
+      background-color: ${theme.colors.accent};
+      opacity: 0.3;
+    }
+
+    & > span:nth-child(2) {
+      position: absolute;
+      left: 10%;
+      top: calc(10% + 80% * 0.75);
+      width: 80%;
+      height: 1px;
+      background-color: ${theme.colors.accent};
+      opacity: 0.3;
+    }
+  `,
+)
+
+const AspectRatioLabel = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    color: ${theme.colors.textSecondary};
+    padding: ${theme.space['1']} ${theme.space['2']};
+    border-radius: ${theme.radii.large};
+    font-size: ${theme.fontSizes.extraSmall};
+    font-weight: ${theme.fontWeights.normal};
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.9;
+  `,
+)
+
+const OuterRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    top: 10%;
+    right: calc(90% + 0.25rem);
+    transform: translateY(-50%);
+  `,
+)
+
+const InnerRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    top: calc(10% + 80% * 0.25);
+    right: calc(90% + 0.25rem);
+    transform: translateY(-50%);
+  `,
+)
+
+const BottomInnerRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    top: calc(10% + 80% * 0.75);
+    right: calc(90% + 0.25rem);
+    transform: translateY(-50%);
+  `,
+)
+
+const BottomOuterRatioLabel = styled(AspectRatioLabel)(
+  () => css`
+    bottom: 10%;
+    right: calc(90% + 0.25rem);
+    transform: translateY(50%);
+  `,
+)
+
 const StyledCanvas = styled.canvas(
   () => css`
     width: 100%;
@@ -138,35 +236,31 @@ const SliderContainer = styled.div(
   `,
 )
 
-export const AvCancelButton = ({ handleCancel }: { handleCancel: () => void }) => {
+export const HeaderCancelButton = ({ handleCancel }: { handleCancel: () => void }) => {
   const { t } = useTranslation('common')
 
   return (
-    <Button data-testid="avatar-cancel-button" colorStyle="accentSecondary" onClick={handleCancel}>
+    <Button data-testid="header-cancel-button" colorStyle="accentSecondary" onClick={handleCancel}>
       {t('action.back')}
     </Button>
   )
 }
 
-// Types for reusable hooks
-type Coordinates = {
-  x: number
-  y: number
-  mx: number
-  my: number
-  w: number
-  h: number
-  oW: number
-  oH: number
-  moving: boolean
-}
+export const CropComponent = ({
+  header,
+  handleCancel,
+  setDataURL,
+}: {
+  header: File
+  handleCancel: () => void
+  setDataURL: (dataURL: string) => void
+}) => {
+  const { t } = useTranslation('transactionFlow')
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const imageRef = useRef(new Image())
+  const resolutionMultiplierRef = useRef(1)
 
-// Hook for canvas drawing functionality
-const useCanvasDrawing = (
-  imageRef: React.RefObject<HTMLImageElement>,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-) => {
-  const coordinatesRef = useRef<Coordinates>({
+  const coordinatesRef = useRef({
     x: 0,
     y: 0,
     mx: 0,
@@ -178,6 +272,34 @@ const useCanvasDrawing = (
     moving: false,
   })
 
+  const touchPoints = useRef<Touch[]>([])
+
+  const [zoom, setZoom] = useState(100)
+
+  const handleSubmit = () => {
+    const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current!)
+    const cropCanvas = document.createElement('canvas')
+    const cropCtx = cropCanvas.getContext('2d')!
+
+    cropCanvas.width = cropWidth
+    cropCanvas.height = cropHeight
+
+    cropCtx.fillStyle = 'white'
+    cropCtx.fillRect(0, 0, cropWidth, cropHeight)
+    cropCtx.drawImage(
+      canvasRef.current!,
+      maxX,
+      maxY,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      cropWidth,
+      cropHeight,
+    )
+    setDataURL(cropCanvas.toDataURL('image/jpeg', 0.9))
+  }
+
   const draw = useCallback(() => {
     const image = imageRef.current
     const canvas = canvasRef.current
@@ -187,14 +309,12 @@ const useCanvasDrawing = (
     // eslint-disable-next-line prefer-const
     let { x, y, w, h, mx, my, moving } = coordinatesRef.current
     const ctx = canvas.getContext('2d')
-
     if (!ctx) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to get canvas context')
       }
       return
     }
-
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     x += mx
     y += my
@@ -202,7 +322,6 @@ const useCanvasDrawing = (
     x = Math.round(x)
     y = Math.round(y)
     ctx.drawImage(image, x, y, w, h)
-
     coordinatesRef.current = {
       ...coordinatesRef.current,
       x,
@@ -213,7 +332,6 @@ const useCanvasDrawing = (
       h,
       moving,
     }
-
     if (!moving) {
       coordinatesRef.current.mx = calcMomentumX(x, maxX, w, cropWidth)
       coordinatesRef.current.my = calcMomentumY(y, maxY, h, cropHeight)
@@ -221,36 +339,12 @@ const useCanvasDrawing = (
         window.requestAnimationFrame(draw)
       }
     }
-  }, [canvasRef, imageRef])
-
-  const updateCoordinates = useCallback((newCoords: Partial<Coordinates>) => {
-    coordinatesRef.current = {
-      ...coordinatesRef.current,
-      ...newCoords,
-    }
   }, [])
 
-  return {
-    draw,
-    coordinatesRef,
-    updateCoordinates,
-  }
-}
-
-// Hook for handling image loading
-const useImageLoader = (
-  avatar: File,
-  imageRef: React.RefObject<HTMLImageElement>,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  coordinatesRef: React.MutableRefObject<Coordinates>,
-  draw: () => void,
-) => {
   const handleImageLoad = useDebouncedCallback(
     () => {
       const image = imageRef.current
-      if (!image || !canvasRef.current) return
-
-      const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current)
+      const { cropWidth, cropHeight, maxX, maxY, ctx } = getHeaderVars(canvasRef.current!)
       const { width: iw, height: ih } = image
       const ir = iw / ih
 
@@ -280,15 +374,7 @@ const useImageLoader = (
         y = maxY
       }
 
-      const ctx = canvasRef.current.getContext('2d')
-      if (!ctx) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to get canvas context')
-        }
-        return
-      }
-
-      ctx.drawImage(image, x, y, w, h)
+      ctx!.drawImage(image, x, y, w, h)
       coordinatesRef.current = {
         x,
         y,
@@ -300,62 +386,32 @@ const useImageLoader = (
         my: 0,
         moving: false,
       }
-
       window.requestAnimationFrame(draw)
     },
     100,
     [draw],
   )
 
-  useEffect(() => {
-    const image = imageRef.current
-    if (!canvasRef.current || !image) return
-
-    const blobUrl = URL.createObjectURL(avatar)
-    image.src = blobUrl
-    image.onload = handleImageLoad
-    image.onerror = () => {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to load image')
+  const handleMoveStart = (e: MouseEvent | TouchEvent) => {
+    e.preventDefault()
+    coordinatesRef.current.moving = true
+    if ('targetTouches' in e) {
+      touchPoints.current = []
+      for (let i = 0; i < e.targetTouches.length; i += 1) {
+        touchPoints.current.push(e.targetTouches[i] as Touch)
       }
-      // Could show error to user via toast/alert in the future
     }
-
-    return () => {
-      if (URL.revokeObjectURL) {
-        URL.revokeObjectURL(blobUrl)
-      }
-      image.onload = null
-      image.onerror = null
-    }
-  }, [avatar, canvasRef, handleImageLoad, imageRef])
-
-  return { handleImageLoad }
-}
-
-// Hook for handling mouse interactions
-const useMouseInteractions = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  coordinatesRef: React.MutableRefObject<Coordinates>,
-  resolutionMultiplierRef: React.MutableRefObject<number>,
-  draw: () => void,
-) => {
-  const handleMoveStart = useCallback(
-    (e: MouseEvent | TouchEvent) => {
-      e.preventDefault()
-      coordinatesRef.current.moving = true
-    },
-    [coordinatesRef],
-  )
+  }
 
   const handleMoveEnd = useCallback(
     (e: MouseEvent | TouchEvent) => {
       if (!coordinatesRef.current.moving) return
       e.preventDefault()
       coordinatesRef.current.moving = false
+      touchPoints.current = []
       window.requestAnimationFrame(draw)
     },
-    [coordinatesRef, draw],
+    [draw],
   )
 
   const handleMouseMove = useCallback(
@@ -372,56 +428,15 @@ const useMouseInteractions = (
       }
       window.requestAnimationFrame(draw)
     },
-    [coordinatesRef, draw, resolutionMultiplierRef],
-  )
-
-  return {
-    handleMoveStart,
-    handleMoveEnd,
-    handleMouseMove,
-  }
-}
-
-// Hook for handling touch interactions
-const useTouchInteractions = (
-  coordinatesRef: React.MutableRefObject<Coordinates>,
-  resolutionMultiplierRef: React.MutableRefObject<number>,
-  draw: () => void,
-  setZoom: React.Dispatch<React.SetStateAction<number>>,
-) => {
-  const touchPoints = useRef<Touch[]>([])
-
-  const handleTouchStart = useCallback(
-    (e: TouchEvent) => {
-      e.preventDefault()
-      coordinatesRef.current.moving = true
-      touchPoints.current = []
-      for (let i = 0; i < e.targetTouches.length; i += 1) {
-        touchPoints.current.push(e.targetTouches[i] as Touch)
-      }
-    },
-    [coordinatesRef],
-  )
-
-  const handleTouchEnd = useCallback(
-    (e: TouchEvent) => {
-      if (!coordinatesRef.current.moving) return
-      e.preventDefault()
-      coordinatesRef.current.moving = false
-      touchPoints.current = []
-      window.requestAnimationFrame(draw)
-    },
-    [coordinatesRef, draw],
+    [draw],
   )
 
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
       if (!coordinatesRef.current.moving) return
       e.preventDefault()
-
       const tpCache = touchPoints.current
       const pointInxs: number[] = []
-
       for (let i = 0; i < e.targetTouches.length; i += 1) {
         const pointInx = tpCache.findIndex(
           (touch) => touch.identifier === e.targetTouches[i].identifier,
@@ -430,8 +445,7 @@ const useTouchInteractions = (
           pointInxs.push(pointInx)
         }
       }
-
-      // Handle pinch to zoom (two touch points)
+      // multi-touch pinch to zoom
       if (e.targetTouches.length === 2 && e.changedTouches.length > 0 && pointInxs.length === 2) {
         const [touch1, touch2] = e.changedTouches
         if (!touch2) return
@@ -442,9 +456,7 @@ const useTouchInteractions = (
         setZoom((z) => Math.max(Math.min(z + zoomDiff * 100, 200), 100))
         tpCache[pointInxs[0]] = touch1
         tpCache[pointInxs[1]] = touch2
-      }
-      // Handle single touch drag
-      else if (
+      } else if (
         e.targetTouches.length === 1 &&
         e.changedTouches.length === 1 &&
         pointInxs.length === 1
@@ -456,57 +468,37 @@ const useTouchInteractions = (
         const resolutionMultiplier = resolutionMultiplierRef.current
         const mx = (ogX - nx) * -1 * resolutionMultiplier * speedMultiplier
         const my = (ogY - ny) * -1 * resolutionMultiplier * speedMultiplier
-
         coordinatesRef.current = {
           ...coordinatesRef.current,
           x: x + mx,
           y: y + my,
         }
-
         tpCache[pointInxs[0]] = touch1
         window.requestAnimationFrame(draw)
       } else {
         touchPoints.current = []
       }
     },
-    [coordinatesRef, draw, resolutionMultiplierRef, setZoom],
+    [draw, setZoom],
   )
 
-  return {
-    handleTouchStart,
-    handleTouchEnd,
-    handleTouchMove,
-  }
-}
-
-// Hook for handling window resizing
-const useWindowResize = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  resolutionMultiplierRef: React.MutableRefObject<number>,
-  imageRef: React.RefObject<HTMLImageElement>,
-  draw: () => void,
-) => {
   const handleWindowResize = useCallback(() => {
     // Calculate available width and height
     const adjustedWidth = window.innerWidth * 0.8 - 25
 
     // For a 3:1 ratio (width:height), we need to ensure the height is 1/3 of the width
     let width = Math.min(adjustedWidth, 1200) // Cap at 1200px for max width
-    // Height is derived from width to maintain 3:1 aspect ratio
-    // const height = width / headerAspectRatio
 
     // Ensure minimum dimensions
     width = Math.max(width, 600)
-    // Height is derived from width, ensuring minimum through width constraint
 
     const canvas = canvasRef.current
-    const image = imageRef.current
-    if (canvas && image && image.complete && image.naturalWidth) {
+    if (canvas) {
       // Update resolution multiplier
       resolutionMultiplierRef.current = canvas.width / width
       draw()
     }
-  }, [canvasRef, imageRef, draw, resolutionMultiplierRef])
+  }, [draw])
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -514,234 +506,51 @@ const useWindowResize = (
     }
   }, [canvasRef, handleWindowResize])
 
-  return { handleWindowResize }
-}
-
-// Hook for handling zoom functionality
-const useZoomControl = (
-  coordinatesRef: React.MutableRefObject<Coordinates>,
-  imageRef: React.RefObject<HTMLImageElement>,
-  zoom: number,
-  draw: () => void,
-) => {
   useEffect(() => {
     const image = imageRef.current
-    // Only zoom if image is loaded and coordinates have been initialized
-    if (zoom !== undefined && image && image.complete && image.naturalWidth) {
-      const { oW: originalWidth, oH: originalHeight } = coordinatesRef.current
-      // Skip if not initialized yet (oW will be 0)
-      if (originalWidth === 0 || originalHeight === 0) return
+    if (canvasRef && !image.src) {
+      image.src = URL.createObjectURL(header)
+      image.onload = handleImageLoad
+    }
+  }, [header, canvasRef, handleImageLoad])
 
-      // Adjust zoom factor to allow for zooming out more (50% to 200%)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    canvas?.addEventListener('mousedown', handleMoveStart, { passive: false })
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMoveEnd)
+    canvas?.addEventListener('touchstart', handleMoveStart, { passive: false })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+    window.addEventListener('touchend', handleMoveEnd, { passive: false })
+    window.addEventListener('touchcancel', handleMoveEnd, { passive: false })
+    window.addEventListener('resize', handleWindowResize)
+    return () => {
+      canvas?.removeEventListener('mousedown', handleMoveStart)
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMoveEnd)
+      canvas?.removeEventListener('touchstart', handleMoveStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('touchend', handleMoveEnd)
+      window.removeEventListener('touchcancel', handleMoveEnd)
+      window.removeEventListener('resize', handleWindowResize)
+    }
+  }, [handleMouseMove, handleMoveEnd, handleTouchMove, handleWindowResize])
+
+  useEffect(() => {
+    if (zoom) {
+      const { oW: originalWidth, oH: originalHeight } = coordinatesRef.current
       const zoomFactor = zoom / 100
       const newWidth = originalWidth * zoomFactor
       const newHeight = originalHeight * zoomFactor
       const widthDiff = newWidth - coordinatesRef.current.w
       const heightDiff = newHeight - coordinatesRef.current.h
-
       coordinatesRef.current.w = originalWidth * zoomFactor
       coordinatesRef.current.h = originalHeight * zoomFactor
       coordinatesRef.current.x -= widthDiff / 2
       coordinatesRef.current.y -= heightDiff / 2
-
       window.requestAnimationFrame(draw)
     }
-  }, [coordinatesRef, imageRef, draw, zoom])
-}
-
-// Hook for setting up event listeners
-const useEventListeners = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  handleMoveStart: (e: MouseEvent | TouchEvent) => void,
-  handleMouseMove: (e: MouseEvent) => void,
-  handleMoveEnd: (e: MouseEvent | TouchEvent) => void,
-  handleTouchStart: (e: TouchEvent) => void,
-  handleTouchMove: (e: TouchEvent) => void,
-  handleTouchEnd: (e: TouchEvent) => void,
-  handleWindowResize: () => void,
-) => {
-  useEffect(() => {
-    const canvas = canvasRef.current
-
-    // Mouse events
-    canvas?.addEventListener('mousedown', handleMoveStart, { passive: false })
-    window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('mouseup', handleMoveEnd)
-
-    // Touch events
-    canvas?.addEventListener('touchstart', handleTouchStart, { passive: false })
-    window.addEventListener('touchmove', handleTouchMove, { passive: false })
-    window.addEventListener('touchend', handleTouchEnd, { passive: false })
-    window.addEventListener('touchcancel', handleTouchEnd, { passive: false })
-
-    // Window resize event
-    window.addEventListener('resize', handleWindowResize)
-
-    return () => {
-      // Cleanup mouse events
-      canvas?.removeEventListener('mousedown', handleMoveStart)
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('mouseup', handleMoveEnd)
-
-      // Cleanup touch events
-      canvas?.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
-      window.removeEventListener('touchend', handleTouchEnd)
-      window.removeEventListener('touchcancel', handleTouchEnd)
-
-      // Cleanup window resize event
-      window.removeEventListener('resize', handleWindowResize)
-    }
-  }, [
-    canvasRef,
-    handleMoveStart,
-    handleMouseMove,
-    handleMoveEnd,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
-    handleWindowResize,
-  ])
-}
-
-// Hook for handling crop submission
-const useCropSubmission = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  coordinatesRef: React.MutableRefObject<Coordinates>,
-  setDataURL: (dataURL: string) => void,
-) => {
-  const [cropError, setCropError] = useState<string | null>(null)
-
-  const handleSubmit = useCallback(() => {
-    if (!canvasRef.current) return
-
-    setCropError(null) // Clear any previous errors
-
-    try {
-      const { cropWidth, cropHeight, maxX, maxY } = getHeaderVars(canvasRef.current)
-      const cropCanvas = document.createElement('canvas')
-      const cropCtx = cropCanvas.getContext('2d')
-
-      if (!cropCtx) {
-        throw new Error('Failed to get canvas context')
-      }
-
-      // Set the output dimensions for the cropped image with proper aspect ratio
-      cropCanvas.width = cropWidth
-      cropCanvas.height = cropHeight
-
-      // Fill with white background
-      cropCtx.fillStyle = 'white'
-      cropCtx.fillRect(0, 0, cropWidth, cropHeight)
-
-      // Get the current canvas
-      const canvas = canvasRef.current
-
-      // Get the current image position and dimensions from coordinatesRef
-      const { x, y, w, h } = coordinatesRef.current
-
-      // Calculate the visible portion of the image that falls within the crop area
-      // The crop area is defined by the SVG overlay, which is positioned at (maxX, maxY) with size cropWidth x cropHeight
-
-      // Calculate source coordinates (the part of the canvas we want to extract)
-      // This is the intersection of the image and the crop window
-      const sourceX = Math.max(maxX, x)
-      const sourceY = Math.max(maxY, y)
-      const sourceWidth = Math.min(maxX + cropWidth, x + w) - sourceX
-      const sourceHeight = Math.min(maxY + cropHeight, y + h) - sourceY
-
-      // Calculate destination coordinates (where to place the extracted portion in the new canvas)
-      // This maps the extracted portion to the correct position in the output
-      const destX = sourceX - maxX
-      const destY = sourceY - maxY
-
-      // Draw the visible portion of the image onto the crop canvas
-      cropCtx.drawImage(
-        canvas,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
-        destX,
-        destY,
-        sourceWidth,
-        sourceHeight,
-      )
-
-      // Convert the cropped canvas to a data URL and set it
-      const dataURL = cropCanvas.toDataURL('image/jpeg', 0.9)
-      setDataURL(dataURL)
-    } catch (error) {
-      // Log error in development
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to crop image:', error)
-      }
-      // Set user-facing error message
-      setCropError('Failed to crop image. Please try again.')
-    }
-  }, [canvasRef, coordinatesRef, setDataURL])
-
-  return { handleSubmit, cropError }
-}
-
-export const CropComponent = ({
-  avatar,
-  handleCancel,
-  setDataURL,
-}: {
-  avatar: File
-  handleCancel: () => void
-  setDataURL: (dataURL: string) => void
-}) => {
-  const { t } = useTranslation('transactionFlow')
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const imageRef = useRef(new Image())
-  const resolutionMultiplierRef = useRef(1)
-  // Set default zoom to 75 (75% of original size) to allow for zooming out
-  const [zoom, setZoom] = useState(75)
-
-  // Initialize canvas drawing functionality
-  const { draw, coordinatesRef } = useCanvasDrawing(imageRef, canvasRef)
-
-  // Initialize image loading
-  useImageLoader(avatar, imageRef, canvasRef, coordinatesRef, draw)
-
-  // Initialize mouse interactions
-  const { handleMoveStart, handleMoveEnd, handleMouseMove } = useMouseInteractions(
-    canvasRef,
-    coordinatesRef,
-    resolutionMultiplierRef,
-    draw,
-  )
-
-  // Initialize touch interactions
-  const { handleTouchStart, handleTouchEnd, handleTouchMove } = useTouchInteractions(
-    coordinatesRef,
-    resolutionMultiplierRef,
-    draw,
-    setZoom,
-  )
-
-  // Initialize window resize handling
-  const { handleWindowResize } = useWindowResize(canvasRef, resolutionMultiplierRef, imageRef, draw)
-
-  // Initialize zoom control
-  useZoomControl(coordinatesRef, imageRef, zoom, draw)
-
-  // Set up event listeners
-  useEventListeners(
-    canvasRef,
-    handleMoveStart,
-    handleMouseMove,
-    handleMoveEnd,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
-    handleWindowResize,
-  )
-
-  // Initialize crop submission
-  const { handleSubmit, cropError } = useCropSubmission(canvasRef, coordinatesRef, setDataURL)
+  }, [draw, zoom])
 
   return (
     <>
@@ -752,6 +561,18 @@ export const CropComponent = ({
             <ImageContainer>
               <ImageCropBorder as={CropBorderSVG} />
               <ImageCropFrame as={CropFrameSVG} />
+              <OuterRatioLabel aria-label="Outer crop frame aspect ratio 3:1">3:1</OuterRatioLabel>
+              <InnerRatioLabel aria-label="Inner grid lines aspect ratio 6:1">6:1</InnerRatioLabel>
+              <BottomInnerRatioLabel aria-label="Bottom inner grid line aspect ratio 6:1">
+                6:1
+              </BottomInnerRatioLabel>
+              <BottomOuterRatioLabel aria-label="Bottom outer crop frame aspect ratio 3:1">
+                3:1
+              </BottomOuterRatioLabel>
+              <ImageCropGuides>
+                <span />
+                <span />
+              </ImageCropGuides>
               <StyledCanvas width={1200} height={400} ref={canvasRef} />
             </ImageContainer>
           </ImageWrapper>
@@ -769,13 +590,8 @@ export const CropComponent = ({
           </SliderContainer>
         </EditImageContainer>
       </Dialog.Content>
-      {cropError && (
-        <Helper data-testid="crop-error" alert="error">
-          {cropError}
-        </Helper>
-      )}
       <Dialog.Footer
-        leading={<AvCancelButton handleCancel={handleCancel} />}
+        leading={<HeaderCancelButton handleCancel={handleCancel} />}
         trailing={
           <Button onClick={handleSubmit} data-testid="continue-button">
             {t('action.continue', { ns: 'common' })}

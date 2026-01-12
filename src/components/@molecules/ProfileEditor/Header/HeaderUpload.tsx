@@ -13,7 +13,7 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { headerAspectRatio } from '@app/utils/headerUpload'
 import { invalidateMetaDataQuery } from '@app/utils/invalidateMetaDataQuery'
 
-import { AvCancelButton, CropComponent } from './HeaderCrop'
+import { CropComponent, HeaderCancelButton } from './HeaderCrop'
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
@@ -166,7 +166,7 @@ const UploadComponent = ({
         </Helper>
       )}
       <Dialog.Footer
-        leading={<AvCancelButton handleCancel={handleCancel} />}
+        leading={<HeaderCancelButton handleCancel={handleCancel} />}
         trailing={
           <Button
             disabled={isPending}
@@ -198,7 +198,7 @@ export const HeaderUpload = ({
   const [dataURL, setDataURL] = useState<string | null>(null)
 
   if (!dataURL) {
-    return <CropComponent {...{ avatar: headerFile, setDataURL, handleCancel }} />
+    return <CropComponent {...{ header: headerFile, setDataURL, handleCancel }} />
   }
 
   return (

@@ -51,6 +51,7 @@ export const TransactionNotifications = () => {
         switch (action) {
           case 'registerName':
             trackEvent('register', chainName)
+            queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
           case 'commitName':
             trackEvent('commit', chainName)
