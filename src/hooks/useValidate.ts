@@ -10,6 +10,9 @@ export type ValidationResult = Prettify<
     isNonASCII: boolean | undefined
     labelCount: number
     labelDataArray: ParsedInputResult['labelDataArray']
+    hasEmoji?: boolean
+    hasMixedScripts?: boolean
+    isLatinOnly?: boolean
   }
 >
 
@@ -23,9 +26,22 @@ const tryDecodeURIComponent = (input: string) => {
 
 export const validate = (input: string) => {
   const decodedInput = tryDecodeURIComponent(input)
-  const { normalised: name, ...parsedInput } = parseInput(decodedInput)
-  const isNonASCII = parsedInput.labelDataArray.some((dataItem) => dataItem.type !== 'ASCII')
-  const outputName = name || input
+  // Normalize to NFC to ensure consistent code point composition before parsing
+  const nfcInput = typeof decodedInput.normalize === 'function' ? decodedInput.normalize('NFC') : decodedInput
+  const { normalised: name, ...parsedInput } = parseInput(nfcInput)
+  // Ignore Common/Inherited/ASCII buckets when determining script mixing
+  const scriptOf = (t: unknown) => String(t || '')
+  const relevantScripts = parsedInput.labelDataArray
+    .map((d) => scriptOf((d as any).type))
+    .filter((t) => t && t !== 'ASCII' && t !== 'Common' && t !== 'Inherited')
+  const scriptSet = new Set(relevantScripts)
+  const hasMixedScripts = scriptSet.size > 1
+  const isLatinOnly = scriptSet.size <= 1 && (scriptSet.size === 0 || scriptSet.has('Latin'))
+  const isNonASCII = parsedInput.labelDataArray.some((dataItem) => scriptOf((dataItem as any).type) !== 'ASCII')
+  // Consider either explicit emoji metadata or presence of extended pictographic chars
+  const emojiRegex = /\p{Extended_Pictographic}/u
+  const hasEmoji = parsedInput.labelDataArray.some((d) => Boolean((d as any).emoji)) || emojiRegex.test(nfcInput)
+  const outputName = name || nfcInput
 
   return {
     ...parsedInput,
@@ -33,6 +49,9 @@ export const validate = (input: string) => {
     beautifiedName: tryBeautify(outputName),
     isNonASCII,
     labelCount: parsedInput.labelDataArray.length,
+    hasEmoji,
+    hasMixedScripts,
+    isLatinOnly,
   }
 }
 
@@ -47,6 +66,9 @@ const defaultData = Object.freeze({
   is2LD: undefined,
   isETH: undefined,
   labelDataArray: [],
+  hasEmoji: undefined as boolean | undefined,
+  hasMixedScripts: undefined as boolean | undefined,
+  isLatinOnly: undefined as boolean | undefined,
 })
 
 type UseValidateParameters = {

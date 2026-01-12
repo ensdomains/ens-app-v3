@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -104,6 +104,35 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     appendVerificationProps,
   })
 
+  // Dismissible unicode info/warning banner persistence (per-normalisedName)
+  const normalisedNameKey = nameDetails?.normalisedName || name
+  const infoKey = `unicode-banner:${normalisedNameKey}:info`
+  const warnKey = `unicode-banner:${normalisedNameKey}:warn`
+  const [infoDismissed, setInfoDismissed] = useState(false)
+  const [warnDismissed, setWarnDismissed] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      setInfoDismissed(localStorage.getItem(infoKey) === '1')
+      setWarnDismissed(localStorage.getItem(warnKey) === '1')
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [infoKey, warnKey])
+
+  const dismissInfo = () => {
+    setInfoDismissed(true)
+    try {
+      if (typeof window !== 'undefined') localStorage.setItem(infoKey, '1')
+    } catch {}
+  }
+  const dismissWarn = () => {
+    setWarnDismissed(true)
+    try {
+      if (typeof window !== 'undefined') localStorage.setItem(warnKey, '1')
+    } catch {}
+  }
+
   return (
     <DetailsWrapper>
       <ProfileSnippet
@@ -128,15 +157,26 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
             />
           </Helper>
         )}
-        {nameDetails.isNonASCII && (
-          <Helper alert="warning" alignment="horizontal">
+        {nameDetails.isNonASCII && nameDetails.isLatinOnly && !nameDetails.hasMixedScripts && !infoDismissed && (
+          <Helper alert="info" alignment="horizontal">
             <Trans
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
               components={{
-                a: <Outlink href={getSupportLink('homoglyphs')} />,
+                a: <Outlink href="https://unicode.org/reports/tr36/" />,
               }}
             />
+            <button aria-label={t('action.dismiss', { ns: 'common' })} onClick={dismissInfo} style={{ marginLeft: 'auto', background: 'none', border: 0, cursor: 'pointer' }}>
+              ×
+            </button>
+          </Helper>
+        )}
+        {nameDetails.isNonASCII && nameDetails.hasMixedScripts && !warnDismissed && (
+          <Helper alert="warning" alignment="horizontal">
+            {t('tabs.profile.warnings.homoglyph')}
+            <button aria-label={t('action.dismiss', { ns: 'common' })} onClick={dismissWarn} style={{ marginLeft: 'auto', background: 'none', border: 0, cursor: 'pointer' }}>
+              ×
+            </button>
           </Helper>
         )}
         {isWrapped && !normalisedName.endsWith('.eth') && (
