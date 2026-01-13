@@ -10,6 +10,7 @@ export const contentHashIconTypes = {
   onion: dynamic(() => import('./onion.svg')),
   swarm: dynamic(() => import('./swarm.svg')),
   arweave: dynamic(() => import('./arweave.svg')),
+  walrus: dynamic(() => import('./walrus.svg')),
 }
 
 export const DynamicContentHashIcon = ({

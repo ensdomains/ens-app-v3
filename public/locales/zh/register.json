@@ -107,13 +107,15 @@
               "swarm": "Swarm",
               "onion": "Onion",
               "skynet": "Skynet",
-              "arweave": "Arweave"
+              "arweave": "Arweave",
+              "walrus": "Walrus"
             },
             "placeholder": {
               "default": "在此添加 url",
               "ipfs": "ipfs://...",
               "skynet": "sia://...",
               "arweave": "ar://...",
+              "walrus": "walrus://...",
               "swarm": "bzz://...",
               "onion": "onion3://..."
             }
