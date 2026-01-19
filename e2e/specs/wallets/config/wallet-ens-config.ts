@@ -172,7 +172,7 @@ export async function customSwitchNetwork(metamaskPage: Page, network: string): 
 }
 
 // Switch to User 2 account + switch to Sepolia
-export async function switchToUser2AndSepolia(page: Page, _metaMask?: any): Promise<void> {
+export async function switchToUser2AndSepolia(page: Page): Promise<void> {
   console.log('👤 Switching to User 2 account...')
 
   // Switch to User 2 account

@@ -1,6 +1,5 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 import dappwright from '@tenkeylabs/dappwright'
-import type { Dappwright } from '@tenkeylabs/dappwright'
 
 import { SafeEnsConfig } from './config/safe-ens-config'
 import {
@@ -10,7 +9,6 @@ import {
 } from './config/wallet-ens-config'
 
 // Global variables to share state
-let metaMask: Dappwright
 let page: Page
 let context: BrowserContext
 let ensName: string
@@ -103,7 +101,7 @@ test.describe('ENS Name Registration', () => {
   // Setup MM before the tests run
   test.beforeAll('Setup Metamask', async () => {
     console.log('🦊 Setting up MetaMask...')
-    const [mm, pg, ctx] = await dappwright.bootstrap('chromium', {
+    const [, pg, ctx] = await dappwright.bootstrap('chromium', {
       wallet: 'metamask',
       version: SafeEnsConfig.METAMASK.VERSION,
       seed: SafeEnsConfig.SEED_PHRASE,
@@ -112,14 +110,13 @@ test.describe('ENS Name Registration', () => {
       slowMo: SafeEnsConfig.BROWSER.SLOW_MO,
     })
 
-    metaMask = mm
     page = pg
     context = ctx
 
     console.log('✅ MetaMask setup complete')
 
     // Switch to User 2 account and Sepolia network
-    await switchToUser2AndSepolia(page, metaMask)
+    await switchToUser2AndSepolia(page)
 
     // Connect wallet to ENS Sepolia
     await connectWalletToEns(page, context)

@@ -1,6 +1,5 @@
 import * as path from 'path'
 
-import { MetaMaskWallet } from '@tenkeylabs/dappwright'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as dotenv from 'dotenv'
 
