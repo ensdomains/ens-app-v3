@@ -80,17 +80,28 @@ export async function setPrimaryNameState(
   if (state.l1 !== undefined) {
     if (state.l1 === '') {
       // To clear L1 primary name, set the resolver for the reverse node to zero address
+      // First check if there's a resolver set - if not, nothing to clear
       const reverseNodeHash = namehash(getReverseNode(address))
-      const tx = await walletClient.sendTransaction({
-        account,
-        to: deploymentAddresses.ENSRegistry as Address,
-        data: encodeFunctionData({
-          abi: registrySetResolverAbi,
-          functionName: 'setResolver',
-          args: [reverseNodeHash, '0x0000000000000000000000000000000000000000'],
-        }),
+      const currentResolver = await publicClient.readContract({
+        address: deploymentAddresses.ENSRegistry as Address,
+        abi: registryResolverAbi,
+        functionName: 'resolver',
+        args: [reverseNodeHash],
       })
-      await waitForTransaction(tx)
+
+      // Only attempt to clear if there's a resolver set
+      if (currentResolver && currentResolver !== '0x0000000000000000000000000000000000000000') {
+        const tx = await walletClient.sendTransaction({
+          account,
+          to: deploymentAddresses.ENSRegistry as Address,
+          data: encodeFunctionData({
+            abi: registrySetResolverAbi,
+            functionName: 'setResolver',
+            args: [reverseNodeHash, '0x0000000000000000000000000000000000000000'],
+          }),
+        })
+        await waitForTransaction(tx)
+      }
     } else {
       // Set the primary name using the L1 ReverseRegistrar
       const tx = await walletClient.sendTransaction({
