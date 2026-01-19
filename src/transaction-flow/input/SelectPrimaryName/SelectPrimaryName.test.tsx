@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getDecodedName } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash } from '@ensdomains/ensjs/utils'
 
-import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegistryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -39,10 +39,10 @@ vi.mock('@app/hooks/resolver/useResolverStatus')
 vi.mock('@app/hooks/useIsWrapped')
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/primary/useGetPrimaryNameTransactionFlowItem')
-vi.mock('@app/hooks/ensjs/public/useReverseRegistryName')
+vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 
 const mockGetDecodedName = mockFunction(getDecodedName)
-const mockUseReverseRegistryName = mockFunction(useReverseRegistryName)
+const mockUsePrimaryName = mockFunction(usePrimaryName)
 mockGetDecodedName.mockImplementation((_: any, { name }) => Promise.resolve(name))
 
 const makeName = (index: number, overwrites?: any) => ({
@@ -212,10 +212,13 @@ describe('SelectPrimaryName', () => {
   })
 
   it('should not show primary name in list', async () => {
-    mockUseReverseRegistryName.mockReturnValue({
-      data: 'test2.eth',
+    mockUsePrimaryName.mockReturnValue({
+      data: {
+        name: 'test2.eth',
+        beautifiedName: 'test2.eth',
+        match: true,
+      },
       isLoading: false,
-      status: 'success',
     })
     render(
       <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,

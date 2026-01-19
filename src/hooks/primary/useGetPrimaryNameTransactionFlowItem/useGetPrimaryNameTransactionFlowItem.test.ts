@@ -4,14 +4,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
-import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegistryName'
+import { usePrimaryNameFromSources } from '@app/hooks/primary/usePrimaryNameFromSources'
 
 import { useGetPrimaryNameTransactionFlowItem } from '.'
 
-vi.mock('@app/hooks/ensjs/public/useReverseRegistryName')
+vi.mock('@app/hooks/primary/usePrimaryNameFromSources')
 vi.mock('@app/hooks/chain/useContractAddress')
 
-const mockUseReverseRegistryName = mockFunction(useReverseRegistryName)
+const mockUsePrimaryNameFromSources = mockFunction(usePrimaryNameFromSources)
 const mockUseContractAddress = mockFunction(useContractAddress)
 
 const createResolverStatusData = (
@@ -26,8 +26,15 @@ const createResolverStatusData = (
 describe('useGetPrimaryNameTransactionFlowItem', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseReverseRegistryName.mockReturnValue({
-      data: 'test.eth',
+    mockUsePrimaryNameFromSources.mockReturnValue({
+      data: {
+        name: 'test.eth',
+        hasPrimaryName: true,
+        hasDefaultPrimaryName: false,
+        reverseRegistryName: 'test.eth',
+        defaultReverseRegistryName: undefined,
+        source: 'l1',
+      },
       isLoading: false,
       isFetching: false,
     })
@@ -48,8 +55,15 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
   })
 
   it('should return transaction SetPrimaryName if the reverseRegistryName is undefined.', async () => {
-    mockUseReverseRegistryName.mockReturnValue({
-      data: undefined,
+    mockUsePrimaryNameFromSources.mockReturnValue({
+      data: {
+        name: undefined,
+        hasPrimaryName: false,
+        hasDefaultPrimaryName: false,
+        reverseRegistryName: undefined,
+        defaultReverseRegistryName: undefined,
+        source: null,
+      },
       isLoading: false,
       isFetching: false,
     })
@@ -69,7 +83,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
             name: 'test.eth',
             address: '0x123',
           },
-          name: 'setPrimaryName',
+          name: 'setDefaultPrimaryName',
         },
       ],
     })
@@ -156,17 +170,17 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         {
           data: {
             name: 'test.eth',
-            address: '0x123',
-            latestResolver: true,
+            contract: 'registry',
           },
-          name: 'updateEthAddress',
+          name: 'updateResolver',
         },
         {
           data: {
             name: 'test.eth',
-            contract: 'registry',
+            address: '0x123',
+            latestResolver: true,
           },
-          name: 'updateResolver',
+          name: 'updateEthAddress',
         },
       ],
     })

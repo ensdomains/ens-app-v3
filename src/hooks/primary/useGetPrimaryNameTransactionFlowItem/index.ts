@@ -9,6 +9,7 @@ import { createTransactionItem, TransactionItem } from '@app/transaction-flow/tr
 import { TransactionIntro } from '@app/transaction-flow/types'
 import { emptyAddress } from '@app/utils/constants'
 
+import { usePrimaryNameFromSources } from '../usePrimaryNameFromSources'
 import {
   checkRequiresSetPrimaryNameTransaction,
   checkRequiresUpdateEthAddressTransaction,
@@ -16,7 +17,6 @@ import {
   getIntroTranslation,
   IntroType,
 } from './utils'
-import { usePrimaryNameFromSources } from '../usePrimaryNameFromSources'
 
 type Inputs = {
   address?: Address
@@ -39,7 +39,7 @@ export const useGetPrimaryNameTransactionFlowItem = (
 
   const _enabled = (options.enabled ?? true) && !!address
 
-  const { data: primaryNameDetails, isLoading, isFetching} = usePrimaryNameFromSources({ address })
+  const { data: primaryNameDetails, isLoading, isFetching } = usePrimaryNameFromSources({ address })
 
   const latestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
@@ -56,8 +56,13 @@ export const useGetPrimaryNameTransactionFlowItem = (
         | TransactionItem<'updateEthAddress'>
       )[] = []
 
-      const targetReverseRegistry = primaryNameDetails?.hasPrimaryName ? 'l1' : 'default'
-      const currentTargetReverseRegistryName = targetReverseRegistry === 'l1' ? primaryNameDetails?.reverseRegistryName : primaryNameDetails?.defaultReverseRegistryName
+      // Use default registry only if user has no L1 primary name
+      const canUseDefaultRegistry = !primaryNameDetails?.hasPrimaryName
+      const targetReverseRegistry = canUseDefaultRegistry ? 'default' : 'l1'
+      const currentTargetReverseRegistryName =
+        targetReverseRegistry === 'l1'
+          ? primaryNameDetails?.reverseRegistryName
+          : primaryNameDetails?.defaultReverseRegistryName
 
       if (
         checkRequiresSetPrimaryNameTransaction({
@@ -65,11 +70,12 @@ export const useGetPrimaryNameTransactionFlowItem = (
           name,
         })
       ) {
-        if (targetReverseRegistry === 'default') transactions.push(createTransactionItem('setDefaultPrimaryName', { name, address }))
-        else transactions.push(createTransactionItem('setPrimaryName', { name, address}))
+        if (targetReverseRegistry === 'default')
+          transactions.push(createTransactionItem('setDefaultPrimaryName', { name, address }))
+        else transactions.push(createTransactionItem('setPrimaryName', { name, address }))
       }
 
-       if (
+      if (
         checkRequiresUpdateEthAddressTransaction({
           resolvedAddress: profileAddress,
           address,
@@ -103,8 +109,6 @@ export const useGetPrimaryNameTransactionFlowItem = (
           }),
         )
       }
-
-     
 
       const introItem =
         transactions.length > 1
@@ -141,6 +145,6 @@ export const useGetPrimaryNameTransactionFlowItem = (
   return {
     callBack,
     isLoading,
-    isFetching
+    isFetching,
   }
 }

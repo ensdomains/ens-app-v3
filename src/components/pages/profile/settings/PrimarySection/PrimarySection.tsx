@@ -7,12 +7,12 @@ import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/Avatar
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { getNetworkFromUrl } from '@app/constants/chains'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { usePrimaryNameFromSources } from '@app/hooks/primary/usePrimaryNameFromSources'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import { NetworkSpecificPrimaryNamesSection } from './NetworkSpecificPrimaryNamesSection'
-import { usePrimaryNameFromSources } from '@app/hooks/primary/usePrimaryNameFromSources'
 
 const SkeletonFiller = styled.div(
   ({ theme }) => css`
