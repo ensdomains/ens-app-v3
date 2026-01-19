@@ -1,9 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Address, encodeFunctionData, namehash, parseAbi } from 'viem'
 
-import { registryResolverSnippet } from '@ensdomains/ensjs/contracts'
-import { setPrimaryName, setResolver } from '@ensdomains/ensjs/wallet'
-
 import { Accounts, User } from './accounts'
 import {
   deploymentAddresses,
@@ -17,6 +14,17 @@ const defaultReverseRegistrarAbi = parseAbi([
   'function setName(string name) external returns (bytes32)',
   'function nameForAddr(address addr) external view returns (string)',
 ])
+
+// ABI for L1 ReverseRegistrar contract
+const reverseRegistrarAbi = parseAbi(['function setName(string name) external returns (bytes32)'])
+
+// ABI for ENS Registry setResolver function
+const registrySetResolverAbi = parseAbi([
+  'function setResolver(bytes32 node, address resolver) external',
+])
+
+// ABI for ENS Registry resolver function
+const registryResolverAbi = parseAbi(['function resolver(bytes32 node) external view returns (address)'])
 
 // ABI for resolver name() function
 const resolverNameSnippet = parseAbi([
@@ -72,24 +80,27 @@ export async function setPrimaryNameState(
   if (state.l1 !== undefined) {
     if (state.l1 === '') {
       // To clear L1 primary name, set the resolver for the reverse node to zero address
-      const functionData = setResolver.makeFunctionData(walletClient, {
-        name: getReverseNode(address),
-        contract: 'registry',
-        resolverAddress: '0x0000000000000000000000000000000000000000',
-      })
+      const reverseNodeHash = namehash(getReverseNode(address))
       const tx = await walletClient.sendTransaction({
         account,
-        ...functionData,
+        to: deploymentAddresses.ENSRegistry as Address,
+        data: encodeFunctionData({
+          abi: registrySetResolverAbi,
+          functionName: 'setResolver',
+          args: [reverseNodeHash, '0x0000000000000000000000000000000000000000'],
+        }),
       })
       await waitForTransaction(tx)
     } else {
-      // Set the primary name
-      const functionData = setPrimaryName.makeFunctionData(walletClient, {
-        name: state.l1,
-      })
+      // Set the primary name using the L1 ReverseRegistrar
       const tx = await walletClient.sendTransaction({
         account,
-        ...functionData,
+        to: deploymentAddresses.ReverseRegistrar as Address,
+        data: encodeFunctionData({
+          abi: reverseRegistrarAbi,
+          functionName: 'setName',
+          args: [state.l1],
+        }),
       })
       await waitForTransaction(tx)
     }
@@ -127,7 +138,7 @@ export async function getPrimaryNameState(
     // First, get the resolver for the reverse node from the ENS Registry
     const resolverAddress = await publicClient.readContract({
       address: deploymentAddresses.ENSRegistry as Address,
-      abi: registryResolverSnippet,
+      abi: registryResolverAbi,
       functionName: 'resolver',
       args: [reverseNodeHash],
     })
