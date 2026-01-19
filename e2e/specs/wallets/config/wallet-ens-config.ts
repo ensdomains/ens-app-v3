@@ -117,3 +117,78 @@ export async function confirmTransactionWithMetaMask(
 
   await page.bringToFront()
 }
+
+/**
+ * Custom network switch function that handles MetaMask's new UI
+ * where test networks are in a "Custom" tab.
+ * This is a workaround for MetaMask's UI change that moved test networks
+ * into a "Custom" tab in the network dropdown.
+ *
+ * @param metamaskPage - The MetaMask extension page (not the dApp page)
+ * @param network - The network name to switch to (e.g., 'Sepolia', 'Mainnet')
+ */
+export async function customSwitchNetwork(metamaskPage: Page, network: string): Promise<void> {
+  console.log(`🌐 Switching to ${network} network...`)
+
+  await metamaskPage.bringToFront()
+
+  // Open network dropdown
+  const networkDropdown = metamaskPage.getByTestId('sort-by-networks')
+  await networkDropdown.waitFor({ state: 'visible' })
+  await networkDropdown.click()
+
+  // Try to find the network in the main list first
+  const networkMenuItemRegex = /network-list-item-eip\d+:\d+$/
+  const networkList = metamaskPage.getByTestId(networkMenuItemRegex)
+  const networkItem = networkList.filter({
+    has: metamaskPage.getByText(network, { exact: true }),
+  })
+
+  const isVisible = await networkItem.isVisible({ timeout: 2000 }).catch(() => false)
+
+  if (isVisible) {
+    // Network is directly visible in the dropdown
+    await networkItem.click()
+    console.log(`✅ Found ${network} in main list`)
+  } else {
+    // Network might be in the "Custom" tab (test networks are now organized there)
+    const customTab = metamaskPage.getByText('Custom', { exact: true })
+    const customTabVisible = await customTab.isVisible({ timeout: 1000 }).catch(() => false)
+
+    if (customTabVisible) {
+      await customTab.click()
+      await metamaskPage.waitForTimeout(500) // Wait for tab content to load
+      await networkItem.click()
+      console.log(`✅ Found ${network} in Custom tab`)
+    } else {
+      // Fallback: try clicking anyway (might throw if not found)
+      await networkItem.click()
+    }
+  }
+
+  // Wait for network switch to complete
+  await metamaskPage.waitForTimeout(3000)
+  console.log(`✅ Switched to ${network} network`)
+}
+
+// Switch to User 2 account + switch to Sepolia
+export async function switchToUser2AndSepolia(page: Page): Promise<void> {
+  console.log('👤 Switching to User 2 account...')
+
+  // Switch to User 2 account
+  await page.click('[data-testid="account-menu-icon"]')
+  await page.click('[data-testid="add-multichain-account-button"]')
+  await page
+    .locator('.multichain-account-cell__account-name')
+    .filter({ hasText: 'account 2' })
+    .click()
+
+  console.log('✅ Switched to User 2 account')
+
+  // Switch to Sepolia network using custom function
+  try {
+    await customSwitchNetwork(page, 'Sepolia')
+  } catch (error) {
+    console.log('⚠️ Could not switch to Sepolia:', error)
+  }
+}

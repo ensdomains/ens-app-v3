@@ -843,8 +843,12 @@ test.describe('OAuth flow', () => {
 
     const transactionModal = makePageObject('TransactionModal')
 
-    await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
+    // Connect user before navigating with OAuth params to prevent
+    // "not logged in" error dialog from blocking the connect button
+    await page.goto('/')
     await login.connect('user')
+
+    await page.goto(`/?iss=${DENTITY_ISS}&code=dummyCode`)
 
     await expect(page).toHaveURL(`/${name}`)
     await expect(transactionModal.transactionModal).not.toBeVisible()
