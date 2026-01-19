@@ -2,22 +2,17 @@ import { expect } from '@playwright/test'
 import { labelhash } from 'viem'
 
 import { getResolver } from '@ensdomains/ensjs/public'
-import { setPrimaryName } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
-import {
-  waitForTransaction,
-  walletClient,
-} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { walletClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import { setPrimaryNameState } from '../../../playwright/fixtures/primaryName'
 
 const UNAUTHORISED_RESOLVER = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
 
 test.afterAll(async () => {
-  await setPrimaryName(walletClient, {
-    name: '',
-    account: createAccounts().getAddress('user') as `0x${string}`,
-  })
+  const accounts = createAccounts()
+  await setPrimaryNameState(accounts, { user: 'user', state: { l1: '', default: '' } })
 })
 
 test.describe('profile', () => {
@@ -46,10 +41,7 @@ test.describe('profile', () => {
       addr: 'user',
     })
 
-    await setPrimaryName(walletClient, {
-      name: '',
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
+    await setPrimaryNameState(accounts, { user: 'user', state: { l1: '', default: '' } })
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
@@ -71,9 +63,9 @@ test.describe('profile', () => {
     )
 
     await page.getByText('Set as primary name').click()
-    // Transaction modal
+    // Transaction modal - uses default registry when no L1 primary name exists
     await expect(page.getByTestId('display-item-info-normal')).toContainText(
-      'Set the primary name for your address',
+      'Set the default primary name for your address',
     )
     await expect(page.getByTestId('display-item-name-normal')).toContainText(name)
     await expect(page.getByTestId('display-item-address-normal')).toContainText(/0xf39...92266/)
@@ -110,10 +102,7 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    await setPrimaryName(walletClient, {
-      name: '',
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
+    await setPrimaryNameState(accounts, { user: 'user', state: { l1: '', default: '' } })
 
     const name = await makeName({
       label: 'other-eth-record',
@@ -157,10 +146,7 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    await setPrimaryName(walletClient, {
-      name: '',
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
+    await setPrimaryNameState(accounts, { user: 'user', state: { l1: '', default: '' } })
 
     const name = await makeName({
       label: 'wrapped',
@@ -215,10 +201,7 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    await setPrimaryName(walletClient, {
-      name: '',
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
+    await setPrimaryNameState(accounts, { user: 'user', state: { l1: '', default: '' } })
 
     const name = await makeName({
       label: 'wrapped',
@@ -287,6 +270,7 @@ test.describe('profile', () => {
   test('should skip setting primary name step if reverse registry name is already set to that name', async ({
     page,
     login,
+    accounts,
     makeName,
     makePageObject,
   }) => {
@@ -306,11 +290,8 @@ test.describe('profile', () => {
     })
     const subname = `test.${name}`
 
-    const tx = await setPrimaryName(walletClient, {
-      name: subname,
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
-    await waitForTransaction(tx)
+    // Set L1 primary name first to test that the primary name step is skipped
+    await setPrimaryNameState(accounts, { user: 'user', state: { l1: subname } })
 
     const profilePage = makePageObject('ProfilePage')
     const transactionModal = makePageObject('TransactionModal')
@@ -396,12 +377,7 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    const tx = await setPrimaryName(walletClient, {
-      name: '',
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
-    await waitForTransaction(tx)
-    console.log('tx', tx)
+    await setPrimaryNameState(accounts, { user: 'user', state: { l1: '', default: '' } })
 
     const label = `unknown-label-${Date.now()}`
     const _labelhash = labelhash(label)
@@ -454,11 +430,7 @@ test.describe('profile', () => {
   }) => {
     test.slow()
 
-    const tx = await setPrimaryName(walletClient, {
-      name: '',
-      account: createAccounts().getAddress('user') as `0x${string}`,
-    })
-    await waitForTransaction(tx)
+    await setPrimaryNameState(accounts, { user: 'user', state: { l1: '', default: '' } })
 
     const name = await makeName({
       label: 'legacy',

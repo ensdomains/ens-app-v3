@@ -11,10 +11,17 @@ import {
   type Web3ProviderBackend,
 } from '@ensdomains/headless-web3-provider'
 
-import { Accounts, createAccounts } from './fixtures/accounts'
+import { Accounts, createAccounts, User } from './fixtures/accounts'
 import { createConsoleListener } from './fixtures/consoleListener'
 import { Login } from './fixtures/login'
 import { createMakeNames } from './fixtures/makeName/index.js'
+import {
+  clearAllPrimaryNames,
+  getPrimaryNameState,
+  GetPrimaryNameStateResult,
+  PrimaryNameState,
+  setPrimaryNameState,
+} from './fixtures/primaryName'
 import { createSubgraph } from './fixtures/subgraph.js'
 import { createTime } from './fixtures/time.js'
 import { createPageObjectMaker } from './pageObjects/index.js'
@@ -34,6 +41,11 @@ type Fixtures = {
   subgraph: ReturnType<typeof createSubgraph>
   time: ReturnType<typeof createTime>
   consoleListener: ReturnType<typeof createConsoleListener>
+  primaryName: {
+    setState: (params: { user: User; state: PrimaryNameState }) => Promise<void>
+    getState: (user: User) => Promise<GetPrimaryNameStateResult>
+    clearAll: (user: User) => Promise<void>
+  }
 }
 
 const getChainById = (chain: string) => {
@@ -84,5 +96,12 @@ export const test = base.extend<Fixtures>({
     const consoleListener = createConsoleListener({ page })
     await use(consoleListener)
     consoleListener.reset()
+  },
+  primaryName: async ({ accounts }, use) => {
+    await use({
+      setState: (params) => setPrimaryNameState(accounts, params),
+      getState: (user) => getPrimaryNameState(accounts, user),
+      clearAll: (user) => clearAllPrimaryNames(accounts, user),
+    })
   },
 })

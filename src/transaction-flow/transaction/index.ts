@@ -13,9 +13,11 @@ import migrateProfileWithReset from './migrateProfileWithReset'
 import registerName from './registerName'
 import removeVerificationRecord from './removeVerificationRecord'
 import repairDesyncedName from './repairDesyncedName'
+import resetDefaultPrimaryName from './resetDefaultPrimaryName'
 import resetPrimaryName from './resetPrimaryName'
 import resetProfile from './resetProfile'
 import resetProfileWithRecords from './resetProfileWithRecords'
+import setDefaultPrimaryName from './setDefaultPrimaryName'
 import setPrimaryName from './setPrimaryName'
 import syncManager from './syncManager'
 import testSendName from './testSendName'
@@ -45,9 +47,11 @@ export const transactions = {
   migrateProfileWithReset,
   registerName,
   repairDesyncedName,
+  resetDefaultPrimaryName,
   resetPrimaryName,
   resetProfile,
   resetProfileWithRecords,
+  setDefaultPrimaryName,
   setPrimaryName,
   syncManager,
   testSendName,

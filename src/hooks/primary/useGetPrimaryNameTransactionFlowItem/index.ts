@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next'
 import type { Address } from 'viem'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegistryName'
 import type { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { makeIntroItem } from '@app/transaction-flow/intro/index'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionIntro } from '@app/transaction-flow/types'
 import { emptyAddress } from '@app/utils/constants'
 
+import { usePrimaryNameFromSources } from '../usePrimaryNameFromSources'
 import {
   checkRequiresSetPrimaryNameTransaction,
   checkRequiresUpdateEthAddressTransaction,
@@ -39,30 +39,57 @@ export const useGetPrimaryNameTransactionFlowItem = (
 
   const _enabled = (options.enabled ?? true) && !!address
 
-  const reverseRegistryName = useReverseRegistryName({ address: address!, enabled: _enabled })
-  const latestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
+  const { data: primaryNameDetails, isLoading, isFetching } = usePrimaryNameFromSources({ address })
 
-  const { isLoading, isFetching } = reverseRegistryName
+  const latestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const isActive = _enabled && !isLoading && !isFetching
 
   const callBack = useMemo(() => {
-    if (!isActive) return undefined
+    if (!isActive || !address) return undefined
     return (name: string) => {
       let introType: IntroType = 'updateEthAddress'
       const transactions: (
         | TransactionItem<'setPrimaryName'>
+        | TransactionItem<'setDefaultPrimaryName'>
         | TransactionItem<'updateResolver'>
         | TransactionItem<'updateEthAddress'>
       )[] = []
 
+      // Use default registry only if user has no L1 primary name
+      const canUseDefaultRegistry = !primaryNameDetails?.hasPrimaryName
+      const targetReverseRegistry = canUseDefaultRegistry ? 'default' : 'l1'
+      const currentTargetReverseRegistryName =
+        targetReverseRegistry === 'l1'
+          ? primaryNameDetails?.reverseRegistryName
+          : primaryNameDetails?.defaultReverseRegistryName
+
       if (
         checkRequiresSetPrimaryNameTransaction({
-          reverseRegistryName: reverseRegistryName.data || '',
+          reverseRegistryName: currentTargetReverseRegistryName || '',
           name,
         })
       ) {
-        transactions.push(createTransactionItem('setPrimaryName', { name, address }))
+        if (targetReverseRegistry === 'default')
+          transactions.push(createTransactionItem('setDefaultPrimaryName', { name, address }))
+        else transactions.push(createTransactionItem('setPrimaryName', { name, address }))
+      }
+
+      if (
+        checkRequiresUpdateEthAddressTransaction({
+          resolvedAddress: profileAddress,
+          address,
+          isResolverAuthorized: resolverStatus?.isAuthorized,
+          isLatestResolverEthAddressSetToAddress: resolverStatus?.hasMigratedRecord,
+        })
+      ) {
+        transactions.unshift(
+          createTransactionItem('updateEthAddress', {
+            name,
+            address,
+            latestResolver: !resolverStatus?.isAuthorized,
+          }),
+        )
       }
 
       if (
@@ -79,23 +106,6 @@ export const useGetPrimaryNameTransactionFlowItem = (
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolverAddress: latestResolverAddress,
-          }),
-        )
-      }
-
-      if (
-        checkRequiresUpdateEthAddressTransaction({
-          resolvedAddress: profileAddress,
-          address,
-          isResolverAuthorized: resolverStatus?.isAuthorized,
-          isLatestResolverEthAddressSetToAddress: resolverStatus?.hasMigratedRecord,
-        })
-      ) {
-        transactions.unshift(
-          createTransactionItem('updateEthAddress', {
-            name,
-            address,
-            latestResolver: !resolverStatus?.isAuthorized,
           }),
         )
       }
@@ -125,10 +135,10 @@ export const useGetPrimaryNameTransactionFlowItem = (
     latestResolverAddress,
     address,
     profileAddress,
-    reverseRegistryName.data,
     resolverAddress,
     resolverStatus?.hasMigratedRecord,
     resolverStatus?.isAuthorized,
+    primaryNameDetails,
     t,
   ])
 

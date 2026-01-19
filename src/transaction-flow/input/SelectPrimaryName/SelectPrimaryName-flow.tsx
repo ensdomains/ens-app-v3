@@ -18,7 +18,7 @@ import {
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
-import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegistryName'
+import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -134,7 +134,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const [searchQuery, _setSearchQuery] = useState('')
   const setSearchQuery = useDebouncedCallback(_setSearchQuery, 300, [])
 
-  const currentPrimary = useReverseRegistryName({ address })
+  const currentPrimary = usePrimaryName({ address })
   const {
     data: namesData,
     hasNextPage,
@@ -153,7 +153,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   // Filter out the primary name's data
   const filteredNamesPages =
     namesData?.pages?.map((page: Name[]) =>
-      page.filter((name: Name) => name?.name !== currentPrimary?.data),
+      page.filter((name: Name) => name?.name !== currentPrimary?.data?.name),
     ) || []
 
   const selectedName = useWatch({

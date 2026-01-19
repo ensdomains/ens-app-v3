@@ -78,3 +78,5 @@ certificates
 
 # Claude
 .playwright-mcp
+.claude
+thoughts/
