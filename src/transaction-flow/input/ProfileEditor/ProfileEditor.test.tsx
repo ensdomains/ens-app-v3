@@ -100,6 +100,14 @@ vi.mock('@app/utils/BreakpointProvider')
 
 vi.mock('@app/transaction-flow/TransactionFlowProvider')
 
+vi.mock('@app/hooks/useRouterWithHistory', () => ({
+  useRouterWithHistory: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    query: {},
+  }),
+}))
+
 vi.mock('@app/transaction-flow/input/ProfileEditor/components/ProfileBlurb', () => ({
   ProfileBlurb: () => <div>Profile Blurb</div>,
 }))

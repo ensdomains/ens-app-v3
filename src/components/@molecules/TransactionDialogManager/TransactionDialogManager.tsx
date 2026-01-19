@@ -139,6 +139,7 @@ export const TransactionDialogManager = ({
               }
               currentStep={_selectedItem.currentTransaction}
               stepCount={_selectedItem.transactions.length}
+              transactions={_selectedItem.transactions}
               transaction={transactionItem}
               txKey={selectedKey}
               backToInput={'backToInput' in transaction ? !!transaction.backToInput : false}

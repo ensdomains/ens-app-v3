@@ -11,7 +11,7 @@ import {
   type Transport,
 } from 'viem'
 import { createConfig, createStorage, fallback, http } from 'wagmi'
-import { holesky, localhost, mainnet, sepolia } from 'wagmi/chains'
+import { localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
 
@@ -111,7 +111,6 @@ export const transports = {
       })),
   [mainnet.id]: initialiseTransports('mainnet', [drpcUrl, tenderlyUrl]),
   [sepolia.id]: initialiseTransports('sepolia', [drpcUrl, tenderlyUrl]),
-  [holesky.id]: initialiseTransports('holesky', [drpcUrl, tenderlyUrl]),
 } as const
 
 // This is a workaround to fix MetaMask defaulting to the wrong transaction type

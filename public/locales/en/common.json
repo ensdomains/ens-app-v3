@@ -441,11 +441,6 @@
       "title": "Switch to Sepolia?",
       "description": "You've selected Sepolia (testnet) in your wallet.",
       "action": "Go to sepolia.app.ens.domains"
-    },
-    "Holesky": {
-      "title": "Switch to Holesky?",
-      "description": "You've selected Holesky (testnet) in your wallet.",
-      "action": "Go to holesky.app.ens.domains"
     }
   },
   "para": {

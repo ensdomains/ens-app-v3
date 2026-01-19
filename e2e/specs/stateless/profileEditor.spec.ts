@@ -20,7 +20,7 @@ import { emptyAddress } from '../../../src/utils/constants'
 dotenv.config({ path: '.env.local' })
 
 const legacyResolver = testClient.chain.contracts.legacyPublicResolver.address
-const latestResolver = testClient.chain.contracts.publicResolver.address
+const latestResolver = testClient.chain.contracts.ensPublicResolver.address
 
 const contractAddresses = JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}')
 const ownedResolverAddress = contractAddresses.OwnedResolver || ''

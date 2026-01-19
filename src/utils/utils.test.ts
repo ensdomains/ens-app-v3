@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { holeskyWithEns, mainnetWithEns, sepoliaWithEns } from '@app/constants/chains'
+import { mainnetWithEns, sepoliaWithEns } from '@app/constants/chains'
 
 import { dateFromDateDiff } from './date'
 import {

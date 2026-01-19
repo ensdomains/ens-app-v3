@@ -19,7 +19,6 @@ import { useChainName } from '@app/hooks/chain/useChainName'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
-import { getDestination } from '@app/routes'
 import { emptyAddress } from '@app/utils/constants'
 import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
 
@@ -96,7 +95,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
       ? ([
           {
             label: t('wallet.viewProfile'),
-            onClick: () => router.push(getDestination(`/profile/${primary.data!.name}`) as string),
+            onClick: () => router.push(`/profile/${primary.data!.name}`),
             color: 'text',
             icon: () => <UpRightArrowSVG height={16} width={16} />,
           },
@@ -110,7 +109,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
       : []),
     {
       label: t('address.viewAddress'),
-      onClick: () => router.push(getDestination(`/address/${address}`) as string),
+      onClick: () => router.push(`/address/${address}`),
       color: 'text',
       icon: () => <UpRightArrowSVG height={16} width={16} />,
     },

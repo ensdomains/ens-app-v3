@@ -30,6 +30,13 @@ vi.mock('@app/hooks/transactions/useRecentTransactions')
 vi.mock('@app/hooks/chain/useInvalidateOnBlock')
 vi.mock('@app/utils/safe')
 vi.mock('@app/utils/query/createAccessList')
+vi.mock('@app/hooks/useRouterWithHistory', () => ({
+  useRouterWithHistory: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    query: {},
+  }),
+}))
 vi.mock('@wagmi/core', async () => {
   const actual = await vi.importActual('@wagmi/core')
   return {
@@ -110,6 +117,7 @@ const ComponentWithDefaultProps = ({
     actionName={actionName}
     displayItems={displayItems}
     transaction={transaction}
+    transactions={[transaction] as const}
     onDismiss={mockOnDismiss}
     dispatch={mockDispatch}
     backToInput={false}

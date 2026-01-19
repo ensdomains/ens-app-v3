@@ -19,10 +19,12 @@ import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
+import { useReferrer } from '@app/hooks/useReferrer'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
+import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
 import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
@@ -162,6 +164,7 @@ const NamesList = ({ names }: NamesListProps) => {
 
 type Data = {
   names: string[]
+  hasWrapped: boolean
   seconds?: number
   isSelf?: boolean
   minSeconds?: number
@@ -172,7 +175,7 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 const ExtendNames = ({
-  data: { seconds: defaultSeconds, names, isSelf, minSeconds = ONE_DAY },
+  data: { seconds: defaultSeconds, names, isSelf, minSeconds = ONE_DAY, hasWrapped },
   dispatch,
   onDismiss,
 }: Props) => {
@@ -183,6 +186,9 @@ const ExtendNames = ({
   )
   const years = secondsToYears(seconds)
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
+
+  const referrer = useReferrer()
+  const referrerHex = getReferrerHex(referrer)
 
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
   const { address, isConnected: isAccountConnected } = useAccount()
@@ -226,6 +232,8 @@ const ExtendNames = ({
           duration: seconds,
           names,
           startDateTimestamp: expiryDate?.getTime(),
+          referrer: referrerHex,
+          hasWrapped,
         },
         stateOverride: [
           {
@@ -316,6 +324,8 @@ const ExtendNames = ({
               bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
               currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
             }),
+            referrer: referrerHex,
+            hasWrapped,
           })
           dispatch({ name: 'setTransactions', payload: [transactions] })
           dispatch({ name: 'setFlowStage', payload: 'transaction' })

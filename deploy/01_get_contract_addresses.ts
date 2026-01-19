@@ -15,10 +15,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   ].map(([name, address]) => [name, getAddress(address)])
   const deploymentAddressMap = Object.fromEntries(deploymentAddressArray)
 
+  // Add alias for legacy ETHRegistrarController as UnwrappedEthRegistrarController
+  const deploymentAddressMapWithAliases = {
+    ...deploymentAddressMap,
+    UnwrappedETHRegistrarController: deploymentAddressMap.ETHRegistrarController,
+  }
+
   await writeFile(
     resolve(__dirname, '../.env.local'),
-    `NEXT_PUBLIC_DEPLOYMENT_ADDRESSES='${JSON.stringify(deploymentAddressMap)}'`,
+    `NEXT_PUBLIC_DEPLOYMENT_ADDRESSES='${JSON.stringify(deploymentAddressMapWithAliases)}'`,
   )
+  const deploymentAddressArrayWithAliases = [
+    ...deploymentAddressArray,
+    ['UnwrappedETHRegistrarController', deploymentAddressMap.ETHRegistrarController],
+  ]
+
   if (!existsSync(resolve(__dirname, '../typings-custom/generated'))) {
     await mkdir(resolve(__dirname, '../typings-custom/generated'))
   }
@@ -27,7 +38,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     `declare module '@app/local-contracts' {
   interface Register {
     deploymentAddresses: {
-      ${deploymentAddressArray.map(([name, address]) => `${name}: '${address}'`).join('\n      ')}
+      ${deploymentAddressArrayWithAliases
+        .map(([name, address]) => `${name}: '${address}'`)
+        .join('\n      ')}
     }
   }
 }

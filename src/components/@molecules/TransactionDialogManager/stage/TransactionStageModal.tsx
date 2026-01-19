@@ -26,12 +26,14 @@ import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTra
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import {
+  GenericTransaction,
   ManagedDialogProps,
   TransactionFlowAction,
   TransactionStage,
 } from '@app/transaction-flow/types'
-import { ConfigWithEns, TransactionDisplayItem } from '@app/types'
+import { ConfigWithEns } from '@app/types'
 import { sendEvent } from '@app/utils/analytics/events'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
@@ -271,16 +273,30 @@ export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => 
   dispatch({ name: 'resetTransactionStep' })
 }
 
+const getSubnameFromTransactions = (transactions: ReadonlyArray<GenericTransaction>) => {
+  const createSubname = transactions.find((t) => t.name === 'createSubname')
+  if (!createSubname) return null
+  const { label, parent } =
+    (createSubname?.data as GenericTransaction<'createSubname'>['data']) ?? {}
+  if (!label || !parent) return null
+  return `${label}.${parent}`
+}
+
 function useCreateSubnameRedirect(
   shouldTrigger: boolean,
-  subdomain?: TransactionDisplayItem['value'],
+  subdomain?: string | null,
+  onDismiss?: () => void,
 ) {
+  const router = useRouterWithHistory()
+
   useEffect(() => {
     if (shouldTrigger && typeof subdomain === 'string') {
       setTimeout(() => {
-        window.location.href = `/${subdomain}`
+        router.push(`/${subdomain}`)
+        onDismiss?.()
       }, 1000)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldTrigger, subdomain])
 }
 
@@ -343,6 +359,7 @@ export const TransactionStageModal = ({
   helper,
   dispatch,
   stepCount,
+  transactions,
   transaction,
   txKey,
   onDismiss,
@@ -445,7 +462,8 @@ export const TransactionStageModal = ({
 
   useCreateSubnameRedirect(
     stage === 'complete' && currentStep + 1 === stepCount,
-    displayItems.find((i) => i.label === 'subname' && i.type === 'name')?.value,
+    getSubnameFromTransactions(transactions),
+    onDismiss,
   )
 
   const stepStatus = useMemo(() => {

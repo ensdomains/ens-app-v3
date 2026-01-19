@@ -1,0 +1,168 @@
+diff --git a/src/docker-compose.yml b/src/docker-compose.yml
+index 7b933cecb50874065956f6e16fa214240255a754..0ed18907c5117ceb91bc5e2b773a108dbfded3d7 100644
+--- a/src/docker-compose.yml
++++ b/src/docker-compose.yml
+@@ -4,40 +4,75 @@ services:
+     image: ghcr.io/foundry-rs/foundry:stable
+     entrypoint: anvil --chain-id 1337 --gas-limit 50000000 --timestamp 1640995200 $ANVIL_EXTRA_ARGS
+     ports:
+-      - "8545:8545"
++      - "8545:8545" # L1 chain
+     environment:
+       ANVIL_IP_ADDR: "0.0.0.0"
++    healthcheck:
++      test: ["CMD", "curl", "-f", "http://localhost:8000"]
++      interval: 10s
++      timeout: 5s
++      retries: 5
++      start_period: 10s
+ 
+   ensindexer:
+     container_name: ensindexer
+-    image: ghcr.io/namehash/ensnode/ensindexer:0.26.0
+-    pull_policy: always
++    image: ghcr.io/namehash/ensnode/ensindexer:0.35.0-ens-test-env.2
+     ports:
+       - "42069:42069"
+     depends_on:
+-      - postgres
+-      - anvil
+-      - ensrainbow
++      postgres:
++        condition: service_started
++      ensrainbow:
++        condition: service_healthy
++      anvil:
++        condition: service_started
+     environment:
+       PORT: 42069
+       RPC_URL_1337: http://anvil:8545
+       ENSNODE_PUBLIC_URL: http://localhost:42069
++      ENSADMIN_PUBLIC_URL: http://localhost:4173
++      ENSINDEXER_URL: http://localhost:42069
+       ENSRAINBOW_URL: http://ensrainbow:3223
+       DATABASE_URL: postgresql://postgres:password@postgres:5432/postgres
+       DATABASE_SCHEMA: ens-test-env
+-      ENS_DEPLOYMENT_CHAIN: ens-test-env
+       HEAL_REVERSE_ADDRESSES: false
+-      INDEX_RESOLVER_RECORDS: false
+-      ACTIVE_PLUGINS: subgraph
+-      NEXT_PUBLIC_DEPLOYMENT_ADDRESSES: ${NEXT_PUBLIC_DEPLOYMENT_ADDRESSES:-}
+-      DEPLOYMENT_ADDRESSES: ${DEPLOYMENT_ADDRESSES:-}
++      INDEX_ADDITIONAL_RESOLVER_RECORDS: false
++      REPLACE_UNNORMALIZED: false
++      PLUGINS: subgraph
++      LABEL_SET_ID: ens-test-env
++      LABEL_SET_VERSION: 0
++      NAMESPACE: ens-test-env
++      DEPLOYMENT_ADDRESSES: $DEPLOYMENT_ADDRESSES
++      NEXT_PUBLIC_DEPLOYMENT_ADDRESSES: $NEXT_PUBLIC_DEPLOYMENT_ADDRESSES
+ 
+   ensrainbow:
+     container_name: ensrainbow
+-    image: ghcr.io/namehash/ensnode/ensrainbow-test:latest
+-    pull_policy: always
++    image: ghcr.io/namehash/ensnode/ensrainbow:0.35.0-ens-test-env.2
+     environment:
++      DB_SCHEMA_VERSION: 3
++      LABEL_SET_ID: ens-test-env
++      LABEL_SET_VERSION: 0
+       LOG_LEVEL: error
++    volumes:
++      - ensrainbow_data:/app/apps/ensrainbow/data
++    healthcheck:
++      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3223/health"]
++      interval: 30s
++      timeout: 5s
++      retries: 2
++      start_period: 2m
++      start_interval: 1s
++
++  ensadmin:
++    container_name: ensadmin
++    image: ghcr.io/namehash/ensnode/ensadmin:0.35.0-ens-test-env.2
++    ports:
++      - "4173:4173"
++    environment:
++      ENSADMIN_PUBLIC_URL: http://localhost:4173
++      NEXT_PUBLIC_DEFAULT_ENSNODE_URLS: http://localhost:42069
++    depends_on:
++      - ensindexer
+ 
+   postgres:
+     container_name: postgres
+@@ -58,7 +93,11 @@ services:
+     ports:
+       - "8080:8080"
+     environment:
+-      - ADDRESS_ETH_REGISTRAR=$ADDRESS_ETH_REGISTRAR
+-      - ADDRESS_NAME_WRAPPER=$ADDRESS_NAME_WRAPPER
+-      - RPC_PROVIDER=http://anvil:8545
++      - ADDRESS_ETH_REGISTRAR=0x36b58F5C1969B7b6591D752ea6F5486D069010AB
++      - ADDRESS_NAME_WRAPPER=0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2
++      - RPC_PROVIDER=http://localhost:8545
+       - SUBGRAPH_URL=http://ensindexer:42069/subgraph
++
++volumes:
++  ensrainbow_data:
++    driver: local
+\ No newline at end of file
+diff --git a/src/manager.js b/src/manager.js
+index 1ba0bccf82e7b96ac9c828d5f4a6e466c09f239c..e032c0cd4743e05513157be3c61940df0752e0a8 100644
+--- a/src/manager.js
++++ b/src/manager.js
+@@ -91,13 +91,13 @@ async function cleanup(exitCode) {
+           log: false,
+         }),
+       )
+-      .catch(() => {})
++      .catch(() => { })
+   }
+ 
+   commands?.forEach((command) => {
+     try {
+       process.kill(command.pid, 'SIGKILL')
+-    } catch {}
++    } catch { }
+   })
+ 
+   process.exit(exitCode ? 1 : 0)
+@@ -144,21 +144,21 @@ const logContainers = async (names) => {
+  */
+ const waitForENSNode = async (blockheight) => {
+   // wait for server to be available
+-  await waitOn({ resources: ['http://localhost:42069'] })
++  await waitOn({ resources: ['http://localhost:42069/subgraph'] })
+ 
+   let currentBlockheight = 0
+   // getter for current indexed blockheight
+   const getCurrentBlock = async () =>
+     // TODO: once _meta is available on subgraph-compat schema (/subgraph), use that
+-    fetch('http://localhost:42069/ponder', {
++    fetch('http://localhost:42069/subgraph', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+-      body: JSON.stringify({ query: '{ _meta { status } }', variables: {} }),
++      body: JSON.stringify({ query: '{ _meta { block { number } } }', variables: {} }),
+     })
+       .then((res) => res.json())
+       .then((res) => {
+         if (res.errors) throw new Error(JSON.stringify(res.errors))
+-        const blockNumber = res.data._meta.status['1337'].block?.number
++        const blockNumber = res.data._meta.block?.number
+         if (!blockNumber) return 0
+         return blockNumber
+       })
+@@ -329,9 +329,9 @@ export const main = async (_config, _options, justKill) => {
+      * @type {import('concurrently').ConcurrentlyResult['result']}
+      */
+     let result
+-    ;({ commands, result } = concurrently(cmdsToRun, {
+-      prefix: 'name',
+-    }))
++      ; ({ commands, result } = concurrently(cmdsToRun, {
++        prefix: 'name',
++      }))
+ 
+     commands.forEach((cmd) => {
+       if (inxsToFinishOnExit.includes(cmd.index)) {

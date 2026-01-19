@@ -56,7 +56,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
     console.log('make commit:', name)
 
     const { data: commitment } = await publicClient.call({
-      to: walletClient.chain.contracts.legacyRegistrarController.address,
+      to: walletClient.chain.contracts.legacyEthRegistrarController.address,
       data: encodeFunctionData({
         functionName: 'makeCommitment',
         abi: legacyEthRegistrarControllerAbi,
@@ -65,7 +65,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
     })
 
     const preparedTransaction = await walletClient.prepareTransactionRequest({
-      to: walletClient.chain.contracts.legacyRegistrarController.address,
+      to: walletClient.chain.contracts.legacyEthRegistrarController.address,
       data: encodeFunctionData({
         functionName: 'commit',
         abi: legacyEthRegistrarControllerAbi,
@@ -85,7 +85,7 @@ export const makeLegacyNameGenerator = ({ accounts }: Dependencies) => ({
     const price = await getLegacyRentPrice({ label, duration })
 
     const preparedTransaction = await walletClient.prepareTransactionRequest({
-      to: walletClient.chain.contracts.legacyRegistrarController.address,
+      to: walletClient.chain.contracts.legacyEthRegistrarController.address,
       data: encodeFunctionData({
         functionName: 'register',
         abi: legacyEthRegistrarControllerAbi,
