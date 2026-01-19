@@ -44,9 +44,9 @@ export async function connectWalletToEns(page: Page, context: BrowserContext): P
     attempts += 1
   }
 
-  // if (!mmPage) {
-  //   throw new Error('❌ MetaMask popup not found')
-  // }
+  if (!mmPage) {
+    throw new Error('❌ MetaMask popup not found')
+  }
 
   await mmPage.bringToFront()
 
