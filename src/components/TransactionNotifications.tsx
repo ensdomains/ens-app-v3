@@ -74,15 +74,13 @@ export const TransactionNotifications = () => {
                 records?: { texts?: Array<{ key: string }> }
               }
               const hasAvatarChange = registrationData.records?.texts?.some(
-                (t) => t.key === 'avatar',
+                (text) => text.key === 'avatar',
               )
               const hasHeaderChange = registrationData.records?.texts?.some(
-                (t) => t.key === 'header',
+                (text) => text.key === 'header',
               )
-              if (hasAvatarChange)
-                bustMediaCache(ensName, client as ClientWithEns, 'avatar')
-              if (hasHeaderChange)
-                bustMediaCache(ensName, client as ClientWithEns, 'header')
+              if (hasAvatarChange) bustMediaCache(ensName, client as ClientWithEns, 'avatar')
+              if (hasHeaderChange) bustMediaCache(ensName, client as ClientWithEns, 'header')
             }
             queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
@@ -113,7 +111,7 @@ export const TransactionNotifications = () => {
                   | Array<{ key: string; group?: string }>
               }
               // Handle both RecordOptions format and ProfileRecord[] format
-              const records = profileData.records
+              const { records } = profileData
               let hasAvatarChange = false
               let hasHeaderChange = false
               if (Array.isArray(records)) {
@@ -126,13 +124,11 @@ export const TransactionNotifications = () => {
                 )
               } else if (records?.texts) {
                 // RecordOptions format (updateProfile)
-                hasAvatarChange = records.texts.some((t) => t.key === 'avatar')
-                hasHeaderChange = records.texts.some((t) => t.key === 'header')
+                hasAvatarChange = records.texts.some((text) => text.key === 'avatar')
+                hasHeaderChange = records.texts.some((text) => text.key === 'header')
               }
-              if (hasAvatarChange)
-                bustMediaCache(ensName, client as ClientWithEns, 'avatar')
-              if (hasHeaderChange)
-                bustMediaCache(ensName, client as ClientWithEns, 'header')
+              if (hasAvatarChange) bustMediaCache(ensName, client as ClientWithEns, 'avatar')
+              if (hasHeaderChange) bustMediaCache(ensName, client as ClientWithEns, 'header')
             }
             queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
@@ -147,15 +143,13 @@ export const TransactionNotifications = () => {
                 records?: { texts?: Array<{ key: string }> }
               }
               const hasAvatarChange = recordsData.records?.texts?.some(
-                (t) => t.key === 'avatar',
+                (text) => text.key === 'avatar',
               )
               const hasHeaderChange = recordsData.records?.texts?.some(
-                (t) => t.key === 'header',
+                (text) => text.key === 'header',
               )
-              if (hasAvatarChange)
-                bustMediaCache(ensName, client as ClientWithEns, 'avatar')
-              if (hasHeaderChange)
-                bustMediaCache(ensName, client as ClientWithEns, 'header')
+              if (hasAvatarChange) bustMediaCache(ensName, client as ClientWithEns, 'avatar')
+              if (hasHeaderChange) bustMediaCache(ensName, client as ClientWithEns, 'header')
             }
             queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
