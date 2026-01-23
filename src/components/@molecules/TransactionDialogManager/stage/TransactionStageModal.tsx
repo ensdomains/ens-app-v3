@@ -38,6 +38,7 @@ import { sendEvent } from '@app/utils/analytics/events'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
+import { computeCacheBustFlags } from '@app/utils/transactionCacheBust'
 import { hasParaConnection, makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -456,6 +457,8 @@ export const TransactionStageModal = ({
         addRecentTransaction,
         dispatch,
         isSafeApp,
+        transactionFlowData: transaction.data,
+        computeCacheBustFn: computeCacheBustFlags,
       }),
     },
   })

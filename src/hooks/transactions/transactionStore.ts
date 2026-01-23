@@ -21,6 +21,12 @@ export type TransactionStatus =
   | 'unknown'
   | 'searching'
 
+export type CacheBust = {
+  avatar?: boolean
+  header?: boolean
+  name?: string
+}
+
 interface BaseTransaction {
   hash: Hash
   action: string
@@ -35,6 +41,7 @@ interface BaseTransaction {
   searchStatus?: 'searching' | 'found'
   input?: Hex
   timestamp?: number
+  cacheBust?: CacheBust
 }
 
 interface SearchingTransaction extends BaseTransaction {
@@ -91,6 +98,7 @@ export type Transaction =
 export type NewTransaction = Omit<Transaction, 'status' | 'minedData'> & {
   input?: Hex
   timestamp?: number
+  cacheBust?: CacheBust
 }
 
 type Data = Record<string, Record<number, Transaction[] | undefined>>
