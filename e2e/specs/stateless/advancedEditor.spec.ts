@@ -25,6 +25,11 @@ test('should be able to maintain state when returning from transaction modal whe
         { coin: 'SOL', value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH' },
         { coin: 'ETH', value: '0xbec1C7C11F2Fa9AB24b9E49122D26e721766DAF6' },
         { coin: 'BTC', value: '1PzAJcFtEiXo9UGtRU6iqXQKj8NXtcC7DE' },
+        {
+          coin: 'SUI',
+          // eslint-disable-next-line no-restricted-syntax -- SUI addresses are 64 hex chars, not private keys
+          value: '0x1231231231231231231231231231231231231231231231231231231231231231',
+        },
       ],
       contentHash: 'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
       abi: await encodeAbi({ encodeAs: 'json', data: dummyABI }),
@@ -51,6 +56,10 @@ test('should be able to maintain state when returning from transaction modal whe
   await expect(recordsPage.getRecordValue('address', 'BTC')).toHaveText(
     '1PzAJcFtEiXo9UGtRU6iqXQKj8NXtcC7DE',
   )
+  await expect(recordsPage.getRecordValue('address', 'SUI')).toHaveText(
+    // eslint-disable-next-line no-restricted-syntax -- SUI addresses are 64 hex chars, not private keys
+    '0x1231231231231231231231231231231231231231231231231231231231231231',
+  )
   await expect(recordsPage.getRecordValue('contentHash')).toHaveText(
     'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
   )
@@ -71,6 +80,10 @@ test('should be able to maintain state when returning from transaction modal whe
   await expect(await advancedEditor.recordInput('address', 'BTC')).toHaveValue(
     '1PzAJcFtEiXo9UGtRU6iqXQKj8NXtcC7DE',
   )
+  await expect(await advancedEditor.recordInput('address', 'SUI')).toHaveValue(
+    // eslint-disable-next-line no-restricted-syntax -- SUI addresses are 64 hex chars, not private keys
+    '0x1231231231231231231231231231231231231231231231231231231231231231',
+  )
   await expect(await advancedEditor.recordInput('contentHash')).toHaveValue(
     'ipfs://bafybeico3uuyj3vphxpvbowchdwjlrlrh62awxscrnii7w7flu5z6fk77y',
   )
@@ -79,13 +92,14 @@ test('should be able to maintain state when returning from transaction modal whe
   await advancedEditor.recordClearButton('text', 'text').then((button) => button.click())
   await advancedEditor.recordClearButton('address', 'SOL').then((button) => button.click())
   await advancedEditor.recordClearButton('address', 'ETH').then((button) => button.click())
+  await advancedEditor.recordClearButton('address', 'SUI').then((button) => button.click())
   await advancedEditor.recordInput('contentHash').then((input) => input.fill(''))
   await advancedEditor.recordInput('abi').then((input) => input.fill(''))
 
   await advancedEditor.saveButton.click()
 
   // Validate transaction display item
-  await expect(transactionModal.displayItem('update')).toHaveText('5 records')
+  await expect(transactionModal.displayItem('update')).toHaveText('6 records')
 
   await transactionModal.backButton.click()
 
@@ -93,13 +107,14 @@ test('should be able to maintain state when returning from transaction modal whe
   await expect(await advancedEditor.recordComponent('text', 'text')).toHaveCount(0)
   await expect(await advancedEditor.recordComponent('address', 'SOL')).toHaveCount(0)
   await expect(await advancedEditor.recordComponent('address', 'ETH')).toHaveCount(0)
+  await expect(await advancedEditor.recordComponent('address', 'SUI')).toHaveCount(0)
   await expect(await advancedEditor.recordInput('contentHash')).toHaveValue('')
   await expect(await advancedEditor.recordInput('abi')).toHaveValue('')
 
   await advancedEditor.saveButton.click()
 
   // Validate transaction display item
-  await expect(transactionModal.displayItem('update')).toHaveText('5 records')
+  await expect(transactionModal.displayItem('update')).toHaveText('6 records')
 
   await transactionModal.autoComplete()
 
@@ -107,6 +122,7 @@ test('should be able to maintain state when returning from transaction modal whe
   await expect(recordsPage.getRecordButton('text', 'text')).toHaveCount(0)
   await expect(recordsPage.getRecordButton('address', 'SOL')).toHaveCount(0)
   await expect(recordsPage.getRecordButton('address', 'ETH')).toHaveCount(0)
+  await expect(recordsPage.getRecordButton('address', 'SUI')).toHaveCount(0)
   await expect(recordsPage.getRecordButton('contentHash')).toHaveCount(0)
   await expect(recordsPage.getRecordButton('abi')).toHaveCount(0)
 })
