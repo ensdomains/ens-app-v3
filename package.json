@@ -198,6 +198,7 @@
       "@wagmi/core": "2.13.3",
       "@walletconnect/ethereum-provider": "2.11.1",
       "@walletconnect/modal": "2.6.2",
+      "@ensdomains/address-encoder": "1.1.4",
       "aggregate-error": "npm:@socketregistry/aggregate-error@^1",
       "array-buffer-byte-length": "npm:@socketregistry/array-buffer-byte-length@^1",
       "array-flatten": "npm:@socketregistry/array-flatten@^1",
