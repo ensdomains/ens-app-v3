@@ -6,7 +6,7 @@ import { call, estimateGas, getTransaction, prepareTransactionRequest } from 'vi
 import { useConnections } from 'wagmi'
 
 import { SupportedChain } from '@app/constants/chains'
-import { TransactionStatus } from '@app/hooks/transactions/transactionStore'
+import { CacheBust, TransactionStatus } from '@app/hooks/transactions/transactionStore'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useIsSafeApp } from '@app/hooks/useIsSafeApp'
 import { createTransactionRequest, TransactionName } from '@app/transaction-flow/transaction'
@@ -50,6 +50,8 @@ export const transactionSuccessHandler =
     addRecentTransaction,
     dispatch,
     isSafeApp,
+    transactionFlowData,
+    computeCacheBustFn,
   }: {
     client: ClientWithEns
     connectorClient: ConnectorClientWithEns
@@ -59,6 +61,8 @@ export const transactionSuccessHandler =
     addRecentTransaction: ReturnType<typeof useAddRecentTransaction>
     dispatch: Dispatch<TransactionFlowAction>
     isSafeApp: ReturnType<typeof useIsSafeApp>['data']
+    transactionFlowData?: unknown
+    computeCacheBustFn?: (action: string, data: unknown) => CacheBust | undefined
   }) =>
   async (tx: SendTransactionReturnType) => {
     let transactionData: Transaction | null = null
@@ -84,6 +88,12 @@ export const transactionSuccessHandler =
       }
     }
 
+    // Compute cache bust flags from the original flow data
+    const cacheBust =
+      transactionFlowData && computeCacheBustFn
+        ? computeCacheBustFn(actionName, transactionFlowData)
+        : undefined
+
     addRecentTransaction({
       ...transactionData,
       hash: tx,
@@ -93,6 +103,7 @@ export const transactionSuccessHandler =
       timestamp: Math.floor(Date.now() / 1000),
       isSafeTx: !!isSafeApp,
       searchRetries: 0,
+      cacheBust,
     })
     dispatch({ name: 'setTransactionHash', payload: { hash: tx, key: txKey! } })
   }
