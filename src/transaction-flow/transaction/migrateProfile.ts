@@ -59,6 +59,7 @@ const transaction = async ({
   })
   if (!profile) throw new Error('No profile found')
   const records = await profileRecordsToKeyValue(profile)
+
   return setRecords.makeFunctionData(connectorClient, {
     name: data.name,
     resolverAddress,
