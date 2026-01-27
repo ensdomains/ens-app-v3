@@ -7,7 +7,7 @@ import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } fr
 
 type Data = {
   name: string
-  address: Address
+  address?: Address
   dnsImportData: GetDnsImportDataReturnType
 }
 
@@ -24,15 +24,20 @@ const displayItems = (
     label: 'action',
     value: t('transaction.description.syncManager'),
   },
-  {
-    label: 'address',
-    value: address,
-    type: 'address',
-  },
+  ...(address
+    ? [
+        {
+          label: 'address',
+          value: address,
+          type: 'address' as const,
+        },
+      ]
+    : []),
 ]
 
 const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
-  return importDnsName.makeFunctionData(connectorClient, data)
+  const { address: _, ...dataWithoutAddress } = data
+  return importDnsName.makeFunctionData(connectorClient, dataWithoutAddress)
 }
 
 export default {

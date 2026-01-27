@@ -62,6 +62,7 @@ vi.mock('@ensdomains/ensjs/contracts', () => ({
   legacyEthRegistrarControllerABI: [],
   legacyEthRegistrarControllerInterface: {},
   nameWrapperErrors: [],
+  dnsRegistrarErrors: [],
   nameWrapperABI: [],
   nameWrapperInterface: {},
   nameWrapperCommitSnippet: [

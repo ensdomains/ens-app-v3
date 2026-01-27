@@ -10,10 +10,10 @@ import { useAccount, useSignTypedData } from 'wagmi'
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
-import { createMetaDataUrl, META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 import { headerAspectRatio } from '@app/utils/headerUpload'
+import { invalidateMetaDataQuery } from '@app/utils/invalidateMetaDataQuery'
 
-import { AvCancelButton, CropComponent } from './HeaderCrop'
+import { CropComponent, HeaderCancelButton } from './HeaderCrop'
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
@@ -128,11 +128,10 @@ const UploadComponent = ({
         const fetched = (await response.json()) as AvatarUploadResult
 
         if ('message' in fetched && fetched.message === 'uploaded') {
-          queryClient.invalidateQueries({
-            queryKey: [
-              META_DATA_QUERY_KEY,
-              createMetaDataUrl({ name, chainName, mediaKey: 'header' }),
-            ],
+          await invalidateMetaDataQuery(queryClient, {
+            name,
+            chainName,
+            mediaKey: 'header',
           })
           return handleSubmit('upload', endpoint, dataURL)
         }
@@ -167,7 +166,7 @@ const UploadComponent = ({
         </Helper>
       )}
       <Dialog.Footer
-        leading={<AvCancelButton handleCancel={handleCancel} />}
+        leading={<HeaderCancelButton handleCancel={handleCancel} />}
         trailing={
           <Button
             disabled={isPending}
@@ -199,7 +198,7 @@ export const HeaderUpload = ({
   const [dataURL, setDataURL] = useState<string | null>(null)
 
   if (!dataURL) {
-    return <CropComponent {...{ avatar: headerFile, setDataURL, handleCancel }} />
+    return <CropComponent {...{ header: headerFile, setDataURL, handleCancel }} />
   }
 
   return (
