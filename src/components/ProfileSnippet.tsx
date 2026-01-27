@@ -20,8 +20,7 @@ const Container = styled.div(
   ({ theme }) => css`
     position: relative;
     width: 100%;
-    padding: ${theme.space['4']};
-    padding-top: ${theme.space['18']};
+    padding: 0;
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.border};
@@ -29,28 +28,52 @@ const Container = styled.div(
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: ${theme.space['4']};
+    gap: 0;
+    flex-gap: 0;
     overflow: hidden;
-
-    @media (min-width: ${theme.breakpoints.sm}px) {
-      padding: ${theme.space['6']};
-      padding-top: ${theme.space['12']};
-    }
   `,
 )
 
 const HeaderContainer = styled.div<{ $header?: string }>(
   ({ theme, $header }) => css`
-    position: absolute;
+    position: relative;
     top: -1px;
     left: 0;
     width: 100%;
-    height: ${theme.space['28']};
-    background-image: ${$header ? `url("${encodeURI($header)}")` : theme.colors.blueGradient};
+    ${$header
+      ? `
+    background-image: url("${encodeURI($header)}")};
+    height: ${theme.space['32']};
+    `
+      : `
+        background-image: ${theme.colors.blueGradient};
+        height: ${theme.space['28']};
+    `}
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: scroll;
+  `,
+)
+
+const ContentContainer = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    padding: ${theme.space['4']};
+    padding-top: 0;
+    margin-top: -${theme.space['12']};
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
+
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      padding: ${theme.space['6']};
+      padding-top: 0;
+      margin-top: -${theme.space['16']};
+    }
   `,
 )
 
@@ -274,68 +297,70 @@ export const ProfileSnippet = ({
   return (
     <Container data-testid="profile-snippet">
       <HeaderContainer $header={headerUrl ?? undefined} />
-      <FirstItems>
-        <NameAvatar
-          size={{ min: '24', sm: '32' }}
-          label={name}
-          name={name}
-          noCache={canEdit}
-          decoding="sync"
-        />
-        <ButtonStack>
-          {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
-        </ButtonStack>
-      </FirstItems>
-      <TextStack>
-        <DetailStack>
-          <Name fontVariant="headingTwo" data-testid="profile-snippet-name">
-            {beautifiedName}
-            {isVerified && (
-              <VerificationBadgeWrapper>
-                <VerifiedPersonSVG data-testid="profile-snippet-person-icon" />
-              </VerificationBadgeWrapper>
+      <ContentContainer>
+        <FirstItems>
+          <NameAvatar
+            size={{ min: '24', sm: '32' }}
+            label={name}
+            name={name}
+            noCache={canEdit}
+            decoding="sync"
+          />
+          <ButtonStack>
+            {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
+          </ButtonStack>
+        </FirstItems>
+        <TextStack>
+          <DetailStack>
+            <Name fontVariant="headingTwo" data-testid="profile-snippet-name">
+              {beautifiedName}
+              {isVerified && (
+                <VerificationBadgeWrapper>
+                  <VerifiedPersonSVG data-testid="profile-snippet-person-icon" />
+                </VerificationBadgeWrapper>
+              )}
+            </Name>
+            {recordName && (
+              <NameRecord data-testid="profile-snippet-nickname">{recordName}</NameRecord>
             )}
-          </Name>
-          {recordName && (
-            <NameRecord data-testid="profile-snippet-nickname">{recordName}</NameRecord>
+          </DetailStack>
+          {description && (
+            <Typography data-testid="profile-snippet-description">{description}</Typography>
           )}
-        </DetailStack>
-        {description && (
-          <Typography data-testid="profile-snippet-description">{description}</Typography>
-        )}
-        {(url || location) && (
-          <LocationAndUrl>
-            {location && (
-              <Typography id="profile-loc" data-testid="profile-snippet-location">
-                {location}
-              </Typography>
-            )}
-            {url && (
-              <a href={url} data-testid="profile-snippet-url" target="_blank" rel="noreferrer">
-                <Typography color="blue" id="profile-url">
-                  {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
+          {(url || location) && (
+            <LocationAndUrl>
+              {location && (
+                <Typography id="profile-loc" data-testid="profile-snippet-location">
+                  {location}
                 </Typography>
-              </a>
+              )}
+              {url && (
+                <a href={url} data-testid="profile-snippet-url" target="_blank" rel="noreferrer">
+                  <Typography color="blue" id="profile-url">
+                    {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
+                  </Typography>
+                </a>
+              )}
+            </LocationAndUrl>
+          )}
+        </TextStack>
+        {(isPrimary || hasMismatch) && (
+          <TagsContainer>
+            {isPrimary && (
+              <PrimaryNameTag size="medium" colorStyle="greenSecondary">
+                <NametagSVG />
+                {t('name.yourPrimaryName')}
+              </PrimaryNameTag>
             )}
-          </LocationAndUrl>
+            {hasMismatch && (
+              <Helper alert="warning" alignment="horizontal">
+                {t('name.unnormalized')}
+              </Helper>
+            )}
+          </TagsContainer>
         )}
-      </TextStack>
-      {(isPrimary || hasMismatch) && (
-        <TagsContainer>
-          {isPrimary && (
-            <PrimaryNameTag size="medium" colorStyle="greenSecondary">
-              <NametagSVG />
-              {t('name.yourPrimaryName')}
-            </PrimaryNameTag>
-          )}
-          {hasMismatch && (
-            <Helper alert="warning" alignment="horizontal">
-              {t('name.unnormalized')}
-            </Helper>
-          )}
-        </TagsContainer>
-      )}
-      {children}
+        {children}
+      </ContentContainer>
     </Container>
   )
 }
