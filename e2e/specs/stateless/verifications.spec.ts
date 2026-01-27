@@ -7,14 +7,16 @@ import { Hash } from 'viem'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import {
+  DENTITY_BASE_ENDPOINT,
   DENTITY_ISS,
-  DENTITY_VPTOKEN_ENDPOINT,
   VERIFICATION_OAUTH_BASE_URL,
   VERIFICATION_RECORD_KEY,
 } from '@app/constants/verification'
 
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+
+const DENTITY_VPTOKEN_ENDPOINT = `${DENTITY_BASE_ENDPOINT}/oidc/vp-token`
 
 type MakeMockVPTokenRecordKey =
   | 'com.twitter'
