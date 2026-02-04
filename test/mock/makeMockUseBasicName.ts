@@ -87,14 +87,14 @@ export const mockUseBasicNameConfig = {
   'eth-emancipated-2ld:grace-period': {
     useValidateType: 'valid-2ld',
     useOwnerType: 'namewrapper:grace-period',
-    useWrapperDataType: 'emancipated',
+    useWrapperDataType: 'emancipated:grace-period',
     useExpiryType: 'grace-period',
     usePriceType: 'base',
   } as MockUseBasicNameConfig,
   'eth-emancipated-2ld:grace-period:unowned': {
     useValidateType: 'valid-2ld',
     useOwnerType: 'namewrapper:grace-period',
-    useWrapperDataType: 'emancipated:unowned',
+    useWrapperDataType: 'emancipated:grace-period:unowned',
     useExpiryType: 'grace-period',
     usePriceType: 'base',
   } as MockUseBasicNameConfig,
@@ -115,14 +115,14 @@ export const mockUseBasicNameConfig = {
   'eth-locked-2ld:grace-period': {
     useValidateType: 'valid-2ld',
     useOwnerType: 'namewrapper:grace-period',
-    useWrapperDataType: 'locked',
+    useWrapperDataType: 'locked:grace-period',
     useExpiryType: 'grace-period',
     usePriceType: 'base',
   } as MockUseBasicNameConfig,
   'eth-locked-2ld:grace-period:unowned': {
     useValidateType: 'valid-2ld',
     useOwnerType: 'namewrapper:grace-period',
-    useWrapperDataType: 'locked:unowned',
+    useWrapperDataType: 'locked:grace-period:unowned',
     useExpiryType: 'grace-period',
     usePriceType: 'base',
   } as MockUseBasicNameConfig,

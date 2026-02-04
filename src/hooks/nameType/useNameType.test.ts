@@ -155,7 +155,7 @@ describe('useNameType', () => {
       expect(result.current.data).toEqual('eth-emancipated-2ld:grace-period')
     })
 
-    it('should return for grace period licked', async () => {
+    it('should return for grace period locked', async () => {
       mockBasicData.mockReturnValue(makeMockUseBasicName('eth-locked-2ld:grace-period'))
       const { result } = renderHook(() => useNameType('name.eth'))
       expect(result.current.data).toEqual('eth-locked-2ld:grace-period')
