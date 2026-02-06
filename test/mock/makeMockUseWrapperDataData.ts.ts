@@ -5,8 +5,6 @@ import { Address } from 'viem'
 
 import { GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 
-import { GRACE_PERIOD } from '@app/utils/constants'
-
 import { createAccounts } from '../../playwright/fixtures/accounts'
 
 const mockUseWrapperDataTypes = [
@@ -14,8 +12,12 @@ const mockUseWrapperDataTypes = [
   'wrapped:unowned',
   'emancipated',
   'emancipated:unowned',
+  'emancipated:grace-period',
+  'emancipated:grace-period:unowned',
   'locked',
   'locked:unowned',
+  'locked:grace-period',
+  'locked:grace-period:unowned',
   'burnt',
   'burnt:unowned',
 ] as const
@@ -67,8 +69,8 @@ export const makeMockUseWrapperDataData = (
         value: 0,
       },
       expiry: {
-        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
-        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
+        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
+        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
       },
       owner: _type.endsWith('unowned') ? user2Address : userAddress,
     }))
@@ -111,8 +113,55 @@ export const makeMockUseWrapperDataData = (
         value: 196608,
       },
       expiry: {
-        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
-        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
+        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
+        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
+      },
+      owner: _type.endsWith('unowned') ? user2Address : userAddress,
+    }))
+    .with(P.union('emancipated:grace-period', 'emancipated:grace-period:unowned'), (_type) => ({
+      fuses: {
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
+          CAN_EXTEND_EXPIRY: false,
+          IS_DOT_ETH: true,
+          unnamed: {
+            '0x80000': false,
+            '0x100000': false,
+            '0x200000': false,
+            '0x400000': false,
+            '0x800000': false,
+            '0x1000000': false,
+          },
+        },
+        child: {
+          CANNOT_UNWRAP: false,
+          CANNOT_BURN_FUSES: false,
+          CANNOT_TRANSFER: false,
+          CANNOT_SET_RESOLVER: false,
+          CANNOT_SET_TTL: false,
+          CANNOT_CREATE_SUBDOMAIN: false,
+          CANNOT_APPROVE: false,
+          unnamed: {
+            '0x80': false,
+            '0x100': false,
+            '0x200': false,
+            '0x400': false,
+            '0x800': false,
+            '0x1000': false,
+            '0x2000': false,
+            '0x4000': false,
+            '0x8000': false,
+          },
+          CAN_DO_EVERYTHING: true,
+        },
+        value: 196608,
+      },
+      // Grace period wrapper expiry = registrar expiry + gracePeriod
+      // Registrar expiry for grace-period mock = Date.now() - 7776000/2
+      // So wrapper expiry = Date.now() - 7776000/2 + 7776000 = Date.now() + 7776000/2
+      expiry: {
+        date: new Date(Date.now() + 7776000 / 2),
+        value: BigInt(Date.now() + 7776000 / 2),
       },
       owner: _type.endsWith('unowned') ? user2Address : userAddress,
     }))
@@ -155,8 +204,55 @@ export const makeMockUseWrapperDataData = (
         value: 196609,
       },
       expiry: {
-        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
-        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
+        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
+        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
+      },
+      owner: _type.endsWith('unowned') ? user2Address : userAddress,
+    }))
+    .with(P.union('locked:grace-period', 'locked:grace-period:unowned'), (_type) => ({
+      fuses: {
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
+          CAN_EXTEND_EXPIRY: false,
+          IS_DOT_ETH: true,
+          unnamed: {
+            '0x80000': false,
+            '0x100000': false,
+            '0x200000': false,
+            '0x400000': false,
+            '0x800000': false,
+            '0x1000000': false,
+          },
+        },
+        child: {
+          CANNOT_UNWRAP: true,
+          CANNOT_BURN_FUSES: false,
+          CANNOT_TRANSFER: false,
+          CANNOT_SET_RESOLVER: false,
+          CANNOT_SET_TTL: false,
+          CANNOT_CREATE_SUBDOMAIN: false,
+          CANNOT_APPROVE: false,
+          unnamed: {
+            '0x80': false,
+            '0x100': false,
+            '0x200': false,
+            '0x400': false,
+            '0x800': false,
+            '0x1000': false,
+            '0x2000': false,
+            '0x4000': false,
+            '0x8000': false,
+          },
+          CAN_DO_EVERYTHING: false,
+        },
+        value: 196609,
+      },
+      // Grace period wrapper expiry = registrar expiry + gracePeriod
+      // Registrar expiry for grace-period mock = Date.now() - 7776000/2
+      // So wrapper expiry = Date.now() - 7776000/2 + 7776000 = Date.now() + 7776000/2
+      expiry: {
+        date: new Date(Date.now() + 7776000 / 2),
+        value: BigInt(Date.now() + 7776000 / 2),
       },
       owner: _type.endsWith('unowned') ? user2Address : userAddress,
     }))
@@ -199,8 +295,8 @@ export const makeMockUseWrapperDataData = (
         value: 196735,
       },
       expiry: {
-        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
-        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + GRACE_PERIOD),
+        date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
+        value: BigInt(Date.now() + 1000 * 60 * 60 * 24 * 365 + 7776000),
       },
       owner: _type.endsWith('unowned') ? user2Address : userAddress,
     }))

@@ -10,11 +10,63 @@ const ownerData: GetOwnerReturnType = {
   ownershipLevel: 'registrar',
 }
 
+const ownerDataNameWrapper: GetOwnerReturnType = {
+  owner: '0x123',
+  ownershipLevel: 'nameWrapper',
+}
+
+const ownerDataNameWrapperEmpty: GetOwnerReturnType = {
+  owner: '0x0000000000000000000000000000000000000000',
+  ownershipLevel: 'nameWrapper',
+}
+
+const GRACE_PERIOD = 7776000 // 90 days in seconds
+
+// Creates a date object with value in milliseconds (legacy helper for non-synced tests)
 const createDateWithValue = (value: number) => ({
   date: new Date(value),
   value: BigInt(value),
 })
 
+// Creates a date object with value in seconds (blockchain timestamps)
+const createDateWithValueInSeconds = (valueInSeconds: number) => ({
+  date: new Date(valueInSeconds * 1000),
+  value: BigInt(valueInSeconds),
+})
+
+// Creates properly synced wrapper and expiry data
+// For synced names: wrapperExpiry === registrarExpiry + gracePeriod
+const createSyncedWrapperAndExpiryData = (registrarExpirySeconds: number) => {
+  const wrapperExpirySeconds = registrarExpirySeconds + GRACE_PERIOD
+  return {
+    wrapperData: {
+      fuses: {
+        child: {
+          CAN_DO_EVERYTHING: true,
+          CANNOT_BURN_FUSES: false,
+          CANNOT_TRANSFER: false,
+          CANNOT_UNWRAP: false,
+          CANNOT_SET_RESOLVER: false,
+          CANNOT_SET_TTL: false,
+          CANNOT_CREATE_SUBDOMAIN: false,
+        } as any,
+        parent: {
+          PARENT_CANNOT_CONTROL: false,
+        } as any,
+        value: 0 as any,
+      },
+      expiry: createDateWithValueInSeconds(wrapperExpirySeconds),
+      owner: '0x123',
+    } satisfies GetWrapperDataReturnType,
+    expiryData: {
+      expiry: createDateWithValueInSeconds(registrarExpirySeconds),
+      gracePeriod: GRACE_PERIOD,
+      status: 'active' as const,
+    },
+  }
+}
+
+// Legacy wrapperData for tests that don't need synced data
 const wrapperData: GetWrapperDataReturnType = {
   fuses: {
     child: {
@@ -31,7 +83,7 @@ const wrapperData: GetWrapperDataReturnType = {
     } as any,
     value: 0 as any,
   },
-  expiry: createDateWithValue(Date.now()),
+  expiry: createDateWithValueInSeconds(Math.floor(Date.now() / 1000)),
   owner: '0x123',
 }
 
@@ -51,33 +103,31 @@ describe('getRegistrationStatus', () => {
     })
 
     it('should return registered if expiry is in the future', async () => {
-      const expiryData = {
-        expiry: createDateWithValue(Date.now() + 1000 * 60 * 60 * 24 * 30),
-        gracePeriod: 60 * 60 * 24 * 1000,
-        status: 'active',
-      } as const
+      // Registrar expiry 30 days in the future
+      const registrarExpirySeconds = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30
+      const { wrapperData: syncedWrapperData, expiryData } =
+        createSyncedWrapperAndExpiryData(registrarExpirySeconds)
       const result = getRegistrationStatus({
         timestamp: Date.now(),
         validation: { is2LD: true, isETH: true },
         ownerData,
-        wrapperData,
+        wrapperData: syncedWrapperData,
         expiryData,
       })
       expect(result).toBe('registered')
     })
 
     it('should return grace period if expiry is in the past, but within grace period', async () => {
-      const expiryData = {
-        expiry: createDateWithValue(Date.now() - 1000),
-        gracePeriod: 60 * 60 * 24 * 1000,
-        status: 'gracePeriod',
-      } as const
+      // Registrar expiry 1 second in the past (still within grace period)
+      const registrarExpirySeconds = Math.floor(Date.now() / 1000) - 1
+      const { wrapperData: syncedWrapperData, expiryData } =
+        createSyncedWrapperAndExpiryData(registrarExpirySeconds)
       const result = getRegistrationStatus({
         timestamp: Date.now(),
         validation: { is2LD: true, isETH: true },
         ownerData,
-        wrapperData,
-        expiryData,
+        wrapperData: syncedWrapperData,
+        expiryData: { ...expiryData, status: 'gracePeriod' as const },
       })
       expect(result).toBe('gracePeriod')
     })
@@ -129,19 +179,158 @@ describe('getRegistrationStatus', () => {
     })
 
     it('should use timestamp parameter for comparisons', () => {
+      // Registrar expiry 10 seconds ago, but timestamp is 60 seconds ago
+      // so from the timestamp's perspective, the name is still registered
+      const registrarExpirySeconds = Math.floor(Date.now() / 1000) - 10
+      const { wrapperData: syncedWrapperData, expiryData } =
+        createSyncedWrapperAndExpiryData(registrarExpirySeconds)
       const result = getRegistrationStatus({
         timestamp: Date.now() - 1_000 * 60,
         validation: { is2LD: true, isETH: true },
         ownerData,
-        wrapperData,
-        expiryData: {
-          expiry: createDateWithValue(Date.now() - 1_000 * 10),
-          gracePeriod: 0,
-          status: 'active',
-        },
+        wrapperData: syncedWrapperData,
+        expiryData,
         supportedTLD: true,
       })
       expect(result).toBe('registered')
+    })
+
+    describe('proactive desync detection', () => {
+      it('should return desynced when wrapper expiry does not match registrar + grace period (active period)', () => {
+        // Simulate a name renewed via legacy controller:
+        // - Registrar expiry was extended (30 days in the future)
+        // - Wrapper expiry was NOT updated (still at old value, e.g., 10 days ago + grace period)
+        const nowSeconds = Math.floor(Date.now() / 1000)
+        const registrarExpirySeconds = nowSeconds + 60 * 60 * 24 * 30 // 30 days in future
+        const oldWrapperExpirySeconds = nowSeconds - 60 * 60 * 24 * 10 + GRACE_PERIOD // Old expiry + grace
+
+        const desyncedWrapperData: GetWrapperDataReturnType = {
+          fuses: {
+            child: {
+              CAN_DO_EVERYTHING: true,
+              CANNOT_BURN_FUSES: false,
+              CANNOT_TRANSFER: false,
+              CANNOT_UNWRAP: false,
+              CANNOT_SET_RESOLVER: false,
+              CANNOT_SET_TTL: false,
+              CANNOT_CREATE_SUBDOMAIN: false,
+            } as any,
+            parent: {
+              PARENT_CANNOT_CONTROL: false,
+            } as any,
+            value: 0 as any,
+          },
+          expiry: createDateWithValueInSeconds(oldWrapperExpirySeconds),
+          owner: '0x123', // Owner is still visible (not 0x0)
+        }
+
+        const result = getRegistrationStatus({
+          timestamp: Date.now(),
+          validation: { is2LD: true, isETH: true },
+          ownerData: ownerDataNameWrapper,
+          wrapperData: desyncedWrapperData,
+          expiryData: {
+            expiry: createDateWithValueInSeconds(registrarExpirySeconds),
+            gracePeriod: GRACE_PERIOD,
+            status: 'active',
+          },
+        })
+        expect(result).toBe('desynced')
+      })
+
+      it('should return desynced:gracePeriod when wrapper expiry does not match registrar + grace period (grace period)', () => {
+        // Registrar expiry 10 days ago (within 90-day grace period)
+        // Wrapper expiry is mismatched
+        const nowSeconds = Math.floor(Date.now() / 1000)
+        const registrarExpirySeconds = nowSeconds - 60 * 60 * 24 * 10 // 10 days ago
+        const oldWrapperExpirySeconds = nowSeconds - 60 * 60 * 24 * 100 + GRACE_PERIOD // Much older
+
+        const desyncedWrapperData: GetWrapperDataReturnType = {
+          fuses: {
+            child: {
+              CAN_DO_EVERYTHING: true,
+              CANNOT_BURN_FUSES: false,
+              CANNOT_TRANSFER: false,
+              CANNOT_UNWRAP: false,
+              CANNOT_SET_RESOLVER: false,
+              CANNOT_SET_TTL: false,
+              CANNOT_CREATE_SUBDOMAIN: false,
+            } as any,
+            parent: {
+              PARENT_CANNOT_CONTROL: false,
+            } as any,
+            value: 0 as any,
+          },
+          expiry: createDateWithValueInSeconds(oldWrapperExpirySeconds),
+          owner: '0x123',
+        }
+
+        const result = getRegistrationStatus({
+          timestamp: Date.now(),
+          validation: { is2LD: true, isETH: true },
+          ownerData: ownerDataNameWrapper,
+          wrapperData: desyncedWrapperData,
+          expiryData: {
+            expiry: createDateWithValueInSeconds(registrarExpirySeconds),
+            gracePeriod: GRACE_PERIOD,
+            status: 'gracePeriod',
+          },
+        })
+        expect(result).toBe('desynced:gracePeriod')
+      })
+
+      it('should return registered when expiries are properly synced', () => {
+        const registrarExpirySeconds = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30
+        const { wrapperData: syncedWrapperData, expiryData } =
+          createSyncedWrapperAndExpiryData(registrarExpirySeconds)
+
+        const result = getRegistrationStatus({
+          timestamp: Date.now(),
+          validation: { is2LD: true, isETH: true },
+          ownerData: ownerDataNameWrapper,
+          wrapperData: syncedWrapperData,
+          expiryData,
+        })
+        expect(result).toBe('registered')
+      })
+
+      it('should not detect desync for unwrapped names (no wrapperData)', () => {
+        const registrarExpirySeconds = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30
+
+        const result = getRegistrationStatus({
+          timestamp: Date.now(),
+          validation: { is2LD: true, isETH: true },
+          ownerData: {
+            owner: '0x123',
+            registrant: '0x123',
+            ownershipLevel: 'registrar',
+          },
+          wrapperData: undefined,
+          expiryData: {
+            expiry: createDateWithValueInSeconds(registrarExpirySeconds),
+            gracePeriod: GRACE_PERIOD,
+            status: 'active',
+          },
+        })
+        expect(result).toBe('registered')
+      })
+
+      it('should still detect desynced via fallback when owner is emptyAddress', () => {
+        // This tests the fallback path where wrapper has fully expired
+        // and owner shows as 0x0
+        const registrarExpirySeconds = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30
+        const { wrapperData: syncedWrapperData, expiryData } =
+          createSyncedWrapperAndExpiryData(registrarExpirySeconds)
+
+        const result = getRegistrationStatus({
+          timestamp: Date.now(),
+          validation: { is2LD: true, isETH: true },
+          ownerData: ownerDataNameWrapperEmpty,
+          wrapperData: syncedWrapperData,
+          expiryData,
+        })
+        expect(result).toBe('desynced')
+      })
     })
   })
 

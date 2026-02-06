@@ -11,6 +11,25 @@ import { getChainsFromUrl } from '@app/constants/chains'
 
 import { emptyAddress } from './constants'
 
+/**
+ * Checks if a wrapped name is out of sync by comparing expiry timestamps.
+ * A synced wrapped name has: wrapperExpiry === registrarExpiry + gracePeriod
+ */
+const isWrappedNameDesynced = (
+  wrapperData: GetWrapperDataReturnType | undefined,
+  expiryData: GetExpiryReturnType | undefined,
+): boolean => {
+  if (
+    !wrapperData?.expiry?.value ||
+    !expiryData?.expiry?.value ||
+    expiryData.gracePeriod === undefined
+  ) {
+    return false
+  }
+  const expectedWrapperExpiry = expiryData.expiry.value + BigInt(expiryData.gracePeriod)
+  return wrapperData.expiry.value !== expectedWrapperExpiry
+}
+
 export type RegistrationStatus =
   | 'invalid'
   | 'registered'
@@ -67,6 +86,11 @@ export const getRegistrationStatus = ({
       const expiry = new Date(_expiry.date)
 
       if (expiry.getTime() > timestamp) {
+        // Proactive desync check: compare expiry timestamps
+        if (isWrappedNameDesynced(wrapperData, expiryData)) {
+          return 'desynced'
+        }
+        // Fallback: owner-based check (for edge cases where wrapper fully expired)
         if (
           ownerData &&
           ownerData.owner === emptyAddress &&
@@ -77,6 +101,11 @@ export const getRegistrationStatus = ({
         return 'registered'
       }
       if (expiry.getTime() + gracePeriod * 1000 > timestamp) {
+        // Proactive desync check: compare expiry timestamps
+        if (isWrappedNameDesynced(wrapperData, expiryData)) {
+          return 'desynced:gracePeriod'
+        }
+        // Fallback: owner-based check (for edge cases)
         // Will need to rethink this when we add multiple chains to manager app.
         const chain = getChainsFromUrl()[0]
         if (
