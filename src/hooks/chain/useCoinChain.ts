@@ -15,7 +15,7 @@ type UseCoinChainParameters = {
 }
 
 type CoinBlockExplorer = {
-  id: number
+  id?: number
   name: string
   nativeCurrency: {
     name: string
