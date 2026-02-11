@@ -15,7 +15,7 @@ type UseCoinChainParameters = {
 }
 
 type CoinBlockExplorer = {
-  id?: number
+  id: number
   name: string
   nativeCurrency: {
     name: string
@@ -71,7 +71,7 @@ export const getCoinChainQueryFn = async <TParams extends UseCoinChainParameters
   }
 
   const otherBlockExplorers = await import('../../constants/blockExplorers/other.json').then(
-    (m) => m.default as { [key: string]: CoinBlockExplorer },
+    (m) => m.default as unknown as { [key: string]: CoinBlockExplorer },
   )
   return otherBlockExplorers[coinName] || null
 }
