@@ -49,7 +49,6 @@ export const getReverseRegistryNameQueryFn =
       functionName: 'resolver',
       args: [getReverseNodeHash(address, { ns: 'addr' })],
     })
-    console.log('reverseResolver', reverseResolver)
     if (!reverseResolver) return null
 
     try {
@@ -59,7 +58,6 @@ export const getReverseRegistryNameQueryFn =
         functionName: 'name',
         args: [getReverseNodeHash(address, { ns: 'addr' })],
       })
-      console.log('reverseResolverName', reverseResolverName)
       return reverseResolverName
     } catch (error) {
       console.error('error', error)

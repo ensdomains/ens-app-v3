@@ -1,11 +1,13 @@
 import type { TFunction } from 'react-i18next'
+import type { Hex } from 'viem'
 
-import { renewNames } from '@ensdomains/ensjs/wallet'
-
+import renewNames from '@app/overrides/ensjs/renewNames'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {
   name: string
+  referrer?: Hex
+  hasWrapped?: boolean
 }
 
 const displayItems = (
@@ -32,6 +34,8 @@ const transaction = async ({ connectorClient, data }: TransactionFunctionParamet
     nameOrNames: data.name,
     duration: 0,
     value: 0n,
+    referrer: data.referrer,
+    hasWrapped: true,
   })
 }
 

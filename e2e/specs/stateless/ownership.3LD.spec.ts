@@ -1170,7 +1170,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           label: 'test',
           owner: 'user',
           type: 'wrapped',
-          resolver: testClient.chain.contracts.publicResolver.address as `0x${string}`,
+          resolver: testClient.chain.contracts.ensPublicResolver.address as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
             coins: [
@@ -1267,7 +1267,7 @@ test.describe('Wrapped 3LD, Unwrapped 2LD - Manager only', () => {
           label: 'test',
           owner: 'user',
           type: 'wrapped',
-          resolver: testClient.chain.contracts.publicResolver.address as `0x${string}`,
+          resolver: testClient.chain.contracts.ensPublicResolver.address as `0x${string}`,
           records: {
             texts: [{ key: 'name', value: 'test' }],
             coins: [

@@ -44,6 +44,9 @@ export class Login {
       await this.handleSafeBanners()
     }
 
+    // Wait for any backdrop modals to close before attempting to connect
+    await this.dismissBackdropModal()
+
     // For Safe wallet, use .first() since there are multiple connect buttons
     if (isSafeWallet) {
       console.log('Connecting to Safe wallet...')
@@ -150,6 +153,57 @@ export class Login {
     }
 
     await this.page.waitForTimeout(1000) // Wait for any animations to complete
+  }
+
+  async dismissBackdropModal() {
+    // Wait for and dismiss any backdrop modals that may be covering interactive elements
+    try {
+      const backdrop = this.page.getByTestId('backdrop-surface')
+
+      // Wait longer for modal to appear (e.g., from OAuth redirects)
+      await this.page.waitForTimeout(1500)
+
+      // Try to dismiss backdrop if visible
+      const isVisible = await backdrop.isVisible({ timeout: 1000 })
+
+      if (isVisible) {
+        console.log('Backdrop modal detected, attempting to dismiss...')
+
+        // Try multiple strategies to dismiss the modal
+        // Strategy 1: Press Escape key (most reliable for modals)
+        try {
+          await this.page.keyboard.press('Escape')
+          await backdrop.waitFor({ state: 'hidden', timeout: 2000 })
+          console.log('✅ Dismissed backdrop modal with Escape key')
+          return
+        } catch (error) {
+          console.log('Escape key did not dismiss modal, trying click...')
+        }
+
+        // Strategy 2: Click on the backdrop
+        try {
+          await backdrop.click({ position: { x: 10, y: 10 }, timeout: 2000 })
+          await backdrop.waitFor({ state: 'hidden', timeout: 2000 })
+          console.log('✅ Dismissed backdrop modal with click')
+          return
+        } catch (error) {
+          console.log('Click did not dismiss modal, trying force click...')
+        }
+
+        // Strategy 3: Force click
+        try {
+          await backdrop.click({ force: true, timeout: 2000 })
+          await backdrop.waitFor({ state: 'hidden', timeout: 2000 })
+          console.log('✅ Dismissed backdrop modal with force click')
+          return
+        } catch (error) {
+          console.log('⚠️  Unable to dismiss backdrop modal, continuing anyway...')
+        }
+      }
+    } catch (error) {
+      // Backdrop not present - this is fine
+      console.log('No backdrop modal found')
+    }
   }
 
   async switchTo(user: User) {

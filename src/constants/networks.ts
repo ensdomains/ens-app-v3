@@ -4,7 +4,6 @@ import {
   arbitrumSepolia,
   base,
   baseSepolia,
-  holesky,
   linea,
   lineaSepolia,
   mainnet,
@@ -112,4 +111,12 @@ export const networks = match(network)
     },
     ...testnetNetworks,
   ])
-  .otherwise(() => [defaultNetwork, { name: 'eth', chainId: holesky.id, coinType: 60 }])
+  .otherwise(() => [
+    defaultNetwork,
+    {
+      name: 'eth',
+      chainId: mainnet.id,
+      coinType: 60,
+    },
+    ...mainnetNetworks,
+  ])

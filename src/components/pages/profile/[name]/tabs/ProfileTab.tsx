@@ -27,7 +27,6 @@ const DetailsWrapper = styled.div(
     flex-direction: column;
     justify-content: flex-start;
     gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
     width: 100%;
   `,
 )

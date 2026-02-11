@@ -32,10 +32,6 @@ describe('useRegistrationParams()', () => {
     expect(result.current).toMatchInlineSnapshot(`
       {
         "duration": 31536000,
-        "fuses": {
-          "named": [],
-          "unnamed": [],
-        },
         "name": "test",
         "owner": "0xowner",
         "records": {
@@ -47,8 +43,9 @@ describe('useRegistrationParams()', () => {
             },
           ],
         },
+        "referrer": undefined,
         "resolverAddress": "0xresolver",
-        "reverseRecord": true,
+        "reverseRecord": 2,
         "secret": "0xsecret",
       }
     `)
@@ -90,10 +87,6 @@ describe('useRegistrationParams()', () => {
     expect(result.current).toMatchInlineSnapshot(`
       {
         "duration": 31536000,
-        "fuses": {
-          "named": [],
-          "unnamed": [],
-        },
         "name": "test",
         "owner": "0xowner",
         "records": {
@@ -115,8 +108,9 @@ describe('useRegistrationParams()', () => {
             },
           ],
         },
+        "referrer": undefined,
         "resolverAddress": "0xresolver",
-        "reverseRecord": true,
+        "reverseRecord": 2,
         "secret": "0xsecret",
       }
     `)
@@ -139,22 +133,20 @@ describe('useRegistrationParams()', () => {
     expect(result.current).toMatchInlineSnapshot(`
       {
         "duration": 31536000,
-        "fuses": {
-          "named": [],
-          "unnamed": [],
-        },
         "name": "test",
         "owner": "0xowner",
         "records": {
           "clearRecords": true,
         },
+        "referrer": undefined,
         "resolverAddress": "0xresolver",
-        "reverseRecord": true,
+        "reverseRecord": 2,
         "secret": "0xsecret",
       }
     `)
   })
-  it('should return correct registration params when permissions are set', () => {
+
+  it('should return reverseRecord set to 0 when reverseRecord is false', () => {
     const { result } = renderHook(() =>
       useRegistrationParams({
         name: 'test',
@@ -163,37 +155,81 @@ describe('useRegistrationParams()', () => {
           seconds: yearsToSeconds(1),
           resolverAddress: '0xresolver',
           secret: '0xsecret',
-          records: [],
-          permissions: {
-            CANNOT_APPROVE: false,
-            CANNOT_BURN_FUSES: false,
-            CANNOT_CREATE_SUBDOMAIN: false,
-            CANNOT_SET_RESOLVER: false,
-            CANNOT_SET_TTL: false,
-            CANNOT_TRANSFER: false,
-            CANNOT_UNWRAP: true,
-          },
+          records: [
+            {
+              key: 'eth',
+              value: '0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74',
+              group: 'address',
+              type: 'addr',
+            },
+          ],
           clearRecords: false,
-          reverseRecord: true,
+          reverseRecord: false,
         },
       }),
     )
     expect(result.current).toMatchInlineSnapshot(`
       {
         "duration": 31536000,
-        "fuses": {
-          "named": [
-            "CANNOT_UNWRAP",
-          ],
-          "unnamed": [],
-        },
         "name": "test",
         "owner": "0xowner",
         "records": {
           "clearRecords": false,
+          "coins": [
+            {
+              "coin": "eth",
+              "value": "0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74",
+            },
+          ],
         },
+        "referrer": undefined,
         "resolverAddress": "0xresolver",
-        "reverseRecord": true,
+        "reverseRecord": 0,
+        "secret": "0xsecret",
+      }
+    `)
+  })
+
+  it('should return referrer when it is set', () => {
+    const { result } = renderHook(() =>
+      useRegistrationParams({
+        name: 'test',
+        owner: '0xowner',
+        registrationData: {
+          seconds: yearsToSeconds(1),
+          resolverAddress: '0xresolver',
+          secret: '0xsecret',
+          records: [
+            {
+              key: 'eth',
+              value: '0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74',
+              group: 'address',
+              type: 'addr',
+            },
+          ],
+          clearRecords: false,
+          reverseRecord: true,
+          referrer: '0xreferrer',
+        },
+      }),
+    )
+    expect(result.current).toMatchInlineSnapshot(`
+      {
+        "duration": 31536000,
+        "name": "test",
+        "owner": "0xowner",
+        "records": {
+          "clearRecords": false,
+          "coins": [
+            {
+              "coin": "eth",
+              "value": "0x4B2D639Ac1b0497e932F8ce234EFd3b3Df9a9b74",
+            },
+          ],
+        },
+        "referrer": "0xreferrer",
+        "resolverAddress": "0xresolver",
+        "reverseRecord": 2,
         "secret": "0xsecret",
       }
     `)

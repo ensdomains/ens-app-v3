@@ -7,12 +7,12 @@ const SUPPORT_LINKS = {
   resolver: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_1ef2545a3f',
   fuses: 'https://support.ens.domains/en/articles/7902567-fuses',
   primaryName: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_b2baf0c02b',
-  nameWrapper: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_cae4f1dea6',
+  nameWrapper: 'https://support.ens.domains/en/articles/7902532-name-wrapper-overview',
   dnsNames: 'https://support.ens.domains/en/collections/4027734-dns-names',
   gaslessDnssec:
     'https://support.ens.domains/en/articles/8834820-offchain-gasless-dnssec-names-in-ens#h_b92a64180f',
   'offchain-not-in-names':
-    'https://support.ens.domains/en/articles/9375254-why-is-my-ens-name-not-in-my-names',
+    'https://support.ens.domains/en/articles/8874842-find-your-names-on-the-my-names-page',
   owner: undefined,
   'owner-emancipated': undefined,
   'parent-owner': undefined,

@@ -2,9 +2,8 @@ import posthog from 'posthog-js'
 import { match, P } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
-import { randomSecret } from '@ensdomains/ensjs/utils'
+import { EMPTY_ADDRESS, EMPTY_BYTES32, randomSecret } from '@ensdomains/ensjs/utils'
 
-import { childFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import {
   RegistrationReducerAction,
   RegistrationReducerData,
@@ -12,10 +11,12 @@ import {
   SelectedItemProperties,
 } from '@app/components/pages/profile/[name]/registration/types'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+import { useReferrer } from '@app/hooks/useReferrer'
 import { sendEvent } from '@app/utils/analytics/events'
+import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_YEAR, yearsToSeconds } from '@app/utils/utils'
 
-const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 3
+const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 4
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
@@ -24,17 +25,17 @@ const defaultData: RegistrationReducerDataItem = {
   reverseRecord: false,
   records: [],
   clearRecords: false,
-  resolverAddress: '0x',
-  permissions: childFuseObj,
-  secret: '0x',
+  resolverAddress: EMPTY_ADDRESS,
+  secret: EMPTY_BYTES32,
   started: false,
-  address: '0x',
+  address: EMPTY_ADDRESS,
   name: '',
   isMoonpayFlow: false,
   externalTransactionId: '',
   chainId: 1,
   durationType: 'years',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
+  referrer: EMPTY_BYTES32,
 }
 
 const isBrowser = !!(
@@ -57,14 +58,14 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   seconds: getDefaultRegistrationDuration(),
   reverseRecord: false,
   records: [],
-  resolverAddress: '0x',
-  permissions: childFuseObj,
+  resolverAddress: EMPTY_ADDRESS,
   secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
   started: false,
   isMoonpayFlow: false,
   externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   durationType: 'years',
+  referrer: selected.referrer || EMPTY_BYTES32,
   ...selected,
 })
 
@@ -150,7 +151,6 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     }
     case 'setProfileData': {
       if (action.payload.records) item.records = action.payload.records
-      if (action.payload.permissions) item.permissions = action.payload.permissions
       if (action.payload.resolverAddress) item.resolverAddress = action.payload.resolverAddress
       break
     }
@@ -170,6 +170,10 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
 
       break
     }
+    case 'setReferrer': {
+      item.referrer = action.payload
+      break
+    }
     // no default
   }
   return state
@@ -184,7 +188,9 @@ const useRegistrationReducer = ({
   name: string
 }) => {
   const chainId = useChainId()
-  const selected = { address: address!, name, chainId } as const
+  const referrer = useReferrer()
+  const referrerHex = getReferrerHex(referrer)
+  const selected = { address: address!, name, chainId, referrer: referrerHex } as const
   const [state, dispatch] = useLocalStorageReducer<
     RegistrationReducerData,
     RegistrationReducerAction

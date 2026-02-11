@@ -8,6 +8,27 @@ import { OwnerArray } from '@app/types'
 
 import { ownershipInfoCalc, ProfileDetails } from './ProfileDetails'
 
+vi.mock('next/router', () => ({
+  useRouter: () => ({
+    query: {},
+    pathname: '/',
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    reload: vi.fn(),
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+      emit: vi.fn(),
+    },
+    isFallback: false,
+    isLocaleDomain: false,
+    isReady: true,
+    isPreview: false,
+  }),
+}))
+
 vi.mock('@app/utils/BreakpointProvider', () => ({
   useBreakpoint: () => ({
     xs: true,
@@ -15,6 +36,21 @@ vi.mock('@app/utils/BreakpointProvider', () => ({
     md: true,
     lg: true,
     xl: false,
+  }),
+}))
+
+vi.mock('@app/hooks/chain/useChainName', () => ({
+  useChainName: () => 'mainnet',
+}))
+
+vi.mock('@app/hooks/useRouterWithHistory', () => ({
+  useRouterWithHistory: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    pushWithHistory: vi.fn(),
+    asPath: '/',
+    pathname: '/',
+    query: {},
   }),
 }))
 
