@@ -220,7 +220,7 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
         <Outlink
           iconPosition="before"
           icon={QuestionCircleSVG}
-          href="https://support.ens.domains/en/articles/7982906-long-running-transactions"
+          href="https://support.ens.domains/en/articles/13608541-transaction-troubleshooting"
         >
           {t('transaction.dialog.sent.learn')}
         </Outlink>
