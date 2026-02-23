@@ -7,14 +7,16 @@ import { Hash } from 'viem'
 import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import {
+  DENTITY_BASE_ENDPOINT,
   DENTITY_ISS,
-  DENTITY_VPTOKEN_ENDPOINT,
   VERIFICATION_OAUTH_BASE_URL,
   VERIFICATION_RECORD_KEY,
 } from '@app/constants/verification'
 
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+
+const DENTITY_VPTOKEN_ENDPOINT = `${DENTITY_BASE_ENDPOINT}/oidc/vp-token`
 
 type MakeMockVPTokenRecordKey =
   | 'com.twitter'
@@ -718,14 +720,6 @@ test.describe('OAuth flow', () => {
       owner: 'user',
       manager: 'user2',
     })
-
-    // Wait for any modals to close and page to be ready
-    await page.waitForTimeout(1000)
-    const backdrop = page.getByTestId('backdrop-surface')
-    if (await backdrop.isVisible()) {
-      await backdrop.click({ force: true })
-      await page.waitForTimeout(500)
-    }
 
     await page.route(`${VERIFICATION_OAUTH_BASE_URL}/dentity/token`, async (route) => {
       await route.fulfill({

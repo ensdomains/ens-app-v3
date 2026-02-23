@@ -113,7 +113,9 @@ test('should be able to extend multiple names (including names in grace preiod) 
     await addresPage.search(label)
     await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
     await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
-    await expect(await addresPage.getTimestamp(name)).toBe(timestampDict[name] + 31536000000 * 3)
+    // Allow up to 3 days tolerance for leap year differences across 3 years
+    const ts = await addresPage.getTimestamp(name)
+    expect(Math.abs(ts - timestampDict[name] - 31536000000 * 3)).toBeLessThanOrEqual(86400000 * 3)
   }
 })
 
@@ -179,7 +181,8 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await extendNamesModal.getExtendButton.click()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    expect(newTimestamp).toEqual(timestamp + 31536000000)
+    // Allow 1 day tolerance for leap year differences
+    expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
   })
 })
 
@@ -241,7 +244,8 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    expect(newTimestamp).toEqual(timestamp + 31536000000)
+    // Allow 1 day tolerance for leap year differences
+    expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
   })
 })
 
@@ -304,7 +308,8 @@ test('should be able to extend a single unwrapped name in grace period from prof
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    await expect(newTimestamp).toEqual(timestamp + 31536000000)
+    // Allow 1 day tolerance for leap year differences
+    expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
   })
 })
 

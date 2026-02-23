@@ -38,6 +38,7 @@ import { sendEvent } from '@app/utils/analytics/events'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
+import { computeCacheBustFlags } from '@app/utils/transactionCacheBust'
 import { hasParaConnection, makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
@@ -219,7 +220,7 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
         <Outlink
           iconPosition="before"
           icon={QuestionCircleSVG}
-          href="https://support.ens.domains/en/articles/7982906-long-running-transactions"
+          href="https://support.ens.domains/en/articles/13608541-transaction-troubleshooting"
         >
           {t('transaction.dialog.sent.learn')}
         </Outlink>
@@ -456,6 +457,8 @@ export const TransactionStageModal = ({
         addRecentTransaction,
         dispatch,
         isSafeApp,
+        transactionFlowData: transaction.data,
+        computeCacheBustFn: computeCacheBustFlags,
       }),
     },
   })
