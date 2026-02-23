@@ -2,7 +2,7 @@ import { mockFunction } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 
-import { getName } from '@ensdomains/ensjs/public'
+import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
 
 import { ClientWithEns, ConfigWithEns } from '@app/types'
 
@@ -11,6 +11,7 @@ import { getPrimaryNameQueryFn } from './usePrimaryName'
 vi.mock('@ensdomains/ensjs/public')
 
 const mockGetName = mockFunction(getName)
+const mockGetAddressRecord = mockFunction(getAddressRecord)
 
 const address = '0xaddress'
 const chainId = 1
@@ -96,6 +97,14 @@ describe('getPrimaryNameQueryFn', () => {
         reverseResolverAddress: '0xreverseResolver',
       }),
     )
+    // Mock getAddressRecord to return the same address so the check passes
+    mockGetAddressRecord.mockImplementationOnce(() =>
+      Promise.resolve({
+        id: 60,
+        name: 'eth',
+        value: address,
+      }),
+    )
     const result = await getPrimaryNameQueryFn(mockConfig)({
       queryKey: [{ address, allowMismatch: true }, chainId, address, undefined, 'getName'],
       meta: {} as any,
@@ -120,6 +129,14 @@ describe('getPrimaryNameQueryFn', () => {
         match: false,
         resolverAddress: '0xresolver',
         reverseResolverAddress: '0xreverseResolver',
+      }),
+    )
+    // Mock getAddressRecord to return the same address so the check passes
+    mockGetAddressRecord.mockImplementationOnce(() =>
+      Promise.resolve({
+        id: 60,
+        name: 'eth',
+        value: address,
       }),
     )
     const result = await getPrimaryNameQueryFn(mockConfig)({
@@ -163,5 +180,32 @@ describe('getPrimaryNameQueryFn', () => {
         "reverseResolverAddress": "0xreverseResolver",
       }
     `)
+  })
+
+  it('should return null when allowMismatch is true but ETH address record points to different address', async () => {
+    const differentAddress = '0x1234567890123456789012345678901234567890'
+
+    mockGetName.mockImplementationOnce(() =>
+      Promise.resolve({
+        name: 'test.eth',
+        match: false,
+        resolverAddress: '0xresolver',
+        reverseResolverAddress: '0xreverseResolver',
+      }),
+    )
+    // Mock getAddressRecord to return a DIFFERENT address
+    mockGetAddressRecord.mockImplementationOnce(() =>
+      Promise.resolve({
+        id: 60,
+        name: 'eth',
+        value: differentAddress, // ← Points to different address!
+      }),
+    )
+    const result = await getPrimaryNameQueryFn(mockConfig)({
+      queryKey: [{ address, allowMismatch: true }, chainId, address, undefined, 'getName'],
+      meta: {} as any,
+      signal: undefined as any,
+    })
+    expect(result).toBeNull() // Should return null because address doesn't match
   })
 })
