@@ -2,13 +2,16 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useClient } from 'wagmi'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { META_DATA_QUERY_KEY } from '@app/hooks/useEnsAvatar'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { ClientWithEns } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { bustMediaCache } from '@app/utils/metadataCache'
 import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider/SyncProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
@@ -36,6 +39,7 @@ export const TransactionNotifications = () => {
 
   const chainName = useChainName()
   const queryClient = useQueryClient()
+  const client = useClient()
 
   const [open, setOpen] = useState(false)
 
@@ -45,13 +49,13 @@ export const TransactionNotifications = () => {
   const currentNotification = notificationQueue[0]
 
   const updateCallback = useCallback<UpdateCallback>(
-    ({ action, key, status, hash }) => {
+    ({ action, key, status, hash, cacheBust }) => {
       if (status === 'pending' || status === 'repriced') return
       if (status === 'confirmed') {
+        // Handle analytics events
         switch (action) {
           case 'registerName':
             trackEvent('register', chainName)
-            queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
             break
           case 'commitName':
             trackEvent('commit', chainName)
@@ -59,12 +63,32 @@ export const TransactionNotifications = () => {
           case 'extendNames':
             trackEvent('renew', chainName)
             break
-          case 'updateProfileRecords':
-          case 'updateProfile':
-            queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
-            break
           default:
             break
+        }
+
+        // Use pre-computed cache bust flags from transaction store
+        if (cacheBust && client) {
+          const { avatar, header, name } = cacheBust
+          if (name) {
+            if (avatar) bustMediaCache(name, client as ClientWithEns, 'avatar')
+            if (header) bustMediaCache(name, client as ClientWithEns, 'header')
+          }
+        }
+
+        // Invalidate metadata queries for actions that modify profile data
+        const profileActions = [
+          'registerName',
+          'updateResolver',
+          'resetProfile',
+          'updateProfile',
+          'updateProfileRecords',
+          'resetProfileWithRecords',
+          'migrateProfile',
+          'migrateProfileWithReset',
+        ]
+        if (profileActions.includes(action)) {
+          queryClient.invalidateQueries({ queryKey: [META_DATA_QUERY_KEY] })
         }
       }
       const resumable = key && getResumable(key)
@@ -99,7 +123,7 @@ export const TransactionNotifications = () => {
 
       setNotificationQueue((queue) => [...queue, item])
     },
-    [chainName, getResumable, resumeTransactionFlow, t, queryClient],
+    [chainName, client, getResumable, resumeTransactionFlow, t, queryClient],
   )
 
   useCallbackOnTransaction(updateCallback)

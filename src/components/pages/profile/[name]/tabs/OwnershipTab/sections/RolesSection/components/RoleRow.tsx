@@ -15,12 +15,12 @@ import {
 } from '@ensdomains/thorin'
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
-import { useChainName } from '@app/hooks/chain/useChainName'
+import { useBlockExplorer } from '@app/hooks/chain/useBlockExplorer'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { emptyAddress } from '@app/utils/constants'
-import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
+import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useRoleActions } from '../hooks/useRoleActions'
 import { RoleTag } from './RoleTag'
@@ -68,21 +68,24 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
   const { t } = useTranslation('common')
 
   const primary = usePrimaryName({ address: address!, enabled: !!address })
-  const networkName = useChainName()
+  const { blockExplorer, buildAddressUrl } = useBlockExplorer()
   const [, copy] = useCopyToClipboard()
 
-  const etherscanAction = useMemo(() => {
+  const blockExplorerAction = useMemo(() => {
     const primaryName = primary.data?.name
-    if (!primaryName) return null
+    if (!primaryName || !blockExplorer) return null
     const is2ldEth = checkETH2LDFromName(primaryName)
     const hasToken = is2ldEth || isWrapped
     if (!hasToken) return null
     return {
-      label: t('transaction.viewEtherscan', { ns: 'common' }),
-      onClick: () => window.open(makeEtherscanLink(address!, networkName, 'address'), '_blank'),
+      label: t('transaction.viewOnBlockExplorer', {
+        ns: 'common',
+        blockExplorer: blockExplorer.name,
+      }),
+      onClick: () => window.open(buildAddressUrl(address!), '_blank'),
       icon: () => <OutlinkSVG height={16} width={16} />,
     }
-  }, [primary.data?.name, isWrapped, t, address, networkName])
+  }, [primary.data?.name, isWrapped, t, address, blockExplorer, buildAddressUrl])
 
   const editRolesAction = actions?.find(({ type, disabled }) => type === 'edit-roles' && !disabled)
 
@@ -119,7 +122,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
       color: 'text',
       icon: () => <CopySVG height={16} width={16} />,
     },
-    ...(etherscanAction ? [etherscanAction] : []),
+    ...(blockExplorerAction ? [blockExplorerAction] : []),
     ...(editRolesAction ? [editRolesAction] : []),
     ...(syncManagerAction ? [syncManagerAction] : []),
   ] as DropdownItem[]
