@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { match, P } from 'ts-pattern'
+import { match } from 'ts-pattern'
 
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { useOwner } from '@app/hooks/ensjs/public/useOwner'
@@ -8,10 +8,10 @@ import { useVerifiedRecords } from '@app/hooks/verification/useVerifiedRecords/u
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
-import { DentityView } from './views/DentityView'
 import { VerificationOptionsList } from './views/VerificationOptionsList'
 
-const VERIFICATION_PROTOCOLS = ['dentity'] as const
+// Available verification protocols - empty array allows for future extensibility
+const VERIFICATION_PROTOCOLS = [] as const
 
 export type VerificationProtocol = (typeof VERIFICATION_PROTOCOLS)[number]
 
@@ -23,8 +23,8 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
-  const [protocol, setProtocol] = useState<VerificationProtocol | null>(null)
+const VerifyProfile = ({ data: { name }, onDismiss }: Props) => {
+  const [protocol] = useState<VerificationProtocol | null>(null)
   const { data: profile, isLoading: isProfileLoading } = useProfile({ name })
 
   const { data: ownerData, isLoading: isOwnerLoading } = useOwner({ name })
@@ -42,34 +42,12 @@ const VerifyProfile = ({ data: { name }, dispatch, onDismiss }: Props) => {
     <>
       {match({
         protocol,
-        name,
-        address: ownerAddress,
-        resolverAddress: profile?.resolverAddress,
         isLoading,
       })
         .with({ isLoading: true }, () => <SearchViewLoadingView />)
-        .with(
-          {
-            protocol: 'dentity',
-            name: P.not(P.nullish),
-            address: P.not(P.nullish),
-            resolverAddress: P.not(P.nullish),
-          },
-          ({ name: _name, address: _address, resolverAddress: _resolverAddress }) => (
-            <DentityView
-              name={_name}
-              address={_address!}
-              resolverAddress={_resolverAddress!}
-              verified={!!verificationData?.some(({ issuer }) => issuer === 'dentity')}
-              dispatch={dispatch}
-              onBack={() => setProtocol(null)}
-            />
-          ),
-        )
         .otherwise(() => (
           <VerificationOptionsList
             verificationData={verificationData}
-            onSelect={setProtocol}
             onDismiss={onDismiss}
           />
         ))}
