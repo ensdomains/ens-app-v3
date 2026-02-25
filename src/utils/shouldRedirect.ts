@@ -5,7 +5,6 @@ import {
   DnsImportReducerDataItem,
   DnsStep,
 } from '@app/components/pages/import/[name]/useDnsImportReducer'
-import { useDotBoxAvailabilityOffchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOffchain'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getEncodedLabelAmount } from '@app/utils/utils'
 
@@ -13,7 +12,6 @@ import { RegistrationStatus } from './registrationStatus'
 
 type RouteParams = {
   'Basic.tsx': { isConnected: boolean; chainId: number | undefined }
-  'DotBoxRegistration.tsx': ReturnType<typeof useDotBoxAvailabilityOffchain>
   'Profile.tsx': {
     isSelf: boolean
     name: string | undefined
@@ -64,24 +62,11 @@ export const shouldRedirect = (
 ) => {
   match([source, extraData])
     .with(
-      ['DotBoxRegistration.tsx', { isLoading: false }],
-      (_params) =>
-        _params[1].data?.data.status !== 'AVAILABLE' &&
-        _params[1].data?.data.status !== 'UNAVAILABLE' &&
-        router.isReady,
-      () => router.push(destination),
-    )
-    .with(
       ['DnsClaim.tsx', { shouldRun: true }],
       (_params) => _params && router.isReady,
       (_params) => {
         const params = _params[1]
-        const isHome = params.payload.item?.name?.includes('.box')
         const isProfile = shouldDnsClaimRedirect(params.payload)
-
-        if (isHome) {
-          return router.push(`/`)
-        }
 
         if (isProfile) {
           return router.push(`/profile/${params.payload.name}`)

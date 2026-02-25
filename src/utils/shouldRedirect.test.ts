@@ -10,58 +10,6 @@ describe('shouldRedirect', () => {
     mockRouter.setCurrentUrl('/')
   })
 
-  // check router.push or router.place is called with the expected argument
-  it('DotBoxRegistration.tsx should return expected path if has valid arguments', () => {
-    const name = 'test'
-    const params = {
-      isLoading: false,
-      data: {
-        data: {},
-      },
-    }
-
-    shouldRedirect(
-      mockRouter as never,
-      'DotBoxRegistration.tsx',
-      `/profile/${name}`,
-      params as never,
-    )
-
-    expect(mockRouter.pathname).toBe(`/profile/${name}`)
-  })
-  it('DotBoxRegistration.tsx should not return expected path if has valid arguments', () => {
-    const name = 'test'
-    const params = {
-      isLoading: false,
-      data: {
-        data: {
-          status: 'AVAILABLE',
-          // status: 'UNAVAILABLE',
-        },
-      },
-    }
-
-    shouldRedirect(
-      mockRouter as never,
-      'DotBoxRegistration.tsx',
-      `/profile/${name}`,
-      params as never,
-    )
-
-    expect(mockRouter.pathname).toBe(`/`)
-  })
-
-  it('DnsClaim.tsx should return "/" path if has valid arguments', () => {
-    const params = {
-      shouldRun: true,
-      payload: {
-        item: { name: '.box' },
-      },
-    }
-    shouldRedirect(mockRouter as never, 'DnsClaim.tsx', '', params as never)
-    expect(mockRouter.pathname).toBe(`/`)
-  })
-
   it('DnsClaim.tsx should "/profile/[name]" expected path if has valid arguments', () => {
     const name = 'test'
     const params = {
