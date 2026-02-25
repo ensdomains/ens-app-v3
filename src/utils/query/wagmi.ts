@@ -10,7 +10,7 @@ import {
   type TransactionType,
   type Transport,
 } from 'viem'
-import { createConfig, createStorage, fallback, http } from 'wagmi'
+import { createConfig, createStorage, fallback, http, webSocket } from 'wagmi'
 import { localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
@@ -53,17 +53,17 @@ export const drpcUrl = (chainName: string) =>
     chainName === 'mainnet' ? 'ethereum' : chainName
   }&dkey=${drpcKey}`
 
-type SupportedUrlFunc = typeof drpcUrl | typeof tenderlyUrl
+export const drpcWsUrl = (chainName: string) =>
+  `wss://lb.drpc.org/ogws?network=${
+    chainName === 'mainnet' ? 'ethereum' : chainName
+  }&dkey=${drpcKey}`
 
-const initialiseTransports = <const UrlFuncArray extends SupportedUrlFunc[]>(
-  chainName: string,
-  urlFuncArray: UrlFuncArray,
-) => {
-  const transportArray: HttpTransport[] = []
-
-  for (const urlFunc of urlFuncArray) transportArray.push(http(urlFunc(chainName)))
-
-  return fallback(transportArray)
+const initialiseTransports = (chainName: string) => {
+  return fallback([
+    webSocket(drpcWsUrl(chainName)), // Primary: instant block updates via subscription
+    http(drpcUrl(chainName)), // Fallback 1: DRPC HTTP
+    http(tenderlyUrl(chainName)), // Fallback 2: Tenderly HTTP
+  ])
 }
 
 export const prefix = 'wagmi'
@@ -109,8 +109,8 @@ export const transports = {
         // this is a hack to make the types happy, dont remove pls
         [localhost.id]: HttpTransport
       })),
-  [mainnet.id]: initialiseTransports('mainnet', [drpcUrl, tenderlyUrl]),
-  [sepolia.id]: initialiseTransports('sepolia', [drpcUrl, tenderlyUrl]),
+  [mainnet.id]: initialiseTransports('mainnet'),
+  [sepolia.id]: initialiseTransports('sepolia'),
 } as const
 
 // This is a workaround to fix MetaMask defaulting to the wrong transaction type
