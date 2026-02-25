@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Hash } from 'viem'
 
 export type ParseVerificationDataDependencies = {
@@ -16,8 +17,8 @@ export type VerifiedRecord = {
 // Currently returns empty array as no providers are configured.
 // The infrastructure is designed to support multiple identity providers in the future.
 export const parseVerificationData =
-  (_dependencies: ParseVerificationDataDependencies) =>
-  async (_data: unknown): Promise<VerifiedRecord[]> => {
+  (dependencies: ParseVerificationDataDependencies) =>
+  async (data: unknown): Promise<VerifiedRecord[]> => {
     // No verification providers are currently configured
     return []
   }

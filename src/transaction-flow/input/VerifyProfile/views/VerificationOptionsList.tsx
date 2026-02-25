@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -20,7 +21,7 @@ const IconWrapper = styled.div(
 )
 
 export const VerificationOptionsList = ({
-  verificationData: _verificationData,
+  verificationData,
   onDismiss,
 }: {
   verificationData?: ReturnType<typeof useVerifiedRecords>['data']

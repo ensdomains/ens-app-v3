@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { Hash } from 'viem'
 
@@ -43,7 +44,7 @@ export const parseVerificationRecord = (verificationRecord?: string): string[] =
 // Returns empty array since no verification providers are currently configured.
 // The infrastructure is preserved for future extensibility.
 export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParameters>({
-  queryKey: [{ verificationsRecord: _verificationsRecord }],
+  queryKey: [{ verificationsRecord }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerifiedRecordsReturnType> => {
   // No verification providers are currently configured
   // Return empty array to maintain API compatibility

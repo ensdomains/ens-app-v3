@@ -46,10 +46,7 @@ const VerifyProfile = ({ data: { name }, onDismiss }: Props) => {
       })
         .with({ isLoading: true }, () => <SearchViewLoadingView />)
         .otherwise(() => (
-          <VerificationOptionsList
-            verificationData={verificationData}
-            onDismiss={onDismiss}
-          />
+          <VerificationOptionsList verificationData={verificationData} onDismiss={onDismiss} />
         ))}
     </>
   )
