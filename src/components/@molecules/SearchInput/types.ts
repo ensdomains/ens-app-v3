@@ -1,4 +1,4 @@
-export type NameType = 'address' | 'text' | 'dns' | 'eth' | 'box' | 'tld' | 'error'
+export type NameType = 'address' | 'text' | 'dns' | 'eth' | 'tld' | 'error'
 
 export type SearchItem = {
   nameType: NameType
