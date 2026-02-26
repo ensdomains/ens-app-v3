@@ -1,12 +1,6 @@
-import { makeMockVerifiablePresentationData } from '@root/test/mock/makeMockVerifiablePresentationData'
-import { match } from 'ts-pattern'
-import { describe, expect, it, vi } from 'vitest'
-
-import { DENTITY_BASE_ENDPOINT } from '@app/constants/verification'
+import { describe, expect, it } from 'vitest'
 
 import { getVerifiedRecords, parseVerificationRecord } from './useVerifiedRecords'
-
-const mockUrl = (path: string) => `${DENTITY_BASE_ENDPOINT}/${path}`
 
 describe('parseVerificationRecord', () => {
   it('should return empty array if undefined', () => {
@@ -27,41 +21,13 @@ describe('parseVerificationRecord', () => {
 })
 
 describe('getVerifiedRecords', () => {
-  const mockFetch = vi.fn().mockImplementation(async (uri) =>
-    match(uri)
-      .with(mockUrl('error'), () => Promise.reject('error'))
-      .otherwise(() =>
-        Promise.resolve({
-          json: () => Promise.resolve(makeMockVerifiablePresentationData('openid')),
-        }),
-      ),
-  )
-  vi.stubGlobal('fetch', mockFetch)
-
-  it('should exclude fetches that error from results ', async () => {
+  it('should return empty array when no verification providers are configured', async () => {
     const result = await getVerifiedRecords({
       queryKey: [
-        { verificationsRecord: JSON.stringify([mockUrl('error'), mockUrl('regular'), mockUrl('error')]) },
+        { verificationsRecord: JSON.stringify(['https://example.com/verify']) },
         '0x123',
       ],
     } as any)
-    expect(result).toHaveLength(7)
-  })
-
-  it('should return a flat array of verified credentials', async () => {
-    const result = await getVerifiedRecords({
-      queryKey: [
-        {
-          verificationsRecord: JSON.stringify([
-            mockUrl('one'),
-            mockUrl('two'),
-            mockUrl('error'),
-            mockUrl('three'),
-          ]),
-        },
-      ],
-    } as any)
-    expect(result).toHaveLength(21)
-    expect(result.every((item) => !Array.isArray(item))).toBe(true)
+    expect(result).toEqual([])
   })
 })

@@ -25,25 +25,25 @@ describe('makeAppendVerificationsProps', () => {
     (key, value) => {
       const verifiedRecords: UseVerifiedRecordsReturnType = [
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'com.twitter',
           value: '@testETH',
           verified: true,
         },
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'org.telegram',
           value: 'testETH',
           verified: true,
         },
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'com.discord',
           value: 'testETH',
           verified: true,
         },
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'com.github',
           value: 'testETH',
           verified: true,
@@ -55,7 +55,7 @@ describe('makeAppendVerificationsProps', () => {
       expect(appendVerificationProps(normalisedRecord)).toEqual({
         ...normalisedRecord,
         isVerified: true,
-        verifiers: ['dentity'],
+        verifiers: ['test-provider'],
       })
     },
   )
@@ -65,25 +65,25 @@ describe('makeAppendVerificationsProps', () => {
     (key, value) => {
       const verifiedRecords: UseVerifiedRecordsReturnType = [
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'com.twitter',
           value: '@testETH',
           verified: false,
         },
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'org.telegram',
           value: 'testETH',
           verified: false,
         },
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'com.discord',
           value: 'testETH',
           verified: false,
         },
         {
-          issuer: 'dentity',
+          issuer: 'test-provider',
           key: 'com.github',
           value: 'testETH',
           verified: false,

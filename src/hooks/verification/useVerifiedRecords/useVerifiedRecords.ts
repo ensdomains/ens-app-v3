@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { Hash } from 'viem'
 
-import { DENTITY_BASE_ENDPOINT } from '@app/constants/verification'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
@@ -9,10 +9,7 @@ import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
 
 import { makeAppendVerificationProps } from './utils/makeAppendVerificationProps'
-import {
-  parseVerificationData,
-  VerifiedRecord,
-} from './utils/parseVerificationData/parseVerificationData'
+import { VerifiedRecord } from './utils/parseVerificationData/parseVerificationData'
 
 type UseVerifiedRecordsParameters = {
   verificationsRecord?: string
@@ -44,27 +41,14 @@ export const parseVerificationRecord = (verificationRecord?: string): string[] =
   }
 }
 
+// Returns empty array since no verification providers are currently configured.
+// The infrastructure is preserved for future extensibility.
 export const getVerifiedRecords = async <TParams extends UseVerifiedRecordsParameters>({
-  queryKey: [{ verificationsRecord, ownerAddress, name }],
+  queryKey: [{ verificationsRecord }],
 }: QueryFunctionContext<QueryKey<TParams>>): Promise<UseVerifiedRecordsReturnType> => {
-  const verifiablePresentationUris = parseVerificationRecord(verificationsRecord)
-
-  // Filter to only allow Dentity verification URLs
-  const validUris = verifiablePresentationUris.filter((uri) =>
-    uri.startsWith(DENTITY_BASE_ENDPOINT),
-  )
-
-  const responses = await Promise.allSettled(
-    validUris.map((uri) => fetch(uri).then((resp) => resp.json())),
-  )
-  return Promise.all(
-    responses
-      .filter(
-        (response): response is PromiseFulfilledResult<any> => response.status === 'fulfilled',
-      )
-      .map(({ value }) => value)
-      .map(parseVerificationData({ ownerAddress, name })),
-  ).then((records) => records.flat())
+  // No verification providers are currently configured
+  // Return empty array to maintain API compatibility
+  return []
 }
 
 export const useVerifiedRecords = <TParams extends UseVerifiedRecordsParameters>({
