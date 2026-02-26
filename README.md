@@ -1,5 +1,5 @@
 # The ENS Manager App (V3)
-
+by Edgar Manuel Ruiz Arias 
 # Quick start
 
 Install [pnpm](https://pnpm.io/installation), then:
