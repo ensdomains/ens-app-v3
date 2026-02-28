@@ -193,6 +193,9 @@
     "networkLatency": {
       "title": "Slow data syncing",
       "message": "The ENS app is experiencing slow downs due to network latency issues."
+    },
+    "referrer": {
+      "title": "Referrer Error"
     }
   },
   "transaction": {
