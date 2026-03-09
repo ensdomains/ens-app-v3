@@ -2,7 +2,7 @@
 
 const SUPPORT_LINKS = {
   homoglyphs: 'https://support.ens.domains/en/articles/7901658-homoglyphs',
-  namesAndSubnames: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_d83b3ffcb0',
+  namesAndSubnames: 'https://support.ens.domains/en/articles/8883890-create-delete-ens-subnames',
   managersAndOwners: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_3cf7f2fbdf',
   resolver: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_1ef2545a3f',
   fuses: 'https://support.ens.domains/en/articles/7902567-fuses',

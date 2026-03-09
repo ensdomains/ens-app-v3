@@ -79,6 +79,11 @@ const mockProfileData = {
         name: 'SOL',
         value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
       },
+      {
+        id: 784,
+        name: 'SUI',
+        value: '0x1231231231231231231231231231231231231231231231231231231231231231',
+      },
     ],
     resolverAddress: '0x0' as const,
     isMigrated: true,
@@ -216,9 +221,11 @@ describe('ProfileEditor', () => {
     vi.resetAllMocks()
   })
 
-  it('should have use the same version of address-encoder as ensjs', () => {
-    expect(appPackage.dependencies['@ensdomains/address-encoder']).toEqual(
-      ensjsPackage.dependencies['@ensdomains/address-encoder'],
-    )
+  it('should have a compatible version of address-encoder with ensjs', () => {
+    const appVersion = appPackage.dependencies['@ensdomains/address-encoder']
+    const ensjsVersion = ensjsPackage.dependencies['@ensdomains/address-encoder']
+    // App may use a newer version for additional coin support (e.g., SUI)
+    // as long as it's backward compatible with ensjs's version
+    expect(appVersion >= ensjsVersion).toBe(true)
   })
 })

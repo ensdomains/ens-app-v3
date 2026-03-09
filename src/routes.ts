@@ -16,7 +16,7 @@ import {
 export type PublicRoute =
   | 'search'
   | 'governance'
-  | 'community'
+  | 'blog'
   | 'developers'
   | 'support'
   | 'bounty'
@@ -108,7 +108,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'feedback',
-    href: 'https://docs.google.com/forms/d/e/1FAIpQLSfDzIszteoaqiayxUCpFLK1AgigoASHIPcsxFg8PZoS6R6Uzw/viewform?usp=sf_link',
+    href: 'https://enslabs.notion.site/20d7a8b1f0ed81feb54dfa19917e6acb?pvs=105',
     label: 'navigation.feedback',
     disabled: false,
     connected: false,
@@ -122,9 +122,9 @@ export const routes: RouteItemObj[] = [
     connected: false,
   },
   {
-    name: 'community',
-    href: 'https://chat.ens.domains/',
-    label: 'navigation.community',
+    name: 'blog',
+    href: 'https://blog.ens.domains',
+    label: 'navigation.blog',
     disabled: false,
     connected: false,
   },
@@ -137,7 +137,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'bounty',
-    href: 'https://docs.ens.domains/bug-bounty-program',
+    href: 'https://docs.ens.domains/bugs#-bug-bounty-program',
     label: 'navigation.bounty',
     disabled: false,
     connected: false,
@@ -227,12 +227,6 @@ export const rewrites = [
     source: '/import/:name',
     destination: '/import?name=$2',
     flattenedDestination: '/$2/import',
-    tldPrefix: true,
-  },
-  {
-    source: '/dotbox/:name',
-    destination: '/dotbox?name=$2',
-    flattenedDestination: '/$2/dotbox',
     tldPrefix: true,
   },
   {

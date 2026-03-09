@@ -111,10 +111,6 @@ const nextConfig = {
         destination: '/import?name=:name',
       },
       {
-        source: '/:name/dotbox',
-        destination: '/dotbox?name=:name',
-      },
-      {
         source: '/tld/:tld',
         destination: '/profile?name=:tld',
       },

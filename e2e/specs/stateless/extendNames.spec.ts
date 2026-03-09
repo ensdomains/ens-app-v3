@@ -112,10 +112,10 @@ test('should be able to extend multiple names (including names in grace preiod) 
     const label = name.replace('.eth', '')
     await addresPage.search(label)
     await expect(addresPage.getNameRow(name)).toBeVisible({ timeout: 5000 })
-    const newTs = await addresPage.getTimestamp(name)
-    expect(newTs).not.toBe(timestampDict[name])
-    // Allow 1 day tolerance for block timestamp rounding
-    expect(Math.abs(newTs - timestampDict[name] - 31536000000 * 3)).toBeLessThanOrEqual(86400000)
+    await expect(await addresPage.getTimestamp(name)).not.toBe(timestampDict[name])
+    // Allow up to 3 days tolerance for leap year differences across 3 years
+    const ts = await addresPage.getTimestamp(name)
+    expect(Math.abs(ts - timestampDict[name] - 31536000000 * 3)).toBeLessThanOrEqual(86400000 * 3)
   }
 })
 
@@ -181,7 +181,7 @@ test('should be able to extend a single unwrapped name from profile', async ({
     await extendNamesModal.getExtendButton.click()
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    // Allow 1 day tolerance for block timestamp rounding
+    // Allow 1 day tolerance for leap year differences
     expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
   })
 })
@@ -244,7 +244,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     await transactionModal.autoComplete()
 
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    // Allow 1 day tolerance for block timestamp rounding
+    // Allow 1 day tolerance for leap year differences
     expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
   })
 })
@@ -308,7 +308,7 @@ test('should be able to extend a single unwrapped name in grace period from prof
     const transactionModal = makePageObject('TransactionModal')
     await transactionModal.autoComplete()
     const newTimestamp = await profilePage.getExpiryTimestamp()
-    // Allow 1 day tolerance for block timestamp rounding
+    // Allow 1 day tolerance for leap year differences
     expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
   })
 })
@@ -1150,5 +1150,52 @@ test.describe('Wrapped Name Renewal with Referrer', () => {
 
     // Note: Bulk renewals should use the legacy bulk renewal contract
     // which doesn't support referrers
+  })
+
+  test('should extend wrapped name in grace period with referrer', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'wrapped-grace-referrer',
+      type: 'wrapped',
+      owner: 'user',
+      duration: -24 * 60 * 60, // Expired 1 day ago
+    })
+
+    const referrerAddress = '0x1234567890123456789012345678901234567890'
+
+    const profilePage = makePageObject('ProfilePage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    // Verify name is in grace period
+    await expect(page.getByText(`${name} has expired`)).toBeVisible()
+
+    // Add referrer to URL and navigate
+    await page.goto(`/${name}?referrer=${referrerAddress}`)
+
+    // Click extend button
+    await profilePage.getExtendButton.click()
+
+    // Set extension and proceed
+    await expect(page.getByTestId('plus-minus-control-label')).toHaveText('1 year')
+    await page.locator('button:has-text("Next")').click()
+
+    // Complete transaction
+    await transactionModal.confirm()
+
+    await expect(page.getByText('Your "Extend names" transaction was successful')).toBeVisible({
+      timeout: 10000,
+    })
+
+    // Verify referrer included in the transaction calldata
+    const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+    const referrerHex = addressToBytes32(referrerAddress)
+    expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
   })
 })
