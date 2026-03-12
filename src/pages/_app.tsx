@@ -36,7 +36,7 @@ import i18n from '../i18n'
 
 import '../styles.css'
 
-const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 'eotmigir'
+const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 're9q5yti'
 
 const anim = keyframes`
   0% {
