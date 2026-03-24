@@ -7,7 +7,7 @@ import { ForwardedRef, forwardRef, MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'
+import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'      
 
 const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ theme, $size }) => css`
@@ -16,6 +16,13 @@ const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
     border-radius: ${theme.radii['2.5xLarge']};
     border-color: ${theme.colors.border};
     width: 100%;
+    & input {
+      padding-right: ${theme.space['12']};
+    }
+    & button {
+      position: relative;
+      right: -${theme.space['4']};
+    }
     & input::placeholder {
       color: ${theme.colors.greyPrimary};
       font-weight: ${theme.fontWeights.bold};
