@@ -9,6 +9,7 @@ import { parseAgentRegistrationKey } from './parseAgentRegistrationKey'
 
 export interface AgentRegistrationRecord {
   key: string
+  value: string // Required by ProfileSection component
   agentId: string
   chainId: number
   chainName: string
@@ -40,15 +41,18 @@ export function transformAgentRegistrationRecord(
   const registryDisplayName = knownName ?? shortenAddress(decoded.address, 13, 6, 4)
   const explorerUrl = buildAddressExplorerUrl(chainInfo.explorerUrl, decoded.address)
 
+  const displayValue = `id: ${parsed.agentId} | registry: ${registryDisplayName}@${chainInfo.name}`
+
   return {
     key: record.key,
+    value: displayValue,
     agentId: parsed.agentId,
     chainId: decoded.chainId,
     chainName: chainInfo.name,
     registryAddress: decoded.address,
     registryDisplayName,
     explorerUrl,
-    displayValue: `id: ${parsed.agentId} | registry: ${registryDisplayName}@${chainInfo.name}`,
+    displayValue,
     iconKey: 'agent',
   }
 }
