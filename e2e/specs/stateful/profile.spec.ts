@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { expect } from '@playwright/test'
 
 import { test } from '../../../playwright/index.js'
@@ -48,6 +49,12 @@ const profiles = [
         key: 'eth',
         value: '0xFc5...7acf0',
         fullValue: '0xFc5958B4B6F9a06D21E06429c8833f865577acf0',
+      },
+      {
+        type: 'address',
+        key: 'sui',
+        value: '0x123...31231',
+        fullValue: '0x1231231231231231231231231231231231231231231231231231231231231231',
       },
       {
         type: 'other',

@@ -8,7 +8,7 @@ import useUserConfig from '@app/utils/useUserConfig'
 import { useChainName } from './chain/useChainName'
 
 type SearchSelectEvent = {
-  eventName: 'search_selected_eth' | 'search_selected_box' | 'search_selected_dns'
+  eventName: 'search_selected_eth' | 'search_selected_dns'
   customProperties: { name: string }
 }
 
@@ -41,7 +41,6 @@ type DefaultEvent = {
     | 'commit_started'
     | 'commit_wallet_opened'
     | 'register_started'
-    | 'register_started_box'
     | 'register_wallet_opened'
     | 'claim_domain_started_dns'
     | 'commit_wallet_opened_dns'
@@ -68,7 +67,7 @@ export const useEventTracker = () => {
     match(props)
       .with(
         {
-          eventName: P.union('search_selected_eth', 'search_selected_box', 'search_selected_dns'),
+          eventName: P.union('search_selected_eth', 'search_selected_dns'),
         },
         ({ eventName, customProperties }) => {
           const { name } = customProperties
@@ -81,7 +80,6 @@ export const useEventTracker = () => {
             'commit_started',
             'commit_wallet_opened',
             'register_started',
-            'register_started_box',
             'register_wallet_opened',
             'claim_domain_started_dns',
             'commit_wallet_opened_dns',

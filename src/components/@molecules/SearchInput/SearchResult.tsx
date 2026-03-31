@@ -10,7 +10,6 @@ import { Address } from 'viem'
 
 import { Avatar, lightTheme, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
-import { useDotBoxAvailabilityOnchain } from '@app/hooks/dotbox/useDotBoxAvailabilityOnchain'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
@@ -394,66 +393,6 @@ const EthResultItem = ({
   )
 }
 
-export const getBoxNameStatus = (isValidData: {
-  isValid: boolean | undefined
-  isAvailable: boolean | undefined
-}) =>
-  match(isValidData)
-    .with({ isValid: false }, () => 'invalid' as const)
-    .with({ isAvailable: true }, () => 'available' as const)
-    .with({ isAvailable: false }, () => 'registered' as const)
-    .otherwise(() => null)
-
-const BoxResultItem = ({
-  hoverCallback,
-  clickCallback,
-  index,
-  selected,
-  searchItem,
-  usingPlaceholder,
-}: SearchResultProps) => {
-  const { text: name, isValid } = searchItem
-  const { data: ensAvatar } = useEnsAvatar({
-    name,
-    enabled: !usingPlaceholder,
-  })
-  const zorb = useZorb(usingPlaceholder ? 'placeholder' : name, 'name')
-  const { data: isDotBoxAvailableOnchain, isLoading: isDotBoxAvailabilityLoading } =
-    useDotBoxAvailabilityOnchain({ name, isValid, enabled: !usingPlaceholder })
-  const isValidData = { isValid, isAvailable: isDotBoxAvailableOnchain }
-
-  const status = getBoxNameStatus(isValidData)
-
-  const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
-
-  return (
-    <SearchItemContainer
-      data-testid="search-result-name"
-      onClick={() => clickCallback(index)}
-      onMouseDown={(e) => e.preventDefault()}
-      onMouseEnter={() => hoverCallback(index)}
-      $clickable={status !== 'invalid'}
-      $selected={selected}
-    >
-      <LeadingSearchItem>
-        <AvatarWrapper $isPlaceholder={avatarIsPlaceholder}>
-          <Avatar src={avatarUri} label="avatar" />
-        </AvatarWrapper>
-        <TextWrapper>
-          <Typography weight="bold">{name}</Typography>
-        </TextWrapper>
-      </LeadingSearchItem>
-      {!isDotBoxAvailabilityLoading && status ? (
-        <StatusTag status={status} />
-      ) : (
-        <SpinnerWrapper>
-          <Spinner color="accent" />
-        </SpinnerWrapper>
-      )}
-    </SearchItemContainer>
-  )
-}
-
 export type SearchResultProps = {
   hoverCallback: (index: number) => void
   clickCallback: SearchHandler
@@ -504,11 +443,6 @@ export const SearchResult = ({
         />
       ),
     )
-    .with({ nameType: 'box' }, () => (
-      <BoxResultItem
-        {...{ selected, hoverCallback, index, clickCallback, searchItem, usingPlaceholder }}
-      />
-    ))
     .with({ nameType: 'tld' }, () => (
       <TldResultItem
         {...{ selected, hoverCallback, index, clickCallback, searchItem, usingPlaceholder }}

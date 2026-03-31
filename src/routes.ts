@@ -16,7 +16,7 @@ import {
 export type PublicRoute =
   | 'search'
   | 'governance'
-  | 'community'
+  | 'blog'
   | 'developers'
   | 'support'
   | 'bounty'
@@ -108,7 +108,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'feedback',
-    href: 'https://docs.google.com/forms/d/e/1FAIpQLSfDzIszteoaqiayxUCpFLK1AgigoASHIPcsxFg8PZoS6R6Uzw/viewform?usp=sf_link',
+    href: 'https://enslabs.notion.site/20d7a8b1f0ed81feb54dfa19917e6acb?pvs=105',
     label: 'navigation.feedback',
     disabled: false,
     connected: false,
@@ -122,9 +122,9 @@ export const routes: RouteItemObj[] = [
     connected: false,
   },
   {
-    name: 'community',
-    href: 'https://chat.ens.domains/',
-    label: 'navigation.community',
+    name: 'blog',
+    href: 'https://blog.ens.domains',
+    label: 'navigation.blog',
     disabled: false,
     connected: false,
   },
@@ -137,7 +137,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'bounty',
-    href: 'https://docs.ens.domains/bug-bounty-program',
+    href: 'https://docs.ens.domains/bugs#-bug-bounty-program',
     label: 'navigation.bounty',
     disabled: false,
     connected: false,
@@ -230,22 +230,15 @@ export const rewrites = [
     tldPrefix: true,
   },
   {
-    source: '/dotbox/:name',
-    destination: '/dotbox?name=$2',
-    flattenedDestination: '/$2/dotbox',
-    tldPrefix: true,
-  },
-  {
     source: '/address/:address',
     destination: '/address?address=$2',
     flattenedDestination: '/$2',
   },
 ]
-export const getDestination = (url: UrlObject | string) => {
+export const getDestination = (url: UrlObject) => {
   const isIPFS = !!process.env.NEXT_PUBLIC_IPFS
-  const isObj = typeof url !== 'string'
-  let href = isObj ? url.pathname! : url
-  const query = new URLSearchParams(isObj ? ((url.query || '') as any) : '')
+  let href = url.pathname!
+  const query = new URLSearchParams((url.query || '') as any)
   for (const rewrite of rewrites) {
     const regex = new RegExp(rewrite.source.replace(/:[^/]+/g, '([^/]+)'))
     const match = regex.exec(href)
@@ -273,13 +266,14 @@ export const getDestination = (url: UrlObject | string) => {
   }
 
   if (!isIPFS) {
-    if (isObj) {
-      return {
-        pathname: href,
-        query: query.toString(),
-      }
+    const queryObj: Record<string, string> = {}
+    query.forEach((value, key) => {
+      queryObj[key] = value
+    })
+    return {
+      pathname: href,
+      query: queryObj,
     }
-    return makeURLString()
   }
   // make absolute url relative
   // when displayed in url bar
@@ -294,4 +288,13 @@ export const getDestination = (url: UrlObject | string) => {
     }
   }
   return makeURLString()
+}
+
+export const getDestinationAsHref = (url: UrlObject): string => {
+  const result = getDestination(url)
+  if (typeof result === 'string') return result
+  const queryString = result.query
+    ? `${new URLSearchParams(result.query as Record<string, string>).toString()}`
+    : ''
+  return `${result.pathname}${queryString ? `?${queryString}` : ''}`
 }

@@ -8,9 +8,9 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
-import { useChainName } from '@app/hooks/chain/useChainName'
+import { useBlockExplorer } from '@app/hooks/chain/useBlockExplorer'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
-import { checkETH2LDFromName, makeEtherscanLink } from '@app/utils/utils'
+import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../../TabWrapper'
 
@@ -106,7 +106,7 @@ const NftBox = styled(NFTWithPlaceholder)(
 const Token = ({ name, isWrapped }: Props) => {
   const { t } = useTranslation('profile')
 
-  const networkName = useChainName()
+  const { blockExplorer, buildNftUrl } = useBlockExplorer()
   const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
   const registrarAddress = useContractAddress({ contract: 'ensBaseRegistrarImplementation' })
 
@@ -123,16 +123,12 @@ const Token = ({ name, isWrapped }: Props) => {
     <Container>
       <HeaderContainer>
         <Typography fontVariant="headingFour">{t('tabs.more.token.label')}</Typography>
-        {hasToken ? (
-          <Outlink
-            data-testid="etherscan-nft-link"
-            href={makeEtherscanLink(`${contractAddress}/${tokenId}`, networkName, 'nft')}
-          >
-            {t('etherscan', { ns: 'common' })}
+        {hasToken && blockExplorer && (
+          <Outlink data-testid="etherscan-nft-link" href={buildNftUrl(contractAddress, tokenId)!}>
+            {blockExplorer.name}
           </Outlink>
-        ) : (
-          <Tag colorStyle="greySecondary">{t('tabs.more.token.noToken')}</Tag>
         )}
+        {!hasToken && <Tag colorStyle="greySecondary">{t('tabs.more.token.noToken')}</Tag>}
       </HeaderContainer>
       {hasToken && (
         <ItemsContainer data-testid="token-ids">

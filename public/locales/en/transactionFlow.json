@@ -413,14 +413,8 @@
       "list": {
         "title": "Verify your profile",
         "message": " You can verify profile information and add proofs of personhood. Verified records will be marked on your profile with a blue check.",
-        "added": "Added"
-      },
-      "dentity": {
-        "title": "Dentity verification",
-        "description": "Proceed to Dentity to verify your profile. You’ll need to provide proof of ownership for the records you want to verify. Dentity does not share any private information with ENS.",
-        "helper": "Your verification will not be complete until you have returned to ENS and updated your records. This will require a transaction.",
-        "remove": "Remove Dentity from profile",
-        "link": "Go to Dentity"
+        "added": "Added",
+        "noOptions": "No verification providers are currently available."
       }
     }
   },

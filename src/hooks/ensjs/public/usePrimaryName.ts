@@ -3,7 +3,12 @@ import { ContractFunctionExecutionError } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { universalResolverReverseSnippet } from '@ensdomains/ensjs/contracts'
-import { getName, GetNameParameters, GetNameReturnType } from '@ensdomains/ensjs/public'
+import {
+  getAddressRecord,
+  getName,
+  GetNameParameters,
+  GetNameReturnType,
+} from '@ensdomains/ensjs/public'
 import { normalise } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
@@ -83,14 +88,13 @@ export const getPrimaryNameQueryFn =
             try {
               const normalizedVersion = normalise(originalName)
               isNormalized = originalName === normalizedVersion
-            } catch (error) {
+            } catch {
               // If normalisation fails, treat as non-normalized
               isNormalized = false
             }
           }
         }
-      } catch (error) {
-        console.error('Failed to get raw reverse name:', error)
+      } catch {
         // Fall back to checking if res.name is normalized
         try {
           const normalizedVersion = normalise(res.name)
@@ -101,6 +105,18 @@ export const getPrimaryNameQueryFn =
       }
     } else {
       // For mismatch case, res.name is already the raw name
+      // Check if the ETH address record for the name matches the input address
+      try {
+        const ethAddressRecord = await getAddressRecord(client, { name: res.name })
+        const resolvedAddress = ethAddressRecord?.value
+
+        if (!resolvedAddress || resolvedAddress.toLowerCase() !== address.toLowerCase()) {
+          return null
+        }
+      } catch {
+        return null
+      }
+
       originalName = res.name
       isNormalized = false // Mismatches are treated as non-normalized
     }

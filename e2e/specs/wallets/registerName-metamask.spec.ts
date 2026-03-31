@@ -1,14 +1,15 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import dappwright from '@tenkeylabs/dappwright'
 import type { Dappwright } from '@tenkeylabs/dappwright'
 
 import { SafeEnsConfig } from './config/safe-ens-config'
-import { confirmTransactionWithMetaMask, connectWalletToEns } from './config/wallet-ens-config'
+import { navigateToHome, openWalletAndConfirm, searchForName } from './config/test-utilities'
+import { connectWalletToEns } from './config/wallet-ens-config'
 
 // Global variables to share state
 let metaMask: Dappwright
-let page: Page
-let context: BrowserContext
+let page: any // Using any to avoid Playwright version conflicts with dappwright
+let context: any
 let ensName: string
 
 // Register unowned name
@@ -16,10 +17,7 @@ async function performRegistration(name: string): Promise<void> {
   console.log(`🎯 Starting registration for ${name}`)
 
   // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(name)
-  await searchInput.press('Enter')
+  await searchForName(page, name)
 
   // Wait for registration page
   await page.getByRole('heading', { name: `Register ${name}` }).waitFor({ timeout: 15000 })
@@ -40,12 +38,8 @@ async function performRegistration(name: string): Promise<void> {
   // Proceed to commit step
   await page.locator('[data-testid="next-button"]').click()
 
-  // Wait for "Open Wallet" and confirm commit
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
-
-  // Confirm transaction
-  await confirmTransactionWithMetaMask(page, 'commit', name)
+  // Open wallet and confirm commit transaction
+  await openWalletAndConfirm(page, { type: 'commit', name })
 
   // Wait 60s for commit
   await page.waitForTimeout(75000)
@@ -55,12 +49,14 @@ async function performRegistration(name: string): Promise<void> {
   await finishButton.waitFor({ timeout: 10000 })
   await finishButton.click()
 
-  // Open wallet modal and click
-  await page.locator('text=Open Wallet').waitFor({ timeout: 10000 })
-  await page.locator('text=Open Wallet').click()
+  // Open wallet and confirm register transaction
+  await openWalletAndConfirm(page, { type: 'register', name })
 
-  // Confirm transaction
-  await confirmTransactionWithMetaMask(page, 'register', name)
+  // Wait for registration completion page to load
+  // Registration flow auto-closes the modal and navigates to the completion step
+  // We wait for the "View Name" button which appears on the completion page
+  const viewNameButton = page.getByTestId('view-name')
+  await viewNameButton.waitFor({ state: 'visible', timeout: 120000 })
 
   console.log('🎉 ENS registration completed!')
 }
@@ -71,15 +67,8 @@ async function registerOwnedName() {
 
   console.log(`🎯 Starting registration for ${registeredName}`)
 
-  // Search for name
-  const searchInput = page.locator('input[placeholder="Search for a name"]')
-  const searchResult = page.getByTestId('search-result-name')
-
-  await searchInput.waitFor({ timeout: 15000 })
-  await searchInput.fill(registeredName)
-  await expect(searchResult).toHaveText(registeredName)
-  await expect(searchResult).toContainText('Registered')
-  await searchInput.press('Enter')
+  // Search for name and verify it shows as registered
+  await searchForName(page, registeredName)
 
   // Register should not appear, profile shows instead
   await expect(page.getByRole('heading', { name: `Register ${registeredName}` })).not.toBeVisible({
@@ -134,6 +123,11 @@ test.describe('ENS Name Registration', () => {
 
     // Generate a unique ENS name for tests
     ensName = `registername-${Date.now()}.eth`
+  })
+
+  test.beforeEach('Navigate to home page', async () => {
+    // Use utility function instead of manual navigation + timeout
+    await navigateToHome(page)
   })
 
   test('Connect MetaMask to ENS localhost', async () => {

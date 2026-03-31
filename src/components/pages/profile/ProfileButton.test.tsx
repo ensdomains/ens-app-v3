@@ -4,15 +4,40 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry, shortenAddress } from '@app/utils/utils'
 
 import { AddressProfileButton, OwnerProfileButton } from './ProfileButton'
 
+vi.mock('next/router', () => ({
+  useRouter: () => ({
+    query: {},
+    pathname: '/',
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    reload: vi.fn(),
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+      emit: vi.fn(),
+    },
+    isFallback: false,
+    isLocaleDomain: false,
+    isReady: true,
+    isPreview: false,
+  }),
+}))
+
 vi.mock('@app/utils/BreakpointProvider')
 vi.mock('@app/hooks/ensjs/public/usePrimaryName')
 vi.mock('@app/hooks/chain/useCoinChain')
+vi.mock('@app/hooks/chain/useChainName')
+vi.mock('@app/hooks/useRouterWithHistory')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 mockUseBreakpoint.mockReturnValue({
@@ -63,6 +88,19 @@ mockUseCoinChain.mockImplementation(({ coinName }) => {
     },
   }
 })
+
+const mockUseChainName = mockFunction(useChainName)
+mockUseChainName.mockReturnValue('mainnet')
+
+const mockUseRouterWithHistory = mockFunction(useRouterWithHistory)
+mockUseRouterWithHistory.mockReturnValue({
+  push: vi.fn(),
+  replace: vi.fn(),
+  pushWithHistory: vi.fn(),
+  asPath: '/',
+  pathname: '/',
+  query: {},
+} as any)
 
 describe('<OwnerProfileButton/>', () => {
   it('renders', () => {
@@ -161,7 +199,7 @@ describe('<AddressProfileButton/>', () => {
       await user.click(addressProfileBtn)
 
       const viewAddressButton = screen.getAllByText((content, element) => {
-        return element?.tagName?.toLowerCase() === 'a' && content?.toLowerCase() === 'view address'
+        return element?.tagName?.toLowerCase() === 'button' && content?.toLowerCase() === 'view address'
       })
 
       expect(viewAddressButton.length).toBe(1)
@@ -188,7 +226,7 @@ describe('<AddressProfileButton/>', () => {
 
       const viewBlockExplorerBtn = screen.getAllByText((content, element) => {
         return (
-          element?.tagName?.toLowerCase() === 'a' && content?.toLowerCase() === 'view on etherscan'
+          element?.tagName?.toLowerCase() === 'button' && content?.toLowerCase() === 'view on etherscan'
         )
       })
 

@@ -404,14 +404,8 @@
       "list": {
         "title": "Verificar tu perfil",
         "message": " Puedes verificar la información de tu perfil y agregar pruebas de identidad. Los registros verificados aparecerán en tu perfil con un check azul.",
-        "added": "Agregado"
-      },
-      "dentity": {
-        "title": "Verificación Dentity",
-        "description": "Ve a Dentity para verificar tu perfil. Deberás demostrar propiedad de los registros que desees verificar. Dentity no comparte ninguna información privada con ENS.",
-        "helper": "Tu verificación no estará completa hasta que regreses a ENS y actualices tus registros. Esto requerirá una transacción.",
-        "remove": "Eliminar Dentity de tu perfil",
-        "link": "Ir a Dentity"
+        "added": "Agregado",
+        "noOptions": "No hay proveedores de verificación disponibles actualmente."
       }
     }
   },

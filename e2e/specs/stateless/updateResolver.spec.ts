@@ -7,7 +7,7 @@ import { testClient } from '../../../playwright/fixtures/contracts/utils/addTest
 // const oldResolver = '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB'
 
 const oldResolver = testClient.chain.contracts.legacyPublicResolver.address
-const newResolver = testClient.chain.contracts.publicResolver.address
+const newResolver = testClient.chain.contracts.ensPublicResolver.address
 
 test.describe('Happy', () => {
   test.describe('When profile is updated to latest resolver', () => {

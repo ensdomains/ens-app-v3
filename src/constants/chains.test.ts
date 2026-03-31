@@ -1,11 +1,10 @@
-import { holesky, localhost, mainnet, sepolia } from 'viem/chains'
+import { localhost, mainnet, sepolia } from 'viem/chains'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   getChainsFromUrl,
   getNetworkFromUrl,
   getSupportedChainById,
-  holeskyWithEns,
   localhostWithEns,
   mainnetWithEns,
   sepoliaWithEns,
@@ -60,11 +59,6 @@ describe('chains', () => {
       expect(result).toBe(sepoliaWithEns)
     })
 
-    it('should return holesky chain for holesky id', () => {
-      const result = getSupportedChainById(holesky.id)
-      expect(result).toBe(holeskyWithEns)
-    })
-
     it('should return localhost chain for localhost id', () => {
       const result = getSupportedChainById(localhost.id)
       expect(result).toBe(localhostWithEns)
@@ -92,12 +86,6 @@ describe('chains', () => {
     })
 
     describe('environment variable overrides', () => {
-      it('should return holesky when NEXT_PUBLIC_CHAIN_NAME is holesky', () => {
-        process.env.NEXT_PUBLIC_CHAIN_NAME = 'holesky'
-        const result = getNetworkFromUrl()
-        expect(result).toBe('holesky')
-      })
-
       it('should return sepolia when NEXT_PUBLIC_CHAIN_NAME is sepolia', () => {
         process.env.NEXT_PUBLIC_CHAIN_NAME = 'sepolia'
         const result = getNetworkFromUrl()
@@ -180,13 +168,6 @@ describe('chains', () => {
         expect(result).toBe('sepolia')
       })
 
-      it('should return holesky for holesky subdomain', () => {
-        // @ts-ignore
-        global.window.location = createMockLocation('holesky.ens.domains')
-        const result = getNetworkFromUrl()
-        expect(result).toBe('holesky')
-      })
-
       it('should return mainnet for app.ens.domains', () => {
         // @ts-ignore
         global.window.location = createMockLocation('app.ens.domains')
@@ -218,18 +199,11 @@ describe('chains', () => {
       expect(result).toEqual([sepoliaWithEns])
     })
 
-    it('should return holesky chains for holesky network', () => {
-      // @ts-ignore
-      global.window.location = createMockLocation('holesky.ens.domains')
-      const result = getChainsFromUrl()
-      expect(result).toEqual([holeskyWithEns])
-    })
-
     it('should return localhost chains for localhost network', async () => {
       process.env.NEXT_PUBLIC_PROVIDER = 'http://localhost:8545'
       // @ts-ignore
       global.window.location = createMockLocation('localhost')
-      
+
       vi.resetModules()
       const { getChainsFromUrl: getChainsFromUrlFresh, localhostWithEns: localhostWithEnsFresh } = await import('./chains')
       const result = getChainsFromUrlFresh()
@@ -249,32 +223,19 @@ describe('chains', () => {
   describe('chain configurations', () => {
     it('should have correct contract addresses for sepolia', () => {
       expect(sepoliaWithEns.contracts.ensEthRegistrarController?.address).toBe(
-        '0xFED6a969AaA60E4961FCD3EBF1A2e8913ac65B72',
+        '0xfb3cE5D01e0f33f41DbB39035dB9745962F1f968',      
       )
       expect(sepoliaWithEns.contracts.ensPublicResolver?.address).toBe(
-        '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD',
+        '0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5',
       )
       expect(sepoliaWithEns.contracts.ensReverseRegistrar?.address).toBe(
         '0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6',
       )
     })
 
-    it('should have correct contract addresses for holesky', () => {
-      expect(holeskyWithEns.contracts.ensEthRegistrarController?.address).toBe(
-        '0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583',
-      )
-      expect(holeskyWithEns.contracts.ensPublicResolver?.address).toBe(
-        '0x9010A27463717360cAD99CEA8bD39b8705CCA238',
-      )
-      expect(holeskyWithEns.contracts.ensReverseRegistrar?.address).toBe(
-        '0x132AC0B116a73add4225029D1951A9A707Ef673f ',
-      )
-    })
-
     it('should have correct chain ids', () => {
       expect(mainnetWithEns.id).toBe(mainnet.id)
       expect(sepoliaWithEns.id).toBe(sepolia.id)
-      expect(holeskyWithEns.id).toBe(holesky.id)
       expect(localhostWithEns.id).toBe(localhost.id)
     })
   })

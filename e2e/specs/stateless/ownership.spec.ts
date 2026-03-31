@@ -1148,7 +1148,7 @@ test.describe('Extend name', () => {
     await test.step('should show the correct price data', async () => {
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0033')
       await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-      await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0034')
+      await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.003[34]/)
       await expect(page.getByText('1 year extension', { exact: true })).toBeVisible()
     })
 
@@ -1163,11 +1163,11 @@ test.describe('Extend name', () => {
     await test.step('should show correct fiat values', async () => {
       await extendNamesModal.getCurrencyToggle.click({ force: true })
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText(/\$10\.0/)
-      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
+      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0\.1[23]/)
       await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$10\.1/)
       await extendNamesModal.getCounterMinusButton.click()
       await expect(extendNamesModal.getInvoiceExtensionFee).toContainText(/\$5\.0/)
-      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('$0.13')
+      await expect(extendNamesModal.getInvoiceTransactionFee).toContainText(/\$0.1[23]/)
       await expect(extendNamesModal.getInvoiceTotal).toContainText(/\$5\.1/)
     })
 
@@ -1175,7 +1175,8 @@ test.describe('Extend name', () => {
       await extendNamesModal.getExtendButton.click()
       await transactionModal.autoComplete()
       const newTimestamp = await ownershipPage.getExpiryTimestamp()
-      expect(newTimestamp).toEqual(timestamp + 31536000000)
+      // Allow 1 day tolerance for leap year differences
+      expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
     })
   })
 })

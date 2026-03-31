@@ -9,8 +9,6 @@ import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
-import { VerificationErrorDialog } from '@app/components/pages/VerificationErrorDialog'
-import { useVerificationOAuthHandler } from '@app/hooks/verification/useVerificationOAuthHandler/useVerificationOAuthHandler'
 
 import ENSFull from '../assets/ENSFull.svg'
 
@@ -92,8 +90,6 @@ const StyledLeadingHeading = styled(LeadingHeading)(
 export default function Page() {
   const { t } = useTranslation('common')
 
-  const { dialogProps } = useVerificationOAuthHandler()
-
   return (
     <>
       <Head>
@@ -119,7 +115,6 @@ export default function Page() {
           <AnnouncementBanner />
         </Stack>
       </Container>
-      <VerificationErrorDialog {...(dialogProps ?? {})} />
     </>
   )
 }

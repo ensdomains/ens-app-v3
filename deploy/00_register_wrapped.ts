@@ -2,16 +2,23 @@
 /* eslint-disable no-await-in-loop */
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { namehash, type Account } from 'viem'
+import { labelhash, namehash, type Account } from 'viem'
 
 import {
+  EMPTY_ADDRESS,
+  EMPTY_BYTES32,
   encodeFuses,
-  makeCommitment as generateCommitment,
-  makeRegistrationTuple,
+  generateRecordCallArray,
+  // makeRegistrationTuple,
   RecordOptions,
-  RegistrationParameters,
 } from '@ensdomains/ensjs/utils'
 
+import {
+  makeCommitment as generateCommitment,
+  type CommitmentTuple,
+  type RegistrationParameters,
+  type RegistrationTuple,
+} from './.utils/nameWrapperRegisterHelpers'
 import { nonceManager } from './.utils/nonceManager'
 
 type Name = {
@@ -27,6 +34,55 @@ type Name = {
     fuses?: number
     expiry?: number
   }[]
+}
+
+export const makeCommitmentTuple = ({
+  name,
+  owner,
+  duration,
+  resolverAddress = EMPTY_ADDRESS,
+  records: { coins = [], ...records } = { texts: [], coins: [] },
+  reverseRecord,
+  fuses,
+  secret,
+}: RegistrationParameters): CommitmentTuple => {
+  const labelHash = labelhash(name.split('.')[0])
+  const hash = namehash(name)
+  const fuseData = fuses ? encodeFuses({ restriction: 'child', input: fuses }) : 0
+
+  if (
+    reverseRecord &&
+    !coins.find(
+      (c) =>
+        (typeof c.coin === 'string' && c.coin.toLowerCase() === 'eth') ||
+        (typeof c.coin === 'string' ? Number.parseInt(c.coin) === 60 : c.coin === 60),
+    )
+  ) {
+    coins.push({ coin: 60, value: owner })
+  }
+
+  const data = records ? generateRecordCallArray({ namehash: hash, coins, ...records }) : []
+
+  if (data.length > 0 && resolverAddress === EMPTY_ADDRESS)
+    throw new Error('resolver address required')
+
+  return [
+    labelHash,
+    owner,
+    BigInt(duration),
+    secret,
+    resolverAddress,
+    data,
+    !!reverseRecord,
+    fuseData,
+  ]
+}
+
+export const makeRegistrationTuple = (params: RegistrationParameters): RegistrationTuple => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_labelhash, ...commitmentData] = makeCommitmentTuple(params)
+  const label = params.name.split('.')[0]
+  return [label, ...commitmentData]
 }
 
 type ProcessedSubname = {
@@ -157,13 +213,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const allNamedClients = await viem.getNamedClients()
   const publicClient = await viem.getPublicClient()
 
-  const controller = await viem.getContract('ETHRegistrarController')
-  const publicResolver = await viem.getContract('PublicResolver')
+  const controller = await viem.getContract('WrappedEthRegistrarController' as any)
+  const publicResolver = await viem.getContract('NameWrapperPublicResolver' as any)
   const nameWrapper = await viem.getContract('NameWrapper')
 
   const makeData = ({ namedOwner, customDuration, fuses, name, subnames, ...rest }: Name) => {
     const resolverAddress = publicResolver.address
-    const secret = '0x0000000000000000000000000000000000000000000000000000000000000000' as const
+    const secret = EMPTY_BYTES32 as `0x${string}`
     const duration = customDuration || 31536000
     // 1659467455 is an approximate base timestamp; adding duration to it gives the wrapper expiry
     const wrapperExpiry = 1659467455 + adjustTime(duration)
@@ -208,6 +264,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     (nonce: number) =>
     async ({ owner, name, duration, label, ...rest }: ProcessedNameData, index: number) => {
       const { base: price } = await controller.read.rentPrice([label, BigInt(duration)])
+      console.log('>>>', {
+        owner: owner.address,
+        name,
+        duration,
+        label,
+        ...rest,
+      })
+      console.log('>>>', makeRegistrationTuple({ owner: owner.address, name, duration, ...rest }))
       const registerTxHash = await controller.write.register(
         makeRegistrationTuple({ owner: owner.address, name, duration, ...rest }),
         {
@@ -261,7 +325,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 func.id = 'register-wrapped-names'
 func.tags = ['register-wrapped-names']
-func.dependencies = ['ETHRegistrarController']
+func.dependencies = ['WrappedEthRegistrarController', 'NameWrapperPublicResolver']
 func.runAtTheEnd = true
 
 export default func

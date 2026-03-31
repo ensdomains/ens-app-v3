@@ -3,11 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { isVerificationProtocol } from './isVerificationProtocol'
 
 describe('isVerificationProtocol', () => {
-  it.each(['dentity'])('should return true for protocol: %s', (protocol) => {
-    expect(isVerificationProtocol(protocol)).toBeTruthy()
-  })
-
-  it.each(['dentitwo'])('should return false for invalid protocol: %s', (protocol) => {
-    expect(isVerificationProtocol(protocol)).not.toBeTruthy()
+  // No verification protocols are currently configured
+  it.each(['dentity', 'other', 'test'])('should return false for any protocol: %s', (protocol) => {
+    expect(isVerificationProtocol(protocol)).toBeFalsy()
   })
 })

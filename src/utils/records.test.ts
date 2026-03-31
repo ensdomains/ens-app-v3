@@ -4,6 +4,9 @@ import {
   checkContentHashEqual,
   checkProfileRecordsContains,
   checkProfileRecordsEqual,
+  hasAvatarRecordChange,
+  hasHeaderRecordChange,
+  hasMediaRecordChange,
   makeProfileRecordsWithEthRecordItem,
   normalizeCoinName,
   profileRecordsToKeyValue,
@@ -296,5 +299,185 @@ describe('normalizeCoinName', () => {
     expect(normalizeCoinName('  ETH  ')).toBe('  eth  ')
     expect(normalizeCoinName('  ETHlegacy  ')).toBe('  ethlegacy  ')
     expect(normalizeCoinName('  ETHlegacy')).toBe('  ethLegacy')
+  })
+})
+
+describe('hasMediaRecordChange', () => {
+  describe('avatar changes', () => {
+    it('should return true when avatar is being added (has value, no previous)', () => {
+      const records = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+      const previousRecords = undefined
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(true)
+    })
+
+    it('should return true when avatar is being updated (different values)', () => {
+      const records = [{ key: 'avatar', group: 'media', value: 'https://example.com/new-avatar.png' }]
+      const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/old-avatar.png' }]
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(true)
+    })
+
+    it('should return true when avatar is being deleted (no value in current, has value in previous)', () => {
+      const records: { key: string; group?: string; value?: string }[] = []
+      const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(true)
+    })
+
+    it('should return true when avatar is being deleted (empty value in current, has value in previous)', () => {
+      const records = [{ key: 'avatar', group: 'media', value: '' }]
+      const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(true)
+    })
+
+    it('should return false when avatar is unchanged (same value in both)', () => {
+      const records = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+      const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(false)
+    })
+
+    it('should return false when avatar is unchanged (not present in either)', () => {
+      const records: { key: string; group?: string; value?: string }[] = []
+      const previousRecords: { key: string; group?: string; value?: string }[] = []
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(false)
+    })
+
+    it('should return false when avatar is not in media group', () => {
+      const records = [{ key: 'avatar', group: 'general', value: 'https://example.com/avatar.png' }]
+      const previousRecords = undefined
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(false)
+    })
+
+    it('should return false when avatar has no group', () => {
+      const records = [{ key: 'avatar', value: 'https://example.com/avatar.png' }]
+      const previousRecords = undefined
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(false)
+    })
+  })
+
+  describe('header changes', () => {
+    it('should return true when header is being added', () => {
+      const records = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+      const previousRecords = undefined
+      expect(hasMediaRecordChange('header', records, previousRecords)).toBe(true)
+    })
+
+    it('should return true when header is being updated', () => {
+      const records = [{ key: 'header', group: 'media', value: 'https://example.com/new-header.png' }]
+      const previousRecords = [{ key: 'header', group: 'media', value: 'https://example.com/old-header.png' }]
+      expect(hasMediaRecordChange('header', records, previousRecords)).toBe(true)
+    })
+
+    it('should return true when header is being deleted', () => {
+      const records: { key: string; group?: string; value?: string }[] = []
+      const previousRecords = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+      expect(hasMediaRecordChange('header', records, previousRecords)).toBe(true)
+    })
+
+    it('should return false when header is unchanged (same value)', () => {
+      const records = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+      const previousRecords = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+      expect(hasMediaRecordChange('header', records, previousRecords)).toBe(false)
+    })
+
+    it('should return false when header is unchanged (not present in either)', () => {
+      const records: { key: string; group?: string; value?: string }[] = []
+      const previousRecords: { key: string; group?: string; value?: string }[] = []
+      expect(hasMediaRecordChange('header', records, previousRecords)).toBe(false)
+    })
+  })
+
+  describe('edge cases', () => {
+    it('should handle undefined records', () => {
+      expect(hasMediaRecordChange('avatar', undefined, undefined)).toBe(false)
+    })
+
+    it('should handle undefined records with previous records containing avatar', () => {
+      const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+      expect(hasMediaRecordChange('avatar', undefined, previousRecords)).toBe(true)
+    })
+
+    it('should handle records with other keys only (avatar deleted)', () => {
+      const records = [
+        { key: 'email', group: 'general', value: 'test@example.com' },
+        { key: 'twitter', group: 'social', value: '@test' },
+      ]
+      const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(true)
+    })
+
+    it('should not detect avatar change when only header changes', () => {
+      const records = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+      const previousRecords: { key: string; group?: string; value?: string }[] = []
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(false)
+    })
+
+    it('should treat undefined value same as empty string', () => {
+      const records = [{ key: 'avatar', group: 'media', value: undefined }]
+      const previousRecords = [{ key: 'avatar', group: 'media', value: '' }]
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(false)
+    })
+
+    it('should treat missing value property same as empty string', () => {
+      const records = [{ key: 'avatar', group: 'media' }]
+      const previousRecords = [{ key: 'avatar', group: 'media', value: '' }]
+      expect(hasMediaRecordChange('avatar', records, previousRecords)).toBe(false)
+    })
+  })
+})
+
+describe('hasAvatarRecordChange', () => {
+  it('should return true when avatar is being added', () => {
+    const records = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+    expect(hasAvatarRecordChange(records, undefined)).toBe(true)
+  })
+
+  it('should return true when avatar is being deleted', () => {
+    const records: { key: string; group?: string; value?: string }[] = []
+    const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+    expect(hasAvatarRecordChange(records, previousRecords)).toBe(true)
+  })
+
+  it('should return true when avatar value changes', () => {
+    const records = [{ key: 'avatar', group: 'media', value: 'https://example.com/new.png' }]
+    const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/old.png' }]
+    expect(hasAvatarRecordChange(records, previousRecords)).toBe(true)
+  })
+
+  it('should return false when avatar is unchanged', () => {
+    const records = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+    const previousRecords = [{ key: 'avatar', group: 'media', value: 'https://example.com/avatar.png' }]
+    expect(hasAvatarRecordChange(records, previousRecords)).toBe(false)
+  })
+
+  it('should return false when neither has avatar', () => {
+    expect(hasAvatarRecordChange([], [])).toBe(false)
+  })
+})
+
+describe('hasHeaderRecordChange', () => {
+  it('should return true when header is being added', () => {
+    const records = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+    expect(hasHeaderRecordChange(records, undefined)).toBe(true)
+  })
+
+  it('should return true when header is being deleted', () => {
+    const records: { key: string; group?: string; value?: string }[] = []
+    const previousRecords = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+    expect(hasHeaderRecordChange(records, previousRecords)).toBe(true)
+  })
+
+  it('should return true when header value changes', () => {
+    const records = [{ key: 'header', group: 'media', value: 'https://example.com/new.png' }]
+    const previousRecords = [{ key: 'header', group: 'media', value: 'https://example.com/old.png' }]
+    expect(hasHeaderRecordChange(records, previousRecords)).toBe(true)
+  })
+
+  it('should return false when header is unchanged', () => {
+    const records = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+    const previousRecords = [{ key: 'header', group: 'media', value: 'https://example.com/header.png' }]
+    expect(hasHeaderRecordChange(records, previousRecords)).toBe(false)
+  })
+
+  it('should return false when header is unchanged', () => {
+    expect(hasHeaderRecordChange([], [])).toBe(false)
   })
 })

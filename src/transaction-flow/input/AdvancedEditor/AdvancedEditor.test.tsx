@@ -81,6 +81,11 @@ const mockProfileData = {
         name: 'sol',
         value: 'HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH',
       },
+      {
+        id: 784,
+        name: 'sui',
+        value: '0x1231231231231231231231231231231231231231231231231231231231231231',
+      },
     ],
     abi: {
       abi: [

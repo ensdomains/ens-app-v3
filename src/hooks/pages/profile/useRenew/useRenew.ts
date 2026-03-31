@@ -68,7 +68,7 @@ export const removeRenewParam = ({
 
 export function useRenew(name: string) {
   const router = useRouterWithHistory()
-  const { registrationStatus, isLoading: isBasicNameLoading } = useBasicName({ name })
+  const { registrationStatus, isLoading: isBasicNameLoading, isWrapped } = useBasicName({ name })
   const abilities = useAbilities({ name })
   const searchParams = useSearchParams()
   const { status } = useAccount()
@@ -107,6 +107,7 @@ export function useRenew(name: string) {
           names: [name],
           isSelf: canSelfExtend,
           seconds: renewSeconds!,
+          hasWrapped: isWrapped,
         })
         const params = removeRenewParam({ query: router.query })
         router.replace(`/${name}${params}`)

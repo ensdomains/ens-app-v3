@@ -80,6 +80,7 @@ const transaction = async ({
 }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress, records, previousRecords = [], clearRecords } = data
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
+
   const recordOptions = await profileRecordsToRecordOptionsWithDeleteAbiArray(client, {
     name,
     profileRecords: submitRecords,

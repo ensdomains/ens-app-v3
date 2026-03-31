@@ -28,10 +28,9 @@ describe('useEventTracker', () => {
     expect(result.current).toHaveProperty('trackEvent')
   })
 
-  test.each([
-    ['search_selected_eth', 'test.eth'],
-    ['search_selected_box', 'test.box'],
-  ])('should call trackEvent with correct arguments for %s event', (eventName, name) => {
+  test.each([['search_selected_eth', 'test.eth']])(
+    'should call trackEvent with correct arguments for %s event',
+    (eventName, name) => {
     const { result } = renderHook(() => useEventTracker())
 
     result.current.trackEvent({
@@ -41,7 +40,8 @@ describe('useEventTracker', () => {
 
     expect(trackEvent).toBeCalledTimes(1)
     expect(trackEvent).toBeCalledWith(eventName, chain, { name })
-  })
+  },
+  )
 
   it('should call trackEvent with correct arguments with payment_selected event name', async () => {
     const duration = 62985600
@@ -75,7 +75,6 @@ describe('useEventTracker', () => {
     'commit_started',
     'commit_wallet_opened',
     'register_started',
-    'register_started_box',
     'register_wallet_opened',
   ])('should call trackEvent with correct arguments for %s event', (eventName) => {
     const { result } = renderHook(() => useEventTracker())

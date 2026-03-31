@@ -39,7 +39,6 @@ const TabButtonContainer = styled.div(
     align-items: center;
     justify-content: flex-start;
     gap: ${theme.space['6']};
-    flex-gap: ${theme.space['6']};
     overflow: auto;
 
     &::-webkit-scrollbar {

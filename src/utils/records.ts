@@ -247,3 +247,49 @@ export const recordsWithCointypeCoins = (records: RecordOptions): RecordOptions 
     }),
   }
 }
+
+// Types for profile record change detection
+export type ProfileRecordItem = { key: string; group?: string; value?: string }
+
+/**
+ * Checks if a media record (avatar or header) has changed between current and previous records.
+ * A change is detected when the value is different between current and previous records:
+ * - Record is being added: has value in current, not present in previous
+ * - Record is being updated: has different value in current vs previous
+ * - Record is being deleted: not present (or empty) in current, had value in previous
+ *
+ * @param key - The record key to check ('avatar' or 'header')
+ * @param records - Current profile records (desired state after transaction)
+ * @param previousRecords - Previous profile records (state before transaction)
+ * @returns true if the record value has changed
+ */
+export const hasMediaRecordChange = (
+  key: 'avatar' | 'header',
+  records: ProfileRecordItem[] | undefined,
+  previousRecords: ProfileRecordItem[] | undefined,
+): boolean => {
+  const currentRecord = records?.find((r) => r.key === key && r.group === 'media')
+  const previousRecord = previousRecords?.find((r) => r.key === key && r.group === 'media')
+
+  const currentValue = currentRecord?.value ?? ''
+  const previousValue = previousRecord?.value ?? ''
+
+  // Changed if values are different (including add/delete scenarios)
+  return currentValue !== previousValue
+}
+
+/**
+ * Checks if avatar has changed between current and previous profile records.
+ */
+export const hasAvatarRecordChange = (
+  records: ProfileRecordItem[] | undefined,
+  previousRecords: ProfileRecordItem[] | undefined,
+): boolean => hasMediaRecordChange('avatar', records, previousRecords)
+
+/**
+ * Checks if header has changed between current and previous profile records.
+ */
+export const hasHeaderRecordChange = (
+  records: ProfileRecordItem[] | undefined,
+  previousRecords: ProfileRecordItem[] | undefined,
+): boolean => hasMediaRecordChange('header', records, previousRecords)

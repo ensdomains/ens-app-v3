@@ -2,11 +2,12 @@ import { expect } from '@playwright/test'
 import { labelhash } from 'viem'
 
 import { getResolver } from '@ensdomains/ensjs/public'
-import { setPrimaryName } from '@ensdomains/ensjs/wallet'
+import { setPrimaryName, setRecords } from '@ensdomains/ensjs/wallet'
 
 import { test } from '../../../playwright'
 import { createAccounts } from '../../../playwright/fixtures/accounts'
 import {
+  testClient,
   waitForTransaction,
   walletClient,
 } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
@@ -486,5 +487,131 @@ test.describe('profile', () => {
     await expect(page.getByTestId('owner-profile-button-name.manager')).toContainText(
       accounts.getAddress('user2', 5),
     )
+  })
+
+  test('should not show primary name when ETH address record points to different address', async ({
+    page,
+    login,
+    makeName,
+    accounts,
+    time,
+  }) => {
+    test.slow()
+
+    // Step 1: Create a name owned by user with ETH record pointing to user's own address
+    const name = await makeName({
+      label: 'primary-mismatch',
+      type: 'legacy',
+      owner: 'user',
+      manager: 'user',
+      addr: 'user', // Initially points to user's own address
+    })
+
+    const userAddress = accounts.getAddress('user')
+    const user2Address = accounts.getAddress('user2')
+
+    // Step 2: Set this name as primary name for user
+    const tx = await setPrimaryName(walletClient, {
+      name,
+      account: createAccounts().getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(tx)
+
+    await page.goto('/')
+    await login.connect()
+
+    // Step 3: Verify primary name shows on user's address page
+    await page.getByPlaceholder('Search for a name').fill(userAddress)
+    await page.getByPlaceholder('Search for a name').press('Enter')
+    await expect(page.getByTestId('profile-snippet')).toBeVisible({ timeout: 25000 })
+    await expect(page.getByTestId('profile-title')).toHaveText(name)
+
+    // Step 4: Change the ETH address record to point to user2's address
+    const tx2 = await setRecords(walletClient, {
+      name,
+      coins: [
+        {
+          coin: 'eth',
+          value: user2Address,
+        },
+      ],
+      resolverAddress: walletClient.chain.contracts.legacyPublicResolver.address,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(tx2)
+
+    await testClient.mine({ blocks: 1 })
+    await time.sync()
+
+    await page.reload()
+
+    // Step 5: Verify primary name NO LONGER shows on user's address page
+    await page.getByPlaceholder('Search for a name').fill(userAddress)
+    await page.getByPlaceholder('Search for a name').press('Enter')
+    await expect(page.getByTestId('no-profile-snippet')).toBeVisible({ timeout: 25000 })
+    await expect(page.getByText('No primary name set')).toBeVisible()
+  })
+
+  test('name-wrapper - should not show primary name when ETH address record points to different address', async ({
+    page,
+    login,
+    makeName,
+    accounts,
+    time,
+    makePageObject,
+  }) => {
+    test.slow()
+
+    // Step 1: Create a name owned by user with ETH record pointing to user's own address
+    const name = await makeName({
+      label: 'primary-mismatch',
+      type: 'wrapped',
+      owner: 'user',
+      addr: accounts.getAddress('user') as `0x${string}`,
+    })
+
+    const userAddress = accounts.getAddress('user')
+    const user2Address = accounts.getAddress('user2')
+
+    await page.goto('/')
+    await login.connect()
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await profilePage.goto(name)
+    await page.getByText('Set as primary name').click()
+    const transactionModal = makePageObject('TransactionModal')
+    await transactionModal.autoComplete()
+
+    // Step 3: Verify primary name shows on user's address page
+    await page.getByPlaceholder('Search for a name').fill(userAddress)
+    await page.getByPlaceholder('Search for a name').press('Enter')
+    await expect(page.getByTestId('profile-snippet')).toBeVisible({ timeout: 25000 })
+    await expect(page.getByTestId('profile-title')).toHaveText(name)
+
+    // Step 4: Change the ETH address record to point to user2's address
+    const tx2 = await setRecords(walletClient, {
+      name,
+      coins: [
+        {
+          coin: 'eth',
+          value: user2Address,
+        },
+      ],
+      resolverAddress: walletClient.chain.contracts.ensPublicResolver.address as `0x${string}`,
+      account: accounts.getAddress('user') as `0x${string}`,
+    })
+    await waitForTransaction(tx2)
+
+    await testClient.mine({ blocks: 1 })
+    await time.sync()
+
+    await page.reload()
+
+    // Step 5: Verify primary name NO LONGER shows on user's address page
+    await page.getByPlaceholder('Search for a name').fill(userAddress)
+    await page.getByPlaceholder('Search for a name').press('Enter')
+    await expect(page.getByTestId('no-profile-snippet')).toBeVisible({ timeout: 25000 })
+    await expect(page.getByText('No primary name set')).toBeVisible()
   })
 })

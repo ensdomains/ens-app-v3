@@ -24,7 +24,6 @@ export const SafeEnsConfig = {
   // Safe addresses for different networks
   SAFE_ADDRESSES: {
     sepolia: 'sep:0x7894BFD6441B2e9a22358F8F71FdF9B2AC817ef8',
-    holesky: 'hol:0x4caeA72C02d06edF1788B743554a94a076CBdBB0', // Example
     mainnet: 'eth:0x4caeA72C02d06edF1788B743554a94a076CBdBB0', // Example
   } as const,
 

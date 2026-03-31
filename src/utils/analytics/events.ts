@@ -41,7 +41,7 @@ export type EventDefs = {
     /**
      * The type of search
      */
-    ens_name_type: 'eth' | 'box' | 'dns'
+    ens_name_type: 'eth' | 'dns'
     /**
      * The name of the search
      */
@@ -105,10 +105,6 @@ export type EventDefs = {
 
   // Register events
   'register:start': {
-    ens_name: string
-  }
-
-  'register:dotbox': {
     ens_name: string
   }
 

@@ -25,10 +25,6 @@ import { BackdropSurface, Portal, Typography } from '@ensdomains/thorin'
 
 import { SupportedChain } from '@app/constants/chains'
 import {
-  UseDotBoxAvailabilityOnchainQueryKey,
-  UseDotBoxAvailabilityOnchainReturnType,
-} from '@app/hooks/dotbox/useDotBoxAvailabilityOnchain'
-import {
   UseAddressRecordQueryKey,
   UseAddressRecordReturnType,
 } from '@app/hooks/ensjs/public/useAddressRecord'
@@ -48,7 +44,7 @@ import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { thread, yearsToSeconds } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
-import { getBoxNameStatus, SearchResult } from './SearchResult'
+import { SearchResult } from './SearchResult'
 import { HistoryItem, SearchHandler, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
@@ -242,20 +238,6 @@ const getRouteForSearchItem = ({
   if (selectedItem.nameType === 'address') return `/address/${selectedItem.text}`
 
   const getCachedQueryData = createCachedQueryDataGetter({ queryClient, chainId, address })
-  if (selectedItem.nameType === 'box') {
-    const isAvailableOnchain = getCachedQueryData<
-      UseDotBoxAvailabilityOnchainReturnType,
-      UseDotBoxAvailabilityOnchainQueryKey
-    >({
-      functionName: 'getDotBoxAvailabilityOnchain',
-      params: { name: selectedItem.text, isValid: selectedItem.isValid },
-    })
-    const boxStatus = getBoxNameStatus({
-      isValid: selectedItem.isValid,
-      isAvailable: isAvailableOnchain,
-    })
-    if (boxStatus === 'available') return `/dotbox/${selectedItem.text}`
-  }
 
   if (selectedItem.nameType === 'eth' || selectedItem.nameType === 'dns') {
     const ownerData = getCachedQueryData<UseOwnerReturnType, UseOwnerQueryKey>({
@@ -338,7 +320,6 @@ const createSearchHandler =
 
     const searchType = match(path)
       .with(`/register/${text}`, () => 'eth' as const)
-      .with(`/dotbox/${text}`, () => 'box' as const)
       .with(`/import/${text}`, () => 'dns' as const)
       .otherwise(() => undefined)
 
@@ -454,44 +435,6 @@ const addEthDropdownItem =
     ]
   }
 
-const isBoxValid = (name: string) => {
-  /*
-    This regular expression will match any string that starts and ends with a letter or a digit, 
-    does not have a hyphen in the third or fourth position, does not include a space, and 
-    consists only of the characters a-z, A-Z, 0-9, and - in between, but does not start or end 
-    with a hyphen.
-
-    This is to comply with .box name rules. 
-  */
-  const regex = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/
-
-  if (!name.endsWith('.box')) return false
-  if (name.length > 63) return false
-  if (!regex.test(name.slice(0, -4))) return false
-  return true
-}
-const formatBoxText = (name: string) => {
-  if (!name) return ''
-  if (name?.endsWith('.box')) return name
-  if (name.includes('.')) return ''
-  if (name === '[root]') return ''
-  return `${name}.box`
-}
-const addBoxDropdownItem =
-  ({ name, isValid }: { name: string; isValid: boolean | undefined }) =>
-  (dropdownItems: SearchItem[]): SearchItem[] => {
-    const formattedBoxName = formatBoxText(name)
-    if (!formattedBoxName) return dropdownItems
-    return [
-      ...dropdownItems,
-      {
-        text: formattedBoxName,
-        nameType: 'box',
-        isValid: isValid && isBoxValid(formattedBoxName),
-      } as const,
-    ]
-  }
-
 const formatTldText = (name: string) => {
   if (!name) return ''
   if (name.includes('.')) return ''
@@ -558,7 +501,6 @@ const addHistoryDropdownItems =
 const formatDnsText = ({ name, isETH }: { name: string; isETH: boolean | undefined }) => {
   if (!name) return ''
   if (!name.includes('.')) return ''
-  if (name.endsWith('.box')) return ''
   if (isETH) return ''
   if (name === '[root]') return ''
   return name
@@ -615,7 +557,6 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
       thread(
         [],
         addEthDropdownItem({ name, isETH }),
-        addBoxDropdownItem({ name, isValid }),
         addDnsDropdownItem({ name, isETH }),
         addAddressItem({ name, inputIsAddress }),
         addTldDropdownItem({ name }),

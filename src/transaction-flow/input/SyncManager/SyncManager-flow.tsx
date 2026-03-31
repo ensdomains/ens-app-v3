@@ -73,7 +73,7 @@ const SyncManager = ({ data: { name }, dispatch, onDismiss }: Props) => {
       canSyncDNS
         ? createTransactionItem('syncManager', {
             name,
-            address: account.address!,
+            address: account.address,
             dnsImportData: dnsImportData.data!,
           })
         : null,

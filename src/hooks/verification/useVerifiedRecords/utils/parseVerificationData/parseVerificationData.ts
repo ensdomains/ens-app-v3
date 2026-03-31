@@ -1,9 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Hash } from 'viem'
-
-import {
-  isDentityVerifiablePresentation,
-  parseDentityVerifiablePresentation,
-} from './utils/parseDentityVerifiablePresentation'
 
 export type ParseVerificationDataDependencies = {
   ownerAddress?: Hash
@@ -17,11 +13,12 @@ export type VerifiedRecord = {
   value: string
 }
 
-// TODO: Add more formats here
+// Parse verification data from any verification provider.
+// Currently returns empty array as no providers are configured.
+// The infrastructure is designed to support multiple identity providers in the future.
 export const parseVerificationData =
   (dependencies: ParseVerificationDataDependencies) =>
   async (data: unknown): Promise<VerifiedRecord[]> => {
-    if (isDentityVerifiablePresentation(data))
-      return parseDentityVerifiablePresentation(dependencies)(data)
+    // No verification providers are currently configured
     return []
   }

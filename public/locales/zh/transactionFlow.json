@@ -404,14 +404,8 @@
       "list": {
         "title": "验证您的个人资料",
         "message": "您可以验证个人资料信息并添加身份证明。已验证的记录将在您的个人资料中标有蓝色对勾。",
-        "added": "已添加"
-      },
-      "dentity": {
-        "title": "Dentity 验证",
-        "description": "前往 Dentity 验证您的个人资料。您需要提供要验证的记录的所有权证明。Dentity 不会与 ENS 共享任何私人信息。",
-        "helper": "在您返回 ENS 并更新记录之前，验证不会完成。这需要一次交易。",
-        "remove": "从个人资料中移除 Dentity",
-        "link": "前往 Dentity"
+        "added": "已添加",
+        "noOptions": "目前没有可用的验证提供商。"
       }
     }
   },
