@@ -161,6 +161,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         }))}
         accountRecords={categorisedRecord.accounts}
         otherRecords={categorisedRecord.other}
+        agentRegistrations={categorisedRecord.agentRegistrations}
         verificationRecords={getVerificationRecordItemProps({
           showErrors: userHasOwnership,
           verifiedRecordsData: verifiedData,
