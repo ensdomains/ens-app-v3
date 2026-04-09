@@ -1,3 +1,19 @@
+diff --git a/README.md b/README.md
+index 42632e23a..a9ad2dccb 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,5 @@
+ # ENS App V3
+-
++by Edgar Manuel Ruiz Arias 
+ The all new, all cool version of the ENS manager.
+ 
+ ## EXTERNAL CONTRIBUTOR NOTICE
+@@ -156,3 +156,4 @@ For deeper parts of the codebase that aren't directly related to a user interact
+ We also primarily test for functionality, making sure the user is able to complete any action that we intend for them to be able to complete. This means we wouldn't write tests to ensure an animation occurs, as that would not stop a user completing an action, and would likely be picked up during the course of development.
+ 
+ Writing out todo tests before implementing a test can help. If I want my form to submit the correct data when I click submit, then I should write `it.todo('should submit the correct data when submit is clicked')` before starting. This will prevent me from testing implementation details as I write out the component.
++by Edgar Manuel Ruiz Arias 
 # ENS App V3
 by Edgar Manuel Ruiz Arias 
 The all new, all cool version of the ENS manager.
