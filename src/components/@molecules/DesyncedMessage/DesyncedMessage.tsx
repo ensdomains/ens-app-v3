@@ -6,9 +6,9 @@ import { ButtonProps } from '@ensdomains/thorin'
 
 import { BannerMessageWithAction } from '@app/components/@atoms/BannerMessageWithAction/BannerMessageWithAction'
 import { useReferrer } from '@app/hooks/useReferrer'
+import { useResolvedReferrer } from '@app/hooks/useResolvedReferrer'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_DAY } from '@app/utils/time'
 
 const createKey = (name: string) => `repair-desynced-name-${name}`
@@ -34,7 +34,9 @@ export const DesyncedMessage = ({
   const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
   const referrer = useReferrer()
-  const referrerHex = getReferrerHex(referrer)
+  const { data: resolvedReferrer, isLoading: isReferrerResolving } = useResolvedReferrer({
+    referrer,
+  })
 
   return (
     <BannerMessageWithAction
@@ -50,6 +52,8 @@ export const DesyncedMessage = ({
             ({
               children: t('banner.desynced.action'),
               colorStyle: 'redPrimary',
+              disabled: isReferrerResolving,
+              loading: isReferrerResolving,
               onClick: () => {
                 if (!name) return
                 const minSeconds = calculateMinSeconds(expiryDate)
@@ -66,7 +70,7 @@ export const DesyncedMessage = ({
                     transactions: [
                       createTransactionItem('repairDesyncedName', {
                         name,
-                        referrer: referrerHex,
+                        referrer: resolvedReferrer,
                         hasWrapped: true,
                       }),
                     ],

@@ -1953,6 +1953,77 @@ test.describe('Registration with Referrer', () => {
       })
     })
   })
+
+  test('should register a name with ENS name as referrer', async ({
+    page,
+    login,
+    accounts,
+    time,
+    makeName,
+    makePageObject,
+  }) => {
+    await time.sync(500)
+
+    // Create an ENS name that will be used as referrer (has an ETH address record)
+    const referrerName = await makeName({
+      label: 'referrer',
+      type: 'legacy',
+      owner: 'user2',
+      records: {
+        coins: [
+          {
+            coin: 'ETH',
+            value: accounts.getAddress('user2'),
+          },
+        ],
+      },
+    })
+
+    const name = `registration-with-ens-referrer-${Date.now()}.eth`
+    const transactionModal = makePageObject('TransactionModal')
+
+    await test.step('should navigate to registration page with ENS name as referrer', async () => {
+      await page.goto(`/${name}/register?referrer=${referrerName}`)
+      await login.connect()
+
+      // Verify referrer is in URL
+      expect(page.url()).toContain(`referrer=${referrerName}`)
+    })
+
+    await test.step('should complete pricing step', async () => {
+      await page.getByTestId('payment-choice-ethereum').check()
+      await page.getByTestId('primary-name-toggle').uncheck()
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('should go to info step', async () => {
+      // Skip profile editor - click next to go to info step
+      await page.getByTestId('next-button').click()
+    })
+
+    await test.step('should complete commit transaction', async () => {
+      await page.getByTestId('next-button').click()
+      await transactionModal.confirm()
+      await expect(page.getByTestId('countdown-complete-check')).toBeVisible({ timeout: 10000 })
+      await testClient.increaseTime({ seconds: 60 })
+    })
+
+    await test.step('should complete register transaction', async () => {
+      await page.getByTestId('finish-button').click()
+      await transactionModal.confirm()
+
+      await expect(page.getByText('Your "Register name" transaction was successful')).toBeVisible({
+        timeout: 10000,
+      })
+    })
+
+    await test.step('should verify resolved referrer address in transaction calldata', async () => {
+      const latestTransaction = await publicClient.getTransaction({ blockTag: 'latest', index: 0 })
+      // The ENS name should have resolved to user2's address
+      const referrerHex = addressToBytes32(accounts.getAddress('user2'))
+      expect(latestTransaction.input).toContain(referrerHex.slice(2)) // Remove '0x' prefix for comparison
+    })
+  })
 })
 
 test('should change profile submit button text from "Skip profile" to "Next" when a header record is added', async ({
@@ -2387,5 +2458,75 @@ test('should allow the user to register with both avatar and header manually set
     await recordsPage.goto(name)
     await expect(recordsPage.getRecordValue('text', 'avatar')).toHaveText(avatar2)
     await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(header2)
+  })
+})
+
+test.describe('Referrer Error Notifications', () => {
+  test('should show error toast when referrer ENS name does not resolve', async ({
+    page,
+    login,
+    time,
+  }) => {
+    await time.sync(500)
+
+    const name = `registration-invalid-referrer-${Date.now()}.eth`
+    const invalidReferrer = 'nonexistent-name-that-does-not-exist.eth'
+
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+    await login.connect()
+
+    // Wait for the error toast to appear
+    await expect(page.getByTestId('toast-desktop')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByTestId('toast-desktop')).toContainText('Referrer Error')
+    await expect(page.getByTestId('toast-desktop')).toContainText('did not resolve')
+
+    // Close the toast
+    await page.getByTestId('toast-close-icon').click()
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
+  })
+
+  test('should show error toast when referrer is invalid format', async ({ page, login, time }) => {
+    await time.sync(500)
+
+    const name = `registration-invalid-format-referrer-${Date.now()}.eth`
+    const invalidReferrer = 'not-a-valid-address-or-name'
+
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+    await login.connect()
+
+    // Wait for the error toast to appear
+    await expect(page.getByTestId('toast-desktop')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByTestId('toast-desktop')).toContainText('Referrer Error')
+
+    // Close the toast
+    await page.getByTestId('toast-close-icon').click()
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
+  })
+
+  test('should only show referrer error toast once', async ({ page, login, time }) => {
+    await time.sync(500)
+
+    const name = `registration-toast-once-${Date.now()}.eth`
+    const invalidReferrer = 'nonexistent-referrer.eth'
+
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+    await login.connect()
+
+    // Wait for the error toast to appear
+    await expect(page.getByTestId('toast-desktop')).toBeVisible({ timeout: 10000 })
+
+    // Close the toast
+    await page.getByTestId('toast-close-icon').click()
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
+
+    // Navigate away and back - toast should not reappear
+    await page.goto('/')
+    await page.goto(`/${name}/register?referrer=${invalidReferrer}`)
+
+    // Wait a bit to ensure toast would have appeared if it was going to
+    await page.waitForTimeout(2000)
+
+    // Toast should not be visible again for same referrer
+    await expect(page.getByTestId('toast-desktop')).not.toBeVisible()
   })
 })

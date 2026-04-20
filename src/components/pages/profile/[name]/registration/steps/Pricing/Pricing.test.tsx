@@ -53,4 +53,19 @@ describe('ActionButton', () => {
     )
     expect(screen.getByText('action.next')).toBeInTheDocument()
   })
+
+  it('should show loading button when isLoading is true', () => {
+    render(
+      <ActionButton
+        {...{
+          ...baseMockData,
+          paymentMethodChoice: PaymentMethod.ethereum,
+          isLoading: true,
+        }}
+      />,
+    )
+    const button = screen.getByTestId('next-button')
+    expect(button).toBeDisabled()
+    expect(screen.getByText('loading')).toBeInTheDocument()
+  })
 })

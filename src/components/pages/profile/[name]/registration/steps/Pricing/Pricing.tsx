@@ -368,6 +368,7 @@ export type ActionButtonProps = {
   estimatedTotal?: bigint
   ethPrice?: bigint
   durationType: 'date' | 'years'
+  isLoading?: boolean
 }
 
 export const ActionButton = (props: ActionButtonProps) => {
@@ -383,6 +384,11 @@ export const ActionButton = (props: ActionButtonProps) => {
     .with({ hasFailedMoonpayTransaction: true, paymentMethodChoice: PaymentMethod.moonpay }, () => (
       <Button data-testid="next-button" disabled loading>
         {t('steps.info.processing')}
+      </Button>
+    ))
+    .with({ isLoading: true }, () => (
+      <Button data-testid="next-button" disabled loading>
+        {t('loading', { ns: 'common' })}
       </Button>
     ))
     .with(
@@ -487,6 +493,7 @@ export type PricingProps = {
   initiateMoonpayRegistrationMutation: ReturnType<
     typeof useMoonpayRegistration
   >['initiateMoonpayRegistrationMutation']
+  isLoading?: boolean
 }
 
 const minSeconds = 28 * ONE_DAY
@@ -502,6 +509,7 @@ const Pricing = ({
   resolverExists,
   moonpayTransactionStatus,
   initiateMoonpayRegistrationMutation,
+  isLoading,
 }: PricingProps) => {
   const { t } = useTranslation('register')
 
@@ -622,6 +630,7 @@ const Pricing = ({
             estimatedTotal,
             ethPrice,
             durationType,
+            isLoading,
           }}
         />
       </MobileFullWidth>
