@@ -47,7 +47,7 @@ type Data = {
 }
 
 const displayItems = (
-  { name, duration, startDateTimestamp, expiryTimestamp }: Data,
+  { name, startDateTimestamp, expiryTimestamp }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => {
   return [

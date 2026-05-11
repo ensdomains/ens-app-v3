@@ -250,7 +250,7 @@ const ExtendNames = ({
     enabled: !isSubname,
   })
 
-  const totalRentFee = isSubname ? 0n : priceData ? priceData.base + priceData.premium : 0n
+  const totalRentFee = priceData && !isSubname ? priceData.base + priceData.premium : 0n
   const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
