@@ -569,7 +569,7 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
 }
 
 const debounce = (func: (...args: any[]) => void, delay?: number) => {
-  let timerId: NodeJS.Timeout
+  let timerId: ReturnType<typeof setTimeout>
   let shouldInvoke: boolean
 
   return (...args: any[]) => {

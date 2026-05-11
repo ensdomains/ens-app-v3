@@ -216,7 +216,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout
+    let timeout: ReturnType<typeof setTimeout>
     if (state.selectedKey) {
       setSelectedKey(state.selectedKey)
     } else {
