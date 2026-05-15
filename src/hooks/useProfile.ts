@@ -54,7 +54,7 @@ const getProfileRecordsParameters = ({
         ...supportedAddresses.map(
           (coinName) => getCoderByCoinNameWithTestnetSupport(coinName).coinType,
         ),
-        ...((subgraphRecords?.coins ?? [])
+        ...(subgraphRecords?.coins
           .map((coinId) => parseInt(coinId))
           .filter((coinId) => {
             try {
@@ -62,7 +62,7 @@ const getProfileRecordsParameters = ({
             } catch {
               return false
             }
-          })),
+          }) || []),
       ]),
     ] as [number, ...number[]],
     abi: true,
