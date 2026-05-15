@@ -265,6 +265,30 @@ it('should filter out unsupported coin records', () => {
   )
 })
 
+it('should handle null coins from subgraph without throwing', () => {
+  // The subgraph can return null for coins (e.g. "coinTypes": null)
+  // even though the type definition says it should be string[] | undefined
+  mockUseSubgraphRecords.mockReturnValue({
+    data: {
+      ...mockUseSubgraphRecordsData,
+      coins: null as unknown as string[],
+    },
+    isLoading: false,
+    isFetching: false,
+    isCachedData: false,
+  })
+  // Should not throw when coins is null
+  expect(() => renderHook(() => useProfile({ name: 'test.eth' }))).not.toThrow()
+  // Should still call useRecords with default supported coins and subgraph text records
+  expect(useRecords).toHaveBeenCalledWith(
+    expect.objectContaining({
+      coins: expect.arrayContaining([0, 60, 501]),
+      // Text records from subgraph should still be included
+      texts: expect.arrayContaining(['avatar', 'description', 'url', 'com.example']),
+    }),
+  )
+})
+
 it('should propagate resolverAddress parameter to useSubgraphRecords and useRecords', () => {
   renderHook(() => useProfile({ name: 'test.eth', resolverAddress: '0xresolverAddress' }))
   expect(useSubgraphRecords).toHaveBeenCalledWith(
