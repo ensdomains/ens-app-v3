@@ -711,12 +711,7 @@ test('renew deep link should redirect to registration when not logged in', async
   await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 })
 
-test('should handle URL-based renew parameter', async ({
-  page,
-  login,
-  makeName,
-  makePageObject,
-}) => {
+test('should handle URL-based renew parameter', async ({ page, login, makeName }) => {
   const name = await makeName({
     label: 'legacy',
     type: 'legacy',
@@ -724,20 +719,14 @@ test('should handle URL-based renew parameter', async ({
   })
 
   await test.step('should handle large duration', async () => {
-    // Read the name's actual expiry, then compute the calendar-aware seconds for a
-    // 10-year extension from that expiry. The URL is in raw seconds, so callers must
-    // express durations correctly: N * ONE_YEAR seconds is leap-day-short of N
-    // calendar years, which the modal's display now reflects accurately.
-    const profilePage = makePageObject('ProfilePage')
-    await profilePage.goto(name)
-    await login.connect()
-    const expiryTimestamp = await profilePage.getExpiryTimestamp()
+    // URL value is raw seconds; compute calendar-aware seconds for 10 years
+    // so the modal's calendar diff displays exactly "10 years extension".
     const tenYearsInSeconds = secondsFromDateDiff({
-      startDate: new Date(expiryTimestamp),
+      startDate: new Date(),
       additionalYears: 10,
     })
-
     await page.goto(`/${name}?renew=${tenYearsInSeconds}`)
+    await login.connect()
     await expect(page.getByText('10 years extension', { exact: true })).toBeVisible()
   })
 })
@@ -746,7 +735,6 @@ test('should handle URL-based renew for names in grace period', async ({
   page,
   login,
   makeName,
-  makePageObject,
 }) => {
   const name = await makeName({
     label: 'legacy',
@@ -756,18 +744,12 @@ test('should handle URL-based renew for names in grace period', async ({
   })
 
   await test.step('should allow extend in grace period', async () => {
-    // Compute calendar-aware seconds for a 3-year extension from the name's actual
-    // expiry. See the parallel test above for the rationale.
-    const profilePage = makePageObject('ProfilePage')
-    await profilePage.goto(name)
-    await login.connect()
-    const expiryTimestamp = await profilePage.getExpiryTimestamp()
     const threeYearsInSeconds = secondsFromDateDiff({
-      startDate: new Date(expiryTimestamp),
+      startDate: new Date(),
       additionalYears: 3,
     })
-
     await page.goto(`/${name}?renew=${threeYearsInSeconds}`)
+    await login.connect()
 
     await expect(page.getByText(`${name} has expired`)).toBeVisible()
     await expect(page.getByText(`You do not own ${name}`)).toBeVisible()
