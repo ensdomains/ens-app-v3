@@ -1,4 +1,4 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 
 import { describe, expect, it, vi } from 'vitest'
 import { useAccount, useBalance } from 'wagmi'
@@ -6,6 +6,7 @@ import { useAccount, useBalance } from 'wagmi'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
 
@@ -16,6 +17,7 @@ vi.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
 vi.mock('@app/hooks/ensjs/public/usePrice')
 vi.mock('wagmi')
 vi.mock('@app/hooks/ensjs/public/useExpiry')
+vi.mock('@app/hooks/nameType/useNameType')
 vi.mock('@app/hooks/useEthPrice')
 vi.mock('@app/hooks/useReferrer')
 
@@ -25,6 +27,7 @@ const mockUseAccount = mockFunction(useAccount)
 const mockUseBalance = mockFunction(useBalance)
 const mockUseEthPrice = mockFunction(useEthPrice)
 const mockUseExpiry = mockFunction(useExpiry)
+const mockUseNameType = mockFunction(useNameType)
 const mockUseReferrer = mockFunction(useReferrer)
 
 vi.mock('@ensdomains/thorin', async () => {
@@ -62,6 +65,11 @@ describe('Extendnames', () => {
   mockUseBalance.mockReturnValue({ data: { balance: 100n }, isLoading: false })
   mockUseEthPrice.mockReturnValue({ data: 100n, isLoading: false })
   mockUseExpiry.mockReturnValue({ data: { expiry: { date: new Date() } }, isLoading: false })
+  mockUseNameType.mockReturnValue({
+    data: 'eth-emancipated-subname',
+    isLoading: false,
+    isCachedData: false,
+  })
   mockUseReferrer.mockReturnValue(undefined)
   it('should render', async () => {
     render(
@@ -109,5 +117,149 @@ describe('Extendnames', () => {
     )
     const trailingButton = screen.getByTestId('extend-names-confirm')
     expect(trailingButton).toHaveAttribute('disabled')
+  })
+  it('should create an extendNames transaction for 2LD names', async () => {
+    const dispatch = vi.fn()
+    mockUseExpiry.mockReturnValueOnce({
+      data: { expiry: { date: new Date('2022-01-01T00:00:00.000Z') } },
+      isLoading: false,
+    })
+
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: true, hasWrapped: false },
+          dispatch,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    expect(mockUsePrice).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        enabled: true,
+      }),
+    )
+
+    await userEvent.click(screen.getByTestId('extend-names-confirm'))
+
+    expect(dispatch).toHaveBeenCalledWith({
+      name: 'setTransactions',
+      payload: [
+        {
+          name: 'extendNames',
+          data: expect.objectContaining({
+            names: ['nick.eth'],
+            duration: 31536000,
+            startDateTimestamp: 1640995200000,
+            hasWrapped: false,
+          }),
+        },
+      ],
+    })
+    expect(dispatch).toHaveBeenCalledWith({ name: 'setFlowStage', payload: 'transaction' })
+  })
+  it('should create an extendSubnameExpiry transaction for single subnames', async () => {
+    const dispatch = vi.fn()
+    mockUseExpiry.mockReturnValueOnce({
+      data: { expiry: { date: new Date('2022-01-01T00:00:00.000Z') } },
+      isLoading: false,
+    })
+
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['sub.nick.eth'], isSelf: true, hasWrapped: true },
+          dispatch,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    expect(mockUsePrice).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        enabled: false,
+      }),
+    )
+
+    await userEvent.click(screen.getByTestId('extend-names-confirm'))
+
+    expect(dispatch).toHaveBeenCalledWith({
+      name: 'setTransactions',
+      payload: [
+        {
+          name: 'extendSubnameExpiry',
+          data: {
+            name: 'sub.nick.eth',
+            duration: 31536000,
+            startDateTimestamp: 1640995200000,
+            expiryTimestamp: 1672531200,
+          },
+        },
+      ],
+    })
+    expect(dispatch).toHaveBeenCalledWith({ name: 'setFlowStage', payload: 'transaction' })
+  })
+  it('should create an extendSubnameExpiry transaction for locked subnames', async () => {
+    const dispatch = vi.fn()
+    mockUseNameType.mockReturnValueOnce({
+      data: 'eth-locked-subname',
+      isLoading: false,
+      isCachedData: false,
+    })
+    mockUseExpiry.mockReturnValueOnce({
+      data: { expiry: { date: new Date('2022-01-01T00:00:00.000Z') } },
+      isLoading: false,
+    })
+
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['sub.nick.eth'], isSelf: true, hasWrapped: true },
+          dispatch,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    await userEvent.click(screen.getByTestId('extend-names-confirm'))
+
+    expect(dispatch).toHaveBeenCalledWith({
+      name: 'setTransactions',
+      payload: [
+        expect.objectContaining({
+          name: 'extendSubnameExpiry',
+        }),
+      ],
+    })
+  })
+  it('should not create an extendSubnameExpiry transaction for non-PCC subnames', async () => {
+    const dispatch = vi.fn()
+    mockUseNameType.mockReturnValueOnce({
+      data: 'eth-wrapped-subname',
+      isLoading: false,
+      isCachedData: false,
+    })
+    mockUseExpiry.mockReturnValueOnce({
+      data: { expiry: { date: new Date('2022-01-01T00:00:00.000Z') } },
+      isLoading: false,
+    })
+
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['sub.nick.eth'], isSelf: true, hasWrapped: true },
+          dispatch,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    const trailingButton = screen.getByTestId('extend-names-confirm')
+    expect(trailingButton).toHaveAttribute('disabled')
+
+    await userEvent.click(trailingButton)
+
+    expect(dispatch).not.toHaveBeenCalled()
   })
 })

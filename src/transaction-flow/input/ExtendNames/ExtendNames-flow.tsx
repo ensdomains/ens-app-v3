@@ -17,6 +17,7 @@ import { DateSelection } from '@app/components/@molecules/DateSelection/DateSele
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
@@ -24,6 +25,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
+import { nameLevel } from '@app/utils/name'
 import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -186,6 +188,12 @@ const ExtendNames = ({
   )
   const years = secondsToYears(seconds)
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
+  const isSubname = names.length === 1 && nameLevel(names[0]) === 'subname'
+  const nameType = useNameType(names[0], { enabled: isSubname })
+  const isSubnameExtension =
+    isSubname &&
+    (nameType.data === 'eth-emancipated-subname' || nameType.data === 'eth-locked-subname')
+  const shouldBlockSubnameExtension = isSubname && !isSubnameExtension
 
   const referrer = useReferrer()
   const referrerHex = getReferrerHex(referrer)
@@ -202,9 +210,10 @@ const ExtendNames = ({
   const { data: priceData, isLoading: isPriceLoading } = usePrice({
     nameOrNames: names,
     duration: seconds,
+    enabled: !isSubname,
   })
 
-  const totalRentFee = priceData ? priceData.base + priceData.premium : 0n
+  const totalRentFee = priceData && !isSubname ? priceData.base + priceData.premium : 0n
   const yearlyFee = priceData?.base ? deriveYearlyFee({ duration: seconds, price: priceData }) : 0n
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
@@ -218,6 +227,7 @@ const ExtendNames = ({
 
   const expiryDate = expiryData?.expiry?.date
   const extendedDate = expiryDate ? new Date(expiryDate.getTime() + seconds * 1000) : undefined
+  const expiryTimestamp = extendedDate ? Math.floor(extendedDate.getTime() / 1000) : undefined
 
   const {
     data: { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
@@ -226,25 +236,38 @@ const ExtendNames = ({
     gasPrice,
   } = useEstimateGasWithStateOverride({
     transactions: [
-      {
-        name: 'extendNames',
-        data: {
-          duration: seconds,
-          names,
-          startDateTimestamp: expiryDate?.getTime(),
-          referrer: referrerHex,
-          hasWrapped,
-        },
-        stateOverride: [
-          {
-            address: address!,
-            // the value will only be used if totalRentFee is defined, dw
-            balance: totalRentFee ? totalRentFee + parseEther('10') : 0n,
+      isSubnameExtension
+        ? {
+            name: 'extendSubnameExpiry',
+            data: {
+              name: names[0],
+              duration: seconds,
+              startDateTimestamp: expiryDate?.getTime(),
+              expiryTimestamp: expiryTimestamp ?? 0,
+            },
+          }
+        : {
+            name: 'extendNames',
+            data: {
+              duration: seconds,
+              names,
+              startDateTimestamp: expiryDate?.getTime(),
+              referrer: referrerHex,
+              hasWrapped,
+            },
+            stateOverride: [
+              {
+                address: address!,
+                // the value will only be used if totalRentFee is defined, dw
+                balance: totalRentFee ? totalRentFee + parseEther('10') : 0n,
+              },
+            ],
           },
-        ],
-      },
     ],
-    enabled: !!totalRentFee && !!address && seconds > 0 && totalRentFee > 0n,
+    enabled:
+      !!address &&
+      seconds > 0 &&
+      (isSubnameExtension ? !!expiryTimestamp : !isSubname && !!totalRentFee && totalRentFee > 0n),
   })
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
@@ -284,8 +307,13 @@ const ExtendNames = ({
   const view = flow[viewIdx]
 
   const isBaseDataLoading =
-    !isAccountConnected || isBalanceLoading || isExpiryEnabledAndLoading || isEthPriceLoading
-  const isRegisterLoading = isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError)
+    !isAccountConnected ||
+    isBalanceLoading ||
+    isExpiryEnabledAndLoading ||
+    (isSubname && nameType.isLoading) ||
+    (!isSubname && isEthPriceLoading)
+  const isRegisterLoading =
+    (!isSubname && isPriceLoading) || (isEstimateGasLoading && !estimateGasLimitError)
 
   const { title, alert, buttonProps } = match(view)
     .with('no-ownership-warning', () => ({
@@ -311,22 +339,31 @@ const ExtendNames = ({
       title: t('input.extendNames.title', { name: names.at(0), count: names.length }),
       alert: undefined,
       buttonProps: {
-        disabled: isRegisterLoading,
+        disabled: isRegisterLoading || shouldBlockSubnameExtension,
         onClick: () => {
-          if (!totalRentFee) return
-          const transactions = createTransactionItem('extendNames', {
-            names,
-            duration: seconds,
-            startDateTimestamp: expiryDate?.getTime(),
-            displayPrice: makeCurrencyDisplay({
-              eth: totalRentFee,
-              ethPrice,
-              bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
-              currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
-            }),
-            referrer: referrerHex,
-            hasWrapped,
-          })
+          if (shouldBlockSubnameExtension) return
+          if (isSubnameExtension && !expiryTimestamp) return
+          if (!isSubname && !totalRentFee) return
+          const transactions = isSubnameExtension
+            ? createTransactionItem('extendSubnameExpiry', {
+                name: names[0],
+                duration: seconds,
+                startDateTimestamp: expiryDate?.getTime(),
+                expiryTimestamp: expiryTimestamp!,
+              })
+            : createTransactionItem('extendNames', {
+                names,
+                duration: seconds,
+                startDateTimestamp: expiryDate?.getTime(),
+                displayPrice: makeCurrencyDisplay({
+                  eth: totalRentFee,
+                  ethPrice,
+                  bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
+                  currency: userConfig.currency === 'fiat' ? 'usd' : 'eth',
+                }),
+                referrer: referrerHex,
+                hasWrapped,
+              })
           dispatch({ name: 'setTransactions', payload: [transactions] })
           dispatch({ name: 'setFlowStage', payload: 'transaction' })
         },

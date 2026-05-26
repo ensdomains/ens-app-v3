@@ -65,7 +65,7 @@ export const StatusChecker = ({
 
   useEffect(() => {
     if (updatedAt) {
-      let interval: NodeJS.Timeout
+      let interval: ReturnType<typeof setInterval>
       const intervalFunc = () => {
         const now = new Date()
         const then = new Date(updatedAt)

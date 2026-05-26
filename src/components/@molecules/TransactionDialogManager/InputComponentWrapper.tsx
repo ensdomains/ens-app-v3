@@ -55,7 +55,7 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
   // hook for detecting when all queries have been refetched on mount generically
   // also handles stale queries
   useEffect(() => {
-    let staleCheckInterval: NodeJS.Timeout | undefined
+    let staleCheckInterval: ReturnType<typeof setInterval> | undefined
     // this can be either the first cache subscription OR the stale check interval subscription
     let unsubscribe: (() => void) | undefined
 
@@ -197,7 +197,7 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
   // hook for showing the spinner after 3 seconds
   // uses isMounted to prevent the spinner from showing up on top of the TransactionLoader spinner
   useEffect(() => {
-    let timeout: NodeJS.Timeout | undefined
+    let timeout: ReturnType<typeof setTimeout> | undefined
     if (isCached && !componentLoading) {
       timeout = setTimeout(() => {
         setShowSpinner(true)

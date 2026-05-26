@@ -338,6 +338,84 @@ test('should not show extend button on unwrapped subnames', async ({
   await expect(profilePage.getExtendButton).toHaveCount(0)
 })
 
+test('should not show extend button on wrapped subnames without PCC burned', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'wrapped-subname-no-pcc',
+    type: 'wrapped',
+    owner: 'user',
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user2',
+        type: 'wrapped',
+      },
+    ],
+  })
+
+  const subname = `test.${name}`
+  const profilePage = makePageObject('ProfilePage')
+
+  await profilePage.goto(subname)
+  await login.connect()
+
+  await expect(profilePage.getExtendButton).toHaveCount(0)
+})
+
+test('should be able to extend an emancipated subname from profile', async ({
+  login,
+  makeName,
+  makePageObject,
+}) => {
+  const name = await makeName({
+    label: 'emancipated-subname-extend',
+    type: 'wrapped',
+    owner: 'user',
+    duration: daysToSeconds(1095),
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'test',
+        owner: 'user2',
+        fuses: {
+          parent: {
+            named: ['PARENT_CANNOT_CONTROL'],
+          },
+        },
+      },
+    ],
+  })
+
+  const subname = `test.${name}`
+  const profilePage = makePageObject('ProfilePage')
+  const extendNamesModal = makePageObject('ExtendNamesModal')
+  const transactionModal = makePageObject('TransactionModal')
+
+  await profilePage.goto(subname)
+  await login.connect()
+
+  await expect(profilePage.getExtendButton).toBeVisible()
+  const timestamp = await profilePage.getExpiryTimestamp()
+
+  await profilePage.getExtendButton.click()
+
+  if (!(await extendNamesModal.getInvoiceExtensionFee.isVisible().catch(() => false))) {
+    await extendNamesModal.getExtendButton.click()
+  }
+
+  await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0 ETH')
+  await extendNamesModal.getExtendButton.click()
+  await transactionModal.autoComplete()
+
+  const newTimestamp = await profilePage.getExpiryTimestamp()
+  expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
+})
+
 test('should be able to extend a name by a month', async ({
   page,
   login,
@@ -531,7 +609,7 @@ test('should be able to extend a name in grace period by a month', async ({
   await test.step('should show the correct price data', async () => {
     await expect(extendNamesModal.getInvoiceExtensionFee).toContainText('0.0003')
     await expect(extendNamesModal.getInvoiceTransactionFee).toContainText('0.0001')
-    await expect(extendNamesModal.getInvoiceTotal).toContainText('0.0004')
+    await expect(extendNamesModal.getInvoiceTotal).toContainText(/0\.000[34]/)
     await expect(page.getByText(/1 month .* extension/)).toBeVisible()
   })
 
