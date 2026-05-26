@@ -1,6 +1,6 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import type { Address } from 'viem'
+import { type Address, zeroAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useReadContract } from 'wagmi'
 
@@ -16,7 +16,6 @@ const mockUseContractAddress = mockFunction(useContractAddress)
 
 const BASE_REGISTRAR = '0x000000000000000000000000000000000000baa1' as Address
 const ETH_REGISTRAR_CONTROLLER = '0x000000000000000000000000000000000000c0c0' as Address
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000' as Address
 
 describe('useIsEthRegistrarControllerActive', () => {
   beforeEach(() => {
@@ -25,7 +24,7 @@ describe('useIsEthRegistrarControllerActive', () => {
       (({ contract }: { contract: string }) => {
         if (contract === 'ensBaseRegistrarImplementation') return BASE_REGISTRAR
         if (contract === 'ensEthRegistrarController') return ETH_REGISTRAR_CONTROLLER
-        return ZERO_ADDRESS
+        return zeroAddress
       }) as typeof useContractAddress,
     )
     mockUseReadContract.mockReturnValue({ data: true, isLoading: false } as any)
