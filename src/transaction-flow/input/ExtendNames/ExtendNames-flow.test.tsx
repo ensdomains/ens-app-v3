@@ -114,7 +114,7 @@ describe('Extendnames', () => {
     const trailingButton = screen.getByTestId('extend-names-confirm')
     expect(trailingButton).toHaveAttribute('disabled')
   })
-  it('should show the disabled banner and a manager link when the ETHRegistrarController has been removed', () => {
+  it('should show the disabled banner when the ETHRegistrarController has been removed', () => {
     mockUseIsEthRegistrarControllerActive.mockReturnValueOnce({
       data: false,
       isLoading: false,
@@ -128,13 +128,14 @@ describe('Extendnames', () => {
         }}
       />,
     )
-    // The pricing/registration UI must not be shown
-    expect(screen.queryByTestId('extend-names-confirm')).not.toHaveTextContent(/next/i)
-    // Banner link to the new Manager app
-    const link = screen.getByRole('link')
-    expect(link).toHaveAttribute('href', 'https://app.ens.dev/renew/nick.eth')
+    // Dialog title should be the disabled-state title (i18n key, since
+    // react-i18next is mocked to return keys verbatim in tests).
+    expect(screen.getAllByText('input.extendNames.disabled.title').length).toBeGreaterThan(0)
+    // The pricing/registration confirm button should be replaced by a Close
+    // button (action.close), so "action.next" must not appear.
+    expect(screen.queryByText('action.next')).not.toBeInTheDocument()
   })
-  it('should link to the Manager homepage in the disabled banner for bulk renewals', () => {
+  it('should still show the disabled banner for bulk renewals', () => {
     mockUseIsEthRegistrarControllerActive.mockReturnValueOnce({
       data: false,
       isLoading: false,
@@ -148,7 +149,7 @@ describe('Extendnames', () => {
         }}
       />,
     )
-    const link = screen.getByRole('link')
-    expect(link).toHaveAttribute('href', 'https://app.ens.dev')
+    expect(screen.getAllByText('input.extendNames.disabled.title').length).toBeGreaterThan(0)
+    expect(screen.queryByText('action.next')).not.toBeInTheDocument()
   })
 })

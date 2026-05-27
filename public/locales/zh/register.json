@@ -14,6 +14,10 @@
   "error": {
     "nameTooLong": "您要注册的名称太长了，请选择一个较短的名称。"
   },
+  "disabled": {
+    "title": "ENS v2 测试版已部署在 Sepolia",
+    "banner": "未来的注册将在新的 Manager 应用中进行。您将在 1 秒内被重定向到该应用。点击<ManagerLink>此处</ManagerLink>立即前往。"
+  },
   "steps": {
     "pricing": {
       "insufficientBalance": "余额不足",

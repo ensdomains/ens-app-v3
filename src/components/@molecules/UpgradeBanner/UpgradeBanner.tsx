@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
+
 /**
  * UpgradeBanner ("A new ENS app is here!")
  *
@@ -139,6 +141,18 @@ const UpgradeBanner = ({ href = DEFAULT_HREF, className }: Props) => {
       </Inner>
     </Container>
   )
+}
+
+/**
+ * Global UpgradeBanner that mounts at the top of the app shell when (and
+ * only when) the legacy ETHRegistrarController has been removed from
+ * BaseRegistrarImplementation. Mirrors the shape of `TestnetWarning`:
+ * self-gating, returns null when not applicable, no props.
+ */
+export const GlobalUpgradeBanner = () => {
+  const { data: isControllerActive } = useIsEthRegistrarControllerActive()
+  if (isControllerActive !== false) return null
+  return <UpgradeBanner />
 }
 
 export default UpgradeBanner

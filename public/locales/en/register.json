@@ -14,6 +14,10 @@
   "error": {
     "nameTooLong": "The name you want to register is too long. Please choose a shorter name."
   },
+  "disabled": {
+    "title": "ENS v2 beta is now deployed on Sepolia",
+    "banner": "Future registration will be in the new Manager app. You'll be redirected there in 1 second. Click <ManagerLink>here</ManagerLink> to proceed now."
+  },
   "steps": {
     "pricing": {
       "insufficientBalance": "Insufficient Balance",

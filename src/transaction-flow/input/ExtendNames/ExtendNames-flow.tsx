@@ -1,12 +1,20 @@
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { usePreviousDistinct } from 'react-use'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { parseEther } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
 
-import { Avatar, Button, CurrencyToggle, Dialog, Helper, Typography } from '@ensdomains/thorin'
+import {
+  Avatar,
+  Banner,
+  Button,
+  CurrencyToggle,
+  Dialog,
+  Helper,
+  Typography,
+} from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { makeCurrencyDisplay } from '@app/components/@atoms/CurrencyText/CurrencyText'
@@ -14,7 +22,6 @@ import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
-import UpgradeBanner from '@app/components/@molecules/UpgradeBanner/UpgradeBanner'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -49,6 +56,14 @@ const MANAGER_BASE_URL = 'https://app.ens.dev'
  */
 const getManagerRenewUrl = (names: string[]) =>
   names.length === 1 ? `${MANAGER_BASE_URL}/renew/${names[0]}` : MANAGER_BASE_URL
+
+const DisabledContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    justify-content: center;
+    padding: ${theme.space['2']} 0;
+  `,
+)
 
 const PlusMinusWrapper = styled.div(
   () => css`
@@ -320,7 +335,7 @@ const ExtendNames = ({
 
   const { title, alert, buttonProps } = match(view)
     .with('disabled', () => ({
-      title: t('upgradeBanner.title', { ns: 'common' }),
+      title: t('input.extendNames.disabled.title'),
       alert: 'warning' as const,
       buttonProps: {
         onClick: onDismiss,
@@ -380,7 +395,20 @@ const ExtendNames = ({
       <Dialog.Content data-testid="extend-names-modal">
         {match([view, isBaseDataLoading])
           .with([P._, true], () => <SearchViewLoadingView />)
-          .with(['disabled', false], () => <UpgradeBanner href={getManagerRenewUrl(names)} />)
+          .with(['disabled', false], () => (
+            <DisabledContainer>
+              <Banner alert="warning" title={t('input.extendNames.disabled.title')}>
+                <Trans
+                  t={t}
+                  i18nKey="input.extendNames.disabled.banner"
+                  components={{
+                    // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+                    ManagerLink: <a href={getManagerRenewUrl(names)} />,
+                  }}
+                />
+              </Banner>
+            </DisabledContainer>
+          ))
           .with(['no-ownership-warning', false], () => (
             <CenteredMessage>
               {t('input.extendNames.ownershipWarning.description', { count: names.length })}
