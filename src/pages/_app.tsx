@@ -2,6 +2,14 @@
 import '@ensdomains/thorin/dist/thorin.css'
 import '@splidejs/react-splide/css'
 
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (e) => {
+    if (e.reason?.message?.includes('Cannot decode zero data')) {
+      e.preventDefault()
+    }
+  })
+}
+
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'

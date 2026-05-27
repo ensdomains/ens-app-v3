@@ -1,3 +1,18 @@
+diff --git a/dist/utils/generateFunction.js b/dist/utils/generateFunction.js
+index ddc2285417b7746d90fcc6f2fbf0595621bdeaa0..d62564fe8134afa99fb443adb0b920db34cfe2d3 100644
+--- a/dist/utils/generateFunction.js
++++ b/dist/utils/generateFunction.js
+@@ -6,9 +6,7 @@ export const generateFunction = ({ encode, decode, }) => {
+         const result = await call(client, encodedData)
+             .then((ret) => ret.data)
+             .catch((e) => {
+-            if (!(e instanceof BaseError))
+-                throw e;
+-            return e;
++            return e instanceof BaseError ? e : new BaseError(e?.message || 'Unknown error');
+         });
+         if (passthrough)
+             return decode(client, result, passthrough, ...args);
 diff --git a/dist/utils/getNameType.js b/dist/utils/getNameType.js
 index 76b725c3f43ad25c66ba5f2d1af3c0b363682c3b..3b1cab8d413817f9cc4b8b0b0fbe0ce2721a7f28 100644
 --- a/dist/utils/getNameType.js
@@ -24,6 +39,20 @@ index 7b2b2164b9aa9e4363f1449883af670bd33efea1..567ab70703086ada36e3abe5a21c499d
      const labelDataArray = split(nameReference);
      const isShort = (labelDataArray[0].output?.length || 0) < MINIMUM_DOT_ETH_CHARS;
      if (labels.length === 1) {
+diff --git a/src/utils/generateFunction.ts b/src/utils/generateFunction.ts
+index aa70184efef3c52b3a77aec159daa857fe7e1e0d..bdeeba35e22b9937e3424f41c08c46404fdfca4c 100644
+--- a/src/utils/generateFunction.ts
++++ b/src/utils/generateFunction.ts
+@@ -72,8 +72,7 @@ export const generateFunction = <
+     const result = await call(client, encodedData)
+       .then((ret) => ret.data)
+       .catch((e) => {
+-        if (!(e instanceof BaseError)) throw e
+-        return e
++        return e instanceof BaseError ? e : new BaseError(e?.message || 'Unknown error')
+       })
+     if (passthrough) return decode(client, result, passthrough, ...args)
+     return decode(client, result, ...args)
 diff --git a/src/utils/getNameType.ts b/src/utils/getNameType.ts
 index ae761486e270c8f899d6ea1e62731a5116452638..833261c8ebcaa4258561c3946cb0d4364af8f80a 100644
 --- a/src/utils/getNameType.ts

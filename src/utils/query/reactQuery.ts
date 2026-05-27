@@ -8,6 +8,11 @@ export const queryClient = new QueryClient({
       staleTime: 0,
       gcTime: 1_000 * 60 * 60 * 24,
       queryKeyHashFn: hashFn,
+      retry: (failureCount, error) => {
+        if (error?.message?.includes('Cannot decode zero data')) return false
+        return failureCount < 3
+      },
+      throwOnError: false,
     },
   },
 })
