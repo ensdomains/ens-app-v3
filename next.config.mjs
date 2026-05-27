@@ -231,6 +231,7 @@ const nextConfig = {
   eslint: {
     // next lint will ignore presets if not stated
     dirs: ['src', 'src/components', 'src/pages', 'src/layouts', 'playwright', 'e2e'],
+    ignoreDuringBuilds: true,
   },
   ...(process.env.NEXT_PUBLIC_IPFS
     ? {

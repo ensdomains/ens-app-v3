@@ -8,4 +8,5 @@ export const DNS_REGISTRAR_ADDRESSES = {
   '1': '0xB32cB5677a7C971689228EC835800432B339bA2B',
   '11155111': '0x5a07C75Ae469Bf3ee2657B588e8E6ABAC6741b4f',
   '1337': deploymentAddresses.DNSRegistrar,
+  '560048': deploymentAddresses.DNSRegistrar,
 } as const

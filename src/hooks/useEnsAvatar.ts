@@ -32,7 +32,7 @@ type UseEnsAvatarParameters = Omit<UseQueryOptions, 'queryFn' | 'queryKey'> & {
   key?: 'avatar' | 'header'
 }
 
-export const useEnsAvatar = ({ name, key, staleTime, enabled = true }: UseEnsAvatarParameters) => {
+export const useEnsAvatar = ({ name: _name, key: _key }: UseEnsAvatarParameters) => {
   return useQuery({
     queryKey: [META_DATA_QUERY_KEY, null],
     queryFn: () => null,

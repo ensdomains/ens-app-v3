@@ -12,6 +12,7 @@ const appLinks = {
   Ethereum: 'app.ens.domains',
   Sepolia: 'sepolia.app.ens.domains',
   Localhost: '',
+  Hoodi: '',
 }
 
 export const NetworkNotifications = () => {
