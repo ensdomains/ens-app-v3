@@ -1,9 +1,20 @@
 import { match } from 'ts-pattern'
+import { defineChain } from 'viem'
 import { localhost, mainnet, sepolia } from 'viem/chains'
 
 import type { Register } from '@app/local-contracts'
 import { addEnsContractsWithSubgraphAndOverrides } from '@app/overrides/addEnsContractsWithSubgraphAndOverrides'
 import { makeLocalhostChainWithEnsAndOverrides } from '@app/overrides/makeLocalhostChainWithEnsAndOverrides'
+
+export const hoodi = defineChain({
+  id: 560048,
+  name: 'Hoodi',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: { http: [process.env.NEXT_PUBLIC_HOODI_RPC_URL || 'https://rpc.hoodi.ethpandaops.io'] },
+  },
+  testnet: true,
+})
 
 export const deploymentAddresses = JSON.parse(
   process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES || '{}',
@@ -28,14 +39,23 @@ export const sepoliaWithEns = addEnsContractsWithSubgraphAndOverrides({
   apiKey: ENS_SUBGRAPH_API_KEY,
 })
 
-export const chainsWithEns = [mainnetWithEns, sepoliaWithEns, localhostWithEns] as const
+export const hoodiDeploymentAddresses = JSON.parse(
+  process.env.NEXT_PUBLIC_HOODI_DEPLOYMENT_ADDRESSES || '{}',
+) as Register['deploymentAddresses']
+
+export const hoodiWithEns = makeLocalhostChainWithEnsAndOverrides<typeof hoodi>(
+  hoodi,
+  hoodiDeploymentAddresses,
+)
+
+export const chainsWithEns = [mainnetWithEns, sepoliaWithEns, localhostWithEns, hoodiWithEns] as const
 
 export const getSupportedChainById = (chainId: number | undefined) =>
   chainId ? chainsWithEns.find((c) => c.id === chainId) : undefined
 
-export type SupportedChain = typeof mainnetWithEns | typeof sepoliaWithEns | typeof localhostWithEns
+export type SupportedChain = typeof mainnetWithEns | typeof sepoliaWithEns | typeof localhostWithEns | typeof hoodiWithEns
 
-export const getNetworkFromUrl = (): 'mainnet' | 'sepolia' | 'localhost' | undefined => {
+export const getNetworkFromUrl = (): 'mainnet' | 'sepolia' | 'localhost' | 'hoodi' | undefined => {
   if (typeof window === 'undefined') return undefined
 
   const { hostname } = window.location
@@ -45,6 +65,7 @@ export const getNetworkFromUrl = (): 'mainnet' | 'sepolia' | 'localhost' | undef
   const chain = process.env.NEXT_PUBLIC_CHAIN_NAME
   if (chain === 'sepolia') return 'sepolia' as const
   if (chain === 'mainnet') return 'mainnet' as const
+  if (chain === 'hoodi') return 'hoodi' as const
 
   // Previews
   if (segments.length === 4) {
@@ -74,5 +95,6 @@ export const getChainsFromUrl = () => {
     .with('mainnet', () => [mainnetWithEns])
     .with('sepolia', () => [sepoliaWithEns])
     .with('localhost', () => [localhostWithEns])
+    .with('hoodi', () => [hoodiWithEns])
     .otherwise(() => [mainnetWithEns])
 }
