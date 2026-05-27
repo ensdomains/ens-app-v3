@@ -133,7 +133,7 @@ const UpgradeBanner = ({ href = DEFAULT_HREF, className }: Props) => {
           <Title>{t('upgradeBanner.title')}</Title>
           <Subtitle>{t('upgradeBanner.subtitle')}</Subtitle>
         </Content>
-        <CTA href={href} rel="noopener noreferrer">
+        <CTA href={href} target="_blank" rel="noopener noreferrer">
           {t('upgradeBanner.cta')}
         </CTA>
       </Inner>
