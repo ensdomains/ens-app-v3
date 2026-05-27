@@ -21,7 +21,8 @@ export const NFTWithPlaceholder = ({
 } & Omit<ComponentProps<'div'>, 'ref'>) => {
   const { data: avatar } = useEnsAvatar({ name })
 
-  const isCompatible = !!(name && name.split('.').length === 2 && name.endsWith('.eth'))
+  const tld = name?.split('.').pop() || ''
+  const isCompatible = !!(name && name.split('.').length === 2 && ['eth', 'testing', 'simplex'].includes(tld))
 
   if (!isCompatible) return null
 

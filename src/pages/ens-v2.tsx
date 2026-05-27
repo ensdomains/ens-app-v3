@@ -249,6 +249,7 @@ const YoutubeEmbed = styled.iframe(
 )
 
 export default function ENSv2() {
+  return null
   const { t } = useTranslation('ensv2')
   return (
     <Main>

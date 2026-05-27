@@ -4,7 +4,7 @@ import { getAddress } from 'viem'
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
-import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
+import { isEthLikeTld, isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
@@ -137,7 +137,7 @@ export const useBasicName = ({
       !!(
         nameWrapperAddress &&
         !isWrapped &&
-        normalisedName?.endsWith('.eth') &&
+        normalisedName && isEthLikeTld(normalisedName) &&
         !isLabelTooLong(normalisedName) &&
         !!registrationStatus &&
         ['registered', 'imported', 'owned'].includes(registrationStatus)

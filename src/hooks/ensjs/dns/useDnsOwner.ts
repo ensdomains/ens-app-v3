@@ -69,6 +69,8 @@ export const useDnsOwner = <TParams extends UseDnsOwnerParameters>({
       enabled &&
       !!params.name &&
       !params.name?.endsWith('.eth') &&
+      !params.name?.endsWith('.testing') &&
+      !params.name?.endsWith('.simplex') &&
       params.name !== 'eth' &&
       params.name !== '[root]',
     gcTime,
