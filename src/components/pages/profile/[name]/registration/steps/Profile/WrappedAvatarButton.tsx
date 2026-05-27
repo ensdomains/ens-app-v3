@@ -9,6 +9,7 @@ type Props = {
 } & Omit<ComponentProps<typeof AvatarButton>, 'validated'>
 
 export const WrappedAvatarButton = ({ control, ...props }: Props) => {
+  return null
   const avatar = useWatch<ProfileEditorForm>({
     control,
     name: 'avatar',

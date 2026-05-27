@@ -11,6 +11,7 @@ type Props = {
 } & Omit<ComponentProps<typeof AvatarButton>, 'validated'>
 
 export const WrappedAvatarButton = ({ control, name, src, ...props }: Props) => {
+  return null
   const { data: avatar } = useEnsAvatar({ name })
   const formState = useFormState<ProfileEditorForm>({
     control,

@@ -10,7 +10,7 @@ import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
 
-import ENSFull from '../assets/ENSFull.svg'
+import ENSFull from '../assets/SimplexFull.svg'
 
 const GradientTitle = styled.h1(
   ({ theme }) => css`

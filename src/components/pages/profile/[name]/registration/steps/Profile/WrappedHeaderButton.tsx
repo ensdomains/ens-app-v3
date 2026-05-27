@@ -10,6 +10,7 @@ type Props = {
 } & Omit<ComponentProps<typeof HeaderButton>, 'validated'>
 
 export const WrappedHeaderButton = ({ control, name, src, ...props }: Props) => {
+  return null
   const headerValue = useWatch({
     control,
     name: 'header',

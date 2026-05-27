@@ -33,13 +33,10 @@ type UseEnsAvatarParameters = Omit<UseQueryOptions, 'queryFn' | 'queryKey'> & {
 }
 
 export const useEnsAvatar = ({ name, key, staleTime, enabled = true }: UseEnsAvatarParameters) => {
-  const chainName = useChainName()
-  const url = createMetaDataUrl({ name, chainName, mediaKey: key })
-
   return useQuery({
-    queryKey: [META_DATA_QUERY_KEY, url],
-    queryFn: checkImageExists,
-    staleTime: staleTime ?? STALE_TIME,
-    enabled: enabled && !!url,
+    queryKey: [META_DATA_QUERY_KEY, null],
+    queryFn: () => null,
+    staleTime: Infinity,
+    enabled: false,
   })
 }
