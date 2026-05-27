@@ -25,7 +25,7 @@ export type PublicRoute =
   | 'oldApp'
   | 'ipfsApp'
   | 'feedback'
-export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
+export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings' | 'admin'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
 export type RouteItemObj = {
@@ -96,6 +96,18 @@ export const routes: RouteItemObj[] = [
     icon: {
       inactive: PersonSVG,
       active: PersonActiveSVG,
+    },
+    onlyDropdown: true,
+  },
+  {
+    name: 'admin',
+    href: '/admin',
+    label: 'Admin',
+    disabled: false,
+    connected: true,
+    icon: {
+      inactive: CogSVG,
+      active: CogActiveSVG,
     },
     onlyDropdown: true,
   },
