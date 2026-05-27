@@ -14,10 +14,6 @@
   "error": {
     "nameTooLong": "De naam die je wilt registreren is te lang. Kies een kortere naam."
   },
-  "disabled": {
-    "title": "ENS v2 beta is nu gelanceerd op Sepolia",
-    "banner": "Toekomstige registraties verlopen via de nieuwe Manager app. Je wordt daar binnen 1 seconde naartoe geleid. Klik <ManagerLink>hier</ManagerLink> om nu verder te gaan."
-  },
   "steps": {
     "pricing": {
       "insufficientBalance": "Niet genoeg balans",

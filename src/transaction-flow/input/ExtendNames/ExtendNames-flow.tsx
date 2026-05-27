@@ -14,9 +14,11 @@ import { Invoice, InvoiceItem } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
+import UpgradeBanner from '@app/components/@molecules/UpgradeBanner/UpgradeBanner'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
@@ -34,7 +36,19 @@ import GasDisplay from '../../../components/@atoms/GasDisplay'
 import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
 import { validateExtendNamesDuration } from './utils/validateExtendNamesDuration'
 
-type View = 'name-list' | 'no-ownership-warning' | 'registration'
+type View = 'name-list' | 'no-ownership-warning' | 'registration' | 'disabled'
+
+const MANAGER_BASE_URL = 'https://app.ens.dev'
+
+/**
+ * When the legacy ETHRegistrarController has been removed as a controller of
+ * BaseRegistrarImplementation (e.g. Sepolia post ENS v2 beta), renewals via
+ * the v1 controller revert on-chain. For a single name we deep-link to the
+ * new Manager renewal page; for bulk renewal (which the new Manager does not
+ * yet support) we fall back to the Manager homepage.
+ */
+const getManagerRenewUrl = (names: string[]) =>
+  names.length === 1 ? `${MANAGER_BASE_URL}/renew/${names[0]}` : MANAGER_BASE_URL
 
 const PlusMinusWrapper = styled.div(
   () => css`
@@ -190,6 +204,10 @@ const ExtendNames = ({
   const referrer = useReferrer()
   const referrerHex = getReferrerHex(referrer)
 
+  const { data: isControllerActive, isLoading: isControllerActiveLoading } =
+    useIsEthRegistrarControllerActive()
+  const isRenewalDisabled = isControllerActive === false
+
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
   const { address, isConnected: isAccountConnected } = useAccount()
   const { data: balance, isLoading: isBalanceLoading } = useBalance({
@@ -266,17 +284,26 @@ const ExtendNames = ({
     },
   ]
 
+  // When the legacy ETHRegistrarController has been removed (e.g. Sepolia
+  // post ENS v2 beta), short-circuit the whole flow with a disabled view
+  // that points users to the new Manager app. The on-chain renew() call
+  // would otherwise revert.
   const flow: View[] = useMemo(
     () =>
-      match([names.length, isSelf])
-        .with([P.when((length) => length > 1), true], () => ['name-list', 'registration'] as View[])
-        .with(
-          [P.when((length) => length > 1), P._],
-          () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
-        )
-        .with([P._, true], () => ['registration'] as View[])
-        .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
-    [names.length, isSelf],
+      isRenewalDisabled
+        ? ['disabled']
+        : match([names.length, isSelf])
+            .with(
+              [P.when((length) => length > 1), true],
+              () => ['name-list', 'registration'] as View[],
+            )
+            .with(
+              [P.when((length) => length > 1), P._],
+              () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
+            )
+            .with([P._, true], () => ['registration'] as View[])
+            .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
+    [names.length, isSelf, isRenewalDisabled],
   )
   const [viewIdx, setViewIdx] = useState(0)
   const incrementView = () => setViewIdx(() => Math.min(flow.length - 1, viewIdx + 1))
@@ -284,10 +311,22 @@ const ExtendNames = ({
   const view = flow[viewIdx]
 
   const isBaseDataLoading =
-    !isAccountConnected || isBalanceLoading || isExpiryEnabledAndLoading || isEthPriceLoading
+    !isAccountConnected ||
+    isBalanceLoading ||
+    isExpiryEnabledAndLoading ||
+    isEthPriceLoading ||
+    isControllerActiveLoading
   const isRegisterLoading = isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError)
 
   const { title, alert, buttonProps } = match(view)
+    .with('disabled', () => ({
+      title: t('upgradeBanner.title', { ns: 'common' }),
+      alert: 'warning' as const,
+      buttonProps: {
+        onClick: onDismiss,
+        children: t('action.close', { ns: 'common' }),
+      },
+    }))
     .with('no-ownership-warning', () => ({
       title: t('input.extendNames.ownershipWarning.title', {
         name: names.at(0),
@@ -341,6 +380,7 @@ const ExtendNames = ({
       <Dialog.Content data-testid="extend-names-modal">
         {match([view, isBaseDataLoading])
           .with([P._, true], () => <SearchViewLoadingView />)
+          .with(['disabled', false], () => <UpgradeBanner href={getManagerRenewUrl(names)} />)
           .with(['no-ownership-warning', false], () => (
             <CenteredMessage>
               {t('input.extendNames.ownershipWarning.description', { count: names.length })}

@@ -6,6 +6,7 @@ import { useAccount, useBalance } from 'wagmi'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
 
@@ -18,6 +19,7 @@ vi.mock('wagmi')
 vi.mock('@app/hooks/ensjs/public/useExpiry')
 vi.mock('@app/hooks/useEthPrice')
 vi.mock('@app/hooks/useReferrer')
+vi.mock('@app/hooks/registration/useIsEthRegistrarControllerActive')
 
 const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)
 const mockUsePrice = mockFunction(usePrice)
@@ -26,6 +28,7 @@ const mockUseBalance = mockFunction(useBalance)
 const mockUseEthPrice = mockFunction(useEthPrice)
 const mockUseExpiry = mockFunction(useExpiry)
 const mockUseReferrer = mockFunction(useReferrer)
+const mockUseIsEthRegistrarControllerActive = mockFunction(useIsEthRegistrarControllerActive)
 
 vi.mock('@ensdomains/thorin', async () => {
   const originalModule = await vi.importActual('@ensdomains/thorin')
@@ -63,6 +66,7 @@ describe('Extendnames', () => {
   mockUseEthPrice.mockReturnValue({ data: 100n, isLoading: false })
   mockUseExpiry.mockReturnValue({ data: { expiry: { date: new Date() } }, isLoading: false })
   mockUseReferrer.mockReturnValue(undefined)
+  mockUseIsEthRegistrarControllerActive.mockReturnValue({ data: true, isLoading: false } as any)
   it('should render', async () => {
     render(
       <ExtendNames
@@ -109,5 +113,42 @@ describe('Extendnames', () => {
     )
     const trailingButton = screen.getByTestId('extend-names-confirm')
     expect(trailingButton).toHaveAttribute('disabled')
+  })
+  it('should show the disabled banner and a manager link when the ETHRegistrarController has been removed', () => {
+    mockUseIsEthRegistrarControllerActive.mockReturnValueOnce({
+      data: false,
+      isLoading: false,
+    } as any)
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+    // The pricing/registration UI must not be shown
+    expect(screen.queryByTestId('extend-names-confirm')).not.toHaveTextContent(/next/i)
+    // Banner link to the new Manager app
+    const link = screen.getByRole('link')
+    expect(link).toHaveAttribute('href', 'https://app.ens.dev/renew/nick.eth')
+  })
+  it('should link to the Manager homepage in the disabled banner for bulk renewals', () => {
+    mockUseIsEthRegistrarControllerActive.mockReturnValueOnce({
+      data: false,
+      isLoading: false,
+    } as any)
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth', 'alice.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+    const link = screen.getByRole('link')
+    expect(link).toHaveAttribute('href', 'https://app.ens.dev')
   })
 })
