@@ -1,0 +1,27 @@
+diff --git a/dist/utils/getNameType.js b/dist/utils/getNameType.js
+index 76b725c3f43ad25c66ba5f2d1af3c0b363682c3b..3b1cab8d413817f9cc4b8b0b0fbe0ce2721a7f28 100644
+--- a/dist/utils/getNameType.js
++++ b/dist/utils/getNameType.js
+@@ -1,6 +1,7 @@
+ export const getNameType = (name) => {
+     const labels = name.split('.');
+-    const isDotEth = labels[labels.length - 1] === 'eth';
++    const tld = labels[labels.length - 1];
++    const isDotEth = tld === 'eth' || tld === 'testing' || tld === 'simplex';
+     if (labels.length === 0)
+         return 'root';
+     if (labels.length === 1) {
+diff --git a/src/utils/getNameType.ts b/src/utils/getNameType.ts
+index ae761486e270c8f899d6ea1e62731a5116452638..833261c8ebcaa4258561c3946cb0d4364af8f80a 100644
+--- a/src/utils/getNameType.ts
++++ b/src/utils/getNameType.ts
+@@ -2,7 +2,8 @@ import type { NameType } from '../types.js'
+ 
+ export const getNameType = (name: string): NameType => {
+   const labels = name.split('.')
+-  const isDotEth = labels[labels.length - 1] === 'eth'
++  const tld = labels[labels.length - 1]
++  const isDotEth = tld === 'eth' || tld === 'testing' || tld === 'simplex'
+ 
+   if (labels.length === 0) return 'root'
+   if (labels.length === 1) {

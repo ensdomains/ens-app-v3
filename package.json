@@ -87,7 +87,7 @@
     "immer": "^9.0.15",
     "iso-639-1": "^2.1.15",
     "markdown-to-jsx": "^7.7.3",
-    "next": "13.5.8", 
+    "next": "13.5.8",
     "node-fetch": "^3.3.2",
     "node-forge": "1.3.1",
     "posthog-js": "^1.236.8",
@@ -302,7 +302,8 @@
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "viem@2.19.4": "patches/viem@2.19.4.patch",
       "hardhat-deploy@0.12.4": "patches/hardhat-deploy@0.12.4.patch",
-      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch"
+      "@nomicfoundation/hardhat-viem@2.0.3": "patches/@nomicfoundation%2Fhardhat-viem@2.0.3.patch",
+      "@ensdomains/ensjs": "patches/@ensdomains__ensjs.patch"
     }
   },
   "packageManager": "pnpm@10.23.0"
