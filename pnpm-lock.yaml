@@ -116,7 +116,7 @@ patchedDependencies:
     hash: d2q3sfjoevneossszak3gyrply
     path: patches/@ensdomains__ens-test-env@1.0.1.patch
   '@ensdomains/ensjs':
-    hash: aoge7cyv3koclrm2bjv7g6hlca
+    hash: qmbpqxhrd4l7ljpr4p5vtwe7xe
     path: patches/@ensdomains__ensjs.patch
   '@nomicfoundation/hardhat-viem@2.0.3':
     hash: znglrikwqnjywwr7ebopjjz3mm
@@ -155,7 +155,7 @@ importers:
         version: 1.0.1(patch_hash=d2q3sfjoevneossszak3gyrply)
       '@ensdomains/ensjs':
         specifier: ^4.2.2
-        version: 4.2.2(patch_hash=aoge7cyv3koclrm2bjv7g6hlca)(typescript@5.7.3)(viem@2.19.4(patch_hash=7v5d3k4uqbii5ammg6pwcktd3e)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
+        version: 4.2.2(patch_hash=qmbpqxhrd4l7ljpr4p5vtwe7xe)(typescript@5.7.3)(viem@2.19.4(patch_hash=7v5d3k4uqbii5ammg6pwcktd3e)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)
       '@ensdomains/thorin':
         specifier: 1.0.0-beta.28
         version: 1.0.0-beta.28(@vanilla-extract/css@1.15.5(babel-plugin-macros@3.1.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -10026,7 +10026,7 @@ snapshots:
       - bare-buffer
       - debug
 
-  '@ensdomains/ensjs@4.2.2(patch_hash=aoge7cyv3koclrm2bjv7g6hlca)(typescript@5.7.3)(viem@2.19.4(patch_hash=7v5d3k4uqbii5ammg6pwcktd3e)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
+  '@ensdomains/ensjs@4.2.2(patch_hash=qmbpqxhrd4l7ljpr4p5vtwe7xe)(typescript@5.7.3)(viem@2.19.4(patch_hash=7v5d3k4uqbii5ammg6pwcktd3e)(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.75))(zod@3.25.75)':
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
       '@ensdomains/address-encoder': 1.1.4

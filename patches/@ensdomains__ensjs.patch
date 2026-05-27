@@ -11,6 +11,19 @@ index 76b725c3f43ad25c66ba5f2d1af3c0b363682c3b..3b1cab8d413817f9cc4b8b0b0fbe0ce2
      if (labels.length === 0)
          return 'root';
      if (labels.length === 1) {
+diff --git a/dist/utils/validation.js b/dist/utils/validation.js
+index 7b2b2164b9aa9e4363f1449883af670bd33efea1..567ab70703086ada36e3abe5a21c499d0af85dcb 100644
+--- a/dist/utils/validation.js
++++ b/dist/utils/validation.js
+@@ -31,7 +31,7 @@ export const parseInput = (input) => {
+     const normalisedName = isValid ? nameReference : undefined;
+     const labels = nameReference.split('.');
+     const tld = labels[labels.length - 1];
+-    const isETH = tld === 'eth';
++    const isETH = tld === 'eth' || tld === 'testing' || tld === 'simplex';
+     const labelDataArray = split(nameReference);
+     const isShort = (labelDataArray[0].output?.length || 0) < MINIMUM_DOT_ETH_CHARS;
+     if (labels.length === 1) {
 diff --git a/src/utils/getNameType.ts b/src/utils/getNameType.ts
 index ae761486e270c8f899d6ea1e62731a5116452638..833261c8ebcaa4258561c3946cb0d4364af8f80a 100644
 --- a/src/utils/getNameType.ts
@@ -25,3 +38,16 @@ index ae761486e270c8f899d6ea1e62731a5116452638..833261c8ebcaa4258561c3946cb0d436
  
    if (labels.length === 0) return 'root'
    if (labels.length === 1) {
+diff --git a/src/utils/validation.ts b/src/utils/validation.ts
+index e1e75d900afee29c8e18d78141234f2e512a9abf..4937757f25695fc8721780cc9ea5b26231cbf4fd 100644
+--- a/src/utils/validation.ts
++++ b/src/utils/validation.ts
+@@ -46,7 +46,7 @@ export const parseInput = (input: string): ParsedInputResult => {
+ 
+   const labels = nameReference.split('.')
+   const tld = labels[labels.length - 1]
+-  const isETH = tld === 'eth'
++  const isETH = tld === 'eth' || tld === 'testing' || tld === 'simplex'
+   const labelDataArray = split(nameReference)
+   const isShort =
+     (labelDataArray[0].output?.length || 0) < MINIMUM_DOT_ETH_CHARS

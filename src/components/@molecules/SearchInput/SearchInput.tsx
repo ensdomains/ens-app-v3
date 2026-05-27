@@ -419,7 +419,7 @@ const formatEthText = ({ name, isETH }: { name: string; isETH: boolean | undefin
   if (isETH) return name
   if (name.includes('.')) return ''
   if (name === '[root]') return ''
-  return `${name}.eth`
+  return `${name}.${process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing'}`
 }
 const addEthDropdownItem =
   ({ name, isETH }: { name: string; isETH: boolean | undefined }) =>
