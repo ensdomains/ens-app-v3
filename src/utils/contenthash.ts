@@ -9,8 +9,9 @@ export type ContentHashProtocol =
   | 'sia'
   | 'arweave'
   | 'ar'
+  | 'walrus'
 
-export type ContentHashProvider = 'ipfs' | 'swarm' | 'onion' | 'skynet' | 'arweave'
+export type ContentHashProvider = 'ipfs' | 'swarm' | 'onion' | 'skynet' | 'arweave' | 'walrus'
 
 type GetContentHashLinkParameters = {
   name: string
@@ -50,6 +51,9 @@ export const getContentHashLink = ({
   if (protocol === 'ar') {
     return `https://arweave.net/${hash}`
   }
+  if (protocol === 'walrus') {
+    return `https://aggregator.walrus-testnet.walrus.space/v1/blobs/${hash}`
+  }
   return null
 }
 
@@ -76,6 +80,7 @@ const contentHashProtocolToProviderMap = {
   sia: 'skynet',
   arweave: 'arweave',
   ar: 'arweave',
+  walrus: 'walrus',
 } as const
 
 export const getContentHashProvider = (protocol: ContentHashProtocol): ContentHashProvider =>
