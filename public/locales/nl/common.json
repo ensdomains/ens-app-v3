@@ -2,6 +2,15 @@
   "title": "Jouw web3 gebruikersnaam",
   "description": "Jouw web3 identiteit, een naam voor al je crypto Adressen, en je gedecentraliseerde website.",
   "loading": "Laden",
+  "upgradeBanner": {
+    "title": "Er is een nieuwe ENS app!",
+    "subtitle": "Vanaf de basis opnieuw ontworpen voor ENSv2.",
+    "cta": "Open nieuwe app"
+  },
+  "legacyAppBanner": {
+    "title": "Je gebruikt de oude ENS app",
+    "body": "Deze versie wordt niet meer onderhouden en sommige functies werken mogelijk niet. Gebruik de nieuwe app voor de volledige ervaring."
+  },
   "action": {
     "cancel": "Annuleer",
     "change": "Verander",
