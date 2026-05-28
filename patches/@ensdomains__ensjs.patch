@@ -1,3 +1,33 @@
+diff --git a/dist/functions/public/getOwner.js b/dist/functions/public/getOwner.js
+index 6c23cac5dbf0f99bebac7cc7f6c2fb0a2ad59d6e..a30d0268f13ecd362491f03ae79c4c476efce17f 100644
+--- a/dist/functions/public/getOwner.js
++++ b/dist/functions/public/getOwner.js
+@@ -62,7 +62,8 @@ const decode = async (client, data, { name, contract }) => {
+         contract: 'ensNameWrapper',
+     });
+     // check for only .eth names
+-    if (labels[labels.length - 1] === 'eth') {
++    const tld = labels[labels.length - 1];
++    if (tld === 'eth' || tld === 'testing' || tld === 'simplex') {
+         // if the owner on the registrar is the namewrapper, then the namewrapper owner is the owner
+         // there is no "registrant" for wrapped names
+         if (registrarOwner === nameWrapperAddress) {
+diff --git a/dist/utils/checkSafeUniversalResolverData.js b/dist/utils/checkSafeUniversalResolverData.js
+index 0194373eec98aa75970a9bef609a3a77d1c10f6a..d1aed41c4f95628a758093036d4c4966f33b86f3 100644
+--- a/dist/utils/checkSafeUniversalResolverData.js
++++ b/dist/utils/checkSafeUniversalResolverData.js
+@@ -23,8 +23,10 @@ export const checkSafeUniversalResolverData = (data, { strict, abi, args, functi
+                 catch (_error) { }
+             }
+         }
+-        if (data instanceof CallExecutionError)
++        if (data instanceof CallExecutionError) {
++            if (!strict) return false;
+             throw data;
++        }
+         throw getContractError(data, {
+             abi,
+             args: typeof args === 'function' ? args() : args,
 diff --git a/dist/utils/generateFunction.js b/dist/utils/generateFunction.js
 index ddc2285417b7746d90fcc6f2fbf0595621bdeaa0..d62564fe8134afa99fb443adb0b920db34cfe2d3 100644
 --- a/dist/utils/generateFunction.js
@@ -39,6 +69,36 @@ index 7b2b2164b9aa9e4363f1449883af670bd33efea1..567ab70703086ada36e3abe5a21c499d
      const labelDataArray = split(nameReference);
      const isShort = (labelDataArray[0].output?.length || 0) < MINIMUM_DOT_ETH_CHARS;
      if (labels.length === 1) {
+diff --git a/src/functions/public/getOwner.ts b/src/functions/public/getOwner.ts
+index b3b572f4dd64e411143d85fc113d755d1f5788c8..1ce1cacf51ebe2f45780711e46840d77a25a0168 100644
+--- a/src/functions/public/getOwner.ts
++++ b/src/functions/public/getOwner.ts
+@@ -150,7 +150,8 @@ const decode = async <TContract extends OwnerContract | undefined = undefined>(
+   })
+ 
+   // check for only .eth names
+-  if (labels[labels.length - 1] === 'eth') {
++  const tld = labels[labels.length - 1]
++  if (tld === 'eth' || tld === 'testing' || tld === 'simplex') {
+     // if the owner on the registrar is the namewrapper, then the namewrapper owner is the owner
+     // there is no "registrant" for wrapped names
+     if (registrarOwner === nameWrapperAddress) {
+diff --git a/src/utils/checkSafeUniversalResolverData.ts b/src/utils/checkSafeUniversalResolverData.ts
+index f2a82ac5d28741ea2077c30e6f8be1950bf5e90c..002c938ecc28c0d26da6f20b08d42d9491f4a754 100644
+--- a/src/utils/checkSafeUniversalResolverData.ts
++++ b/src/utils/checkSafeUniversalResolverData.ts
+@@ -49,7 +49,10 @@ export const checkSafeUniversalResolverData = (
+         } catch (_error) {}
+       }
+     }
+-    if (data instanceof CallExecutionError) throw data
++    if (data instanceof CallExecutionError) {
++      if (!strict) return false
++      throw data
++    }
+     throw getContractError(data, {
+       abi,
+       args: typeof args === 'function' ? args() : args,
 diff --git a/src/utils/generateFunction.ts b/src/utils/generateFunction.ts
 index aa70184efef3c52b3a77aec159daa857fe7e1e0d..bdeeba35e22b9937e3424f41c08c46404fdfca4c 100644
 --- a/src/utils/generateFunction.ts
