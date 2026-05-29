@@ -166,13 +166,14 @@ function AdminPanel() {
               <Row>
                 <Input
                   label="New minimum"
-
+                  data-testid="admin-new-min-char-input"
                   value={newMinChar}
                   onChange={(e) => setNewMinChar(e.target.value)}
                   placeholder={String(minCharLen - 1)}
                 />
                 <Button
                   size="small"
+                  data-testid="admin-set-min-char-button"
                   onClick={() => execTx('setMinCharLength', [Number(newMinChar)])}
                   disabled={!newMinChar}
                 >
