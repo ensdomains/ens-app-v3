@@ -13,6 +13,7 @@ import { Avatar, lightTheme, Spinner, Tag, Typography } from '@ensdomains/thorin
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useControllerLimits } from '@app/hooks/useControllerLimits'
+import { useReservedStatus } from '@app/hooks/useReservedStatus'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
@@ -190,8 +191,30 @@ const PremiumTag = styled(StyledTag)(
   `,
 )
 
-const StatusTag = ({ status, minCharLength }: { status: RegistrationStatus; minCharLength?: number }) => {
+const StatusTag = ({
+  status,
+  minCharLength,
+  isReserved,
+}: {
+  status: RegistrationStatus
+  minCharLength?: number
+  isReserved?: boolean
+}) => {
   const { t } = useTranslation('common')
+  // Reserved trumps any "not currently owned" status: the public can't claim a
+  // reserved label even if ENS would otherwise say `available`, `notImported`,
+  // `notOwned`, `offChain`, or `short`. We don't override when the name is
+  // actually owned (registered/imported/gracePeriod/premium/desynced) — those
+  // outcomes already prevent registration on their own.
+  const isUnownedStatus =
+    status === 'available' ||
+    status === 'notImported' ||
+    status === 'notOwned' ||
+    status === 'offChain' ||
+    status === 'short'
+  if (isReserved && isUnownedStatus) {
+    return <StyledTag colorStyle="redSecondary">Reserved</StyledTag>
+  }
   switch (status) {
     case 'owned':
     case 'imported':
@@ -365,6 +388,7 @@ const EthResultItem = ({
     enabled: !usingPlaceholder,
   })
   const { minCharLength } = useControllerLimits()
+  const { isReserved } = useReservedStatus({ name: usingPlaceholder ? undefined : name })
 
   const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
 
@@ -390,7 +414,11 @@ const EthResultItem = ({
       {!isLoading &&
       registrationStatus &&
       (registrationStatus !== 'invalid' || !usingPlaceholder) ? (
-        <StatusTag status={registrationStatus} minCharLength={minCharLength} />
+        <StatusTag
+          status={registrationStatus}
+          minCharLength={minCharLength}
+          isReserved={isReserved}
+        />
       ) : (
         <SpinnerWrapper>
           <Spinner color="accent" />

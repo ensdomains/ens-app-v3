@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi'
-import { getAddress } from 'viem'
+import { getAddress, keccak256, toBytes } from 'viem'
 
 import { Button, Card, Heading, Input, Toggle, Typography } from '@ensdomains/thorin'
 
@@ -14,7 +14,7 @@ const controllerAbi = [
   { inputs: [], name: 'owner', outputs: [{ type: 'address' }], stateMutability: 'view', type: 'function' },
   { inputs: [], name: 'minCharLength', outputs: [{ type: 'uint8' }], stateMutability: 'view', type: 'function' },
   { inputs: [], name: 'nftGateEnabled', outputs: [{ type: 'bool' }], stateMutability: 'view', type: 'function' },
-  { inputs: [{ name: 'name', type: 'string' }], name: 'reservedNames', outputs: [{ type: 'bool' }], stateMutability: 'view', type: 'function' },
+  { inputs: [{ name: 'hash', type: 'bytes32' }], name: 'reservedNames', outputs: [{ type: 'bool' }], stateMutability: 'view', type: 'function' },
   { inputs: [{ name: 'newMinCharLength', type: 'uint8' }], name: 'setMinCharLength', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   { inputs: [], name: 'disableNftGate', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   { inputs: [{ name: 'name', type: 'string' }], name: 'addReservedName', outputs: [], stateMutability: 'nonpayable', type: 'function' },
@@ -121,7 +121,7 @@ function AdminPanel() {
         address: controllerAddress as `0x${string}`,
         abi: controllerAbi,
         functionName: 'reservedNames',
-        args: [checkName],
+        args: [keccak256(toBytes(checkName))],
       })
       setCheckResult(result ? 'RESERVED' : 'NOT RESERVED')
     } catch (e: any) {

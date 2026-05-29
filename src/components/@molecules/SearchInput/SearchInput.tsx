@@ -273,7 +273,10 @@ const getRouteForSearchItem = ({
         supportedTLD: true,
       })
       if (registrationStatus === 'available') return `/register/${selectedItem.text}`
-      if (registrationStatus === 'notImported') return `/import/${selectedItem.text}`
+      // DNS import is disabled in this app — route the "needs import" status
+      // back through the regular registration flow, where the SimplexInfoPanel
+      // shows the actual blocker (e.g. a reserved-name banner).
+      if (registrationStatus === 'notImported') return `/register/${selectedItem.text}`
     }
   }
 

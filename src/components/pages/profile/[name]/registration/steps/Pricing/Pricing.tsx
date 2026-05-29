@@ -28,6 +28,7 @@ import { DateSelection } from '@app/components/@molecules/DateSelection/DateSele
 import { Card } from '@app/components/Card'
 import { SimplexInfoPanel } from '@app/components/SimplexInfoPanel'
 import { useNftGateStatus } from '@app/hooks/useNftGateStatus'
+import { useReservedStatus } from '@app/hooks/useReservedStatus'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
@@ -513,6 +514,7 @@ const Pricing = ({
   const { data: ethPrice } = useEthPrice()
   const { required: nftRequired, hasNft } = useNftGateStatus({ address })
   const blockedByNftGate = nftRequired && hasNft === false
+  const { isReserved } = useReservedStatus({ name })
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
   const [durationType, setDurationType] = useState<'date' | 'years'>(
@@ -576,7 +578,7 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
-      <SimplexInfoPanel address={address} />
+      <SimplexInfoPanel name={name} address={address} />
       <DateSelection
         {...{ seconds, setSeconds, minSeconds, durationType }}
         onChangeDurationType={setDurationType}
@@ -612,7 +614,11 @@ const Pricing = ({
         />
       )}
       <MobileFullWidth>
-        {blockedByNftGate ? (
+        {isReserved ? (
+          <Button data-testid="next-button" disabled>
+            Reserved name
+          </Button>
+        ) : blockedByNftGate ? (
           <Button data-testid="next-button" disabled>
             SimpleX NFT required
           </Button>
