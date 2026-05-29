@@ -26,6 +26,8 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { ConnectButton } from '@app/components/@molecules/ConnectButton/ConnectButton'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { Card } from '@app/components/Card'
+import { SimplexInfoPanel } from '@app/components/SimplexInfoPanel'
+import { useNftGateStatus } from '@app/hooks/useNftGateStatus'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/gasEstimation/useEstimateRegistration'
@@ -509,6 +511,8 @@ const Pricing = ({
   const { data: balance } = useBalance({ address })
   const resolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
   const { data: ethPrice } = useEthPrice()
+  const { required: nftRequired, hasNft } = useNftGateStatus({ address })
+  const blockedByNftGate = nftRequired && hasNft === false
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
   const [durationType, setDurationType] = useState<'date' | 'years'>(
@@ -572,6 +576,7 @@ const Pricing = ({
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
+      <SimplexInfoPanel address={address} />
       <DateSelection
         {...{ seconds, setSeconds, minSeconds, durationType }}
         onChangeDurationType={setDurationType}
@@ -607,23 +612,29 @@ const Pricing = ({
         />
       )}
       <MobileFullWidth>
-        <ActionButton
-          {...{
-            address,
-            hasPendingMoonpayTransaction,
-            hasFailedMoonpayTransaction,
-            paymentMethodChoice,
-            reverseRecord,
-            callback,
-            initiateMoonpayRegistrationMutation,
-            seconds,
-            balance,
-            totalRequiredBalance,
-            estimatedTotal,
-            ethPrice,
-            durationType,
-          }}
-        />
+        {blockedByNftGate ? (
+          <Button data-testid="next-button" disabled>
+            SimpleX NFT required
+          </Button>
+        ) : (
+          <ActionButton
+            {...{
+              address,
+              hasPendingMoonpayTransaction,
+              hasFailedMoonpayTransaction,
+              paymentMethodChoice,
+              reverseRecord,
+              callback,
+              initiateMoonpayRegistrationMutation,
+              seconds,
+              balance,
+              totalRequiredBalance,
+              estimatedTotal,
+              ethPrice,
+              durationType,
+            }}
+          />
+        )}
       </MobileFullWidth>
     </StyledCard>
   )
