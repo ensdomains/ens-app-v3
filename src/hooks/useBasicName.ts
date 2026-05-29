@@ -8,6 +8,7 @@ import { isEthLikeTld, isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { useContractAddress } from './chain/useContractAddress'
 import useCurrentBlockTimestamp from './chain/useCurrentBlockTimestamp'
+import { useControllerLimits } from './useControllerLimits'
 import { useAddressRecord } from './ensjs/public/useAddressRecord'
 import { useExpiry } from './ensjs/public/useExpiry'
 import { useOwner, UseOwnerReturnType } from './ensjs/public/useOwner'
@@ -118,7 +119,7 @@ export const useBasicName = ({
   }, [isTempPremiumDesynced, blockTimestamp])
 
   const isNameAndPublicCallsLoaded = !!name && !publicCallsLoading
-  const registrationStatus = isNameAndPublicCallsLoaded
+  const baseRegistrationStatus = isNameAndPublicCallsLoaded
     ? getRegistrationStatus({
         timestamp: registrationStatusTimestamp,
         validation,
@@ -131,6 +132,16 @@ export const useBasicName = ({
         name: normalisedName,
       })
     : undefined
+
+  // Override: if the controller enforces a minimum char length stricter than ENS's default 3,
+  // mark short labels as 'short' so the UI fails early instead of letting the user attempt
+  // a registration that the contract will revert.
+  const { minCharLength } = useControllerLimits()
+  const labelLen = isETH && is2LD && normalisedName ? normalisedName.split('.')[0].length : Infinity
+  const registrationStatus =
+    baseRegistrationStatus === 'available' && minCharLength && labelLen < minCharLength
+      ? ('short' as const)
+      : baseRegistrationStatus
 
   const canBeWrapped = useMemo(
     () =>

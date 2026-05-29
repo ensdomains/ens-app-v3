@@ -19,9 +19,8 @@ export const socialIconTypes = {
 }
 
 export const socialIconColors = {
-  // undefined → let the SVG's own gradient/fills render
-  'simplex.contact': undefined,
-  'simplex.channel': undefined,
+  'simplex.contact': '#0197FF',
+  'simplex.channel': '#0197FF',
   'com.discord': '#5A57DD',
   'com.discourse': undefined,
   'com.github': '#000000',

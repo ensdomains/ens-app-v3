@@ -12,6 +12,7 @@ import { Avatar, lightTheme, Spinner, Tag, Typography } from '@ensdomains/thorin
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
+import { useControllerLimits } from '@app/hooks/useControllerLimits'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
@@ -189,7 +190,7 @@ const PremiumTag = styled(StyledTag)(
   `,
 )
 
-const StatusTag = ({ status }: { status: RegistrationStatus }) => {
+const StatusTag = ({ status, minCharLength }: { status: RegistrationStatus; minCharLength?: number }) => {
   const { t } = useTranslation('common')
   switch (status) {
     case 'owned':
@@ -207,7 +208,11 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
     case 'notImported':
       return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
     case 'short':
-      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
+      return (
+        <StyledTag colorStyle="redSecondary">
+          {minCharLength ? `Min ${minCharLength} chars` : t(`search.status.${status}`)}
+        </StyledTag>
+      )
     case 'desynced':
     case 'desynced:gracePeriod':
       return <StyledTag colorStyle="redSecondary">{t(`search.status.desynced`)}</StyledTag>
@@ -309,6 +314,7 @@ const TldResultItem = ({
     name,
     enabled: !usingPlaceholder,
   })
+  const { minCharLength } = useControllerLimits()
 
   const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
 
@@ -330,7 +336,7 @@ const TldResultItem = ({
         </TextWrapper>
       </LeadingSearchItem>
       {!isLoading && registrationStatus ? (
-        <StatusTag status={registrationStatus} />
+        <StatusTag status={registrationStatus} minCharLength={minCharLength} />
       ) : (
         <SpinnerWrapper>
           <Spinner color="accent" />
@@ -358,6 +364,7 @@ const EthResultItem = ({
     name,
     enabled: !usingPlaceholder,
   })
+  const { minCharLength } = useControllerLimits()
 
   const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
 
@@ -383,7 +390,7 @@ const EthResultItem = ({
       {!isLoading &&
       registrationStatus &&
       (registrationStatus !== 'invalid' || !usingPlaceholder) ? (
-        <StatusTag status={registrationStatus} />
+        <StatusTag status={registrationStatus} minCharLength={minCharLength} />
       ) : (
         <SpinnerWrapper>
           <Spinner color="accent" />
