@@ -73,6 +73,8 @@
           "social": {
             "label": "Social",
             "items": {
+              "simplex.contact": "SimpleX contact",
+              "simplex.channel": "SimpleX channel",
               "com.twitter": "Twitter",
               "com.github": "GitHub",
               "com.discord": "Discord",
@@ -80,6 +82,8 @@
               "email": "Email"
             },
             "placeholder": {
+              "simplex.contact": "https://simplex.chat/contact#/?v=2-7&smp=...",
+              "simplex.channel": "https://simplex.chat/contact#/?v=2-7&smp=...",
               "com.twitter": "e.g. ensdomains",
               "com.github": "e.g. ensdomains",
               "com.discord": "e.g. nickjohnson",

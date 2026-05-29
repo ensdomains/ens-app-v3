@@ -227,6 +227,11 @@ export const useGraphOutOfSync = () => {
 
 export const useHasGraphError = () => {
   const { isFetching, isError } = useContext(Context)
+  // Local dev runs without a subgraph; treat the resulting error state as "no error"
+  // so subgraph-gated UI (e.g. Edit profile) stays enabled.
+  if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_PROVIDER) {
+    return { data: false, isLoading: false }
+  }
   return { data: isError, isLoading: isFetching }
 }
 

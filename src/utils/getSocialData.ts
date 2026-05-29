@@ -2,6 +2,24 @@ import { normaliseTwitterRecordValue } from './records/normaliseTwitterRecordVal
 
 export const getSocialData = (iconKey: string, value: string) => {
   switch (iconKey) {
+    case 'simplex.contact':
+      return {
+        icon: 'simplex.contact',
+        color: '#0080BC',
+        label: 'SimpleX contact',
+        value: 'SimpleX contact',
+        type: 'link',
+        urlFormatter: value,
+      }
+    case 'simplex.channel':
+      return {
+        icon: 'simplex.channel',
+        color: '#0080BC',
+        label: 'SimpleX channel',
+        value: 'SimpleX channel',
+        type: 'link',
+        urlFormatter: value,
+      }
     case 'twitter':
     case 'com.twitter':
     case 'x':
