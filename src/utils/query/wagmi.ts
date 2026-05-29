@@ -111,9 +111,6 @@ export const transports = {
       })),
   [mainnet.id]: initialiseTransports('mainnet'),
   [sepolia.id]: initialiseTransports('sepolia'),
-  ...(process.env.NEXT_PUBLIC_HOODI_RPC_URL
-    ? ({ [560048]: http(process.env.NEXT_PUBLIC_HOODI_RPC_URL) as unknown as FallbackTransport } as const)
-    : ({} as unknown as { [K in 560048]: FallbackTransport })),
 } as const
 
 // This is a workaround to fix MetaMask defaulting to the wrong transaction type
