@@ -532,20 +532,32 @@ const Pricing = ({
   const hasPendingMoonpayTransaction = moonpayTransactionStatus === 'pending'
   const hasFailedMoonpayTransaction = moonpayTransactionStatus === 'failed'
 
-  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
-    hasPendingMoonpayTransaction || !balance?.value
-      ? PaymentMethod.moonpay
-      : PaymentMethod.ethereum,
-  )
+  // On the .testing TLD registration is gas-only — hide the credit-card /
+  // Moonpay payment option entirely and pin payment-method state to
+  // ethereum so the Next button isn't trapped in moonpay-default while
+  // balance loads.
+  const isTestingTld = (process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing') === 'testing'
 
-  // Keep radio button choice up to date
-  useEffect(() => {
-    setPaymentMethodChoice(
-      hasPendingMoonpayTransaction || hasFailedMoonpayTransaction || !balance?.value
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod>(
+    isTestingTld
+      ? PaymentMethod.ethereum
+      : hasPendingMoonpayTransaction || !balance?.value
         ? PaymentMethod.moonpay
         : PaymentMethod.ethereum,
+  )
+
+  // Keep radio button choice up to date. On .testing the credit-card path
+  // is hidden entirely, so pin to ethereum — otherwise the default `moonpay`
+  // (chosen while balance is still loading) leaves the Next button disabled.
+  useEffect(() => {
+    setPaymentMethodChoice(
+      isTestingTld
+        ? PaymentMethod.ethereum
+        : hasPendingMoonpayTransaction || hasFailedMoonpayTransaction || !balance?.value
+          ? PaymentMethod.moonpay
+          : PaymentMethod.ethereum,
     )
-  }, [balance, hasFailedMoonpayTransaction, hasPendingMoonpayTransaction, setPaymentMethodChoice])
+  }, [balance, hasFailedMoonpayTransaction, hasPendingMoonpayTransaction, isTestingTld, setPaymentMethodChoice])
 
   const fullEstimate = useEstimateFullRegistration({
     name,
@@ -561,10 +573,22 @@ const Pricing = ({
 
   const { hasPremium, premiumFee, gasPrice, yearlyFee, totalDurationBasedFee, estimatedGasFee } =
     fullEstimate
-  const durationRequiredBalance = totalDurationBasedFee ? (totalDurationBasedFee * 110n) / 100n : 0n
-  const totalRequiredBalance = durationRequiredBalance
-    ? durationRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)
-    : 0n
+  // Note: distinguish "fee estimate hasn't returned yet" (undefined) from
+  // "the fee genuinely is zero" (0n, on the free .testing oracle). The
+  // ternary used to gate on `totalDurationBasedFee` itself, which collapsed
+  // free pricing to "loading" forever and left the Next button disabled.
+  // `totalDurationBasedFee` is always bigint (`useEstimateRegistration`
+  // coerces undefined → 0n), so we can't distinguish "still loading" from
+  // "free pricing" by the value alone. The downstream ActionButton matcher
+  // treats `!totalRequiredBalance` as "still loading" and disables Next —
+  // which traps free .testing names because both price AND gas estimate
+  // can resolve to 0n (Hardhat doesn't support state-override-based
+  // eth_estimateGas, so the gas hook can stay at 0n). Floor at 1n so the
+  // matcher recognises the value as "loaded" and enables the button; the
+  // user only pays actual gas.
+  const durationRequiredBalance = (totalDurationBasedFee * 110n) / 100n
+  const totalRequiredBalance =
+    (durationRequiredBalance + (premiumFee || 0n) + (estimatedGasFee || 0n)) || 1n
   const estimatedTotal =
     (totalDurationBasedFee || 0n) + (premiumFee || 0n) + (estimatedGasFee || 0n)
 
@@ -572,9 +596,6 @@ const Pricing = ({
 
   const unsafeDisplayYearlyFee = yearlyFee === 0n ? previousYearlyFee : yearlyFee
 
-  // On the .testing TLD registration is gas-only — hide the credit-card /
-  // Moonpay payment option entirely.
-  const isTestingTld = (process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing') === 'testing'
   const showPaymentChoice = !isPrimaryLoading && address && !isTestingTld
 
   const previousEstimatedGasFee = usePreviousDistinct(estimatedGasFee) || 0n
