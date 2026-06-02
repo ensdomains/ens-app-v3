@@ -2,39 +2,86 @@ import { infiniteQueryOptions, QueryFunctionContext } from '@tanstack/react-quer
 import { useEffect, useMemo, useState } from 'react'
 
 import { Address, keccak256, namehash, parseAbi, parseAbiItem, toBytes } from 'viem'
-import { getLogs, readContract } from 'viem/actions'
+import { getBlockNumber, getLogs, readContract } from 'viem/actions'
 import {
   getNamesForAddress,
   GetNamesForAddressParameters,
   GetNamesForAddressReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { deploymentAddresses } from '@app/constants/chains'
+import { deploymentAddresses, sepoliaDeploymentAddresses } from '@app/constants/chains'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
 
-// Local-dev fallback: when there is no subgraph, scan BaseRegistrar Transfer events
-// to find tokenIds (labelhashes) owned by `address`, then resolve the labels via
-// ensjs' label cache in localStorage (populated whenever a name is searched/registered).
+// No-subgraph fallback: scan BaseRegistrar Transfer events to find tokenIds
+// (labelhashes) owned by `address`, then resolve the labels via ensjs' label
+// cache in localStorage (populated whenever a name is searched/registered).
+// Used for both local Hardhat (chainId 1337) and our custom Sepolia deployment
+// (chainId 11155111).
 const getNamesForAddressFromChain = async (
   client: any,
   address: Address,
 ): Promise<GetNamesForAddressReturnType> => {
-  const baseRegistrar = deploymentAddresses.BaseRegistrarImplementation as Address | undefined
-  if (!baseRegistrar) return []
+  const chainId: number = client?.chain?.id
+  const addresses =
+    chainId === 11155111 ? sepoliaDeploymentAddresses : deploymentAddresses
+  const baseRegistrar = addresses.BaseRegistrarImplementation as Address | undefined
+  // eslint-disable-next-line no-console
+  console.log('[chain-scan] chainId=', chainId, 'baseRegistrar=', baseRegistrar, 'address=', address)
+  if (!baseRegistrar) {
+    // eslint-disable-next-line no-console
+    console.warn('[chain-scan] No BaseRegistrarImplementation address for chainId', chainId)
+    return []
+  }
   const tld = (process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing') as string
 
-  // The wagmi client doesn't expose `getLogs`/`readContract` as methods; we call
-  // the viem actions directly with the client object.
-  const logs = await getLogs(client, {
-    address: baseRegistrar,
-    event: parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)'),
-    args: { to: address },
-    fromBlock: 0n,
-    toBlock: 'latest',
-  })
+  // Public Sepolia RPCs cap eth_getLogs at 10k blocks per call; scanning from
+  // genesis would reject. Chunk over recent history. Locally (Hardhat) the
+  // chain is fresh, so we can scan from 0 in a single call.
+  const event = parseAbiItem(
+    'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
+  )
+  let logs: any[] = []
+  if (chainId === 11155111) {
+    const latest = await getBlockNumber(client)
+    const WINDOW = 9999n
+    // ~5 days of Sepolia history at 12s blocks. Enough to find any name
+    // registered after the deploy; bump if older registrations are missed.
+    const SCAN_DEPTH = 40000n
+    const start = latest > SCAN_DEPTH ? latest - SCAN_DEPTH : 0n
+    // eslint-disable-next-line no-console
+    console.log('[chain-scan] sepolia window', { latest, start, depth: SCAN_DEPTH })
+    for (let from = start; from <= latest; from += WINDOW + 1n) {
+      const to = from + WINDOW > latest ? latest : from + WINDOW
+      try {
+        const chunk = await getLogs(client, {
+          address: baseRegistrar,
+          event,
+          args: { to: address },
+          fromBlock: from,
+          toBlock: to,
+        })
+        // eslint-disable-next-line no-console
+        console.log('[chain-scan] chunk', { from, to, found: chunk.length })
+        logs.push(...chunk)
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('[chain-scan] getLogs failed', { from, to }, e)
+      }
+    }
+  } else {
+    logs = await getLogs(client, {
+      address: baseRegistrar,
+      event,
+      args: { to: address },
+      fromBlock: 0n,
+      toBlock: 'latest',
+    })
+  }
 
+  // eslint-disable-next-line no-console
+  console.log('[chain-scan] total logs found:', logs.length, logs.slice(0, 3))
   // Drop tokens later transferred away; keep only those still owned by `address`.
   const stillOwnedIds = new Set<string>()
   const abi = parseAbi(['function ownerOf(uint256) view returns (address)', 'function nameExpires(uint256) view returns (uint256)'])
