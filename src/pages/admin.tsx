@@ -15,8 +15,8 @@ const controllerAbi = [
   { inputs: [{ name: 'hash', type: 'bytes32' }], name: 'reservedNames', outputs: [{ type: 'bool' }], stateMutability: 'view', type: 'function' },
   { inputs: [{ name: 'newMinCharLength', type: 'uint8' }], name: 'setMinCharLength', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   { inputs: [], name: 'disableNftGate', outputs: [], stateMutability: 'nonpayable', type: 'function' },
-  { inputs: [{ name: 'name', type: 'string' }], name: 'addReservedName', outputs: [], stateMutability: 'nonpayable', type: 'function' },
-  { inputs: [{ name: 'name', type: 'string' }], name: 'removeReservedName', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  { inputs: [{ name: 'names', type: 'string[]' }], name: 'addReservedNames', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  { inputs: [{ name: 'names', type: 'string[]' }], name: 'removeReservedNames', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
     inputs: [{ name: 'label', type: 'string' }, { name: 'owner', type: 'address' }, { name: 'duration', type: 'uint256' }],
     name: 'registerReserved',
@@ -220,30 +220,44 @@ function AdminPanel() {
               </Row>
               <Row>
                 <Input
-                  label="Reserve name"
+                  label="Reserve name(s)"
                   value={reserveName}
                   onChange={(e) => setReserveName(e.target.value)}
-                  placeholder="name to reserve"
+                  placeholder="one name per line — submitted in a single tx"
+                  description="Newline or comma separated. ~1000 names per tx fits in the block gas limit."
                 />
                 <Button
                   size="small"
-                  onClick={() => execTx('addReservedName', [reserveName])}
-                  disabled={!reserveName}
+                  onClick={() => {
+                    const labels = reserveName
+                      .split(/[\n,]/)
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                    if (labels.length) execTx('addReservedNames', [labels])
+                  }}
+                  disabled={!reserveName.trim()}
                 >
                   Reserve
                 </Button>
               </Row>
               <Row>
                 <Input
-                  label="Unreserve name"
+                  label="Unreserve name(s)"
                   value={unReserveName}
                   onChange={(e) => setUnReserveName(e.target.value)}
-                  placeholder="name to unreserve"
+                  placeholder="one name per line — submitted in a single tx"
+                  description="Newline or comma separated."
                 />
                 <Button
                   size="small"
-                  onClick={() => execTx('removeReservedName', [unReserveName])}
-                  disabled={!unReserveName}
+                  onClick={() => {
+                    const labels = unReserveName
+                      .split(/[\n,]/)
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                    if (labels.length) execTx('removeReservedNames', [labels])
+                  }}
+                  disabled={!unReserveName.trim()}
                 >
                   Unreserve
                 </Button>
