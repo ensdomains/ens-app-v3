@@ -125,8 +125,13 @@ export const getNamesForAddressQueryFn =
 
     const client = config.getClient({ chainId })
 
-    // Local dev has no subgraph — scan chain instead.
-    if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_PROVIDER) {
+    // Local dev and the Sepolia custom deployment both run against contracts
+    // the public ENS subgraph doesn't index — scan the chain via BaseRegistrar
+    // Transfer events instead.
+    if (
+      typeof window !== 'undefined' &&
+      (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+    ) {
       if (pageParam && pageParam.length > 0) return [] as GetNamesForAddressReturnType
       try {
         return await getNamesForAddressFromChain(client, address as Address)

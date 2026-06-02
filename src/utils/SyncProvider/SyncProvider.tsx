@@ -227,9 +227,15 @@ export const useGraphOutOfSync = () => {
 
 export const useHasGraphError = () => {
   const { isFetching, isError } = useContext(Context)
-  // Local dev runs without a subgraph; treat the resulting error state as "no error"
-  // so subgraph-gated UI (e.g. Edit profile) stays enabled.
-  if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_PROVIDER) {
+  // Local dev (NEXT_PUBLIC_PROVIDER) and our Sepolia deployment
+  // (NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES) both run against custom contract
+  // addresses that the public ENS subgraph doesn't index. Treat the resulting
+  // error state as "no error" so subgraph-gated UI (e.g. Edit profile) stays
+  // enabled.
+  if (
+    typeof window !== 'undefined' &&
+    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+  ) {
     return { data: false, isLoading: false }
   }
   return { data: isError, isLoading: isFetching }
@@ -237,6 +243,15 @@ export const useHasGraphError = () => {
 
 export const useGraphErrorType = () => {
   const context = useContext(Context)
+  // Same bypass as useHasGraphError: local dev and the Sepolia custom
+  // deployment have no subgraph, so suppress the banner instead of crying
+  // wolf for a known-and-intentional missing dependency.
+  if (
+    typeof window !== 'undefined' &&
+    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+  ) {
+    return null
+  }
   if (context.isError) return 'SubgraphError'
   if (context.isSlow) return 'SubgraphLatency'
   if (context.isOutOfSync) return 'SubgraphOutOfSync'
