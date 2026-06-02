@@ -1,14 +1,12 @@
 import { ReactElement, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi'
+import { useAccount, useChainId, usePublicClient, useWalletClient } from 'wagmi'
 import { getAddress, keccak256, toBytes } from 'viem'
 
 import { Button, Card, Heading, Input, Toggle, Typography } from '@ensdomains/thorin'
 
 import { Content } from '@app/layouts/Content'
-import { deploymentAddresses } from '@app/constants/chains'
-
-const controllerAddress = deploymentAddresses.ETHRegistrarController
+import { getSnrcAddresses } from '@app/constants/chains'
 
 const controllerAbi = [
   { inputs: [], name: 'owner', outputs: [{ type: 'address' }], stateMutability: 'view', type: 'function' },
@@ -53,6 +51,8 @@ const StatusText = styled(Typography)<{ $success?: boolean }>(
 
 function AdminPanel() {
   const { address } = useAccount()
+  const chainId = useChainId()
+  const controllerAddress = getSnrcAddresses(chainId).ETHRegistrarController
   const publicClient = usePublicClient()
   const { data: walletClient } = useWalletClient()
 

@@ -1,9 +1,7 @@
 import { Address, keccak256, parseAbi, toBytes } from 'viem'
-import { useReadContract } from 'wagmi'
+import { useChainId, useReadContract } from 'wagmi'
 
-import { deploymentAddresses } from '@app/constants/chains'
-
-const controllerAddress = deploymentAddresses.ETHRegistrarController as Address | undefined
+import { getSnrcAddresses } from '@app/constants/chains'
 
 const reservedAbi = parseAbi([
   'function reservedNames(bytes32) view returns (bool)',
@@ -14,6 +12,8 @@ const reservedAbi = parseAbi([
  * name (the `.testing` / `.simplex` suffix is stripped before hashing).
  */
 export const useReservedStatus = ({ name }: { name?: string }) => {
+  const chainId = useChainId()
+  const controllerAddress = getSnrcAddresses(chainId).ETHRegistrarController as Address | undefined
   const label = name ? name.split('.')[0] : ''
   const enabled =
     !!controllerAddress &&

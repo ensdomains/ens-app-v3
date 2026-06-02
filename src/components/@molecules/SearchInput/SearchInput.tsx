@@ -13,17 +13,17 @@ import { TFunction, useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
-import { Address, isAddress } from 'viem'
-import { useAccount, useChainId } from 'wagmi'
+import { Address, isAddress, keccak256, parseAbi, toBytes } from 'viem'
+import { useAccount, useChainId, usePublicClient } from 'wagmi'
 
 import {
   GetExpiryReturnType,
   GetPriceReturnType,
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
-import { BackdropSurface, Portal, Typography } from '@ensdomains/thorin'
+import { BackdropSurface, Portal, Toast, Typography } from '@ensdomains/thorin'
 
-import { SupportedChain } from '@app/constants/chains'
+import { getSnrcAddresses, SupportedChain } from '@app/constants/chains'
 import {
   UseAddressRecordQueryKey,
   UseAddressRecordReturnType,
@@ -33,6 +33,7 @@ import { UseOwnerQueryKey, UseOwnerReturnType } from '@app/hooks/ensjs/public/us
 import { UsePriceQueryKey } from '@app/hooks/ensjs/public/usePrice'
 import { UseWrapperDataQueryKey } from '@app/hooks/ensjs/public/useWrapperData'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { useNftGateStatus } from '@app/hooks/useNftGateStatus'
 import { createQueryKey } from '@app/hooks/useQueryOptions'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate, validate } from '@app/hooks/useValidate'
@@ -283,6 +284,8 @@ const getRouteForSearchItem = ({
   return `/profile/${selectedItem.text}`
 }
 
+type BlockedReason = 'nft' | 'reserved'
+
 type CreateSearchHandlerProps = {
   address: Address | undefined
   chainId: SupportedChain['id']
@@ -292,6 +295,33 @@ type CreateSearchHandlerProps = {
   setHistory: Dispatch<SetStateAction<HistoryItem[]>>
   setInputVal: Dispatch<SetStateAction<string>>
   queryClient: QueryClient
+  nftGateBlocked: boolean
+  onBlocked: (reason: BlockedReason) => void
+  publicClient: ReturnType<typeof usePublicClient>
+  controllerAddress: Address | undefined
+}
+
+const reservedAbi = parseAbi(['function reservedNames(bytes32) view returns (bool)'])
+
+const isLabelReserved = async (
+  publicClient: ReturnType<typeof usePublicClient>,
+  controllerAddress: Address | undefined,
+  label: string,
+): Promise<boolean> => {
+  if (!publicClient || !controllerAddress || !label) return false
+  try {
+    return (await publicClient.readContract({
+      address: controllerAddress,
+      abi: reservedAbi,
+      functionName: 'reservedNames',
+      args: [keccak256(toBytes(label))],
+    })) as boolean
+  } catch {
+    // If the controller call fails (unconfigured chain, RPC blip, etc.) we
+    // fall through to allow the navigation — the registration flow has its
+    // own reserved-name banner as a second line of defence.
+    return false
+  }
 }
 
 const createSearchHandler =
@@ -304,8 +334,12 @@ const createSearchHandler =
     setHistory,
     setInputVal,
     queryClient,
+    nftGateBlocked,
+    onBlocked,
+    publicClient,
+    controllerAddress,
   }: CreateSearchHandlerProps): SearchHandler =>
-  (index: number) => {
+  async (index: number) => {
     if (index === -1) return
 
     const selectedItem = dropdownItems[index]
@@ -320,6 +354,28 @@ const createSearchHandler =
     ])
 
     const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
+
+    if (path.startsWith('/register/')) {
+      // Reserved beats NFT — a reserved name is unregistrable regardless of
+      // who's connected, and the message should reflect that root cause.
+      const label = text.split('.')[0]
+      const reserved = await isLabelReserved(publicClient, controllerAddress, label)
+      if (reserved) {
+        setInputVal('')
+        searchInputRef.current?.blur()
+        onBlocked('reserved')
+        return
+      }
+      // NFT-gate hard stop: don't even let the user reach the registration view
+      // when the connected wallet doesn't hold an SMPXNFT. The homepage banner
+      // explains why; the toast acknowledges the click rather than dropping it.
+      if (nftGateBlocked) {
+        setInputVal('')
+        searchInputRef.current?.blur()
+        onBlocked('nft')
+        return
+      }
+    }
 
     const searchType = match(path)
       .with(`/register/${text}`, () => 'eth' as const)
@@ -618,6 +674,13 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history-v2', [])
 
+  const { required: nftRequired, hasNft } = useNftGateStatus({ address })
+  const nftGateBlocked = !!nftRequired && hasNft === false
+  const publicClient = usePublicClient()
+  const controllerAddress = getSnrcAddresses(chainId).ETHRegistrarController as Address | undefined
+  const [blockedReason, setBlockedReason] = useState<BlockedReason | null>(null)
+  const handleBlocked = useCallback((reason: BlockedReason) => setBlockedReason(reason), [])
+
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
@@ -634,8 +697,25 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
       searchInputRef,
       setHistory,
       setInputVal,
+      nftGateBlocked,
+      onBlocked: handleBlocked,
+      publicClient,
+      controllerAddress,
     }),
-    [address, chainId, dropdownItems, queryClient, router, searchInputRef, setHistory, setInputVal],
+    [
+      address,
+      chainId,
+      dropdownItems,
+      queryClient,
+      router,
+      searchInputRef,
+      setHistory,
+      setInputVal,
+      nftGateBlocked,
+      handleBlocked,
+      publicClient,
+      controllerAddress,
+    ],
   )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -696,11 +776,38 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
     </SearchResultsContainer>
   )
 
+  // Surfaced via Toast (Thorin) — Portal-rendered at the page top-right so
+  // it's visible even when the user clicked through the search dropdown.
+  // One reason at a time; reserved takes precedence over NFT-gate in the
+  // handler so the user gets the root-cause message.
+  const blockedToastCopy =
+    blockedReason === 'reserved'
+      ? {
+          title: 'This name is reserved',
+          description:
+            'This label has been reserved by the SimpleX team and cannot be registered through the public flow.',
+        }
+      : {
+          title: 'SimpleX NFT required',
+          description:
+            'Your wallet does not hold an SMPXNFT. Registration is disabled during the testing phase until you connect a wallet that holds one.',
+        }
+  const BlockedToast = (
+    <Toast
+      data-testid="search-blocked-toast"
+      open={blockedReason !== null}
+      onClose={() => setBlockedReason(null)}
+      variant={breakpoints.sm ? 'desktop' : 'touch'}
+      {...blockedToastCopy}
+    />
+  )
+
   if (breakpoints.sm) {
     return (
       <Container data-testid="search-input-desktop" $size={size}>
         {SearchInputElement}
         {state !== 'unmounted' && SearchResultsElement}
+        {BlockedToast}
       </Container>
     )
   }
@@ -716,6 +823,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
           toggle,
         }}
       />
+      {BlockedToast}
     </Container>
   )
 }

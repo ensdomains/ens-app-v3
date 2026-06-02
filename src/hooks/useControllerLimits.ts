@@ -1,9 +1,7 @@
 import { Address } from 'viem'
-import { useReadContracts } from 'wagmi'
+import { useChainId, useReadContracts } from 'wagmi'
 
-import { deploymentAddresses } from '@app/constants/chains'
-
-const controllerAddress = deploymentAddresses.ETHRegistrarController as Address | undefined
+import { getSnrcAddresses } from '@app/constants/chains'
 
 const controllerAbi = [
   {
@@ -30,6 +28,8 @@ const controllerAbi = [
 ] as const
 
 export const useControllerLimits = () => {
+  const chainId = useChainId()
+  const controllerAddress = getSnrcAddresses(chainId).ETHRegistrarController as Address | undefined
   const enabled = !!controllerAddress && controllerAddress !== '0x0000000000000000000000000000000000000000'
   const { data } = useReadContracts({
     contracts: enabled

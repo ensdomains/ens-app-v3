@@ -9,6 +9,7 @@ import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
+import { SimplexHomeBanner } from '@app/components/SimplexHomeBanner'
 
 import ENSFull from '../assets/SimplexFull.svg'
 
@@ -112,6 +113,7 @@ export default function Page() {
           </SubtitleWrapper>
           <SearchInput />
 
+          <SimplexHomeBanner />
           <AnnouncementBanner />
         </Stack>
       </Container>

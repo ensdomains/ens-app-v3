@@ -34,6 +34,12 @@ export const sepoliaWithEns = makeLocalhostChainWithEnsAndOverrides<typeof sepol
   sepoliaDeploymentAddresses,
 )
 
+// Pick the SNRC contract bundle (controller, registrar, etc.) for a given
+// chain. Used by hooks that talk to the SimplexController — they can't
+// hard-code one bundle because Sepolia and localhost have different addresses.
+export const getSnrcAddresses = (chainId: number | undefined) =>
+  chainId === 11155111 ? sepoliaDeploymentAddresses : deploymentAddresses
+
 export const chainsWithEns = [mainnetWithEns, sepoliaWithEns, localhostWithEns] as const
 
 export const getSupportedChainById = (chainId: number | undefined) =>
