@@ -47,25 +47,8 @@ const Text = styled.span(
   `,
 )
 
-export const AnnouncementBanner = () => {
-  const { t } = useTranslation('ensv2')
-
-  return (
-    <Link href="https://ens.domains/ensv2" legacyBehavior passHref>
-      <Container>
-        <TextContainer>
-          <img src="/migrate/confetti.png" alt="" height={33} width={33} />
-          <Text>
-            <Typography fontVariant="largeBold">{t('banner.title')}</Typography>
-            <Typography fontVariant="small" color="grey">
-              {t('banner.caption')}
-            </Typography>
-          </Text>
-        </TextContainer>
-        <Button as="a" href="https://ens.domains/ensv2" colorStyle="greenPrimary" width="max">
-          {t('banner.cta')}
-        </Button>
-      </Container>
-    </Link>
-  )
-}
+// ENSv2 migration banner is not applicable to SNRC. Short-circuited
+// rather than removed from the homepage so the diff vs upstream stays
+// limited to this file (matches the pattern used for ens-v2.tsx and
+// legacyfavourites.tsx).
+export const AnnouncementBanner = () => null
