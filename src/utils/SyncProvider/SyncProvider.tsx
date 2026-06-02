@@ -222,6 +222,15 @@ export const useCallbackOnTransaction = (callback: UpdateCallback) => {
 
 export const useGraphOutOfSync = () => {
   const { isOutOfSync } = useContext(Context)
+  // Same bypass as useHasGraphError / useGraphErrorType: local dev and the
+  // Sepolia custom deployment have no subgraph, so there is nothing to be
+  // out of sync with. Suppress the hamburger-menu spinner + warning.
+  if (
+    typeof window !== 'undefined' &&
+    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+  ) {
+    return false
+  }
   return !!isOutOfSync
 }
 
