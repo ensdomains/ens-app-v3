@@ -23,15 +23,19 @@ export const IS_DEV_ENVIRONMENT =
 
 export const INVALID_NAME = '[Invalid ENS Name]'
 
-export const ENS_LINKS = {
-  X: 'https://x.com/ensdomains',
-  DISCORD: 'https://chat.ens.domains',
-  MIRROR: 'https://ens.mirror.xyz',
-  DISCOURSE: 'https://discuss.ens.domains',
-  GITHUB: 'https://github.com/ensdomains',
-  EMAIL: 'mailto:support@ens.domains',
-  HOMEPAGE: 'https://ens.domains/',
-  YOUTUBE: 'https://www.youtube.com/ensdomains',
+// HOMEPAGE points at the Simplex Network Consortium — the foundation
+// (https://simplexnetwork.org/), not Simplex Chat Ltd. Social accounts
+// are SimpleX Chat's public presence (sourced from https://simplex.chat/);
+// the consortium does not run its own social handles.
+export const SIMPLEX_LINKS = {
+  HOMEPAGE: 'https://simplexnetwork.org/',
+  X: 'https://twitter.com/simplexchat',
+  GITHUB: 'https://github.com/simplex-chat',
+  MASTODON: 'https://mastodon.social/@simplex',
+  REDDIT: 'https://www.reddit.com/r/SimpleXChat/',
+  LINKEDIN: 'https://www.linkedin.com/company/simplex-chat/',
+  LEMMY: 'https://lemmy.ml/c/simplex',
+  EMAIL: 'mailto:chat@simplex.chat',
 }
 
 export const DISCONNECTED_PLACEHOLDER_ADDRESS =

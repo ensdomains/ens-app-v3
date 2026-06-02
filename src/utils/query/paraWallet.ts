@@ -10,7 +10,7 @@ import {
 } from '@getpara/rainbowkit-wallet'
 
 import i18n from '../../i18n'
-import { ENS_LINKS, WC_PROJECT_ID } from '../constants'
+import { SIMPLEX_LINKS, WC_PROJECT_ID } from '../constants'
 import { transports } from './wagmi'
 
 const prodParaApiKey = process.env.NEXT_PUBLIC_PARA_API_KEY_PROD
@@ -29,10 +29,10 @@ const paraConstructorOpts: ConstructorOpts = {
   // User Email Branding
   emailTheme: 'light' as any,
   emailPrimaryColor: '#5298FF',
-  githubUrl: ENS_LINKS.GITHUB,
-  xUrl: ENS_LINKS.X,
-  homepageUrl: ENS_LINKS.HOMEPAGE,
-  supportUrl: ENS_LINKS.EMAIL,
+  githubUrl: SIMPLEX_LINKS.GITHUB,
+  xUrl: SIMPLEX_LINKS.X,
+  homepageUrl: SIMPLEX_LINKS.HOMEPAGE,
+  supportUrl: SIMPLEX_LINKS.EMAIL,
 }
 
 export const paraClient = new ParaWeb(PARA_ENV, PARA_API_KEY, paraConstructorOpts)

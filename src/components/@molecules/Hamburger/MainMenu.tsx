@@ -16,21 +16,19 @@ import {
   WalletSVG,
 } from '@ensdomains/thorin'
 
-import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
-import SocialDiscourse from '@app/assets/social/SocialDiscourse.svg'
-import SocialDiscourseColour from '@app/assets/social/SocialDiscourseColour.svg'
 import SocialGithub from '@app/assets/social/SocialGithub.svg'
-import SocialMirror from '@app/assets/social/SocialMirror.svg'
-import SocialMirrorColour from '@app/assets/social/SocialMirrorColour.svg'
+import SocialLemmy from '@app/assets/social/SocialLemmy.svg'
+import SocialLinkedIn from '@app/assets/social/SocialLinkedIn.svg'
+import SocialMastodon from '@app/assets/social/SocialMastodon.svg'
+import SocialReddit from '@app/assets/social/SocialReddit.svg'
 import SocialX from '@app/assets/social/SocialX.svg'
-import SocialYoutube from '@app/assets/social/SocialYoutube.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { useReadLocalStorage } from '@app/hooks/useLocalStorage'
 import { routes } from '@app/routes'
-import { ENS_LINKS } from '@app/utils/constants'
+import { SIMPLEX_LINKS } from '@app/utils/constants'
 import { makeDisplay } from '@app/utils/currency'
 import { useGraphOutOfSync } from '@app/utils/SyncProvider/SyncProvider'
 import useUserConfig from '@app/utils/useUserConfig'
@@ -155,7 +153,7 @@ const RoutesSection = styled.div(
     padding: ${theme.space['2']};
 
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   `,
   miscSectionStyle,
 )
@@ -326,16 +324,12 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: HamburgerView) =>
         ))}
       </RoutesSection>
       <SocialSection>
-        <SocialIcon Icon={SocialX} color="black" href={ENS_LINKS.X} />
-        <SocialIcon Icon={SocialGithub} color="#0F0F0F" href={ENS_LINKS.GITHUB} />
-        <SocialIcon Icon={SocialDiscord} color="#7F83FF" href={ENS_LINKS.DISCORD} />
-        <SocialIcon Icon={SocialMirror} ColoredIcon={SocialMirrorColour} href={ENS_LINKS.MIRROR} />
-        <SocialIcon
-          Icon={SocialDiscourse}
-          ColoredIcon={SocialDiscourseColour}
-          href={ENS_LINKS.DISCOURSE}
-        />
-        <SocialIcon Icon={SocialYoutube} color="#EE1919" href={ENS_LINKS.YOUTUBE} />
+        <SocialIcon Icon={SocialX} color="black" href={SIMPLEX_LINKS.X} />
+        <SocialIcon Icon={SocialGithub} color="#0F0F0F" href={SIMPLEX_LINKS.GITHUB} />
+        <SocialIcon Icon={SocialMastodon} color="#6364FF" href={SIMPLEX_LINKS.MASTODON} />
+        <SocialIcon Icon={SocialReddit} color="#FF4500" href={SIMPLEX_LINKS.REDDIT} />
+        <SocialIcon Icon={SocialLinkedIn} color="#0A66C2" href={SIMPLEX_LINKS.LINKEDIN} />
+        <SocialIcon Icon={SocialLemmy} color="#00BC8C" href={SIMPLEX_LINKS.LEMMY} />
       </SocialSection>
       <NetworkSection />
     </Container>

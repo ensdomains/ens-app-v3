@@ -13,18 +13,7 @@ import {
   PersonSVG,
 } from '@ensdomains/thorin'
 
-export type PublicRoute =
-  | 'search'
-  | 'governance'
-  | 'blog'
-  | 'developers'
-  | 'support'
-  | 'bounty'
-  | 'terms'
-  | 'privacy'
-  | 'oldApp'
-  | 'ipfsApp'
-  | 'feedback'
+export type PublicRoute = 'search' | 'consortium'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings' | 'admin'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -112,77 +101,11 @@ export const routes: RouteItemObj[] = [
     onlyDropdown: true,
   },
   {
-    name: 'support',
-    href: 'https://simplex.chat',
-    label: 'navigation.support',
+    name: 'consortium',
+    href: 'https://simplexnetwork.org/',
+    label: 'navigation.consortium',
     disabled: false,
     connected: false,
-  },
-  {
-    name: 'feedback',
-    href: 'https://simplex.chat',
-    label: 'navigation.feedback',
-    disabled: true,
-    connected: false,
-    onlyDropdown: true,
-  },
-  {
-    name: 'governance',
-    href: 'https://simplex.chat',
-    label: 'navigation.governance',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'blog',
-    href: 'https://simplex.chat/blog',
-    label: 'navigation.blog',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'developers',
-    href: 'https://simplex.chat',
-    label: 'navigation.developers',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'bounty',
-    href: 'https://simplex.chat',
-    label: 'navigation.bounty',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'terms',
-    href: 'https://simplex.chat',
-    label: 'navigation.terms',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'privacy',
-    href: 'https://simplex.chat',
-    label: 'navigation.privacy',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'oldApp',
-    href: 'https://simplex.chat',
-    label: 'navigation.oldApp',
-    disabled: true,
-    connected: false,
-    onlyDropdown: true,
-  },
-  {
-    name: 'ipfsApp',
-    href: 'https://simplex.chat',
-    label: 'navigation.ipfsApp',
-    disabled: true,
-    connected: false,
-    onlyDropdown: true,
   },
 ]
 
