@@ -39,16 +39,22 @@ export default function Page() {
         trailing: (
           <ContentContainer>
             <NameListView address={address} selfAddress={address} />
-            <Banner
-              as="a"
-              target="_blank"
-              rel="noopener noreferrer"
-              href={getSupportLink('offchain-not-in-names')}
-              icon={QuestionCircleSVG}
-              title={t('offchainWarning.title')}
-            >
-              {t('offchainWarning.text')}
-            </Banner>
+            {/* SNRC has no off-chain names (no CCIP-Read, no DNS import). The
+                banner is always misleading on our deployments — same env-var
+                gate as the SyncProvider bypasses. */}
+            {!process.env.NEXT_PUBLIC_PROVIDER &&
+              !process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES && (
+                <Banner
+                  as="a"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={getSupportLink('offchain-not-in-names')}
+                  icon={QuestionCircleSVG}
+                  title={t('offchainWarning.title')}
+                >
+                  {t('offchainWarning.text')}
+                </Banner>
+              )}
           </ContentContainer>
         ),
       }}
