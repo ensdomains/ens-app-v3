@@ -69,6 +69,13 @@ index 7b2b2164b9aa9e4363f1449883af670bd33efea1..567ab70703086ada36e3abe5a21c499d
      const labelDataArray = split(nameReference);
      const isShort = (labelDataArray[0].output?.length || 0) < MINIMUM_DOT_ETH_CHARS;
      if (labels.length === 1) {
+@@ -56,5 +56,5 @@ export const parseInput = (input) => {
+         labelDataArray,
+     };
+ };
+-export const checkIsDotEth = (labels) => labels.length === 2 && labels[1] === 'eth';
++export const checkIsDotEth = (labels) => labels.length === 2 && (labels[1] === 'eth' || labels[1] === 'testing' || labels[1] === 'simplex');
+ //# sourceMappingURL=validation.js.map
 diff --git a/src/functions/public/getOwner.ts b/src/functions/public/getOwner.ts
 index b3b572f4dd64e411143d85fc113d755d1f5788c8..1ce1cacf51ebe2f45780711e46840d77a25a0168 100644
 --- a/src/functions/public/getOwner.ts
@@ -132,7 +139,7 @@ index e1e75d900afee29c8e18d78141234f2e512a9abf..4937757f25695fc8721780cc9ea5b262
 --- a/src/utils/validation.ts
 +++ b/src/utils/validation.ts
 @@ -46,7 +46,7 @@ export const parseInput = (input: string): ParsedInputResult => {
- 
+
    const labels = nameReference.split('.')
    const tld = labels[labels.length - 1]
 -  const isETH = tld === 'eth'
@@ -140,3 +147,11 @@ index e1e75d900afee29c8e18d78141234f2e512a9abf..4937757f25695fc8721780cc9ea5b262
    const labelDataArray = split(nameReference)
    const isShort =
      (labelDataArray[0].output?.length || 0) < MINIMUM_DOT_ETH_CHARS
+@@ -75,5 +75,5 @@ export const parseInput = (input: string): ParsedInputResult => {
+   }
+ }
+
+-export const checkIsDotEth = (labels: string[]) =>
+-  labels.length === 2 && labels[1] === 'eth'
++export const checkIsDotEth = (labels: string[]): boolean =>
++  labels.length === 2 && (labels[1] === 'eth' || labels[1] === 'testing' || labels[1] === 'simplex')
