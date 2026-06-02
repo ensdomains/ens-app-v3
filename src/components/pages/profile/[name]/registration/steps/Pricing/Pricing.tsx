@@ -27,6 +27,7 @@ import { ConnectButton } from '@app/components/@molecules/ConnectButton/ConnectB
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
 import { Card } from '@app/components/Card'
 import { SimplexInfoPanel } from '@app/components/SimplexInfoPanel'
+import { useControllerLimits } from '@app/hooks/useControllerLimits'
 import { useNftGateStatus } from '@app/hooks/useNftGateStatus'
 import { useReservedStatus } from '@app/hooks/useReservedStatus'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
@@ -515,6 +516,9 @@ const Pricing = ({
   const { required: nftRequired, hasNft } = useNftGateStatus({ address })
   const blockedByNftGate = nftRequired && hasNft === false
   const { isReserved } = useReservedStatus({ name })
+  const { minCharLength } = useControllerLimits()
+  const labelLen = name ? name.split('.')[0].length : 0
+  const isTooShort = !!minCharLength && labelLen > 0 && labelLen < minCharLength
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
   const [durationType, setDurationType] = useState<'date' | 'years'>(
@@ -568,7 +572,10 @@ const Pricing = ({
 
   const unsafeDisplayYearlyFee = yearlyFee === 0n ? previousYearlyFee : yearlyFee
 
-  const showPaymentChoice = !isPrimaryLoading && address
+  // On the .testing TLD registration is gas-only — hide the credit-card /
+  // Moonpay payment option entirely.
+  const isTestingTld = (process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing') === 'testing'
+  const showPaymentChoice = !isPrimaryLoading && address && !isTestingTld
 
   const previousEstimatedGasFee = usePreviousDistinct(estimatedGasFee) || 0n
 
@@ -617,6 +624,10 @@ const Pricing = ({
         {isReserved ? (
           <Button data-testid="next-button" disabled>
             Reserved name
+          </Button>
+        ) : isTooShort ? (
+          <Button data-testid="next-button" disabled>
+            Name too short
           </Button>
         ) : blockedByNftGate ? (
           <Button data-testid="next-button" disabled>

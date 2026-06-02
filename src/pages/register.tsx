@@ -24,7 +24,17 @@ export default function Page() {
 
   const isLoading = detailsLoading || initial
 
-  if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
+  // 'short' = the label is shorter than the controller's minCharLength.
+  // Stay on /register so the SimplexInfoPanel can show the yellow min-chars
+  // warning and the Pricing step's Next button stays disabled. Without this,
+  // the page silently redirects to /profile/<name> which makes the name
+  // look registered when it isn't.
+  const stayOnRegister =
+    registrationStatus === 'available' ||
+    registrationStatus === 'premium' ||
+    registrationStatus === 'short'
+
+  if (!isLoading && !stayOnRegister) {
     let redirect = true
 
     if (nameDetails.ownerData?.owner === address && !!address) {

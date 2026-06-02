@@ -1,10 +1,57 @@
 import styled, { css } from 'styled-components'
 
-import { Helper, Typography } from '@ensdomains/thorin'
+import { AlertSVG, Helper, Typography } from '@ensdomains/thorin'
 
 import { useControllerLimits } from '@app/hooks/useControllerLimits'
 import { useNftGateStatus } from '@app/hooks/useNftGateStatus'
 import { useReservedStatus } from '@app/hooks/useReservedStatus'
+
+const WarnCard = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${theme.space['3']};
+    width: 100%;
+    padding: ${theme.space['4']};
+    border-radius: ${theme.radii['2xLarge']};
+    background-color: ${theme.colors.yellowSurface};
+    border: 1px solid ${theme.colors.yellowPrimary};
+  `,
+)
+
+const WarnIcon = styled.div(
+  ({ theme }) => css`
+    flex-shrink: 0;
+    width: ${theme.space['10']};
+    height: ${theme.space['10']};
+    border-radius: ${theme.radii.full};
+    background-color: ${theme.colors.yellowPrimary};
+    color: ${theme.colors.backgroundPrimary};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  `,
+)
+
+const WarnText = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['0.5']};
+  `,
+)
+
+const WarnSub = styled(Typography)(
+  ({ theme }) => css`
+    color: ${theme.colors.greyPrimary};
+  `,
+)
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -85,6 +132,11 @@ export const SimplexInfoPanel = ({ name, address }: Props) => {
             ? 5
             : 6
 
+  // .testing is free during the testing phase (gas only). The pricing tiers
+  // panel and the NFT-holder positive callout are both noise for users on
+  // that TLD; hide them.
+  const isTestingTld = (process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing') === 'testing'
+
   return (
     <Container data-testid="simplex-info-panel">
       {isReserved && (
@@ -99,55 +151,55 @@ export const SimplexInfoPanel = ({ name, address }: Props) => {
           </div>
         </Helper>
       )}
-      {nftRequired && (
-        <Helper
-          type={hasNft === false ? 'error' : 'info'}
-          alignment="horizontal"
-          data-testid="simplex-nft-gate-helper"
-        >
+      {nftRequired && nftLoaded && hasNft === false && (
+        <Helper type="error" alignment="horizontal" data-testid="simplex-nft-gate-helper">
           <div>
             <Typography weight="bold">SimpleX NFT required</Typography>
             <Typography>
               During the testing phase only SMPXNFT holders may register names. The gate contract
-              is <code>{nftAddress}</code>.
-              {nftLoaded && hasNft === false && ' Your wallet does not currently hold one.'}
-              {nftLoaded && hasNft === true && ' Your wallet holds one — you can register.'}
+              is <code>{nftAddress}</code>. Your wallet does not currently hold one.
             </Typography>
           </div>
         </Helper>
       )}
-      {!!minCharLength && minCharLength > 3 && (
-        <Helper type="info" alignment="horizontal" data-testid="simplex-min-chars-helper">
-          <div>
+      {!!minCharLength && labelLen > 0 && labelLen < minCharLength && (
+        <WarnCard role="alert" data-testid="simplex-min-chars-helper">
+          <WarnIcon>
+            <AlertSVG />
+          </WarnIcon>
+          <WarnText>
             <Typography weight="bold">Minimum {minCharLength} characters</Typography>
-            <Typography>
-              Names shorter than {minCharLength} characters are not yet registrable. The admin
-              lowers this limit over time.
-            </Typography>
-          </div>
-        </Helper>
+            <WarnSub fontVariant="small">
+              <code>{label}</code> is {labelLen} character{labelLen === 1 ? '' : 's'} — names
+              shorter than {minCharLength} are not yet registrable. The admin lowers this limit
+              over time.
+            </WarnSub>
+          </WarnText>
+        </WarnCard>
       )}
-      <div>
-        <Typography weight="bold">SimpleX pricing (per year)</Typography>
-        <TiersGrid>
-          <TierCard data-testid="simplex-tier-6" data-active={activeTier === 6} $active={activeTier === 6}>
-            <TierLabel>6+ chars</TierLabel>
-            <TierPrice>$1</TierPrice>
-          </TierCard>
-          <TierCard data-testid="simplex-tier-5" data-active={activeTier === 5} $active={activeTier === 5}>
-            <TierLabel>5 chars</TierLabel>
-            <TierPrice>$8</TierPrice>
-          </TierCard>
-          <TierCard data-testid="simplex-tier-4" data-active={activeTier === 4} $active={activeTier === 4}>
-            <TierLabel>4 chars</TierLabel>
-            <TierPrice>$32</TierPrice>
-          </TierCard>
-          <TierCard data-testid="simplex-tier-3" data-active={activeTier === 3} $active={activeTier === 3}>
-            <TierLabel>3 chars</TierLabel>
-            <TierPrice>$128</TierPrice>
-          </TierCard>
-        </TiersGrid>
-      </div>
+      {!isTestingTld && (
+        <div>
+          <Typography weight="bold">SimpleX pricing (per year)</Typography>
+          <TiersGrid>
+            <TierCard data-testid="simplex-tier-6" data-active={activeTier === 6} $active={activeTier === 6}>
+              <TierLabel>6+ chars</TierLabel>
+              <TierPrice>$1</TierPrice>
+            </TierCard>
+            <TierCard data-testid="simplex-tier-5" data-active={activeTier === 5} $active={activeTier === 5}>
+              <TierLabel>5 chars</TierLabel>
+              <TierPrice>$8</TierPrice>
+            </TierCard>
+            <TierCard data-testid="simplex-tier-4" data-active={activeTier === 4} $active={activeTier === 4}>
+              <TierLabel>4 chars</TierLabel>
+              <TierPrice>$32</TierPrice>
+            </TierCard>
+            <TierCard data-testid="simplex-tier-3" data-active={activeTier === 3} $active={activeTier === 3}>
+              <TierLabel>3 chars</TierLabel>
+              <TierPrice>$128</TierPrice>
+            </TierCard>
+          </TiersGrid>
+        </div>
+      )}
     </Container>
   )
 }
