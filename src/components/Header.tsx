@@ -4,13 +4,12 @@ import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { useTheme as useThorinTheme } from '@ensdomains/thorin'
+
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
 import { legacyFavouritesRoute, routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-
-import ENSFull from '../assets/SimplexFull.svg'
-import ENSWithGradient from '../assets/SimplexWithGradient.svg'
 import BaseLink from './@atoms/BaseLink'
 import { RouteItem } from './@atoms/RouteItem/RouteItem'
 import { HeaderConnect } from './@molecules/ConnectButton/ConnectButton'
@@ -128,6 +127,8 @@ const routesNoSearch = routes.filter(
 
 export const Header = () => {
   const { space } = useTheme()
+  const { mode } = useThorinTheme()
+  const logoSrc = mode === 'dark' ? '/simplex-logo-dark.png' : '/simplex-logo-light.png'
   const router = useRouter()
   const isInitial = useInitial()
   const { isConnected } = useAccount()
@@ -202,11 +203,11 @@ export const Header = () => {
             </BaseLink>
           )}
         >
-          {pathnameWithoutQuery === '/' ? (
-            <ENSFull height={space['12']} />
-          ) : (
-            <ENSWithGradient height={space['12']} />
-          )}
+          <img
+            src={logoSrc}
+            alt="SimpleX"
+            style={{ height: space['12'], width: 'auto', display: 'block' }}
+          />
         </ConditionalWrapper>
         {pathnameWithoutQuery !== '/' && breakpoints.sm && (
           <>

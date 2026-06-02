@@ -145,19 +145,24 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
           />
         </filter>
       </defs>
-      {/* SimpleX brand mark — swapped in for the ENS four-diamond glyph.
-          Source: SocialSimplex.svg (single-path 0..34 viewBox). Translated
-          to the same upper-left corner as the original ENS mark and scaled
-          to a comparable footprint. White fill + drop-shadow to read on
-          both the blue/red gradient backgrounds. */}
-      <g transform="translate(33 33) scale(1.4)" filter="url(#dropShadow)">
-        <path
-          fill="white"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M3.02972 8.59396L8.62219 14.186L14.3703 8.43848L17.1668 11.2346L11.4182 16.982L17.0112 22.5742L14.1371 25.448L8.5441 19.8557L2.79651 25.6035L0 22.8074L5.74813 17.0597L0.155656 11.4678L3.02972 8.59396Z M14.0922 25.5L16.9434 22.6486L16.9423 22.6478L22.6464 16.9456L17.0512 11.3519L17.0518 11.3514L14.2542 8.55418L8.65961 2.95973L11.5114 0.108337L17.106 5.70288L22.8095 0L25.607 2.79722L19.903 8.5L25.4981 14.0943L31.2022 8.39169L33.9997 11.1889L28.2957 16.8914L33.8914 22.4861L31.0396 25.3375L25.4439 19.7428L19.7404 25.4454L25.3361 31.0403L22.4843 33.8917L16.8887 28.2968L11.1862 34L8.38867 31.2028L14.0922 25.5Z"
-        />
-      </g>
+      {/* SimpleX badge — JPG with rounded corners. The clipPath gives the
+          rounded-square look (rx=10 of a 48px badge). Falls back gracefully
+          to no badge if the asset doesn't load. */}
+      <defs>
+        <clipPath id="simplexBadgeClip">
+          <rect x="32" y="32" width="48" height="48" rx="10" ry="10" />
+        </clipPath>
+      </defs>
+      <image
+        href="/simplex-nft-badge.jpg"
+        x="32"
+        y="32"
+        width="48"
+        height="48"
+        preserveAspectRatio="xMidYMid slice"
+        clipPath="url(#simplexBadgeClip)"
+        filter="url(#dropShadow)"
+      />
       {!isNormalised && (
         <>
           <rect x="200" y="34" width="40" height="40" rx="20" fill="white" fillOpacity="0.2" />

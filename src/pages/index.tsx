@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography, useTheme } from '@ensdomains/thorin'
 
 import FaucetBanner from '@app/components/@molecules/FaucetBanner'
 import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
@@ -10,8 +10,6 @@ import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
 import { SimplexHomeBanner } from '@app/components/SimplexHomeBanner'
-
-import ENSFull from '../assets/SimplexFull.svg'
 
 const GradientTitle = styled.h1(
   ({ theme }) => css`
@@ -63,9 +61,14 @@ const Stack = styled.div(
   `,
 )
 
-const StyledENS = styled.div(
+// PNG to preserve the SimpleX brand gradient. Light + dark variants come
+// straight from simplex.chat — the theme-aware <img src> swap below picks
+// the right one for the current mode.
+const StyledLogo = styled.img(
   ({ theme }) => css`
     height: ${theme.space['8.5']};
+    width: auto;
+    display: block;
   `,
 )
 
@@ -90,6 +93,8 @@ const StyledLeadingHeading = styled(LeadingHeading)(
 
 export default function Page() {
   const { t } = useTranslation('common')
+  const { mode } = useTheme()
+  const logoSrc = mode === 'dark' ? '/simplex-logo-dark.png' : '/simplex-logo-light.png'
 
   return (
     <>
@@ -98,7 +103,7 @@ export default function Page() {
       </Head>
       <StyledLeadingHeading>
         <LogoAndLanguage>
-          <StyledENS as={ENSFull} />
+          <StyledLogo src={logoSrc} alt="SimpleX" />
         </LogoAndLanguage>
         <Hamburger />
       </StyledLeadingHeading>
