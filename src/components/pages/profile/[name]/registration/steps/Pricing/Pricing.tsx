@@ -518,7 +518,10 @@ const Pricing = ({
   const { isReserved } = useReservedStatus({ name })
   const { minCharLength } = useControllerLimits()
   const labelLen = name ? name.split('.')[0].length : 0
-  const isTooShort = !!minCharLength && labelLen > 0 && labelLen < minCharLength
+  // minCharLength is only enforced on top-level register(); subname creation
+  // bypasses the controller, so the UI gate must too.
+  const isSubname = !!name && name.split('.').length > 2
+  const isTooShort = !!minCharLength && !isSubname && labelLen > 0 && labelLen < minCharLength
 
   const [seconds, setSeconds] = useState(() => registrationData.seconds ?? ONE_YEAR)
   const [durationType, setDurationType] = useState<'date' | 'years'>(

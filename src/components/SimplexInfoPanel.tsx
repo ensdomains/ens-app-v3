@@ -117,6 +117,11 @@ export const SimplexInfoPanel = ({ name, address }: Props) => {
 
   const label = name ? name.split('.')[0] : ''
   const labelLen = label.length
+  // SimplexController._checkSimplexGates runs only inside register() for
+  // top-level names. Subnames (3LD+) are created via NameWrapper /
+  // setSubnodeOwner, which doesn't apply minCharLength — so the UI gate
+  // shouldn't either.
+  const isSubname = !!name && name.split('.').length > 2
   // Tier buckets correspond to the StablePriceOracle array indices: 3, 4, and 5+
   // (the contract collapses 5+ into a single tier). The deploy script also
   // declares the human-readable 5-char tier at $8 in the plan; if the deployed
@@ -162,7 +167,7 @@ export const SimplexInfoPanel = ({ name, address }: Props) => {
           </div>
         </Helper>
       )}
-      {!!minCharLength && labelLen > 0 && labelLen < minCharLength && (
+      {!!minCharLength && !isSubname && labelLen > 0 && labelLen < minCharLength && (
         <WarnCard role="alert" data-testid="simplex-min-chars-helper">
           <WarnIcon>
             <AlertSVG />

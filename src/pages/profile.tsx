@@ -101,7 +101,10 @@ export default function Page() {
   const { minCharLength } = useControllerLimits()
   const label = name ? String(name).split('.')[0] : ''
   const labelLen = label.length
-  const isTooShort = !!minCharLength && labelLen > 0 && labelLen < minCharLength
+  // Subnames (3LD+) aren't registered through SimplexController.register, so
+  // the minCharLength gate doesn't apply.
+  const isSubname = !!name && String(name).split('.').length > 2
+  const isTooShort = !!minCharLength && !isSubname && labelLen > 0 && labelLen < minCharLength
 
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)
