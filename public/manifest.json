@@ -1,6 +1,6 @@
 {
-  "name": "ENS App",
-  "short_name": "ENS",
+  "name": "SimpleX Namespace",
+  "short_name": "SimpleX",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -16,5 +16,5 @@
   "theme_color": "#5298FF",
   "background_color": "#F6F6F6",
   "display": "standalone",
-  "description": "Decentralised naming for wallets, websites, & more"
+  "description": "Decentralised SimpleX naming on Ethereum."
 }

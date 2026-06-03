@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "ENS App",
-  "short_name": "ENS",
+  "name": "SimpleX Namespace",
+  "short_name": "SimpleX",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -20,5 +20,5 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "description": "Decentralised naming for wallets, websites, & more"
+  "description": "Decentralised SimpleX naming on Ethereum."
 }

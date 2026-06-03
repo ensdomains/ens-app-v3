@@ -99,7 +99,15 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>ENS</title>
+        <title>SimpleX Namespace</title>
+        <meta name="description" content="Decentralised SimpleX naming on Ethereum." />
+        <meta property="og:title" content="SimpleX Namespace" />
+        <meta property="og:description" content="Decentralised SimpleX naming on Ethereum." />
+        <meta property="og:image" content="https://simplex-namespace-contract.pages.dev/simplex-logo-light.png" />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="SimpleX Namespace" />
+        <meta property="twitter:description" content="Decentralised SimpleX naming on Ethereum." />
+        <meta property="twitter:image" content="https://simplex-namespace-contract.pages.dev/simplex-logo-light.png" />
       </Head>
       <StyledLeadingHeading>
         <LogoAndLanguage>
