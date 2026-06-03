@@ -1,2 +1,19 @@
 /legal/privacy-policy https://ens.domains/legal/privacy-policy 301
 /legal/terms-of-use https://ens.domains/legal/terms-of-use 301
+
+# Mirror next.config.mjs `rewrites()`. Those are server-side only and don't
+# survive `next export`, so we re-implement them as edge rewrites for any
+# static host that reads `_redirects` (Cloudflare Pages, Netlify).
+# `200` keeps the URL in the address bar and serves the rewritten static
+# file. More-specific rules must come before the catch-alls.
+/legacyFavourites                 /legacyfavourites                       200
+/my/profile                       /profile?connected=true                 200
+/names/:address                   /my/names?address=:address              200
+/tld/:tld/register                /register?name=:tld                     200
+/tld/:tld/expired-profile         /profile?name=:tld&expired=true         200
+/tld/:tld/import                  /import?name=:tld                       200
+/tld/:tld                         /profile?name=:tld                      200
+/:name/register                   /register?name=:name                    200
+/:name/expired-profile            /profile?name=:name&expired=true        200
+/:name/import                     /import?name=:name                      200
+/:name                            /profile?name=:name                     200
