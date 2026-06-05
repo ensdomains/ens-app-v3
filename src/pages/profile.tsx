@@ -130,7 +130,22 @@ export default function Page() {
   // impossible) shouldn't render the empty-looking ProfileContent — that
   // makes them look registered. Show a yellow warning instead, matching
   // the home banner / min-chars helper style.
-  if (!isBasicLoading && (isReserved || isTooShort || registrationStatus === 'invalid')) {
+  //
+  // BUT: a name can be both reserved AND already registered (e.g. the
+  // admin reserved the label, then immediately registered it to a
+  // recipient via `registerReserved`). In that case the registered
+  // profile must take precedence — the user owns the name and needs to
+  // manage it. Same applies to too-short names that were registered
+  // before the minCharLength gate was raised. Skip the warning when
+  // the registry already has an owner for this node.
+  const isAlreadyRegistered =
+    !!registrationStatus &&
+    ['registered', 'imported', 'owned', 'gracePeriod'].includes(registrationStatus)
+  if (
+    !isBasicLoading &&
+    !isAlreadyRegistered &&
+    (isReserved || isTooShort || registrationStatus === 'invalid')
+  ) {
     const title = isReserved
       ? `${name} is reserved`
       : isTooShort

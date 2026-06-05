@@ -109,7 +109,9 @@ export const transports = {
         // this is a hack to make the types happy, dont remove pls
         [localhost.id]: HttpTransport
       })),
-  [mainnet.id]: initialiseTransports('mainnet'),
+  [mainnet.id]: process.env.NEXT_PUBLIC_MAINNET_RPC_URL
+    ? (http(process.env.NEXT_PUBLIC_MAINNET_RPC_URL) as unknown as FallbackTransport)
+    : initialiseTransports('mainnet'),
   [sepolia.id]: initialiseTransports('sepolia'),
 } as const
 

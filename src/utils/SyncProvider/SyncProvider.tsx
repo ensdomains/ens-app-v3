@@ -227,7 +227,7 @@ export const useGraphOutOfSync = () => {
   // out of sync with. Suppress the hamburger-menu spinner + warning.
   if (
     typeof window !== 'undefined' &&
-    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES || process.env.NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES)
   ) {
     return false
   }
@@ -243,7 +243,7 @@ export const useHasGraphError = () => {
   // enabled.
   if (
     typeof window !== 'undefined' &&
-    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES || process.env.NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES)
   ) {
     return { data: false, isLoading: false }
   }
@@ -257,7 +257,7 @@ export const useGraphErrorType = () => {
   // wolf for a known-and-intentional missing dependency.
   if (
     typeof window !== 'undefined' &&
-    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+    (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES || process.env.NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES)
   ) {
     return null
   }

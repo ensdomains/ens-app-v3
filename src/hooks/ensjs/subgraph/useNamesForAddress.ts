@@ -9,7 +9,7 @@ import {
   GetNamesForAddressReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
-import { deploymentAddresses, sepoliaDeploymentAddresses } from '@app/constants/chains'
+import { getSnrcAddresses } from '@app/constants/chains'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
@@ -24,8 +24,10 @@ const getNamesForAddressFromChain = async (
   address: Address,
 ): Promise<GetNamesForAddressReturnType> => {
   const chainId: number = client?.chain?.id
-  const addresses =
-    chainId === 11155111 ? sepoliaDeploymentAddresses : deploymentAddresses
+  // Pick the SNRC bundle for whichever live network the wallet is on
+  // (mainnet=1, sepolia=11155111, localhost=1337). Without this, mainnet
+  // would fall through to the empty localhost bundle and return [].
+  const addresses = getSnrcAddresses(chainId)
   const baseRegistrar = addresses.BaseRegistrarImplementation as Address | undefined
   // eslint-disable-next-line no-console
   console.log('[chain-scan] chainId=', chainId, 'baseRegistrar=', baseRegistrar, 'address=', address)
@@ -36,22 +38,23 @@ const getNamesForAddressFromChain = async (
   }
   const tld = (process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing') as string
 
-  // Public Sepolia RPCs cap eth_getLogs at 10k blocks per call; scanning from
-  // genesis would reject. Chunk over recent history. Locally (Hardhat) the
-  // chain is fresh, so we can scan from 0 in a single call.
+  // Public mainnet + Sepolia RPCs cap eth_getLogs at 10k blocks per call;
+  // scanning from genesis would reject. Chunk over recent history on both.
+  // Locally (Hardhat) the chain is fresh, so we can scan from 0 in one call.
   const event = parseAbiItem(
     'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
   )
   let logs: any[] = []
-  if (chainId === 11155111) {
+  const needsChunking = chainId === 1 || chainId === 11155111
+  if (needsChunking) {
     const latest = await getBlockNumber(client)
     const WINDOW = 9999n
-    // ~5 days of Sepolia history at 12s blocks. Enough to find any name
-    // registered after the deploy; bump if older registrations are missed.
+    // ~5 days at 12s blocks. Bump if you need to find registrations older
+    // than this. Mainnet deploys are recent, so 40k blocks covers easily.
     const SCAN_DEPTH = 40000n
     const start = latest > SCAN_DEPTH ? latest - SCAN_DEPTH : 0n
     // eslint-disable-next-line no-console
-    console.log('[chain-scan] sepolia window', { latest, start, depth: SCAN_DEPTH })
+    console.log('[chain-scan] window', { chainId, latest, start, depth: SCAN_DEPTH })
     for (let from = start; from <= latest; from += WINDOW + 1n) {
       const to = from + WINDOW > latest ? latest : from + WINDOW
       try {
@@ -177,7 +180,7 @@ export const getNamesForAddressQueryFn =
     // Transfer events instead.
     if (
       typeof window !== 'undefined' &&
-      (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES)
+      (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES || process.env.NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES)
     ) {
       if (pageParam && pageParam.length > 0) return [] as GetNamesForAddressReturnType
       try {
