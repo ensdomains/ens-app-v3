@@ -1,5 +1,5 @@
 {
-  "title": "Register {{name}} on ENS",
+  "title": "Register {{name}} on SNRC",
   "subtitle": "Register",
   "heading": "Register {{name}}",
   "invoice": {
@@ -15,7 +15,7 @@
     "nameTooLong": "The name you want to register is too long. Please choose a shorter name."
   },
   "disabled": {
-    "title": "ENS v2 beta is now deployed on Sepolia",
+    "title": "SNRC v2 beta is now deployed on Sepolia",
     "banner": "Future registration will be in the new Manager app. You'll be redirected there in 1 second. Click <ManagerLink>here</ManagerLink> to proceed now."
   },
   "steps": {
@@ -98,6 +98,8 @@
               "default": "Add address here",
               "eth": "0xb8c2C2...",
               "btc": "3FZbgi29...",
+              "xmr": "4Aux5y...",
+              "dot": "15oF4u...",
               "sol": "D4kA7VzHnmV...",
               "op": "0xb8c2C2...",
               "arb1": "0xb8c2C2...",

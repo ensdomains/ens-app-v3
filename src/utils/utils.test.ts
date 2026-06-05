@@ -85,7 +85,10 @@ describe('formatDateTime', () => {
   it('should format time correctly', () => {
     const date = new Date('2020-01-01T00:00:00.000Z')
     const result = formatDateTime(date)
-    expect(result).toEqual('24:00:00 UTC')
+    // Intl.DateTimeFormat in newer Node versions renders midnight as
+    // `00:00:00` (hour12: false, hourCycle: 'h23'); older Nodes used
+    // `24:00:00`. Both are valid per Unicode TR35 — assert the modern form.
+    expect(result).toEqual('00:00:00 UTC')
   })
 })
 
@@ -93,7 +96,7 @@ describe('formatFullExpiry', () => {
   it('should format the date and time as expected', () => {
     const expiry = new Date('2020-01-01T00:00:00.000Z')
     const result = formatFullExpiry(expiry)
-    expect(result).toEqual('January 1, 2020, 24:00:00 UTC')
+    expect(result).toEqual('January 1, 2020, 00:00:00 UTC')
   })
   it('should return empty if undefined', () => {
     expect(formatFullExpiry()).toEqual('')

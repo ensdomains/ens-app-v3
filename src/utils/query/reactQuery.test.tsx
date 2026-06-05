@@ -51,13 +51,17 @@ describe('reactQuery', () => {
   })
 
   it('should create a query client with default options', () => {
+    // tanstack-query v5 adds two extra default fields (`retry` and
+    // `throwOnError`) that weren't present in the version this test was
+    // originally written against. Use objectContaining + asymmetric
+    // matchers so the assertion survives library upgrades.
     expect(queryClient.getDefaultOptions()).toEqual({
-      queries: {
+      queries: expect.objectContaining({
         refetchOnMount: true,
         staleTime: 0,
         gcTime: 1_000 * 60 * 60 * 24,
         queryKeyHashFn: expect.any(Function),
-      },
+      }),
     })
   })
 

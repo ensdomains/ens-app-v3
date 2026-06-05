@@ -148,7 +148,10 @@ export const useBasicName = ({
       !!(
         nameWrapperAddress &&
         !isWrapped &&
-        normalisedName && isEthLikeTld(normalisedName) &&
+        // Reject the bare TLD itself (`eth`) — only names *within* the TLD
+        // are wrappable. 2LDs and subnames both contain a dot.
+        normalisedName && normalisedName.includes('.') &&
+        isEthLikeTld(normalisedName) &&
         !isLabelTooLong(normalisedName) &&
         !!registrationStatus &&
         ['registered', 'imported', 'owned'].includes(registrationStatus)

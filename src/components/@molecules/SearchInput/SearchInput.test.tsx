@@ -243,8 +243,10 @@ describe('SearchInput', () => {
 
     await userEvent.type(screen.getByTestId('search-input-box'), address)
 
+    // SNRC: the search dropdown auto-appends NEXT_PUBLIC_SIMPLEX_TLD
+    // (default `testing`) rather than `.eth`.
     await waitFor(() =>
-      expect(screen.queryByText(`${address.toLowerCase()}.eth`)).toBeInTheDocument(),
+      expect(screen.queryByText(`${address.toLowerCase()}.testing`)).toBeInTheDocument(),
     )
   })
   it('should show invalid search as invalid', async () => {
@@ -290,7 +292,7 @@ describe('SearchInput', () => {
       () => {
         const results = screen.getByTestId('search-input-results')
         expect(results).toBeInTheDocument()
-        expect(results).toHaveTextContent('test.eth')
+        expect(results).toHaveTextContent('test.testing')
       },
       {
         timeout: 300,
@@ -325,7 +327,7 @@ describe('SearchInput', () => {
       () => {
         const results = screen.getByTestId('search-input-results')
         expect(results).toBeInTheDocument()
-        expect(results).toHaveTextContent('test.eth')
+        expect(results).toHaveTextContent('test.testing')
       },
       {
         timeout: 300,

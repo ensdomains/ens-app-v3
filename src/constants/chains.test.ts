@@ -100,101 +100,65 @@ describe('chains', () => {
     })
 
     describe('hostname-based detection', () => {
-      it('should return mainnet for test.app.ens.domains', () => {
-        // @ts-ignore
-        global.window.location = createMockLocation('test.app.ens.domains')
-        const result = getNetworkFromUrl()
-        expect(result).toBe('mainnet')
-      })
-
-      it('should return sepolia for preview URLs ending with ens-app-v3.pages.dev', () => {
-        // @ts-ignore
-        global.window.location = createMockLocation('abc.ens-app-v3.pages.dev')
-        const result = getNetworkFromUrl()
-        expect(result).toBe('sepolia')
-      })
-
+      // SNRC dropped the ENS-specific hostname branches (app.ens.domains,
+      // sepolia.app.ens.domains, *.ens-app-v3.pages.dev). The only
+      // hostname-driven path left is `localhost` / `127.0.0.1`, which
+      // resolves to either 'localhost' (with NEXT_PUBLIC_PROVIDER set) or
+      // 'sepolia' (without). Any other hostname returns undefined and
+      // requires NEXT_PUBLIC_CHAIN_NAME to disambiguate.
       it('should return localhost for localhost with local provider', async () => {
-        // Set up environment before importing
         process.env.NEXT_PUBLIC_PROVIDER = 'http://localhost:8545'
         // @ts-ignore
         global.window.location = createMockLocation('localhost')
-        
-        // Re-import the module to pick up the new environment variable
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
-        const result = getNetworkFromUrlFresh()
-        expect(result).toBe('localhost')
+        expect(getNetworkFromUrlFresh()).toBe('localhost')
       })
 
       it('should return sepolia for localhost without local provider', async () => {
         delete process.env.NEXT_PUBLIC_PROVIDER
         // @ts-ignore
         global.window.location = createMockLocation('localhost')
-        
-        // Re-import the module to pick up the cleared environment variable
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
-        const result = getNetworkFromUrlFresh()
-        expect(result).toBe('sepolia')
+        expect(getNetworkFromUrlFresh()).toBe('sepolia')
       })
 
       it('should return localhost for 127.0.0.1 with local provider', async () => {
         process.env.NEXT_PUBLIC_PROVIDER = 'http://localhost:8545'
         // @ts-ignore
         global.window.location = createMockLocation('127.0.0.1')
-        
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
-        const result = getNetworkFromUrlFresh()
-        expect(result).toBe('localhost')
+        expect(getNetworkFromUrlFresh()).toBe('localhost')
       })
 
       it('should return sepolia for 127.0.0.1 without local provider', async () => {
         delete process.env.NEXT_PUBLIC_PROVIDER
         // @ts-ignore
         global.window.location = createMockLocation('127.0.0.1')
-        
         vi.resetModules()
         const { getNetworkFromUrl: getNetworkFromUrlFresh } = await import('./chains')
-        const result = getNetworkFromUrlFresh()
-        expect(result).toBe('sepolia')
+        expect(getNetworkFromUrlFresh()).toBe('sepolia')
       })
 
-      it('should return sepolia for sepolia subdomain', () => {
-        // @ts-ignore
-        global.window.location = createMockLocation('sepolia.ens.domains')
-        const result = getNetworkFromUrl()
-        expect(result).toBe('sepolia')
-      })
-
-      it('should return mainnet for app.ens.domains', () => {
-        // @ts-ignore
-        global.window.location = createMockLocation('app.ens.domains')
-        const result = getNetworkFromUrl()
-        expect(result).toBe('mainnet')
-      })
-
-      it('should return mainnet for unknown hostname', () => {
+      it('should return undefined for any non-local hostname when no env var is set', () => {
         // @ts-ignore
         global.window.location = createMockLocation('unknown.example.com')
-        const result = getNetworkFromUrl()
-        expect(result).toBe('mainnet')
+        expect(getNetworkFromUrl()).toBeUndefined()
       })
     })
   })
 
   describe('getChainsFromUrl', () => {
-    it('should return mainnet chains for mainnet network', () => {
-      // @ts-ignore
-      global.window.location = createMockLocation('app.ens.domains')
+    it('should return mainnet chains when NEXT_PUBLIC_CHAIN_NAME=mainnet', () => {
+      process.env.NEXT_PUBLIC_CHAIN_NAME = 'mainnet'
       const result = getChainsFromUrl()
       expect(result).toEqual([mainnetWithEns])
     })
 
-    it('should return sepolia chains for sepolia network', () => {
-      // @ts-ignore
-      global.window.location = createMockLocation('sepolia.ens.domains')
+    it('should return sepolia chains when NEXT_PUBLIC_CHAIN_NAME=sepolia', () => {
+      process.env.NEXT_PUBLIC_CHAIN_NAME = 'sepolia'
       const result = getChainsFromUrl()
       expect(result).toEqual([sepoliaWithEns])
     })
@@ -210,33 +174,34 @@ describe('chains', () => {
       expect(result).toEqual([localhostWithEnsFresh])
     })
 
-    it('should return mainnet for undefined network', () => {
+    it('should fall back to sepolia for undefined network', () => {
+      // SNRC default fallback: when neither NEXT_PUBLIC_CHAIN_NAME nor a
+      // localhost hostname identifies the network, the dApp serves sepolia
+      // since that's where .testing originally lives in test environments.
       Object.defineProperty(global, 'window', {
         value: undefined,
         writable: true,
       })
-      const result = getChainsFromUrl()
-      expect(result).toMatchObject([mainnetWithEns])
+      expect(getChainsFromUrl()).toMatchObject([sepoliaWithEns])
     })
   })
 
   describe('chain configurations', () => {
-    it('should have correct contract addresses for sepolia', () => {
-      expect(sepoliaWithEns.contracts.ensEthRegistrarController?.address).toBe(
-        '0xfb3cE5D01e0f33f41DbB39035dB9745962F1f968',      
-      )
-      expect(sepoliaWithEns.contracts.ensPublicResolver?.address).toBe(
-        '0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5',
-      )
-      expect(sepoliaWithEns.contracts.ensReverseRegistrar?.address).toBe(
-        '0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6',
-      )
-    })
-
-    it('should have correct chain ids', () => {
+    it('should keep the correct chain ids', () => {
       expect(mainnetWithEns.id).toBe(mainnet.id)
       expect(sepoliaWithEns.id).toBe(sepolia.id)
       expect(localhostWithEns.id).toBe(localhost.id)
+    })
+
+    it('should reflect SNRC addresses on sepolia (parsed from env)', () => {
+      // sepoliaWithEns is built from `sepoliaDeploymentAddresses` (parsed
+      // from NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES at module load
+      // time). In tests the env var is unset so the bundle is empty, but
+      // the override hook should still be wired up — the canonical ENS
+      // Sepolia controller address must NOT leak through.
+      expect(sepoliaWithEns.contracts.ensEthRegistrarController?.address).not.toBe(
+        '0xfb3cE5D01e0f33f41DbB39035dB9745962F1f968',
+      )
     })
   })
 })

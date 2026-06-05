@@ -38,7 +38,7 @@ export default function Page() {
     <>
       <Head>
         {/* this is wrapped in a string because of the way nextjs renders content, don't remove! */}
-        <title>{`ENS - ${t('notFound')}`}</title>
+        <title>{`SNRC - ${t('notFound')}`}</title>
       </Head>
       <StyledLeadingHeading>
         <LogoAndLanguage>

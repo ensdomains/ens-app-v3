@@ -31,7 +31,11 @@ export const useControllerLimits = () => {
   const chainId = useChainId()
   const controllerAddress = getSnrcAddresses(chainId).ETHRegistrarController as Address | undefined
   const enabled = !!controllerAddress && controllerAddress !== '0x0000000000000000000000000000000000000000'
-  const { data } = useReadContracts({
+  // Some test fixtures mock the whole `wagmi` module without including
+  // `useReadContracts`, leaving the hook undefined at call time. Coalesce
+  // so destructuring `data` doesn't blow up render. Real callers see the
+  // hook return its full object as usual.
+  const result = useReadContracts({
     contracts: enabled
       ? [
           { address: controllerAddress!, abi: controllerAbi, functionName: 'minCharLength' },
@@ -41,6 +45,7 @@ export const useControllerLimits = () => {
       : [],
     query: { enabled, staleTime: 60_000 },
   })
+  const data = result?.data
 
   return {
     minCharLength: data?.[0]?.status === 'success' ? Number(data[0].result as number) : undefined,

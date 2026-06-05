@@ -18,6 +18,20 @@
       "default": { "name": "Blockchair", "url": "https://blockchair.com/bitcoin" }
     }
   },
+  "xmr": {
+    "name": "Monero",
+    "nativeCurrency": { "name": "Monero", "symbol": "XMR", "decimals": 12 },
+    "blockExplorers": {
+      "default": { "name": "XMRChain", "url": "https://xmrchain.net" }
+    }
+  },
+  "dot": {
+    "name": "Polkadot",
+    "nativeCurrency": { "name": "Polkadot", "symbol": "DOT", "decimals": 10 },
+    "blockExplorers": {
+      "default": { "name": "Subscan", "url": "https://polkadot.subscan.io" }
+    }
+  },
   "sol": {
     "name": "Solana",
     "nativeCurrency": { "name": "Solana", "symbol": "SOL", "decimals": 9 },

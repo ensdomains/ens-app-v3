@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css, DefaultTheme, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { useTheme as useThorinTheme } from '@ensdomains/thorin'
 
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
@@ -126,9 +125,14 @@ const routesNoSearch = routes.filter(
 )
 
 export const Header = () => {
-  const { space } = useTheme()
-  const { mode } = useThorinTheme()
-  const logoSrc = mode === 'dark' ? '/simplex-logo-dark.png' : '/simplex-logo-light.png'
+  const theme = useTheme() as DefaultTheme & { mode?: 'light' | 'dark' }
+  // The Thorin theme object is what's passed to styled-components'
+  // ThemeProvider in `_app.tsx` (and in `test-utils.tsx`), so the same
+  // hook gives us both styled-components tokens and Thorin's `mode`.
+  // Reading via styled-components avoids depending on Thorin's separate
+  // ThemeProvider, which the test fixtures don't wrap in.
+  const { space } = theme
+  const logoSrc = theme.mode === 'dark' ? '/simplex-logo-dark.png' : '/simplex-logo-light.png'
   const router = useRouter()
   const isInitial = useInitial()
   const { isConnected } = useAccount()

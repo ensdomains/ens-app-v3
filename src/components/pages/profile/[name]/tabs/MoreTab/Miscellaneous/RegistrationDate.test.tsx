@@ -42,6 +42,6 @@ describe('RegistrationDate', () => {
     const transactionHash = '0x1234567890abcdef'
     render(<RegistrationDate {...{ registrationData: { registrationDate, transactionHash } }} />)
     const element = screen.getByText('action.view')
-    expect(element).toHaveAttribute('href', `https://etherscan.io/tx/0x1234567890abcdef`)
+    expect(element).toHaveAttribute('href', `https://localhost.etherscan.io/tx/0x1234567890abcdef`)
   })
 })

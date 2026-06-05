@@ -85,11 +85,11 @@
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
     "back": "Back",
-    "oldApp": "Old ENS App",
+    "oldApp": "Old SNRC App",
     "language": "Language",
     "theme": "Theme",
     "currency": "Currency",
-    "ipfsApp": "IPFS ENS App",
+    "ipfsApp": "IPFS SNRC App",
     "feedback": "Feedback",
     "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet.",
     "mode": {
@@ -193,7 +193,7 @@
     },
     "networkLatency": {
       "title": "Slow data syncing",
-      "message": "The ENS app is experiencing slow downs due to network latency issues."
+      "message": "The SNRC app is experiencing slow downs due to network latency issues."
     }
   },
   "transaction": {
@@ -385,7 +385,7 @@
     "empty": "No options found"
   },
   "testnetFaucet": {
-    "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the ENS manager app, as well as any other testnet usage.",
+    "explanation": "Each address on {{ testnet }} can claim {{ amount }} {{ ticker }} to test out the SNRC manager app, as well as any other testnet usage.",
     "note": "It may take a few minutes to show up in your wallet."
   },
   "roles": {
