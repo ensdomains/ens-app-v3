@@ -6,6 +6,12 @@
 # static host that reads `_redirects` (Cloudflare Pages, Netlify).
 # `200` keeps the URL in the address bar and serves the rewritten static
 # file. More-specific rules must come before the catch-alls.
+#
+# Status-200 rewrites on Cloudflare Pages override real static assets, so a
+# bare `/:name` catch-all would intercept `/favicon.svg`, `/simplex-logo-*.png`
+# etc. and rewrite them to the profile page. Scope the name catch-alls to
+# the literal `.testing`/`.simplex` TLD suffixes so unrelated paths fall
+# through to the static-asset handler.
 /legacyFavourites                 /legacyfavourites                       200
 /my/profile                       /profile?connected=true                 200
 /names/:address                   /my/names?address=:address              200
@@ -13,7 +19,11 @@
 /tld/:tld/expired-profile         /profile?name=:tld&expired=true         200
 /tld/:tld/import                  /import?name=:tld                       200
 /tld/:tld                         /profile?name=:tld                      200
-/:name/register                   /register?name=:name                    200
-/:name/expired-profile            /profile?name=:name&expired=true        200
-/:name/import                     /import?name=:name                      200
-/:name                            /profile?name=:name                     200
+/:label.testing/register          /register?name=:label.testing           200
+/:label.testing/expired-profile   /profile?name=:label.testing&expired=true  200
+/:label.testing/import            /import?name=:label.testing             200
+/:label.testing                   /profile?name=:label.testing            200
+/:label.simplex/register          /register?name=:label.simplex           200
+/:label.simplex/expired-profile   /profile?name=:label.simplex&expired=true  200
+/:label.simplex/import            /import?name=:label.simplex             200
+/:label.simplex                   /profile?name=:label.simplex            200
