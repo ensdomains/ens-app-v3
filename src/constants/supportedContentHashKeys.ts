@@ -1,1 +1,1 @@
-export const supportedContentHashKeys = ['ipfs', 'swarm', 'onion', 'skynet', 'arweave'] as const
+export const supportedContentHashKeys = ['ipfs', 'swarm', 'onion', 'skynet', 'arweave', 'walrus'] as const
