@@ -1,0 +1,149 @@
+name: Build & deploy SPA to GitHub Pages
+
+# SNRC mainnet .testing deploy. Self-contained: this workflow lives in the
+# ens-app-v3 fork and does NOT depend on the parent simplex-namespace-contract
+# repo — `deployments.mainnet.testing.json` is checked in beside this file.
+#
+# Coexists with the Cloudflare Pages deploy. Both hit the same source tree
+# and the same .env.production-baked NEXT_PUBLIC_* values, so the rendered
+# bundles should match. The Cloudflare one is the primary URL; this is a
+# mirror under testing-names.simplex.chat.
+#
+# One-time setup on simplex-network/ens-app-v3:
+#   Settings → Pages → Source: GitHub Actions
+#   Settings → Pages → Custom domain: testing-names.simplex.chat
+#   Add a DNS CNAME record  testing-names → simplex-network.github.io
+#   Once DNS resolves, toggle "Enforce HTTPS" to get the Let's Encrypt cert.
+
+on:
+  push:
+    branches: [mainnet-testing]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Pages honours one in-flight deploy per environment. Let the running one
+# finish so a wedged build doesn't strand the previous version.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ens-app-v3 pins `packageManager: pnpm@10.23.0` in package.json. The
+      # cache key keys off pnpm-lock.yaml so subsequent runs skip the
+      # download phase entirely.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: '10.23.0'
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      # pnpm 10.23 validates patched-dependency content hashes against the
+      # lockfile and rejects --frozen-lockfile if any patch file's hash has
+      # drifted. Resolution is still pinned via --prefer-frozen-lockfile.
+      - name: Install deps
+        run: pnpm install --no-frozen-lockfile --prefer-frozen-lockfile
+
+      # Bake the deployed-contract addresses into the static export. Next
+      # inlines NEXT_PUBLIC_* env vars at build time; src/constants/chains.ts
+      # reads this one and falls through to defaults if unset.
+      - name: Build static SPA
+        env:
+          NEXT_PUBLIC_CHAIN_NAME: mainnet
+          NEXT_PUBLIC_SIMPLEX_TLD: testing
+        run: |
+          export NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES="$(node -e "process.stdout.write(JSON.stringify(JSON.parse(require('fs').readFileSync('deployments.mainnet.testing.json','utf8'))))")"
+          pnpm build
+          pnpm export
+
+      # GitHub-Pages-only files layered on top of the export:
+      #   - CNAME       custom domain
+      #   - .nojekyll   keep `_next/` underscore-prefixed dirs intact
+      #   - 404.html    JS redirect that mirrors public/_redirects (Cloudflare
+      #                 honours _redirects directly; GH Pages does not)
+      - name: Add GitHub-Pages-only files to artifact
+        working-directory: out
+        run: |
+          echo testing-names.simplex.chat > CNAME
+          touch .nojekyll
+          cat > 404.html <<'HTML'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="utf-8">
+          <title>Redirecting…</title>
+          <meta name="robots" content="noindex">
+          <style>body{font:14px/1.4 system-ui,sans-serif;color:#666;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}</style>
+          <script>
+          (function () {
+            var p = location.pathname.replace(/\/+$/, '');
+            var enc = encodeURIComponent;
+            var go = function (path, qs) { location.replace(path + (qs ? '?' + qs : '')); };
+
+            // /:label.testing or /:label.simplex (optionally /register | /import | /expired-profile)
+            var m = p.match(/^\/(.+?\.(?:testing|simplex))(?:\/(register|expired-profile|import))?$/);
+            if (m) {
+              var q = 'name=' + enc(m[1]);
+              if (m[2] === 'register')        return go('/register', q);
+              if (m[2] === 'expired-profile') return go('/profile', q + '&expired=true');
+              if (m[2] === 'import')          return go('/import', q);
+              return go('/profile', q);
+            }
+
+            // /tld/:tld[/<sub>]
+            m = p.match(/^\/tld\/([^/]+)(?:\/(register|expired-profile|import))?$/);
+            if (m) {
+              var qq = 'name=' + enc(m[1]);
+              if (m[2] === 'register')        return go('/register', qq);
+              if (m[2] === 'expired-profile') return go('/profile', qq + '&expired=true');
+              if (m[2] === 'import')          return go('/import', qq);
+              return go('/profile', qq);
+            }
+
+            // /names/:address
+            m = p.match(/^\/names\/(.+)$/);
+            if (m) return go('/my/names', 'address=' + enc(m[1]));
+
+            if (p === '/my/profile')           return go('/profile', 'connected=true');
+            if (p === '/legacyFavourites')     return go('/legacyfavourites', '');
+            if (p === '/legal/privacy-policy') return location.replace('https://ens.domains/legal/privacy-policy');
+            if (p === '/legal/terms-of-use')   return location.replace('https://ens.domains/legal/terms-of-use');
+
+            // Unrecognised path — fall back to homepage rather than dead-ending.
+            location.replace('/');
+          })();
+          </script>
+          </head>
+          <body>Redirecting…</body>
+          </html>
+          HTML
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
