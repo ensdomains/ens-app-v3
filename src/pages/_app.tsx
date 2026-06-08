@@ -10,6 +10,7 @@ if (typeof window !== 'undefined') {
   })
 }
 
+import { lightTheme, RainbowKitProvider, type Theme } from '@getpara/rainbowkit'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -34,7 +35,6 @@ import { setupAnalytics } from '@app/utils/analytics'
 import { PostHogProvider } from '@app/utils/analytics/posthog'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
-import { RainbowKitWithParaProvider } from '@app/utils/query/RainbowKitWithParaProvider'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
 import { SyncProvider } from '@app/utils/SyncProvider/SyncProvider'
 
@@ -174,9 +174,19 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
     },
   }
 
+  const rainbowKitTheme: Theme = {
+    ...lightTheme({
+      accentColor: thorinLightTheme.colors.accent,
+      borderRadius: 'medium',
+    }),
+    fonts: {
+      body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
+    },
+  }
+
   return (
     <PostHogProvider>
-      <RainbowKitWithParaProvider>
+      <RainbowKitProvider theme={rainbowKitTheme}>
         <TransactionStoreProvider>
           <ThemeProvider theme={themeWithCSSVars}>
             <BreakpointProvider queries={breakpoints}>
@@ -196,7 +206,7 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
             </BreakpointProvider>
           </ThemeProvider>
         </TransactionStoreProvider>
-      </RainbowKitWithParaProvider>
+      </RainbowKitProvider>
     </PostHogProvider>
   )
 }
