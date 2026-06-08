@@ -37,6 +37,8 @@ const FullInvoice = ({
   seconds,
   totalDurationBasedFee,
   estimatedGasFee,
+  estimatedGasLoading,
+  priceLoading,
   hasPremium,
   premiumFee,
   gasPrice,
@@ -58,12 +60,12 @@ const FullInvoice = ({
           }),
         }),
         bufferPercentage: CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE,
-        value: totalDurationBasedFee,
+        value: priceLoading ? undefined : totalDurationBasedFee,
         color: seconds < 30 * ONE_DAY ? ('orangePrimary' as Colors) : undefined,
       },
       {
         label: t('invoice.estimatedNetworkFee'),
-        value: estimatedGasFee,
+        value: estimatedGasLoading ? undefined : estimatedGasFee,
       },
       ...(hasPremium
         ? [
@@ -76,7 +78,16 @@ const FullInvoice = ({
           ]
         : []),
     ]
-  }, [t, seconds, totalDurationBasedFee, estimatedGasFee, hasPremium, premiumFee])
+  }, [
+    t,
+    seconds,
+    totalDurationBasedFee,
+    estimatedGasFee,
+    estimatedGasLoading,
+    priceLoading,
+    hasPremium,
+    premiumFee,
+  ])
 
   return (
     <InvoiceContainer>

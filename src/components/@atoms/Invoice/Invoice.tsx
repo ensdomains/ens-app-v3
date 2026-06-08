@@ -50,9 +50,11 @@ type Props = {
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
   const filteredItems = items
     .map(({ value, bufferPercentage }) =>
-      value && unit === 'eth' && bufferPercentage ? (value * bufferPercentage) / 100n : value,
+      value !== undefined && unit === 'eth' && bufferPercentage
+        ? (value * bufferPercentage) / 100n
+        : value,
     )
-    .filter((x): x is bigint => !!x)
+    .filter((x): x is bigint => x !== undefined)
   const total = filteredItems.reduce((a, b) => a + b, 0n)
   const hasEmptyItems = filteredItems.length !== items.length
 
@@ -61,9 +63,9 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
       {items.map(({ label, value, bufferPercentage, color }, inx) => (
         <LineItem data-testid={`invoice-item-${inx}`} $color={color} key={label}>
           <div>{label}</div>
-          <Skeleton loading={!value}>
+          <Skeleton loading={value === undefined}>
             <div data-testid={`invoice-item-${inx}-amount`}>
-              <CurrencyText bufferPercentage={bufferPercentage} eth={value || 0n} currency={unit} />
+              <CurrencyText bufferPercentage={bufferPercentage} eth={value ?? 0n} currency={unit} />
             </div>
           </Skeleton>
         </LineItem>

@@ -31,7 +31,10 @@ export const useEstimateFullRegistration = ({
     registrationData,
   })
 
-  const { data: price } = usePrice({ nameOrNames: name, duration: registrationParams.duration })
+  const { data: price, isPending: priceLoading } = usePrice({
+    nameOrNames: name,
+    duration: registrationParams.duration,
+  })
 
   const ethRegistrarControllerAddress = useContractAddress({
     contract: 'ensEthRegistrarController',
@@ -74,6 +77,7 @@ export const useEstimateFullRegistration = ({
     estimatedGasLoading: isLoading || gasPriceLoading,
     yearlyFee,
     totalDurationBasedFee,
+    priceLoading,
     hasPremium,
     premiumFee,
     gasPrice,

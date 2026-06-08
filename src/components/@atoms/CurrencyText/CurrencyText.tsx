@@ -17,16 +17,22 @@ export const makeCurrencyDisplay = ({
   bufferPercentage = 100n,
   currency = 'eth',
 }: Props & { ethPrice?: bigint }) => {
-  if (!eth || !ethPrice) return '0.0000 ETH'
+  if (eth === undefined) return '0.0000 ETH'
   if (currency === 'eth')
     return makeDisplay({ value: (eth * bufferPercentage) / 100n, symbol: 'eth' })
+  if (ethPrice === undefined) return '0.0000 ETH'
   return makeDisplay({ value: (eth * ethPrice) / BigInt(1e8), symbol: currency })
 }
 
 export const CurrencyText = ({ eth, bufferPercentage = 100n, currency = 'eth' }: Props) => {
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
 
-  const isLoading = isEthPriceLoading || !eth || !ethPrice
+  // `eth` of `0n` is a real value (free .testing), not a loading state. Only
+  // gate on `undefined`. For fiat display we additionally need `ethPrice`; the
+  // pure-ETH display does not, so skip the price-load gate when currency=eth.
+  const isLoading =
+    eth === undefined ||
+    (currency !== 'eth' && (isEthPriceLoading || ethPrice === undefined))
 
   return (
     <Skeleton loading={isLoading}>
