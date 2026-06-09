@@ -7,7 +7,7 @@ env:
 
 jobs:
   coverage:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -20,7 +20,7 @@ jobs:
       - run: pnpm test:coverage
 
   build-stateless:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -43,7 +43,7 @@ jobs:
           path: stateless-build.tar
 
   build-stateful-sepolia:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -63,7 +63,7 @@ jobs:
           path: stateful-sepolia-build.tar
 
   build-stateful-mainnet:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -86,7 +86,7 @@ jobs:
     name: stateless (${{matrix.shard}})
     needs: build-stateless
     timeout-minutes: 20
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         shard:
@@ -158,7 +158,7 @@ jobs:
     name: stateful-sepolia (${{matrix.shard}})
     needs: build-stateful-sepolia
     timeout-minutes: 10
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         shard: [1, 2, 3]
@@ -199,7 +199,7 @@ jobs:
     name: stateful-mainnet (${{matrix.shard}})
     needs: build-stateful-mainnet
     timeout-minutes: 10
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         shard: [1, 2, 3]
