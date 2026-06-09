@@ -22,6 +22,9 @@ import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEd
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import { AddProfileRecordView } from './AddProfileRecordView'
+import { MultiUrlField } from '@app/components/@molecules/MultiUrlField/MultiUrlField'
+import { parseSimplexUrls } from '@app/utils/parseSimplexUrls'
+
 import { CustomProfileRecordInput } from './CustomProfileRecordInput'
 import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
@@ -147,8 +150,10 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
     trigger,
     control,
     handleSubmit,
+    setValue,
     addRecords,
     removeRecordAtIndex,
+    updateRecordAtIndex,
     removeRecordByGroupAndKey: removeRecordByTypeAndKey,
     setAvatar,
     setHeader,
@@ -358,6 +363,27 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
                   {...register(`records.${index}.value`, {
                     validate: validatorForRecord(field),
                   })}
+                />
+              ))
+              .with({ key: 'simplex.contact' }, { key: 'simplex.channel' }, () => (
+                <MultiUrlField
+                  key={field.id}
+                  recordKey={field.key}
+                  label={labelForRecord(field)}
+                  secondaryLabel={secondaryLabelForRecord(field)}
+                  placeholder={placeholderForRecord(field)}
+                  value={parseSimplexUrls(field.value)}
+                  error={errorForRecordAtIndex(index)}
+                  onChange={(urls) => {
+                    // setValue() preserves the useFieldArray entry's `id`;
+                    // updateRecordAtIndex regenerates it and unmounts the
+                    // MultiUrlField on every keystroke + Add URL click.
+                    setValue(`records.${index}.value`, urls.join(','), {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    })
+                  }}
+                  onDelete={() => handleDeleteRecord(field, index)}
                 />
               ))
               .otherwise(() => (

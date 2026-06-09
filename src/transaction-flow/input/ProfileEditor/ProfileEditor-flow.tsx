@@ -8,6 +8,7 @@ import { match } from 'ts-pattern'
 import { Button, Dialog, PlusSVG } from '@ensdomains/thorin'
 
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { MultiUrlField } from '@app/components/@molecules/MultiUrlField/MultiUrlField'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import {
   HeaderViewManager,
@@ -29,6 +30,7 @@ import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { parseSimplexUrls } from '@app/utils/parseSimplexUrls'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
@@ -157,6 +159,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     trigger,
     control,
     handleSubmit,
+    setValue,
     addRecords,
     updateRecord,
     removeRecordAtIndex,
@@ -464,6 +467,30 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     {...register(`records.${index}.value`, {
                       validate: validatorForRecord(field),
                     })}
+                  />
+                ) : field.key === 'simplex.contact' || field.key === 'simplex.channel' ? (
+                  <MultiUrlField
+                    key={field.id}
+                    recordKey={field.key}
+                    label={labelForRecord(field)}
+                    secondaryLabel={secondaryLabelForRecord(field)}
+                    placeholder={placeholderForRecord(field)}
+                    value={parseSimplexUrls(field.value)}
+                    error={errorForRecordAtIndex(index)}
+                    onChange={(urls) => {
+                      // setValue() updates the field's `value` while keeping
+                      // the useFieldArray entry's `id` stable; `updateRecordAtIndex`
+                      // (= useFieldArray.update) regenerates the id and would
+                      // unmount/remount this component on every keystroke and
+                      // every Add URL click.
+                      setValue(`records.${index}.value`, urls.join(','), {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                      })
+                    }}
+                    onDelete={() => {
+                      handleDeleteRecord(field, index)
+                    }}
                   />
                 ) : field.key !== 'header' && field.group !== 'media' ? (
                   <ProfileRecordInput

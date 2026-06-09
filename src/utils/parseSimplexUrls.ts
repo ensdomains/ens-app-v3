@@ -1,0 +1,20 @@
+/**
+ * Decode a `simplex.contact` / `simplex.channel` text-record value into an
+ * ordered list of SMP server URLs. The on-chain record stores the list as a
+ * single comma-separated string; clients try the URLs in order, primary
+ * first. Whitespace around commas is trimmed and empty entries are dropped
+ * so trailing commas, doubled commas, and all-whitespace inputs all yield
+ * clean output.
+ *
+ * Mirrors the `split_csv` helper in the SNRC REST resolver
+ * (`simplexmq/scripts/resolver/snrc-resolve.py`). The two sides MUST stay
+ * in lockstep for round-trips through the dApp ↔ resolver ↔ smp-server
+ * chain to be lossless.
+ */
+export const parseSimplexUrls = (value: string | undefined): string[] => {
+  if (!value) return []
+  return value
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0)
+}

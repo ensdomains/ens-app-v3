@@ -239,6 +239,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
     control,
     handleSubmit,
     getValues,
+    setValue,
     addRecords,
     getRecords,
     updateRecord,

@@ -1,3 +1,4 @@
+import { parseSimplexUrls } from './parseSimplexUrls'
 import { normaliseTwitterRecordValue } from './records/normaliseTwitterRecordValue'
 
 export const getSocialData = (iconKey: string, value: string) => {
@@ -9,7 +10,8 @@ export const getSocialData = (iconKey: string, value: string) => {
         label: 'SimpleX contact',
         value: 'SimpleX contact',
         type: 'link',
-        urlFormatter: value,
+        urlFormatter: parseSimplexUrls(value)[0] ?? value,
+        urls: parseSimplexUrls(value),
       }
     case 'simplex.channel':
       return {
@@ -18,7 +20,8 @@ export const getSocialData = (iconKey: string, value: string) => {
         label: 'SimpleX channel',
         value: 'SimpleX channel',
         type: 'link',
-        urlFormatter: value,
+        urlFormatter: parseSimplexUrls(value)[0] ?? value,
+        urls: parseSimplexUrls(value),
       }
     case 'twitter':
     case 'com.twitter':

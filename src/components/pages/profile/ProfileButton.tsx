@@ -91,6 +91,43 @@ export const SocialProfileButton = ({
   )
 
   if (!socialData) return null
+
+  // For social records that carry a list of URLs (`simplex.contact` /
+  // `simplex.channel`) with two or more entries, expand the card into a
+  // dropdown listing each URL as its own clickable item — primary first,
+  // fallbacks after. A single-URL list falls through to the plain `<a>`
+  // render below so the common case stays one-click.
+  const urls = 'urls' in socialData ? socialData.urls : undefined
+  if (urls && urls.length > 1) {
+    const items: DropdownItem[] = urls.map((url, index) => ({
+      icon: UpRightArrowIcon,
+      label: `Server ${index + 1}`,
+      onClick: () => window.open(url, '_blank', 'noopener,noreferrer'),
+    }))
+    return (
+      <VerificationBadge
+        isVerified={isVerified}
+        showBadge={isVerified}
+        type="record"
+        tooltipContent={<VerificationBadgeAccountTooltipContent verifiers={verifiers} />}
+      >
+        <Dropdown width={200} items={items} direction="up">
+          <RecordItem
+            icon={IconComponent}
+            postfixIcon={VerticalDotsSVG}
+            size={breakpoints.sm ? 'large' : 'small'}
+            inline
+            as="button"
+            data-testid={`social-profile-button-${iconKey}`}
+            value={socialData.value}
+          >
+            {socialData.value}
+          </RecordItem>
+        </Dropdown>
+      </VerificationBadge>
+    )
+  }
+
   return (
     <VerificationBadge
       isVerified={isVerified}
