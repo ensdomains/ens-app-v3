@@ -72,7 +72,12 @@ export const makeLocalhostChainWithEns = <T extends Chain>(
     },
     subgraphs: {
       ens: {
-        url: 'http://localhost:42069/subgraph',
+        // NEXT_PUBLIC_SUBGRAPH_URL lets the local-dev and Pages builds
+        // point at a self-hosted Graph Node (e.g. scripts/subgraph/ in
+        // simplex-namespace-contract) without baking the URL into the
+        // chain config. Falls back to the legacy localhost:42069 endpoint
+        // so the existing `pnpm dev:glocal` flow keeps working.
+        url: process.env.NEXT_PUBLIC_SUBGRAPH_URL || 'http://localhost:42069/subgraph',
       },
     },
   }
