@@ -18,8 +18,8 @@ import {
 
 import SocialGithub from '@app/assets/social/SocialGithub.svg'
 import SocialLemmy from '@app/assets/social/SocialLemmy.svg'
-import SocialLinkedIn from '@app/assets/social/SocialLinkedIn.svg'
 import SocialMastodon from '@app/assets/social/SocialMastodon.svg'
+import SocialNostr from '@app/assets/social/SocialNostr.svg'
 import SocialReddit from '@app/assets/social/SocialReddit.svg'
 import SocialX from '@app/assets/social/SocialX.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
@@ -328,7 +328,7 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: HamburgerView) =>
         <SocialIcon Icon={SocialGithub} color="#0F0F0F" href={SIMPLEX_LINKS.GITHUB} />
         <SocialIcon Icon={SocialMastodon} color="#6364FF" href={SIMPLEX_LINKS.MASTODON} />
         <SocialIcon Icon={SocialReddit} color="#FF4500" href={SIMPLEX_LINKS.REDDIT} />
-        <SocialIcon Icon={SocialLinkedIn} color="#0A66C2" href={SIMPLEX_LINKS.LINKEDIN} />
+        <SocialIcon Icon={SocialNostr} color="#7B2CD0" href={SIMPLEX_LINKS.NOSTR} />
         <SocialIcon Icon={SocialLemmy} color="#00BC8C" href={SIMPLEX_LINKS.LEMMY} />
       </SocialSection>
       <NetworkSection />

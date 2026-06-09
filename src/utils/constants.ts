@@ -33,7 +33,8 @@ export const SIMPLEX_LINKS = {
   GITHUB: 'https://github.com/simplex-chat',
   MASTODON: 'https://mastodon.social/@simplex',
   REDDIT: 'https://www.reddit.com/r/SimpleXChat/',
-  LINKEDIN: 'https://www.linkedin.com/company/simplex-chat/',
+  NOSTR:
+    'https://primal.net/p/npub1exv22uulqnmlluszc4yk92jhs2e5ajcs6mu3t00a6avzjcalj9csm7d828',
   LEMMY: 'https://lemmy.ml/c/simplex',
   EMAIL: 'mailto:chat@simplex.chat',
 }
