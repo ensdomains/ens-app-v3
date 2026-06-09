@@ -23,6 +23,6 @@ export const TestnetWarning = () => {
   }, [])
 
   if (isClient && chains && chains[0].id !== 1)
-    return <Container>You are viewing the SimpleX namespace app on {chains[0].name} testnet.</Container>
+    return <Container>You are viewing the SimpleX Namespace app on {chains[0].name} testnet.</Container>
   return null
 }
