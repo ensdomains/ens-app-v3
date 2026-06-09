@@ -22,4 +22,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm knip
+      # Knip's report is informational on the simplex fork. Upstream's
+      # tree carries ~100 unused files/exports the fork has no need to
+      # clean up; gating CI on a clean knip report would force us to
+      # either delete upstream code (raising fork-vs-upstream diff) or
+      # to maintain an ever-growing ignore list. `--no-exit-code` keeps
+      # the findings visible in the run log without breaking the pipeline.
+      - run: pnpm knip --no-exit-code

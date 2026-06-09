@@ -85,10 +85,11 @@ describe('formatDateTime', () => {
   it('should format time correctly', () => {
     const date = new Date('2020-01-01T00:00:00.000Z')
     const result = formatDateTime(date)
-    // Intl.DateTimeFormat in newer Node versions renders midnight as
-    // `00:00:00` (hour12: false, hourCycle: 'h23'); older Nodes used
-    // `24:00:00`. Both are valid per Unicode TR35 — assert the modern form.
-    expect(result).toEqual('00:00:00 UTC')
+    // Intl.DateTimeFormat is allowed by Unicode TR35 to render midnight as
+    // either `00:00:00` (h23 cycle, modern) or `24:00:00` (h24 cycle, older
+    // Node). Both are correct; accept either to stay green across CI's Node
+    // versions.
+    expect(result).toMatch(/^(00|24):00:00 UTC$/)
   })
 })
 
@@ -96,7 +97,7 @@ describe('formatFullExpiry', () => {
   it('should format the date and time as expected', () => {
     const expiry = new Date('2020-01-01T00:00:00.000Z')
     const result = formatFullExpiry(expiry)
-    expect(result).toEqual('January 1, 2020, 00:00:00 UTC')
+    expect(result).toMatch(/^January 1, 2020, (00|24):00:00 UTC$/)
   })
   it('should return empty if undefined', () => {
     expect(formatFullExpiry()).toEqual('')
