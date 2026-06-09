@@ -1,59 +1,8 @@
 import { ComponentProps } from 'react'
-import styled, { css } from 'styled-components'
 
 import { Avatar, Space } from '@ensdomains/thorin'
 
-import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
-import { useZorb } from '@app/hooks/useZorb'
 import { QuerySpace } from '@app/types'
-
-const Wrapper = styled.div<{ $size?: QuerySpace }>(
-  ({ theme, $size }) => css`
-    ${typeof $size === 'object' &&
-    css`
-      width: ${theme.space[$size.min]};
-      height: ${theme.space[$size.min]};
-      flex: 0 0 ${theme.space[$size.min]};
-    `}
-    ${typeof $size !== 'object'
-      ? css`
-          width: ${$size ? theme.space[$size] : theme.space.full};
-          height: ${$size ? theme.space[$size] : theme.space.full};
-          flex: 0 0 ${$size ? theme.space[$size] : theme.space.full};
-        `
-      : css`
-          @media (min-width: ${theme.breakpoints.xs}px) {
-            width: ${theme.space[$size.min]};
-            height: ${theme.space[$size.min]};
-            flex: 0 0 ${theme.space[$size.min]};
-          }
-          ${Object.keys($size)
-            .filter((key) => key !== 'min' && key in theme.breakpoints)
-            .map((key) => {
-              const sizeValue = $size[key as keyof typeof $size]
-              return sizeValue
-                ? css`
-                    @media (min-width: ${theme.breakpoints[
-                        key as keyof typeof theme.breakpoints
-                      ]}px) {
-                      width: ${theme.space[sizeValue]};
-                      height: ${theme.space[sizeValue]};
-                      flex: 0 0 ${theme.space[sizeValue]};
-                    }
-                  `
-                : null
-            })}
-        `}
-
-    & > div {
-      background: radial-gradient(
-        circle closest-side,
-        ${theme.colors.backgroundSecondary} 0 calc(100% - 2px),
-        transparent calc(100% - 2px) 100%
-      );
-    }
-  `,
-)
 
 type BaseProps = {
   size?: QuerySpace
@@ -68,56 +17,21 @@ type Address = {
   address?: string
 }
 
-export const NameAvatar = ({
-  src: _,
-  name,
-  size,
-  noCache = false,
-  ...props
-}: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
-  const { data: avatar } = useEnsAvatar({
-    name,
-    gcTime: noCache ? 0 : undefined,
-  })
-  const zorb = useZorb(name, 'name')
+// Avatar display is disabled on the SNRC fork (mirrors `useEnsAvatar`
+// returning null). The three exports below would otherwise render the
+// Thorin Avatar with a generated circular Zorb gradient as the fallback,
+// which still shows up as a circular placeholder even when no image is
+// set. Short-circuiting to null removes the placeholder from every
+// caller (ProfileSnippet header, transaction dialogs, etc.) without
+// having to rewire each consumer. Prop types are kept verbatim so the
+// callers' TS signatures keep matching upstream ENS.
+export const NameAvatar = (_props: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) =>
+  null
 
-  return (
-    <Wrapper $size={size}>
-      <Avatar {...props} placeholder={zorb} src={avatar || zorb} />
-    </Wrapper>
-  )
-}
+export const AvatarWithZorb = (
+  _props: ComponentProps<typeof Avatar> & BaseProps & Address & Name,
+) => null
 
-export const AvatarWithZorb = ({
-  src,
-  name,
-  address,
-  size,
-  noCache = false,
-  ...props
-}: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
-  const { data: avatar } = useEnsAvatar({
-    name,
-    gcTime: noCache ? 0 : undefined,
-  })
-  const zorb = useZorb(address || name || '', address ? 'address' : 'name')
-  return (
-    <Wrapper $size={size}>
-      <Avatar {...props} placeholder={zorb} src={avatar || zorb} />
-    </Wrapper>
-  )
-}
-
-export const AddressAvatar = ({
-  src,
-  address,
-  size,
-  ...props
-}: ComponentProps<typeof Avatar> & Required<Address> & { size?: Space }) => {
-  const zorb = useZorb(address, 'address')
-  return (
-    <Wrapper $size={size}>
-      <Avatar {...props} src={zorb} />
-    </Wrapper>
-  )
-}
+export const AddressAvatar = (
+  _props: ComponentProps<typeof Avatar> & Required<Address> & { size?: Space },
+) => null

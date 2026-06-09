@@ -43,11 +43,11 @@ const HeaderContainer = styled.div<{ $header?: string }>(
     ${$header
       ? `
     background-image: url("${encodeURI($header)}")};
-    height: ${theme.space['32']};
+    height: ${theme.space['8']};
     `
       : `
         background-image: ${theme.colors.blueGradient};
-        height: ${theme.space['28']};
+        height: ${theme.space['8']};
     `}
     background-position: center;
     background-size: cover;
@@ -60,8 +60,9 @@ const ContentContainer = styled.div(
   ({ theme }) => css`
     width: 100%;
     padding: ${theme.space['4']};
-    padding-top: 0;
-    margin-top: -${theme.space['12']};
+    /* The original layout pulled the content up by ~48-64px so the avatar
+     * could overhang the header banner. With both avatar and full-height
+     * banner gone, content sits directly under the bar at its natural top. */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -71,8 +72,6 @@ const ContentContainer = styled.div(
 
     @media (min-width: ${theme.breakpoints.sm}px) {
       padding: ${theme.space['6']};
-      padding-top: 0;
-      margin-top: -${theme.space['16']};
     }
   `,
 )
