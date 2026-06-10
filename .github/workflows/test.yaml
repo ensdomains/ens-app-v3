@@ -5,6 +5,14 @@ on: [push]
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
+# SNRC fork: the upstream Playwright E2E suites (stateless / stateful-sepolia /
+# stateful-mainnet) were removed from CI. They spin up the full ens-test-env
+# Docker stack (flaky Docker Hub pulls in CI), require secrets the fork doesn't
+# hold (SECRET_WORDS) and Cloudflare `wrangler`, and exercise upstream `.eth`
+# flows the fork has intentionally diverged from. CI keeps the unit tests
+# (coverage) and the cross-chain build checks below. Re-add a SNRC-specific E2E
+# suite here if/when one exists.
+
 jobs:
   coverage:
     runs-on: ubuntu-latest
@@ -33,15 +41,6 @@ jobs:
       - name: Build stateless and export
         run: pnpm build:glocal && pnpm export
 
-      - name: Tar stateless files
-        run: tar -cvf stateless-build.tar out
-
-      - name: Upload stateless
-        uses: actions/upload-artifact@v4
-        with:
-          name: stateless-build
-          path: stateless-build.tar
-
   build-stateful-sepolia:
     runs-on: ubuntu-latest
     steps:
@@ -53,15 +52,6 @@ jobs:
           export NEXT_PUBLIC_CHAIN_NAME=sepolia
           pnpm build && pnpm export
 
-      - name: Tar stateful sepolia files
-        run: tar -cvf stateful-sepolia-build.tar out
-
-      - name: Upload stateful sepolia
-        uses: actions/upload-artifact@v4
-        with:
-          name: stateful-sepolia-build
-          path: stateful-sepolia-build.tar
-
   build-stateful-mainnet:
     runs-on: ubuntu-latest
     steps:
@@ -72,168 +62,3 @@ jobs:
         run: |
           export NEXT_PUBLIC_CHAIN_NAME=mainnet
           pnpm build && pnpm export
-
-      - name: Tar stateful mainnet files
-        run: tar -cvf stateful-mainnet-build.tar out
-
-      - name: Upload stateful mainnet
-        uses: actions/upload-artifact@v4
-        with:
-          name: stateful-mainnet-build
-          path: stateful-mainnet-build.tar
-
-  stateless:
-    name: stateless (${{matrix.shard}})
-    needs: build-stateless
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        shard:
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19,
-            20,
-            21,
-            22,
-            23,
-            24,
-            25,
-            26,
-            27,
-            28,
-            29,
-            30,
-            31,
-          ]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-
-      - name: Install Playwright
-        run: pnpm exec playwright install --with-deps chromium
-
-      - run: pnpm rebuild -r
-
-      - name: Download build
-        id: download
-        uses: actions/download-artifact@v4
-        with:
-          name: stateless-build
-          merge-multiple: true
-
-      - name: Untar files
-        run: tar -xvf stateless-build.tar
-
-      - name: Run tests
-        run: |
-          PLAYWRIGHT_SHARD=${{matrix.shard}} PLAYWRIGHT_TOTAL=${{strategy.job-total}} pnpm e2e:ci --no-build
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: stateless-report-${{matrix.shard}}
-          path: playwright-report/
-          retention-days: 30
-          overwrite: true
-
-  stateful-sepolia:
-    name: stateful-sepolia (${{matrix.shard}})
-    needs: build-stateful-sepolia
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        shard: [1, 2, 3]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-
-      - name: Install Playwright
-        run: pnpm exec playwright install --with-deps chromium
-
-      - run: pnpm rebuild -r
-
-      - name: Download sepolia build
-        id: download
-        uses: actions/download-artifact@v4
-        with:
-          name: stateful-sepolia-build
-
-      - name: Untar sepolia files
-        run: tar -xvf stateful-sepolia-build.tar
-
-      - name: Run sepolia tests
-        run: |
-          parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm wrangle" \
-          "pnpm wait-on http://127.0.0.1:8788 && npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful --grep-invert='@mainnet'"
-        env:
-          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: stateful-sepolia-report-${{matrix.shard}}
-          path: playwright-report/
-          retention-days: 30
-
-  stateful-mainnet:
-    name: stateful-mainnet (${{matrix.shard}})
-    needs: build-stateful-mainnet
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        shard: [1, 2, 3]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup
-
-      - name: Install Playwright
-        run: pnpm exec playwright install --with-deps chromium
-
-      - run: |
-          export NEXT_PUBLIC_CHAIN_NAME=mainnet
-          pnpm rebuild -r
-
-      - name: Download mainnet build
-        id: download
-        uses: actions/download-artifact@v4
-        with:
-          name: stateful-mainnet-build
-
-      - name: Untar mainnet files
-        run: tar -xvf stateful-mainnet-build.tar
-
-      - name: Run mainnet tests
-        run: |
-          parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm dev:mainnet" \
-          "pnpm wait-on http://127.0.0.1:3000 && CHAIN=mainnet npx playwright test --shard=${{matrix.shard}}/${{strategy.job-total}} --project=stateful --grep='@mainnet'"
-        env:
-          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: stateful-mainnet-report-${{matrix.shard}}
-          path: playwright-report/
-          retention-days: 30
