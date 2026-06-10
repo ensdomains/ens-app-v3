@@ -177,9 +177,14 @@ export const getNamesForAddressQueryFn =
 
     // Local dev and the Sepolia custom deployment both run against contracts
     // the public ENS subgraph doesn't index — scan the chain via BaseRegistrar
-    // Transfer events instead.
+    // Transfer events instead. When a self-hosted subgraph IS configured
+    // (NEXT_PUBLIC_SUBGRAPH_URL, e.g. the Graph Node in
+    // simplex-namespace-contract/scripts/subgraph), prefer it: it resolves
+    // labels (incl. reserved names) the chain-scan can't recover without a
+    // populated localStorage cache.
     if (
       typeof window !== 'undefined' &&
+      !process.env.NEXT_PUBLIC_SUBGRAPH_URL &&
       (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES || process.env.NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES)
     ) {
       if (pageParam && pageParam.length > 0) return [] as GetNamesForAddressReturnType
