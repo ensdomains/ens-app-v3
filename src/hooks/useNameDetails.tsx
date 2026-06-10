@@ -61,10 +61,8 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
       return {
         content: (
           <>
-            {t('errors.migrationNotAvailable')}
-            <a href={`https://legacy.ens.domains/name/${normalisedName}`}>
-              {t('errors.migrationNotAvailableLink')}
-            </a>
+            {t('errors.legacyRegistryAvailable')}
+            <a href={`/${normalisedName}/register`}>{t('errors.legacyRegistryAvailableLink')}</a>
           </>
         ),
       }

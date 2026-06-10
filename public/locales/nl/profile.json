@@ -181,8 +181,6 @@
     "notMigrated": "Deze naam is nog niet gemigreerd naar de nieuwe registry.",
     "featureNotAvailable": "Somige functies zijn nog niet beschikbaar, maar je kan nogsteeds ",
     "featureNotAvailableLink": "deze naam bekijken in de oude app.",
-    "migrationNotAvailable": "Migreren naar de nieuwe registry is nog niet beschikbaar, maar je kan nogsteeds ",
-    "migrationNotAvailableLink": "deze naam migreren in de oude app.",
     "addressLength": "Indien adres moet die 42 karakters lang zijn"
   }
 }
