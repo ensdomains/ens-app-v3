@@ -459,6 +459,8 @@
     "notMigrated": "该名称没有迁移到新的注册表。",
     "featureNotAvailable": "有些功能目前还不可用，但您仍然可以",
     "featureNotAvailableLink": "在旧版 app 中查看该名称。",
+    "legacyRegistryAvailable": "该名称存在于 2020 年迁移之前的旧注册表中，现在可供注册。",
+    "legacyRegistryAvailableLink": "注册该名称。",
     "addressLength": "如果是地址，那它的长度应该是 42 个字符",
     "unsupportedTLD": "不支持该 TLD",
     "keyInUse": "{{value}} 已经在使用了",
