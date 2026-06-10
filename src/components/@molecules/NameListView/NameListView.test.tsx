@@ -47,6 +47,39 @@ describe('NameListView', () => {
     const { getByText } = render(<NameListView address="0x123" selfAddress={undefined} />)
     expect(getByText('name.eth')).toBeInTheDocument()
   })
+  it('should not render unregistered legacy registry names', () => {
+    mockTaggedNameItem.mockImplementation(mockComponent as any)
+    mockUseNamesForAddress.mockReturnValue({
+      infiniteData: [
+        {
+          name: 'name.eth',
+          id: '0x123',
+          parentName: 'eth',
+          expiryDate: createDateAndValue(new Date('2020-01-01').getTime()),
+          relation: {
+            owner: true,
+            registrant: true,
+          },
+        },
+        {
+          name: 'legacy-relic.eth',
+          id: '0x456',
+          parentName: 'eth',
+          expiryDate: null,
+          relation: {
+            owner: true,
+          },
+        },
+      ],
+      nameCount: 2,
+    })
+
+    const { getByText, queryByText } = render(
+      <NameListView address="0x123" selfAddress={undefined} />,
+    )
+    expect(getByText('name.eth')).toBeInTheDocument()
+    expect(queryByText('legacy-relic.eth')).not.toBeInTheDocument()
+  })
   it('should render no results if there are no results', () => {
     mockUseNamesForAddress.mockReturnValue({
       infiniteData: [],

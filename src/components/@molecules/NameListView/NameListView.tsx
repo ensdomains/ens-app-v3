@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
@@ -22,6 +22,7 @@ import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { isStaleLegacyRegistryName } from '@app/utils/name'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -85,8 +86,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
   const [searchInput, setSearchInput] = useState(searchQuery)
 
   const {
-    infiniteData: names,
-    nameCount,
+    infiniteData,
     isLoading: isNamesLoading,
     isFetching,
     isError,
@@ -103,6 +103,12 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
       resolvedAddress: false,
     },
   })
+
+  const names = useMemo(
+    () => infiniteData.filter((name) => !isStaleLegacyRegistryName(name)),
+    [infiniteData],
+  )
+  const nameCount = names.length
 
   // useBlockTimestamp() is used in:
   // <TaggedNameItem />
