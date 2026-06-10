@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
@@ -104,10 +104,7 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     },
   })
 
-  const names = useMemo(
-    () => infiniteData.filter((name) => !isStaleLegacyRegistryName(name)),
-    [infiniteData],
-  )
+  const names = infiniteData.filter((name) => !isStaleLegacyRegistryName(name))
   const nameCount = names.length
 
   // useBlockTimestamp() is used in:
