@@ -60,6 +60,7 @@ const ContentContainer = styled.div(
   ({ theme }) => css`
     width: 100%;
     padding: ${theme.space['4']};
+
     /* The original layout pulled the content up by ~48-64px so the avatar
      * could overhang the header banner. With both avatar and full-height
      * banner gone, content sits directly under the bar at its natural top. */

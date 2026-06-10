@@ -32,6 +32,7 @@ const ButtonColumn = styled.div<{ $hasLabel: boolean }>(
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
     /* The first row sits below a label, so the trash button is offset down
      * to line up with the input field; rows without a label have no offset. */
     padding-top: ${$hasLabel ? theme.space['8'] : '0'};
