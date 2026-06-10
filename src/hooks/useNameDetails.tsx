@@ -58,14 +58,17 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
       return { content: t('errors.unsupportedTLD') }
     }
     if (profile && !profile.isMigrated && typeof profile.isMigrated === 'boolean') {
-      return {
-        content: (
-          <>
-            {t('errors.legacyRegistryAvailable')}
-            <a href={`/${normalisedName}/register`}>{t('errors.legacyRegistryAvailableLink')}</a>
-          </>
-        ),
+      if (registrationStatus === 'available' || registrationStatus === 'premium') {
+        return {
+          content: (
+            <>
+              {t('errors.legacyRegistryAvailable')}
+              <a href={`/register/${normalisedName}`}>{t('errors.legacyRegistryAvailableLink')}</a>
+            </>
+          ),
+        }
       }
+      return { content: t('errors.notMigrated') }
     }
     if (registrationStatus === 'invalid') {
       return { content: t('errors.invalidName') }

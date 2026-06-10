@@ -456,6 +456,7 @@
     "hasExpired": "{{name}} ha expirado",
     "ownerManagerChoice": "Debes enviar propietario o administrador",
     "unknown": "Error desconocido",
+    "notMigrated": "Este nombre no está migrado al nuevo registro.",
     "legacyRegistryAvailable": "Este nombre existe en el registro heredado anterior a la migración de 2020 y está disponible para registrar. ",
     "legacyRegistryAvailableLink": "Registrar este nombre.",
     "addressLength": "Si se trata de una dirección, debe tener 42 caracteres",
