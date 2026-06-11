@@ -1,6 +1,6 @@
+// SNRC: simplex.contact / simplex.channel are intentionally NOT here — they
+// live in their own category (see supportedSimplexRecordKeys, issue #10).
 export const supportedSocialRecordKeys = [
-  'simplex.contact',
-  'simplex.channel',
   'com.twitter',
   'com.github',
   'com.discord',

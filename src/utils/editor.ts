@@ -4,6 +4,7 @@ import type { EncodedAbi } from '@ensdomains/ensjs/utils'
 
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSimplexRecordKeys } from '@app/constants/supportedSimplexRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { Profile } from '@app/types/index'
 
@@ -78,7 +79,10 @@ export const convertProfileToProfileFormObject = async (
         }
         return newMap
       }
-      if (supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number])) {
+      if (
+        supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number]) ||
+        supportedSimplexRecordKeys.includes(key as (typeof supportedSimplexRecordKeys)[number])
+      ) {
         return {
           ...map,
           accounts: { ...map.accounts, [safeKey]: record.value },

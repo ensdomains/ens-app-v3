@@ -6,12 +6,14 @@ import { supportedContentHashKeys } from '@app/constants/supportedContentHashKey
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
 import { supportedMediaRecordKeys } from '@app/constants/supportedMediaRecordKeys'
 import { supportedOtherRecordKeys } from '@app/constants/supportedOtherRecordKeys'
+import { supportedSimplexRecordKeys } from '@app/constants/supportedSimplexRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 
 export type ProfileRecordGroup =
   | 'general'
   | 'media'
   | 'address'
+  | 'simplex'
   | 'social'
   | 'website'
   | 'other'
@@ -38,6 +40,13 @@ const general: ProfileRecord[] = supportedGeneralRecordKeys.map((key) => ({
 //   group: 'media',
 //   type: 'text',
 // }))
+
+// SNRC: SimpleX is its own category, above Social (issue #10).
+const simplex: ProfileRecord[] = supportedSimplexRecordKeys.map((key) => ({
+  key,
+  group: 'simplex',
+  type: 'text',
+}))
 
 const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
   key,
@@ -76,11 +85,15 @@ const other: ProfileRecord[] = supportedOtherRecordKeys.map((key) => ({
   type: typeForOtherRecordKey(key),
 }))
 
-export default [...general, ...social, ...address, ...website, ...other] as const
+export default [...general, ...simplex, ...social, ...address, ...website, ...other] as const
 export const grouped = [
   {
     group: 'general',
     items: general,
+  },
+  {
+    group: 'simplex',
+    items: simplex,
   },
   {
     group: 'social',
@@ -107,6 +120,10 @@ export const sortValues: { [key: string]: { [key: string]: number } } = {
   }, {}),
   general: supportedGeneralRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
     acc[key] = index + 100
+    return acc
+  }, {}),
+  simplex: supportedSimplexRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
+    acc[key] = index + 150
     return acc
   }, {}),
   social: supportedSocialRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {

@@ -159,6 +159,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           key: item.name,
           value: item.value,
         }))}
+        simplexRecords={categorisedRecord.simplex}
         accountRecords={categorisedRecord.accounts}
         otherRecords={categorisedRecord.other}
         verificationRecords={getVerificationRecordItemProps({

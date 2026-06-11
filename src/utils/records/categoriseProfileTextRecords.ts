@@ -5,6 +5,10 @@ import {
   SupportedGeneralRecordsKey,
 } from '@app/constants/supportedGeneralRecordKeys'
 import {
+  SupportedSimplexRecordKey,
+  supportedSimplexRecordKeys,
+} from '@app/constants/supportedSimplexRecordKeys'
+import {
   SupportedSocialRecordKey,
   supportedSocialRecordKeys,
 } from '@app/constants/supportedSocialRecordKeys'
@@ -39,11 +43,29 @@ export const categoriseAndTransformTextRecords = ({
 }) => {
   const categorisedTextRecords = texts.reduce<{
     general: DecodedText[]
+    simplex: ProfileAccountRecord[]
     accounts: ProfileAccountRecord[]
     other: ProfileOtherRecord[]
   }>(
     (acc, record) => {
       const normalisedRecord = normaliseProfileAccountsRecord(record)
+      // SNRC: SimpleX links are their own category, above socials (issue #10).
+      if (
+        supportedSimplexRecordKeys.includes(
+          normalisedRecord.normalisedKey as unknown as SupportedSimplexRecordKey,
+        )
+      ) {
+        return {
+          ...acc,
+          simplex: [
+            ...acc.simplex,
+            {
+              ...normalisedRecord,
+              iconKey: normalisedRecord.normalisedKey,
+            },
+          ],
+        }
+      }
       if (
         supportedSocialRecordKeys.includes(
           normalisedRecord.normalisedKey as unknown as SupportedSocialRecordKey,
@@ -75,6 +97,7 @@ export const categoriseAndTransformTextRecords = ({
     },
     {
       general: [],
+      simplex: [],
       accounts: [],
       other: [],
     },

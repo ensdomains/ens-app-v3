@@ -300,6 +300,7 @@ export const ownershipInfoCalc = (
 }
 
 export const ProfileDetails = ({
+  simplexRecords = [],
   accountRecords = [],
   otherRecords = [],
   addresses = [],
@@ -312,6 +313,7 @@ export const ProfileDetails = ({
   name,
   gracePeriodEndDate,
 }: {
+  simplexRecords?: ProfileAccountRecord[]
   accountRecords: ProfileAccountRecord[]
   otherRecords: ProfileOtherRecord[]
   addresses: Array<Record<'key' | 'value', string>>
@@ -337,6 +339,12 @@ export const ProfileDetails = ({
   return (
     <ProfileInfoBox $isCached={isCached}>
       <RecordsStack>
+        <ProfileSection
+          label="simplex"
+          condition={simplexRecords.length > 0}
+          array={simplexRecords}
+          button={SocialProfileButton}
+        />
         <ProfileSection
           label="accounts"
           condition={accountRecords.length > 0}
