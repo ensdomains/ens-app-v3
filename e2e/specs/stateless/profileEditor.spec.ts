@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 
-import { expect } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 import dotenv from 'dotenv'
 import { type Address } from 'viem'
 
@@ -33,6 +33,12 @@ const customNameWrapperAwareResolver = contractAddresses.CustomNameWrapperAwareR
 const dummyABI = {
   test: 'test',
 }
+
+// A 1x1 transparent PNG. The manual avatar/header inputs now run an async
+// image-validity check (FET-2440), so fixtures must be URLs that actually load
+// as an image; a data URL does so deterministically without a network request.
+const VALID_IMAGE_DATA_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
 
 const DEFAULT_RECORDS: RecordOptions = {
   texts: [
@@ -158,10 +164,8 @@ test.describe('legacy resolver', () => {
       records: await makeRecords(),
     })
 
-    const avatarUrl =
-      'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
-    const headerUrl =
-      'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
+    const avatarUrl = VALID_IMAGE_DATA_URL
+    const headerUrl = VALID_IMAGE_DATA_URL
 
     const morePage = makePageObject('MorePage')
     const profilePage = makePageObject('ProfilePage')
@@ -233,8 +237,8 @@ test.describe('legacy resolver', () => {
     await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(headerUrl)
 
     await profilePage.goto(name)
-    await expect(profilePage.record('text', 'avatar')).toContainText('https://turquoi...')
-    await expect(profilePage.record('text', 'header')).toContainText('https://cdn-med...')
+    await expect(profilePage.record('text', 'avatar')).toContainText('data:image/png')
+    await expect(profilePage.record('text', 'header')).toContainText('data:image/png')
   })
 
   test('should be able to delete profile records without migration', async ({
@@ -329,10 +333,8 @@ test.describe('custom legacy resolver', () => {
       records: await makeRecords(),
     })
 
-    const avatarUrl =
-      'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
-    const headerUrl =
-      'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
+    const avatarUrl = VALID_IMAGE_DATA_URL
+    const headerUrl = VALID_IMAGE_DATA_URL
 
     const morePage = makePageObject('MorePage')
     const profilePage = makePageObject('ProfilePage')
@@ -404,8 +406,8 @@ test.describe('custom legacy resolver', () => {
     await expect(recordsPage.getRecordValue('text', 'header')).toHaveText(headerUrl)
 
     await profilePage.goto(name)
-    await expect(profilePage.record('text', 'avatar')).toContainText('https://turquoi...')
-    await expect(profilePage.record('text', 'header')).toContainText('https://cdn-med...')
+    await expect(profilePage.record('text', 'avatar')).toContainText('data:image/png')
+    await expect(profilePage.record('text', 'header')).toContainText('data:image/png')
   })
 
   test('should be able to delete profile records without migration', async ({
@@ -1901,5 +1903,153 @@ test.describe('edit profile button states', () => {
     await profilePage.goto(name)
 
     await expect(page.getByTestId('disabled-profile-action-Edit profile')).toBeVisible()
+  })
+})
+
+test.describe('manual image url validation', () => {
+  const NON_IMAGE_URL = 'data:text/html,<h1>not-an-image</h1>'
+  const NOT_AN_IMAGE_ERROR = 'This URL does not return an image'
+
+  // Robustly open the manual-entry dialog from an avatar/header dropdown. The
+  // profile editor re-renders periodically, which can detach the dropdown menu
+  // or reset the dialog mid-interaction; retrying the open (and only re-clicking
+  // the trigger when the menu is actually closed, to avoid toggling it shut)
+  // absorbs that without weakening any assertion.
+  const openManualEntry = async (
+    page: Page,
+    buttonTestId: string,
+    addLabel: string,
+    inputTestId: string,
+  ) => {
+    const dropdown = page.getByTestId(buttonTestId)
+    const enterManually = dropdown.getByRole('button', { name: 'Enter Manually' })
+    await expect(async () => {
+      if (!(await enterManually.isVisible())) {
+        await dropdown.getByRole('button', { name: addLabel }).click()
+      }
+      await expect(enterManually).toBeVisible({ timeout: 2000 })
+      await enterManually.click()
+      await expect(page.getByTestId(inputTestId)).toBeVisible({ timeout: 2000 })
+    }).toPass({ timeout: 30000 })
+  }
+
+  test('avatar: shows an inline error and disables Confirm for a non-image URL, then accepts a valid image URL', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'manual-avatar-validation',
+      type: 'legacy',
+      records: { texts: [{ key: 'description', value: 'manual avatar test' }] },
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    // Ensure profile data is loaded (warms the query cache) so the editor renders
+    // stably and a late re-render does not detach the dropdown menu below.
+    await expect(profilePage.record('text', 'description')).toHaveText('manual avatar test')
+
+    // Make CSS transitions instant so the dropdown menu opens stably; its 0.35s
+    // bouncy entrance transition otherwise races with re-renders and
+    // intermittently detaches the menu item before Playwright can click it. Only
+    // transitions are flattened (they jump to their final state), not keyframe
+    // animations, so reveal-on-mount elements such as the inline error still show.
+    await page.addStyleTag({
+      content:
+        '*, *::before, *::after { transition-duration: 0s !important; transition-delay: 0s !important; }',
+    })
+
+    await profilePage.editProfileButton.click()
+    await expect(page.getByTestId('profile-submit-button')).toBeVisible()
+
+    await openManualEntry(page, 'avatar-button', 'Add avatar', 'avatar-uri-input')
+
+    const confirmButton = page.getByRole('button', { name: 'Confirm' })
+    const input = page.getByTestId('avatar-uri-input')
+    const errorText = page.getByText(NOT_AN_IMAGE_ERROR)
+
+    // Non-image URL: passes format validation but does not return an image. The
+    // error appears after the debounce, without clicking Confirm. Re-filling
+    // inside expect(...).toPass guards against the editor occasionally
+    // re-rendering and resetting the dialog while the async check is in flight.
+    await expect(async () => {
+      await input.fill(NON_IMAGE_URL)
+      await expect(errorText).toBeVisible({ timeout: 2000 })
+      await expect(confirmButton).toBeDisabled()
+    }).toPass({ timeout: 30000 })
+
+    // Valid image URL: the error clears and the avatar can be saved.
+    await expect(async () => {
+      await input.fill(VALID_IMAGE_DATA_URL)
+      await expect(errorText).toBeHidden({ timeout: 2000 })
+      await expect(confirmButton).toBeEnabled()
+      await confirmButton.click()
+      await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 3000 })
+    }).toPass({ timeout: 30000 })
+  })
+
+  test('header: shows an inline error and disables Save for a non-image URL, then accepts a valid image URL', async ({
+    page,
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    const name = await makeName({
+      label: 'manual-header-validation',
+      type: 'legacy',
+      records: { texts: [{ key: 'description', value: 'manual header test' }] },
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    // Ensure profile data is loaded (warms the query cache) so the editor renders
+    // stably and a late re-render does not detach the dropdown menu below.
+    await expect(profilePage.record('text', 'description')).toHaveText('manual header test')
+
+    // Make CSS transitions instant so the dropdown menu opens stably; its 0.35s
+    // bouncy entrance transition otherwise races with re-renders and
+    // intermittently detaches the menu item before Playwright can click it. Only
+    // transitions are flattened (they jump to their final state), not keyframe
+    // animations, so reveal-on-mount elements such as the inline error still show.
+    await page.addStyleTag({
+      content:
+        '*, *::before, *::after { transition-duration: 0s !important; transition-delay: 0s !important; }',
+    })
+
+    await profilePage.editProfileButton.click()
+    await expect(page.getByTestId('profile-submit-button')).toBeVisible()
+
+    await openManualEntry(page, 'header-button', 'Add header', 'header-manual-input')
+
+    const saveButton = page.getByRole('button', { name: 'Save' })
+    const input = page.getByTestId('header-manual-input')
+    const errorText = page.getByText(NOT_AN_IMAGE_ERROR)
+
+    // Non-image URL: passes format validation but does not return an image. The
+    // error appears after the debounce, without clicking Save. Re-filling inside
+    // expect(...).toPass guards against the editor occasionally re-rendering and
+    // resetting the dialog while the async check is in flight.
+    await expect(async () => {
+      await input.fill(NON_IMAGE_URL)
+      await expect(errorText).toBeVisible({ timeout: 2000 })
+      await expect(saveButton).toBeDisabled()
+    }).toPass({ timeout: 30000 })
+
+    // Valid image URL: the error clears and the header can be saved.
+    await expect(async () => {
+      await input.fill(VALID_IMAGE_DATA_URL)
+      await expect(errorText).toBeHidden({ timeout: 2000 })
+      await expect(saveButton).toBeEnabled()
+      await saveButton.click()
+      await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 3000 })
+    }).toPass({ timeout: 30000 })
   })
 })
