@@ -92,6 +92,22 @@ export const SocialProfileButton = ({
 
   if (!socialData) return null
 
+  // SimpleX records (`simplex.contact` / `simplex.channel`) get a title via
+  // `keyLabel` — the equivalent of "eth address" on coin records — and show the
+  // SMP-server host as the value, linking out to the full URL. Other socials are
+  // unchanged.
+  const isSimplex = 'urls' in socialData
+  const simplexUrl = 'urls' in socialData ? socialData.urlFormatter : undefined
+  const simplexHost = (() => {
+    if (!simplexUrl) return undefined
+    try {
+      return new URL(simplexUrl).host
+    } catch {
+      return simplexUrl
+    }
+  })()
+  const keyLabel = isSimplex ? socialData.label : undefined
+
   // For social records that carry a list of URLs (`simplex.contact` /
   // `simplex.channel`) with two or more entries, expand the card into a
   // dropdown listing each URL as its own clickable item — primary first,
@@ -118,6 +134,7 @@ export const SocialProfileButton = ({
             size={breakpoints.sm ? 'large' : 'small'}
             inline
             as="button"
+            keyLabel={keyLabel}
             data-testid={`social-profile-button-${iconKey}`}
             value={socialData.value}
           >
@@ -139,13 +156,14 @@ export const SocialProfileButton = ({
         icon={IconComponent}
         size={breakpoints.sm ? 'large' : 'small'}
         inline
+        keyLabel={keyLabel}
         data-testid={`social-profile-button-${iconKey}`}
-        value={socialData.value}
+        value={simplexUrl ?? socialData.value}
         {...(socialData.type === 'link'
           ? { as: 'a' as const, link: socialData.urlFormatter }
           : { as: 'button' as const })}
       >
-        {socialData.value}
+        {simplexHost ?? socialData.value}
       </RecordItem>
     </VerificationBadge>
   )
