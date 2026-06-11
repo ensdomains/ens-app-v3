@@ -25,6 +25,7 @@ import {
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
+import { SIMPLEX_LINK_SEPARATOR } from '@app/constants/simplex'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
@@ -483,7 +484,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                       // (= useFieldArray.update) regenerates the id and would
                       // unmount/remount this component on every keystroke and
                       // every Add URL click.
-                      setValue(`records.${index}.value`, urls.join(','), {
+                      setValue(`records.${index}.value`, urls.join(SIMPLEX_LINK_SEPARATOR), {
                         shouldDirty: true,
                         shouldTouch: true,
                       })

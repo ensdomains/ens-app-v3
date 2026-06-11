@@ -16,6 +16,7 @@ import {
   HeaderViewType,
 } from '@app/components/@molecules/ProfileEditor/Header/HeaderViewManager'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
+import { SIMPLEX_LINK_SEPARATOR } from '@app/constants/simplex'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
@@ -378,7 +379,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
                     // setValue() preserves the useFieldArray entry's `id`;
                     // updateRecordAtIndex regenerates it and unmounts the
                     // MultiUrlField on every keystroke + Add URL click.
-                    setValue(`records.${index}.value`, urls.join(','), {
+                    setValue(`records.${index}.value`, urls.join(SIMPLEX_LINK_SEPARATOR), {
                       shouldDirty: true,
                       shouldTouch: true,
                     })
