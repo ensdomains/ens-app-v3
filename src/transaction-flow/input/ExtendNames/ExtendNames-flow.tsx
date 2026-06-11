@@ -41,27 +41,31 @@ import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
 import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
+import { getManagerRenewUrl } from './utils/getManagerRenewUrl'
 import { validateExtendNamesDuration } from './utils/validateExtendNamesDuration'
 
 type View = 'name-list' | 'no-ownership-warning' | 'registration' | 'disabled'
-
-const MANAGER_BASE_URL = 'https://app.ens.dev'
-
-/**
- * When the legacy ETHRegistrarController has been removed as a controller of
- * BaseRegistrarImplementation (e.g. Sepolia post ENS v2 beta), renewals via
- * the v1 controller revert on-chain. For a single name we deep-link to the
- * new Manager renewal page; for bulk renewal (which the new Manager does not
- * yet support) we fall back to the Manager homepage.
- */
-const getManagerRenewUrl = (names: string[]) =>
-  names.length === 1 ? `${MANAGER_BASE_URL}/renew/${names[0]}` : MANAGER_BASE_URL
 
 const DisabledContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     justify-content: center;
     padding: ${theme.space['2']} 0;
+  `,
+)
+
+// The global stylesheet resets anchors to `color: inherit; text-decoration:
+// none`, which makes a bare <a> inside the banner look like plain text. Style
+// it explicitly so the "here" link reads as a clickable link.
+const ManagerLink = styled.a(
+  ({ theme }) => css`
+    color: ${theme.colors.accent};
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: none;
+    }
   `,
 )
 
@@ -403,7 +407,13 @@ const ExtendNames = ({
                   i18nKey="input.extendNames.disabled.banner"
                   components={{
                     // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
-                    ManagerLink: <a href={getManagerRenewUrl(names)} />,
+                    ManagerLink: (
+                      <ManagerLink
+                        href={getManagerRenewUrl(names)}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      />
+                    ),
                   }}
                 />
               </Banner>
