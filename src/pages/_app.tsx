@@ -15,7 +15,6 @@ import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
-import { IntercomProvider } from 'react-use-intercom'
 import { createGlobalStyle, keyframes, ThemeProvider } from 'styled-components'
 
 import {
@@ -31,8 +30,6 @@ import { TransactionNotifications } from '@app/components/TransactionNotificatio
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
-import { setupAnalytics } from '@app/utils/analytics'
-import { PostHogProvider } from '@app/utils/analytics/posthog'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { QueryProviders } from '@app/utils/query/providers'
 import { SyncDroppedTransaction } from '@app/utils/SyncProvider/SyncDroppedTransaction'
@@ -43,8 +40,6 @@ import '@getpara/rainbowkit/styles.css'
 import i18n from '../i18n'
 
 import '../styles.css'
-
-const INTERCOM_ID = process.env.NEXT_PUBLIC_INTERCOM_ID || 're9q5yti'
 
 const anim = keyframes`
   0% {
@@ -149,8 +144,6 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-setupAnalytics()
-
 declare global {
   interface Window {
     __theme: Mode
@@ -185,29 +178,25 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
   }
 
   return (
-    <PostHogProvider>
-      <RainbowKitProvider theme={rainbowKitTheme}>
-        <TransactionStoreProvider>
-          <ThemeProvider theme={themeWithCSSVars}>
-            <BreakpointProvider queries={breakpoints}>
-              <IntercomProvider appId={INTERCOM_ID}>
-                <GlobalStyle />
-                <SyncProvider>
-                  <TransactionFlowProvider>
-                    <SyncDroppedTransaction>
-                      <NetworkNotifications />
-                      <TransactionNotifications />
-                      <TestnetWarning />
-                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                    </SyncDroppedTransaction>
-                  </TransactionFlowProvider>
-                </SyncProvider>
-              </IntercomProvider>
-            </BreakpointProvider>
-          </ThemeProvider>
-        </TransactionStoreProvider>
-      </RainbowKitProvider>
-    </PostHogProvider>
+    <RainbowKitProvider theme={rainbowKitTheme}>
+      <TransactionStoreProvider>
+        <ThemeProvider theme={themeWithCSSVars}>
+          <BreakpointProvider queries={breakpoints}>
+            <GlobalStyle />
+            <SyncProvider>
+              <TransactionFlowProvider>
+                <SyncDroppedTransaction>
+                  <NetworkNotifications />
+                  <TransactionNotifications />
+                  <TestnetWarning />
+                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                </SyncDroppedTransaction>
+              </TransactionFlowProvider>
+            </SyncProvider>
+          </BreakpointProvider>
+        </ThemeProvider>
+      </TransactionStoreProvider>
+    </RainbowKitProvider>
   )
 }
 

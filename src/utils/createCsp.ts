@@ -14,18 +14,12 @@ csp += ';'
 csp += ' script-src'
 // allow self
 csp += " 'self'"
-// allow plausible script
-csp += ' plausible.io'
-// allow PostHog
-csp += ' jakob.ens.domains'
-// allow cloudflare analytics script
-csp += ' https://static.cloudflareinsights.com'
+// SNRC: analytics/tracker script sources removed (Plausible, PostHog,
+// Cloudflare Web Analytics, Intercom). Note: Cloudflare Web Analytics is
+// injected by Cloudflare server-side when enabled — also disable it in the
+// Cloudflare Pages dashboard.
 // allow loading from the pages domain for this app
 csp += ' *.ens-app-v3.pages.dev'
-// allow intercom scripts
-csp += ' https://app.intercom.io'
-csp += ' https://widget.intercom.io'
-csp += ' https://js.intercomcdn.com'
 // allow Para (Capsule) scripts
 csp += ' https://app.beta.usecapsule.com'
 csp += ' https://app.usecapsule.com'

@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import posthog from 'posthog-js'
-
 import type {
   DnsImportType,
   DnsStep,
@@ -210,24 +208,12 @@ export type EventDefs = {
   }
 }
 
-function isProduction() {
-  if (typeof window !== 'undefined') {
-    return !!window.location.host.match('ens.domains')
-  }
-}
-
 /**
- * Send a type safe event to PostHog
- * @param eventName - The name of the event to send
- * @param properties - The properties for the event
+ * SNRC: analytics removed. No-op so the type-safe call sites still compile;
+ * the `EventDefs` map above is retained purely for those call-site types.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const sendEvent = <TEvent extends keyof EventDefs>(
-  eventName: TEvent,
-  ...args: EventDefs[TEvent] extends undefined ? [] : [EventDefs[TEvent]]
-): void => {
-  if (!isProduction()) {
-    console.log('[Metrics] Event:', eventName, args[0])
-  }
-
-  posthog.capture(eventName, args[0])
-}
+  _eventName: TEvent,
+  ..._args: EventDefs[TEvent] extends undefined ? [] : [EventDefs[TEvent]]
+): void => {}

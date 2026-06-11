@@ -5,7 +5,6 @@ import { useAccount, useSwitchChain } from 'wagmi'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { getSupportedChainById } from '@app/constants/chains'
-import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
 
 import { Navigation } from './Navigation'
 
@@ -79,7 +78,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { chainId, connector, isConnected } = useAccount()
   const hasProgrammaticChainSwitching = Boolean(connector?.switchChain)
   const { switchChain, isPending, isError } = useSwitchChain()
-  useSetupIntercom()
 
   const [error] = useErrorBoundary()
 

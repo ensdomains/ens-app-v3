@@ -156,12 +156,6 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"
             rel="stylesheet"
           />
-
-          <script
-            defer
-            data-domain="app.ens.domains"
-            src="https://plausible.io/js/script.outbound-links.js"
-          />
         </Head>
         <body>
           <Main />

@@ -1,5 +1,3 @@
-import posthog from 'posthog-js'
-import { match, P } from 'ts-pattern'
 import { useChainId } from 'wagmi'
 
 import { EMPTY_ADDRESS, EMPTY_BYTES32, randomSecret } from '@ensdomains/ensjs/utils'
@@ -44,13 +42,9 @@ const isBrowser = !!(
   window.document.createElement
 )
 
-const getDefaultRegistrationDuration = () => {
-  const payload = posthog.getFeatureFlagPayload('default_registration_duration')
-
-  return match(payload)
-    .with({ years: P.number }, ({ years }) => years * ONE_YEAR)
-    .otherwise(() => ONE_YEAR)
-}
+// SNRC: PostHog removed. This was a feature-flagged override of the default
+// registration duration; we use the flag's own fallback of one year.
+const getDefaultRegistrationDuration = () => ONE_YEAR
 
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,

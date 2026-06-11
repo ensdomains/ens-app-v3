@@ -1,11 +1,5 @@
 @import url('/fonts/fonts.css');
 
-.intercom-lightweight-app,
-#intercom-container {
-  position: relative;
-  z-index: 998 !important;
-}
-
 cpsl-identicon {
   background: var(--identicon-background-blue) !important;
 }
