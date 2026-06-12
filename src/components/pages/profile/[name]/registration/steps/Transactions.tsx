@@ -372,6 +372,19 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     resumeTransactionFlow(registerKey)
   }
 
+  const retryRegister = () => {
+    // Drop the stuck/failed register (reveal) transaction only — the commit is
+    // untouched — so the flow returns to 'registrationReady' and the user can
+    // resubmit the reveal with the same commitment, without repeating commit.
+    cleanupFlow(registerKey)
+  }
+
+  const retryCommit = () => {
+    // Drop the stuck/failed commit transaction; the `!commitTx` effect below
+    // re-initiates a fresh commit so the user can retry without restarting.
+    cleanupFlow(commitKey)
+  }
+
   const resetTransactions = () => {
     cleanupFlow(commitKey)
     cleanupFlow(registerKey)
@@ -540,10 +553,21 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
             </>
           ))
           .with('registrationSent', () => (
-            <ProgressButton
-              label={t('steps.transactions.transactionProgress')}
-              onClick={showRegisterTransaction}
-            />
+            <>
+              <MobileFullWidth>
+                <Button
+                  colorStyle="accentSecondary"
+                  data-testid="retry-register-button"
+                  onClick={retryRegister}
+                >
+                  {t('action.tryAgain', { ns: 'common' })}
+                </Button>
+              </MobileFullWidth>
+              <ProgressButton
+                label={t('steps.transactions.transactionProgress')}
+                onClick={showRegisterTransaction}
+              />
+            </>
           ))
           .with(
             'registrationReady',
@@ -593,10 +617,21 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
             </>
           ))
           .with('commitSent', () => (
-            <ProgressButton
-              label={t('steps.transactions.transactionProgress')}
-              onClick={showCommitTransaction}
-            />
+            <>
+              <MobileFullWidth>
+                <Button
+                  colorStyle="accentSecondary"
+                  data-testid="retry-commit-button"
+                  onClick={retryCommit}
+                >
+                  {t('action.tryAgain', { ns: 'common' })}
+                </Button>
+              </MobileFullWidth>
+              <ProgressButton
+                label={t('steps.transactions.transactionProgress')}
+                onClick={showCommitTransaction}
+              />
+            </>
           ))
           .with('commitReady', () => (
             <>
