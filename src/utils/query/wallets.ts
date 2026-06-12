@@ -15,12 +15,11 @@ import type { Address } from 'viem'
 
 import { WC_PROJECT_ID } from '../constants'
 import { isInsideSafe } from '../safe'
-import { DEFAULT_MOCK_ACCOUNT, mockWallet } from './mockWallet'
+import { DEFAULT_MOCK_ACCOUNT, isMockWalletEnabled, mockWallet } from './mockWallet'
 
 // Test-only: when enabled, a "Mock Wallet" is added to the connect modal (and the
 // wagmi connectors array) so automated/manual testing can connect without MetaMask.
 // Never set this in production builds.
-const useMockWallet = process.env.NEXT_PUBLIC_USE_MOCK_WALLET === 'true'
 const mockAccount = (process.env.NEXT_PUBLIC_MOCK_ACCOUNT as Address) || DEFAULT_MOCK_ACCOUNT
 
 const standardWallets = isInsideSafe()
@@ -46,7 +45,7 @@ const standardWallets = isInsideSafe()
     ] as const satisfies WalletList[number]['wallets'])
 
 export const rainbowKitWallets = (
-  useMockWallet ? [() => mockWallet([mockAccount]), ...standardWallets] : standardWallets
+  isMockWalletEnabled ? [() => mockWallet([mockAccount]), ...standardWallets] : standardWallets
 ) as WalletList[number]['wallets']
 
 export const rainbowKitConnectors = connectorsForWallets(

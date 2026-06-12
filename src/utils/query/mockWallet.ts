@@ -25,6 +25,12 @@ import { createConnector } from 'wagmi'
  */
 export const DEFAULT_MOCK_ACCOUNT: Address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
 
+/** Whether the mock wallet is enabled. Build-time flag; never set in production. */
+export const isMockWalletEnabled = process.env.NEXT_PUBLIC_USE_MOCK_WALLET === 'true'
+
+/** Connector id used by the mock wallet (matches wagmi's `mock` connector id). */
+export const MOCK_CONNECTOR_ID = 'mock'
+
 // Inline icon so we don't ship an extra asset for a test-only wallet.
 const mockWalletIcon =
   "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'>" +
