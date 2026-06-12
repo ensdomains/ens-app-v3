@@ -3,15 +3,15 @@
   "BaseRegistrarImplementation": "0x42d63e6a9f92c0282dc0b9677d9192d491b0da72",
   "ReverseRegistrar": "0x6008959b72147fb86aad2f280afbfa0584abb120",
   "DefaultReverseRegistrar": "0xd292ccd221bcdd135f41a0b412cb49c919c4df28",
-  "NameWrapper": "0x9be8cf2b3d315a290de52f4c878a9e890269877f",
-  "PublicResolver": "0x80fa1903e70af03e79c73fb7feae2fb33aebae01",
+  "NameWrapper": "0x0994819ee8acfcf10b17ebe1f826cc753ea4e9ef",
+  "PublicResolver": "0x15231918f8c87bb8853219748b85a9bbcebedc1b",
   "ETHRegistrarController": "0x41d7522837fe4f715f9e3aaaae99711870aaeefb",
   "SimplexControllerImpl": "0xedaf0faf7c5f1423c82a8d970945b4c71fbb979e",
   "ExponentialPremiumPriceOracle": "0x9cf6c6ae2c9bdd4f1c3ef877be3bd2c947c54f96",
   "DummyGatewayProvider": "0xdc18c90ad8276fff7bce4bf6370b8c3da41633ec",
   "DummyOracle": "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
   "SMPXNFT": "0x3AF6D9Ee862376A8DFC0a78847Eb20A153557291",
-  "NameWrapperPublicResolver": "0x80fa1903e70af03e79c73fb7feae2fb33aebae01",
+  "NameWrapperPublicResolver": "0x15231918f8c87bb8853219748b85a9bbcebedc1b",
   "UniversalResolver": "0x2e5c00841f8464b3059f61314f95d4b9e59a435f",
   "Multicall": "0xcA11bde05977b3631167028862bE2a173976CA11",
   "DNSRegistrar": "0x0000000000000000000000000000000000000000",
@@ -23,5 +23,6 @@
   "UniversalRegistrarRenewalWithReferrer": "0x0000000000000000000000000000000000000000",
   "OffchainDNSResolver": "0x0000000000000000000000000000000000000000",
   "ExtendedDNSResolver": "0x0000000000000000000000000000000000000000",
-  "OutdatedResolver": "0x0000000000000000000000000000000000000000"
+  "OutdatedResolver": "0x0000000000000000000000000000000000000000",
+  "StaticMetadataService": "0xfaa5e702471926379b0c7b96c103bded9b159705"
 }
