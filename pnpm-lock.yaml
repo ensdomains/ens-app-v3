@@ -11,6 +11,7 @@ overrides:
   '@walletconnect/ethereum-provider': 2.11.1
   '@walletconnect/modal': 2.6.2
   '@ensdomains/address-encoder': 1.1.4
+  '@ensdomains/content-hash': 3.1.1
   aggregate-error: npm:@socketregistry/aggregate-error@^1
   array-buffer-byte-length: npm:@socketregistry/array-buffer-byte-length@^1
   array-flatten: npm:@socketregistry/array-flatten@^1
@@ -142,8 +143,8 @@ importers:
         specifier: 1.1.4
         version: 1.1.4
       '@ensdomains/content-hash':
-        specifier: ^3.0.0-beta.5
-        version: 3.0.0
+        specifier: 3.1.1
+        version: 3.1.1
       '@ensdomains/ens-contracts':
         specifier: 1.6.0
         version: 1.6.0(patch_hash=690a84b6dc89077babbf6277c7ba377c4a9b92489488897fc4af09f5e4241aac)(bufferutil@4.0.9)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(utf-8-validate@5.0.10)
@@ -1353,11 +1354,9 @@ packages:
   '@ensdomains/buffer@0.1.3':
     resolution: {integrity: sha512-L/GoCkQFePjSn4DeVnBNfkGdm2CI8UxTxwgQztcZ1L9aHaFefRD+mTUXxtikk946KwwMHRQJDn38wo1IWtEpSg==}
 
-  '@ensdomains/content-hash@3.0.0':
-    resolution: {integrity: sha512-5ongDPX9qDkemcYZ2rPXsRzCRDneoR2xujm2Tq3u0ZefQa49ZAURVKGqbJdjoL0VIZDfceLkBXekYKqkfrR5Ww==}
-
-  '@ensdomains/content-hash@3.1.0-rc.1':
-    resolution: {integrity: sha512-OzdkXgdFmduzcJKU4KRkkJkQHnm5p7m7FkX8k+bHOEoOIzc0ueGT/Jay4nnb60wNk1wSHRmzY+hHBMpFDiGReg==}
+  '@ensdomains/content-hash@3.1.1':
+    resolution: {integrity: sha512-BKB3BtAtfDkSX3DOYsnnTlzAeM55bI0ze7UJhk8TzoxO5/4iHjgPoEHDzjgzCTYJoCOkpFPEDah+gl62e7HJjA==}
+    engines: {node: '>=18'}
 
   '@ensdomains/dnsprovejs@0.5.1':
     resolution: {integrity: sha512-nfm4ggpK5YBVwVwLZKF9WPjRGRTL9aUxX2O4pqv/AnQCz3WeGHsW7VhVFLj2s4EoWSzCXwR1E6nuqgUwnH692w==}
@@ -2320,8 +2319,8 @@ packages:
     resolution: {integrity: sha512-wK+5pLK5XFmgtH3aQ2YVvA3HohS3xqV/OxuVOdNx9Wpnz7VE/fnC+e1A7ln6LFYeck7gOJ/dsZV6OLplOtAJ2w==}
     engines: {node: '>=18'}
 
-  '@multiformats/sha3@2.0.17':
-    resolution: {integrity: sha512-7ik6pk178qLO2cpNucgf48UnAOBMkq/2H92DP4SprZOJqM9zqbVaKS7XyYW6UvhRsDJ3wi921fYv1ihTtQHLtA==}
+  '@multiformats/sha3@4.0.0':
+    resolution: {integrity: sha512-y/tB2RWyeIhUToaUIYkwZUtGqfGIa3kaTvAMVekvxWJUYaD7YLa7L6O8QYaOblxxc1MMobGwh63kS1NhocRQPw==}
 
   '@namestone/ezccip@0.1.1':
     resolution: {integrity: sha512-MZ0pLyAT695OfbXGIKNqHRHylIsk9KHMhpRP3ZgHVJxv5TZi1ouptylfEYr05qDqX33wYnR1w9BIqvcYcqruvA==}
@@ -6314,6 +6313,9 @@ packages:
   js-sha3@0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
 
+  js-sha3@0.9.3:
+    resolution: {integrity: sha512-BcJPCQeLg6WjEx3FE591wVAevlli8lxsxm9/FzV4HXkV49TmBH38Yvrpce6fjbADGMKFrBMGTqrVz3qPIZ88Gg==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -6695,9 +6697,11 @@ packages:
       typescript:
         optional: true
 
-  multiformats@12.1.3:
-    resolution: {integrity: sha512-eajQ/ZH7qXZQR2AgtfpmSMizQzmyYVmCql7pdhldPuYQi4atACekbJaQplk6dWyIi10jCaFnd6pqvcEFXjbaJw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+  multiformats@13.4.2:
+    resolution: {integrity: sha512-eh6eHCrRi1+POZ3dA+Dq1C6jhP1GNtr9CRINMb67OKzqW9I5DUuZM/3jLPlzhgpGeiNUlEGEbkCYChXMCc/8DQ==}
+
+  multiformats@14.0.0:
+    resolution: {integrity: sha512-iWK1RrAS58p2NDfeZFuSUSv3ZPewTIhsGbh/5NgeGGJwJmRljLxGtjRR3nkn+loG3zl+IrfR/W1590QnrSK+Gg==}
 
   multiformats@9.9.0:
     resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
@@ -10050,16 +10054,10 @@ snapshots:
 
   '@ensdomains/buffer@0.1.3': {}
 
-  '@ensdomains/content-hash@3.0.0':
+  '@ensdomains/content-hash@3.1.1':
     dependencies:
-      '@multiformats/sha3': 2.0.17
-      multiformats: 12.1.3
-
-  '@ensdomains/content-hash@3.1.0-rc.1':
-    dependencies:
-      '@ensdomains/address-encoder': 1.1.4
-      '@noble/curves': 1.9.7
-      '@scure/base': 1.2.6
+      '@multiformats/sha3': 4.0.0
+      multiformats: 13.4.2
 
   '@ensdomains/dnsprovejs@0.5.1(patch_hash=613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22)':
     dependencies:
@@ -10104,7 +10102,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
       '@ensdomains/address-encoder': 1.1.4
-      '@ensdomains/content-hash': 3.1.0-rc.1
+      '@ensdomains/content-hash': 3.1.1
       '@ensdomains/dnsprovejs': 0.5.1(patch_hash=613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22)
       abitype: 1.1.1(typescript@5.7.3)(zod@3.25.75)
       dns-packet: 5.6.1
@@ -11322,10 +11320,10 @@ snapshots:
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
 
-  '@multiformats/sha3@2.0.17':
+  '@multiformats/sha3@4.0.0':
     dependencies:
-      js-sha3: 0.8.0
-      multiformats: 9.9.0
+      js-sha3: 0.9.3
+      multiformats: 14.0.0
 
   '@namestone/ezccip@0.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
@@ -16192,6 +16190,8 @@ snapshots:
 
   js-sha3@0.8.0: {}
 
+  js-sha3@0.9.3: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@4.1.0:
@@ -16616,7 +16616,9 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  multiformats@12.1.3: {}
+  multiformats@13.4.2: {}
+
+  multiformats@14.0.0: {}
 
   multiformats@9.9.0: {}
 
