@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 import { ThirdwebProvider } from 'thirdweb/react'
 import { WagmiProvider } from 'wagmi'
 
+import { isMockWalletEnabled } from './mockWallet'
+import { MockWalletAutoConnect } from './MockWalletAutoConnect'
 import { createPersistConfig } from './persist'
 import { queryClient } from './reactQuery'
 import { wagmiConfig } from './wagmi'
@@ -20,6 +22,7 @@ export function QueryProviders({ children }: Props) {
           client={queryClient}
           persistOptions={createPersistConfig({ queryClient })}
         >
+          {isMockWalletEnabled ? <MockWalletAutoConnect /> : null}
           {children}
           <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
         </PersistQueryClientProvider>

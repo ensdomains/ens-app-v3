@@ -1,12 +1,20 @@
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { usePreviousDistinct } from 'react-use'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { parseEther } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
 
-import { Avatar, Button, CurrencyToggle, Dialog, Helper, Typography } from '@ensdomains/thorin'
+import {
+  Avatar,
+  Banner,
+  Button,
+  CurrencyToggle,
+  Dialog,
+  Helper,
+  Typography,
+} from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { makeCurrencyDisplay } from '@app/components/@atoms/CurrencyText/CurrencyText'
@@ -17,6 +25,7 @@ import { DateSelection } from '@app/components/@molecules/DateSelection/DateSele
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
+import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
@@ -32,9 +41,33 @@ import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
 import { SearchViewLoadingView } from '../SendName/views/SearchView/views/SearchViewLoadingView'
+import { getManagerRenewUrl } from './utils/getManagerRenewUrl'
 import { validateExtendNamesDuration } from './utils/validateExtendNamesDuration'
 
-type View = 'name-list' | 'no-ownership-warning' | 'registration'
+type View = 'name-list' | 'no-ownership-warning' | 'registration' | 'disabled'
+
+const DisabledContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    justify-content: center;
+    padding: ${theme.space['2']} 0;
+  `,
+)
+
+// The global stylesheet resets anchors to `color: inherit; text-decoration:
+// none`, which makes a bare <a> inside the banner look like plain text. Style
+// it explicitly so the "here" link reads as a clickable link.
+const ManagerLink = styled.a(
+  ({ theme }) => css`
+    color: ${theme.colors.accent};
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: none;
+    }
+  `,
+)
 
 const PlusMinusWrapper = styled.div(
   () => css`
@@ -190,6 +223,10 @@ const ExtendNames = ({
   const referrer = useReferrer()
   const referrerHex = getReferrerHex(referrer)
 
+  const { data: isControllerActive, isLoading: isControllerActiveLoading } =
+    useIsEthRegistrarControllerActive()
+  const isRenewalDisabled = isControllerActive === false
+
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
   const { address, isConnected: isAccountConnected } = useAccount()
   const { data: balance, isLoading: isBalanceLoading } = useBalance({
@@ -266,17 +303,26 @@ const ExtendNames = ({
     },
   ]
 
+  // When the legacy ETHRegistrarController has been removed (e.g. Sepolia
+  // post ENS v2 beta), short-circuit the whole flow with a disabled view
+  // that points users to the new Manager app. The on-chain renew() call
+  // would otherwise revert.
   const flow: View[] = useMemo(
     () =>
-      match([names.length, isSelf])
-        .with([P.when((length) => length > 1), true], () => ['name-list', 'registration'] as View[])
-        .with(
-          [P.when((length) => length > 1), P._],
-          () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
-        )
-        .with([P._, true], () => ['registration'] as View[])
-        .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
-    [names.length, isSelf],
+      isRenewalDisabled
+        ? ['disabled']
+        : match([names.length, isSelf])
+            .with(
+              [P.when((length) => length > 1), true],
+              () => ['name-list', 'registration'] as View[],
+            )
+            .with(
+              [P.when((length) => length > 1), P._],
+              () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
+            )
+            .with([P._, true], () => ['registration'] as View[])
+            .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
+    [names.length, isSelf, isRenewalDisabled],
   )
   const [viewIdx, setViewIdx] = useState(0)
   const incrementView = () => setViewIdx(() => Math.min(flow.length - 1, viewIdx + 1))
@@ -284,10 +330,22 @@ const ExtendNames = ({
   const view = flow[viewIdx]
 
   const isBaseDataLoading =
-    !isAccountConnected || isBalanceLoading || isExpiryEnabledAndLoading || isEthPriceLoading
+    !isAccountConnected ||
+    isBalanceLoading ||
+    isExpiryEnabledAndLoading ||
+    isEthPriceLoading ||
+    isControllerActiveLoading
   const isRegisterLoading = isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError)
 
   const { title, alert, buttonProps } = match(view)
+    .with('disabled', () => ({
+      title: t('input.extendNames.disabled.title'),
+      alert: 'warning' as const,
+      buttonProps: {
+        onClick: onDismiss,
+        children: t('action.close', { ns: 'common' }),
+      },
+    }))
     .with('no-ownership-warning', () => ({
       title: t('input.extendNames.ownershipWarning.title', {
         name: names.at(0),
@@ -341,6 +399,26 @@ const ExtendNames = ({
       <Dialog.Content data-testid="extend-names-modal">
         {match([view, isBaseDataLoading])
           .with([P._, true], () => <SearchViewLoadingView />)
+          .with(['disabled', false], () => (
+            <DisabledContainer>
+              <Banner alert="warning" title={t('input.extendNames.disabled.title')}>
+                <Trans
+                  t={t}
+                  i18nKey="input.extendNames.disabled.banner"
+                  components={{
+                    // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+                    ManagerLink: (
+                      <ManagerLink
+                        href={getManagerRenewUrl(names)}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      />
+                    ),
+                  }}
+                />
+              </Banner>
+            </DisabledContainer>
+          ))
           .with(['no-ownership-warning', false], () => (
             <CenteredMessage>
               {t('input.extendNames.ownershipWarning.description', { count: names.length })}

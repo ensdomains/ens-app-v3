@@ -17,6 +17,7 @@ import {
 } from '@ensdomains/thorin'
 
 import { NetworkNotifications } from '@app/components/@molecules/NetworkNotifications/NetworkNotifications'
+import { GlobalUpgradeBanner } from '@app/components/@molecules/UpgradeBanner/UpgradeBanner'
 import { TestnetWarning } from '@app/components/TestnetWarning'
 import { TransactionNotifications } from '@app/components/TransactionNotifications'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
@@ -179,6 +180,7 @@ const AppWithThorin = ({ Component, pageProps }: Omit<AppPropsWithLayout, 'route
                     <SyncDroppedTransaction>
                       <NetworkNotifications />
                       <TransactionNotifications />
+                      <GlobalUpgradeBanner />
                       <TestnetWarning />
                       <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                     </SyncDroppedTransaction>

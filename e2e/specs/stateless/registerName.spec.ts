@@ -23,6 +23,12 @@ const addressToBytes32 = (address: string): string => {
   return pad(`0x${cleanAddress}`, { size: 32 })
 }
 
+// A 1x1 transparent PNG. The manual avatar/header inputs now run an async
+// image-validity check (FET-2440), so fixtures must be URLs that actually load
+// as an image; a data URL does so deterministically without a network request.
+const VALID_IMAGE_DATA_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+
 /*
  * NOTE: Do not use transactionModal autocomplete here since the app will auto close the modal and playwright will
  * get stuck looking for the complete button
@@ -1980,7 +1986,7 @@ test('should change profile submit button text from "Skip profile" to "Next" whe
   // Upload header - directly set files on hidden input
   await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
   await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('header-manual-input').fill('https://image.com/header.jpg')
+  await page.getByTestId('header-manual-input').fill(VALID_IMAGE_DATA_URL)
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 30000 })
 
@@ -2012,7 +2018,7 @@ test('should change profile submit button text from "Skip profile" to "Next" whe
   // Add avatar
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('avatar-uri-input').fill('https://image.com/avatar.jpg')
+  await page.getByTestId('avatar-uri-input').fill(VALID_IMAGE_DATA_URL)
   await page.getByRole('button', { name: 'Confirm' }).click()
 
   await expect(page.getByTestId('profile-submit-button')).toHaveText('Next')
@@ -2043,14 +2049,14 @@ test('should change profile submit button text from "Skip profile" to "Next" whe
   // Add avatar
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Add avatar' }).click()
   await page.getByTestId('avatar-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('avatar-uri-input').fill('https://image.com/avatar.jpg')
+  await page.getByTestId('avatar-uri-input').fill(VALID_IMAGE_DATA_URL)
   await page.getByRole('button', { name: 'Confirm' }).click()
   await expect(page.getByTestId('avatar-uri-display')).toBeVisible({ timeout: 30000 })
 
   // Add header
   await page.getByTestId('header-button').getByRole('button', { name: 'Add header' }).click()
   await page.getByTestId('header-button').getByRole('button', { name: 'Enter Manually' }).click()
-  await page.getByTestId('header-manual-input').fill('https://image.com/header.jpg')
+  await page.getByTestId('header-manual-input').fill(VALID_IMAGE_DATA_URL)
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByTestId('header-uri-display')).toBeVisible({ timeout: 30000 })
 
@@ -2097,8 +2103,7 @@ test('should allow the user to register with an avatar image manually set', asyn
   makePageObject,
 }) => {
   const name = `avatar-reg-${Date.now()}.eth`
-  const avatarUrl =
-    'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
+  const avatarUrl = VALID_IMAGE_DATA_URL
 
   await setPrimaryName(walletClient, {
     name: '',
@@ -2194,8 +2199,7 @@ test('should allow the user to register with a header image manually set', async
   makePageObject,
 }) => {
   const name = `header-reg-${Date.now()}.eth`
-  const headerUrl =
-    'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
+  const headerUrl = VALID_IMAGE_DATA_URL
 
   await setPrimaryName(walletClient, {
     name: '',
@@ -2291,10 +2295,8 @@ test('should allow the user to register with both avatar and header manually set
   makePageObject,
 }) => {
   const name = `avatar-header-reg-${Date.now()}.eth`
-  const avatar2 =
-    'https://turquoise-junior-skunk-153.mypinata.cloud/ipfs/bafybeielr6r2tltc27ywygbmhapookijfg3uk32mzqowvhfd4pcvfqijby'
-  const header2 =
-    'https://cdn-media.sforum.vn/storage/app/media/bookgrinder/honkai-star-rail-31-skill-mydei-1.jpg'
+  const avatar2 = VALID_IMAGE_DATA_URL
+  const header2 = VALID_IMAGE_DATA_URL
 
   await setPrimaryName(walletClient, {
     name: '',
