@@ -7,8 +7,9 @@ export const getSocialData = (iconKey: string, value: string) => {
       return {
         icon: 'simplex.contact',
         color: '#0080BC',
-        label: 'SimpleX contact',
-        value: 'SimpleX contact',
+        // Title shown as the record's keyLabel (like "eth address" for coins).
+        label: 'SimpleX Contact',
+        value: 'SimpleX Contact',
         type: 'link',
         urlFormatter: parseSimplexUrls(value)[0] ?? value,
         urls: parseSimplexUrls(value),
@@ -17,8 +18,9 @@ export const getSocialData = (iconKey: string, value: string) => {
       return {
         icon: 'simplex.channel',
         color: '#0080BC',
-        label: 'SimpleX channel',
-        value: 'SimpleX channel',
+        // Title shown as the record's keyLabel (like "eth address" for coins).
+        label: 'SimpleX Channel',
+        value: 'SimpleX Channel',
         type: 'link',
         urlFormatter: parseSimplexUrls(value)[0] ?? value,
         urls: parseSimplexUrls(value),

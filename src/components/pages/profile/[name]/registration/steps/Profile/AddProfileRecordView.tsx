@@ -162,6 +162,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
 
   const observerRootRef = useRef<HTMLDivElement>(null)
   const generalRef = useRef<HTMLDivElement>(null)
+  const simplexRef = useRef<HTMLDivElement>(null)
   const socialRef = useRef<HTMLDivElement>(null)
   const addressRef = useRef<HTMLDivElement>(null)
   const websiteRef = useRef<HTMLDivElement>(null)
@@ -173,6 +174,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: P
     [key in ProfileRecordGroup]?: React.RefObject<HTMLDivElement>
   } = {
     general: generalRef,
+    simplex: simplexRef,
     social: socialRef,
     address: addressRef,
     website: websiteRef,

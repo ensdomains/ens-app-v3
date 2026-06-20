@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 
+import { supportedSimplexRecordKeys } from '@app/constants/supportedSimplexRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { textRecords } from '@app/constants/textRecords'
 import { formSafeKey } from '@app/utils/editor'
@@ -10,7 +11,11 @@ const LabelWrapper = styled.div(
   `,
 )
 
-export const textOptions = [...textRecords, ...supportedSocialRecordKeys].map((key) => ({
+export const textOptions = [
+  ...textRecords,
+  ...supportedSimplexRecordKeys,
+  ...supportedSocialRecordKeys,
+].map((key) => ({
   value: formSafeKey(key),
   label: key,
   node: <LabelWrapper>{key}</LabelWrapper>,

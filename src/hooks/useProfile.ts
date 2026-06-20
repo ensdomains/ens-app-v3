@@ -5,6 +5,7 @@ import { getCoderByCoinType } from '@ensdomains/address-encoder'
 
 import { supportedAddresses } from '@app/constants/supportedAddresses'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSimplexRecordKeys } from '@app/constants/supportedSimplexRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import { getCoderByCoinNameWithTestnetSupport } from '@app/utils/records'
 
@@ -43,6 +44,7 @@ const getProfileRecordsParameters = ({
       : undefined,
     texts: [
       ...new Set([
+        ...supportedSimplexRecordKeys,
         ...supportedSocialRecordKeys,
         ...supportedGeneralRecordKeys,
         ...CUSTOM_RECORD_ADDITIONS,

@@ -4,15 +4,15 @@ import { getSocialData } from './getSocialData'
 
 describe('getSocialData', () => {
   // Regression: `simplex.contact` / `simplex.channel` may hold a
-  // comma-separated list of SMP-server URLs for redundancy. The renderer
+  // semicolon-separated list of SMP-server URLs for redundancy. The renderer
   // (`SocialProfileButton`) gates on `urls.length > 1` to decide between
   // a plain `<a>` and a `Dropdown` of clickable items, so the contract
   // here is: `urls` is the parsed list (primary first), `urlFormatter`
   // is its first element for the single-link fallback path.
-  it('parses simplex.contact CSV into urls (primary first) and exposes the first URL via urlFormatter', () => {
+  it('parses a simplex.contact list into urls (primary first) and exposes the first URL via urlFormatter', () => {
     const result = getSocialData(
       'simplex.contact',
-      'https://smp16.simplex.im/a#H1,https://smp19.simplex.im/a#H1',
+      'https://smp16.simplex.im/a#H1;https://smp19.simplex.im/a#H1',
     )
     expect(result).toMatchObject({
       icon: 'simplex.contact',

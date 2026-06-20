@@ -5,6 +5,7 @@ import { encodeAbi, EncodedAbi, getProtocolType, RecordOptions } from '@ensdomai
 
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import { supportedGeneralRecordKeys } from '@app/constants/supportedGeneralRecordKeys'
+import { supportedSimplexRecordKeys } from '@app/constants/supportedSimplexRecordKeys'
 import { supportedSocialRecordKeys } from '@app/constants/supportedSocialRecordKeys'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import { Profile } from '@app/types'
@@ -184,6 +185,7 @@ const sortProfileRecords = (recordA: ProfileRecord, recordB: ProfileRecord): num
   const unknownGroupValue: { [key in ProfileRecordGroup]: number } = {
     media: 1,
     general: 199,
+    simplex: 249,
     social: 299,
     address: 399,
     website: 499,
@@ -222,6 +224,8 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
         key as (typeof supportedGeneralRecordKeys)[number],
       )
         ? 'general'
+        : supportedSimplexRecordKeys.includes(key as (typeof supportedSimplexRecordKeys)[number])
+        ? 'simplex'
         : supportedSocialRecordKeys.includes(key as (typeof supportedSocialRecordKeys)[number])
         ? 'social'
         : 'custom'

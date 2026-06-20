@@ -4,8 +4,9 @@ import styled, { css } from 'styled-components'
 import { Button, CrossSVG, Input, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import { DynamicIcon } from '@app/components/pages/profile/[name]/registration/steps/Profile/DynamicIcon'
+import { SIMPLEX_LINK_SEPARATOR, SIMPLEX_MAX_LINKS } from '@app/constants/simplex'
 
-const MAX_URLS = 5
+const MAX_URLS = SIMPLEX_MAX_LINKS
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -138,9 +139,10 @@ type Props = {
  * before being emitted upstream — keeping the form state aligned with the
  * parse rule in `parseSimplexUrls`.
  *
- * Caps at MAX_URLS (5). The `+ Add` button is disabled once the cap is hit;
- * the underlying record on-chain is unconstrained, but the editor refuses
- * to write more than five.
+ * Caps at MAX_URLS (`SIMPLEX_MAX_LINKS`, currently 1 — multi-link is disabled
+ * until supported across the whole stack; see issue #11). The `+ Add` button
+ * is disabled once the cap is hit; the underlying record on-chain is
+ * unconstrained, but the editor refuses to write more than the cap.
  */
 export const MultiUrlField = ({
   recordKey,
@@ -223,13 +225,16 @@ export const MultiUrlField = ({
             error={index === 0 ? error : undefined}
             data-testid={`multi-url-field-${recordKey}-input-${index}`}
             onKeyDown={(e) => {
-              // Comma is the separator inside the on-chain record. Blocking
-              // it at keystroke-time prevents the rendered list from shifting
-              // mid-edit and removes the only character that could mangle
-              // round-trips through `parseSimplexUrls`.
-              if (e.key === ',') e.preventDefault()
+              // The separator (`SIMPLEX_LINK_SEPARATOR`) is what joins entries
+              // inside the on-chain record. Blocking it at keystroke-time
+              // prevents the rendered list from shifting mid-edit and removes
+              // the only character that could mangle round-trips through
+              // `parseSimplexUrls`.
+              if (e.key === SIMPLEX_LINK_SEPARATOR) e.preventDefault()
             }}
-            onChange={(e) => updateAt(index, e.target.value.replace(/,/g, ''))}
+            onChange={(e) =>
+              updateAt(index, e.target.value.split(SIMPLEX_LINK_SEPARATOR).join(''))
+            }
           />
           <ButtonColumn $hasLabel={index === 0}>
             <DeleteButton
@@ -252,24 +257,29 @@ export const MultiUrlField = ({
           </ButtonColumn>
         </Row>
       ))}
-      <AddRow>
-        <Typography fontVariant="small" color="grey">
-          {`${draft.length} of ${MAX_URLS}`}
-        </Typography>
-        <Button
-          // Default <button type> inside a <form> is "submit"; an Add URL
-          // click was firing the ProfileEditor form's submit handler before
-          // the row could be added. Pin the type so the click is local.
-          type="button"
-          size="small"
-          prefix={PlusSVG}
-          disabled={disabled || atCap}
-          onClick={addRow}
-          data-testid={`multi-url-field-${recordKey}-add`}
-        >
-          Add URL
-        </Button>
-      </AddRow>
+      {/* Single-link mode (MAX_URLS === 1, multi-link disabled — issue #11):
+          the count + "Add URL" row is meaningless ("1 of 1", always disabled),
+          so hide it entirely. It returns once the cap is raised. */}
+      {MAX_URLS > 1 && (
+        <AddRow>
+          <Typography fontVariant="small" color="grey">
+            {`${draft.length} of ${MAX_URLS}`}
+          </Typography>
+          <Button
+            // Default <button type> inside a <form> is "submit"; an Add URL
+            // click was firing the ProfileEditor form's submit handler before
+            // the row could be added. Pin the type so the click is local.
+            type="button"
+            size="small"
+            prefix={PlusSVG}
+            disabled={disabled || atCap}
+            onClick={addRow}
+            data-testid={`multi-url-field-${recordKey}-add`}
+          >
+            Add URL
+          </Button>
+        </AddRow>
+      )}
     </Container>
   )
 }

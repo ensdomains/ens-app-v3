@@ -70,11 +70,20 @@
               "banner": "https://example.com/banner.png"
             }
           },
+          "simplex": {
+            "label": "SimpleX",
+            "items": {
+              "simplex.contact": "SimpleX contact",
+              "simplex.channel": "SimpleX channel"
+            },
+            "placeholder": {
+              "simplex.contact": "https://smp00.simplex.im/a#Q_...",
+              "simplex.channel": "https://smp00.simplex.im/c#Q_..."
+            }
+          },
           "social": {
             "label": "Social",
             "items": {
-              "simplex.contact": "SimpleX contact",
-              "simplex.channel": "SimpleX channel",
               "com.twitter": "Twitter",
               "com.github": "GitHub",
               "com.discord": "Discord",
@@ -82,8 +91,6 @@
               "email": "Email"
             },
             "placeholder": {
-              "simplex.contact": "https://simplex.chat/contact#/?v=2-7&smp=...",
-              "simplex.channel": "https://simplex.chat/contact#/?v=2-7&smp=...",
               "com.twitter": "e.g. ensdomains",
               "com.github": "e.g. ensdomains",
               "com.discord": "e.g. nickjohnson",

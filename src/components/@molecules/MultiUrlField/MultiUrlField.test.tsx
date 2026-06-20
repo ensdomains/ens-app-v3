@@ -34,7 +34,9 @@ describe('MultiUrlField', () => {
     expect(row1.value).toBe('https://smp2.example.im/a#H1')
   })
 
-  it('appends an empty row when "Add URL" is clicked, up to the cap', () => {
+  // Multi-link is disabled while the cap is 1 (issue #11). These add-row tests
+  // re-activate automatically once SIMPLEX_MAX_LINKS is bumped back to 5.
+  it.skipIf(MULTI_URL_FIELD_CAP <= 1)('appends an empty row when "Add URL" is clicked, up to the cap', () => {
     const onChange = vi.fn()
     render(
       <MultiUrlField {...baseProps} onChange={onChange} value={['https://smp1.example.im/a#H1']} />,
@@ -48,12 +50,26 @@ describe('MultiUrlField', () => {
     ).toBeInTheDocument()
   })
 
-  it('disables the add button once MULTI_URL_FIELD_CAP rows are present', () => {
-    const value = Array.from({ length: MULTI_URL_FIELD_CAP }, (_, i) => `https://smp${i + 1}.example.im/a#H1`)
-    render(<MultiUrlField {...baseProps} value={value} />)
-    const addButton = screen.getByTestId('multi-url-field-simplex.contact-add') as HTMLButtonElement
-    expect(addButton).toBeDisabled()
-    expect(screen.getByText(`${MULTI_URL_FIELD_CAP} of ${MULTI_URL_FIELD_CAP}`)).toBeVisible()
+  it.skipIf(MULTI_URL_FIELD_CAP <= 1)(
+    'disables the add button once MULTI_URL_FIELD_CAP rows are present',
+    () => {
+      const value = Array.from(
+        { length: MULTI_URL_FIELD_CAP },
+        (_, i) => `https://smp${i + 1}.example.im/a#H1`,
+      )
+      render(<MultiUrlField {...baseProps} value={value} />)
+      const addButton = screen.getByTestId(
+        'multi-url-field-simplex.contact-add',
+      ) as HTMLButtonElement
+      expect(addButton).toBeDisabled()
+      expect(screen.getByText(`${MULTI_URL_FIELD_CAP} of ${MULTI_URL_FIELD_CAP}`)).toBeVisible()
+    },
+  )
+
+  // Single-link mode (issue #11): the "Add URL" row is hidden entirely.
+  it.skipIf(MULTI_URL_FIELD_CAP > 1)('hides the add row in single-link mode', () => {
+    render(<MultiUrlField {...baseProps} value={['https://smp1.example.im/a#H1']} />)
+    expect(screen.queryByTestId('multi-url-field-simplex.contact-add')).not.toBeInTheDocument()
   })
 
   it('emits the trimmed/joined list upstream when a row is typed into', () => {
@@ -80,16 +96,16 @@ describe('MultiUrlField', () => {
     expect(onChange).toHaveBeenLastCalledWith(['https://smp2.example.im/a#H1'])
   })
 
-  it('strips commas typed into the input (preserved separator)', () => {
+  it('strips the separator typed into the input (preserves the on-chain separator)', () => {
     const onChange = vi.fn()
     render(
       <MultiUrlField {...baseProps} onChange={onChange} value={['https://smp1.example.im/a#H1']} />,
     )
     const input = screen.getByTestId('multi-url-field-simplex.contact-input-0')
-    // A change event with commas already in the value (e.g. paste) — commas
+    // A change event with the separator already in the value (e.g. paste) — it
     // must be stripped so the on-chain separator stays consistent.
     fireEvent.change(input, {
-      target: { value: 'https://smp1.example.im/a#H1,https://smp2.example.im/a#H2' },
+      target: { value: 'https://smp1.example.im/a#H1;https://smp2.example.im/a#H2' },
     })
     expect(onChange).toHaveBeenLastCalledWith([
       'https://smp1.example.im/a#H1https://smp2.example.im/a#H2',
@@ -115,14 +131,17 @@ describe('MultiUrlField', () => {
     )
   }
 
-  it('keeps the new empty row visible after the parent re-binds the same value', () => {
-    render(<ParentHarness initial={['https://smp1.example.im/a#H1']} />)
-    fireEvent.click(screen.getByTestId('multi-url-field-simplex.contact-add'))
-    expect(screen.getByTestId('multi-url-field-simplex.contact-input-1')).toBeVisible()
-    // And a second click still works — three rows now.
-    fireEvent.click(screen.getByTestId('multi-url-field-simplex.contact-add'))
-    expect(screen.getByTestId('multi-url-field-simplex.contact-input-2')).toBeVisible()
-  })
+  it.skipIf(MULTI_URL_FIELD_CAP <= 1)(
+    'keeps the new empty row visible after the parent re-binds the same value',
+    () => {
+      render(<ParentHarness initial={['https://smp1.example.im/a#H1']} />)
+      fireEvent.click(screen.getByTestId('multi-url-field-simplex.contact-add'))
+      expect(screen.getByTestId('multi-url-field-simplex.contact-input-1')).toBeVisible()
+      // And a second click still works — three rows now.
+      fireEvent.click(screen.getByTestId('multi-url-field-simplex.contact-add'))
+      expect(screen.getByTestId('multi-url-field-simplex.contact-input-2')).toBeVisible()
+    },
+  )
 
   it('calls onDelete when the only row is removed', () => {
     const onChange = vi.fn()

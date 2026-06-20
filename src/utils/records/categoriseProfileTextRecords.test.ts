@@ -7,6 +7,7 @@ describe('categoriseProfileTextRecords', () => {
     const result = categoriseAndTransformTextRecords({
       texts: [
         { key: 'com.twitter', value: 'name' },
+        { key: 'simplex.contact', value: 'https://smp.example/abc' },
         { key: 'other', value: 'value' },
         { key: 'description', value: 'description' },
       ],
@@ -19,6 +20,14 @@ describe('categoriseProfileTextRecords', () => {
     })
     expect(result).toEqual({
       general: [{ key: 'description', value: 'description' }],
+      simplex: [
+        {
+          key: 'simplex.contact',
+          normalisedKey: 'simplex.contact',
+          value: 'https://smp.example/abc',
+          iconKey: 'simplex.contact',
+        },
+      ],
       accounts: [
         {
           key: 'com.twitter',
@@ -57,6 +66,7 @@ describe('categoriseProfileTextRecords', () => {
     })
     expect(result).toEqual({
       general: [{ key: 'description', value: 'description' }],
+      simplex: [],
       accounts: [
         {
           key: 'com.twitter',
