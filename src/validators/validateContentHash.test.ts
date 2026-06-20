@@ -13,6 +13,7 @@ const onion3 = 'onion3://jamie3vkiwibfiwucd6vxijskbhpjdyajmzeor4mc4i7yopvpo4p7cy
 const skylink = 'sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg'
 const arweave = 'arweave://ys32Pt8uC7TrVxHdOLByOspfPEq2LO63wREHQIM9SJQ'
 const ar = 'ar://ys32Pt8uC7TrVxHdOLByOspfPEq2LO63wREHQIM9SJQ'
+const adnl = 'adnl://61bd855da6c07e8d1c807e880c2a9a6272011cfc2b34b2e9de32cd37ff6f4ae5'
 
 const invalidate = (url: string) => `${url}invalid`
 
@@ -93,6 +94,14 @@ describe('validateContentHash', () => {
     expect(typeof validateContentHash('arweave')(invalidate(ar))).toBe('string')
   })
 
+  it('should return true for valid adnl address', () => {
+    expect(validateContentHash('adnl')(adnl)).toBe(true)
+  })
+
+  it('should fail for invalid adnl address (wrong length)', () => {
+    expect(typeof validateContentHash('adnl')('adnl://deadbeef')).toBe('string')
+  })
+
   it('should fail if the content hash is undefined', () => {
     expect(typeof validateContentHash(undefined as any)(ipfs)).toBe('string')
   })
@@ -112,5 +121,6 @@ describe('validateContentHash', () => {
     expect(validateContentHash('all')(skylink)).toBe(true)
     expect(validateContentHash('all')(arweave)).toBe(true)
     expect(validateContentHash('all')(ar)).toBe(true)
+    expect(validateContentHash('all')(adnl)).toBe(true)
   })
 })
