@@ -9,8 +9,9 @@ export type ContentHashProtocol =
   | 'sia'
   | 'arweave'
   | 'ar'
+  | 'adnl'
 
-export type ContentHashProvider = 'ipfs' | 'swarm' | 'onion' | 'skynet' | 'arweave'
+export type ContentHashProvider = 'ipfs' | 'swarm' | 'onion' | 'skynet' | 'arweave' | 'adnl'
 
 type GetContentHashLinkParameters = {
   name: string
@@ -76,6 +77,7 @@ const contentHashProtocolToProviderMap = {
   sia: 'skynet',
   arweave: 'arweave',
   ar: 'arweave',
+  adnl: 'adnl',
 } as const
 
 export const getContentHashProvider = (protocol: ContentHashProtocol): ContentHashProvider =>

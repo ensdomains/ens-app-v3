@@ -98,7 +98,8 @@
             "skynet": "sia://...",
             "arweave": "ar://...",
             "swarm": "bzz://...",
-            "onion": "onion3://..."
+            "onion": "onion3://...",
+            "adnl": "adnl://..."
           }
         },
         "other": {

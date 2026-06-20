@@ -11,6 +11,7 @@ const contentHashToProtocols = {
   onion: ['onion', 'onion3'],
   skynet: ['sia'],
   arweave: ['arweave', 'ar'],
+  adnl: ['adnl'],
 }
 
 export const validateContentHash =
@@ -29,7 +30,8 @@ export const validateContentHash =
       (protocolType === 'onion' && decoded.length !== 16) ||
       (protocolType === 'onion3' && decoded.length !== 56) ||
       (protocolType === 'sia' && decoded.length !== 46) ||
-      (['arweave', 'ar'].includes(protocolType) && decoded.length !== 43)
+      (['arweave', 'ar'].includes(protocolType) && decoded.length !== 43) ||
+      (protocolType === 'adnl' && !/^[0-9a-f]{64}$/i.test(decoded))
     )
       return 'Invalid content id'
 
