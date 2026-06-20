@@ -9,6 +9,7 @@ export type ContentHashProtocol =
   | 'sia'
   | 'arweave'
   | 'ar'
+  | 'adnl'
 
 export type ContentHashProvider = 'ipfs' | 'swarm' | 'onion' | 'skynet' | 'arweave'
 
@@ -67,16 +68,19 @@ export const contentHashToString = (
   return ''
 }
 
-const contentHashProtocolToProviderMap = {
-  ipfs: 'ipfs',
-  ipns: 'ipfs',
-  bzz: 'swarm',
-  onion: 'onion',
-  onion3: 'onion',
-  sia: 'skynet',
-  arweave: 'arweave',
-  ar: 'arweave',
-} as const
+const contentHashProtocolToProviderMap: Partial<Record<ContentHashProtocol, ContentHashProvider>> =
+  {
+    ipfs: 'ipfs',
+    ipns: 'ipfs',
+    bzz: 'swarm',
+    onion: 'onion',
+    onion3: 'onion',
+    sia: 'skynet',
+    arweave: 'arweave',
+    ar: 'arweave',
+    // 'adnl' (TON) has no editable content hash provider
+  }
 
-export const getContentHashProvider = (protocol: ContentHashProtocol): ContentHashProvider =>
-  contentHashProtocolToProviderMap[protocol]
+export const getContentHashProvider = (
+  protocol: ContentHashProtocol,
+): ContentHashProvider | undefined => contentHashProtocolToProviderMap[protocol]
