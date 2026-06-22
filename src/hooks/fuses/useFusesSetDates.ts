@@ -1,13 +1,6 @@
-import {
-  QueryFunctionContext,
-  useQueries,
-  useQueryClient,
-  UseQueryResult,
-} from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { QueryFunctionContext, UseQueryResult } from '@tanstack/react-query'
 import { Address, BlockTag, GetBlockParameters, GetBlockReturnType } from 'viem'
 import { getBlock } from 'viem/actions'
-import { useAccount, useClient } from 'wagmi'
 
 import { ChainWithEns } from '@ensdomains/ensjs/contracts'
 import { GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'
@@ -15,7 +8,6 @@ import { ChildFuseKeys, decodeFuses, ParentFuseKeys } from '@ensdomains/ensjs/ut
 
 import { AnyFuseKey, ClientWithEns, CreateQueryKey } from '@app/types'
 
-import { useNameHistory } from '../ensjs/subgraph/useNameHistory'
 import { createQueryKey } from '../useQueryOptions'
 
 type UseFusesSetDatesParameters = {
@@ -152,39 +144,21 @@ export const generateMatchedFuseBlockData = ({
   }
 }
 
-export const useFusesSetDates = ({ name, enabled = true }: UseFusesSetDatesParameters) => {
-  const queryClient = useQueryClient()
-
-  const client = useClient()
-  const { address } = useAccount()
-
-  const {
-    data: nameHistory,
-    isLoading: isNameHistoryLoading,
-    isFetching: isNameHistoryFetching,
-    isSuccess: isNameHistorySuccess,
-  } = useNameHistory({ name, enabled })
-  const { blocksNeeded, fuseSetBlocks } = useMemo(
-    () => generateFuseSetBlocks(nameHistory),
-    [nameHistory],
-  )
-
-  const queries = useMemo(
-    () => generateGetBlockQueryArray(client, { address, blocksNeeded }),
-    [client, address, blocksNeeded],
-  )
-
-  const blockDatas = useQueries({ queries }, queryClient)
-
-  const { data, hasPendingBlocks, hasFetchingBlocks, hasAllSuccessData } = useMemo(
-    () => generateMatchedFuseBlockData({ fuseSetBlocks, blockDatas, queries }),
-    [fuseSetBlocks, blockDatas, queries],
-  )
-
+export const useFusesSetDates = (
+  params: UseFusesSetDatesParameters, // eslint-disable-line @typescript-eslint/no-unused-vars
+) => {
+  // Wrapper-free deployment: no fuses, so there are no fuse-set dates to
+  // resolve and no subgraph name-history call to make. Derive the empty
+  // result from generateMatchedFuseBlockData so the return type is identical.
+  const { data } = generateMatchedFuseBlockData({
+    fuseSetBlocks: [],
+    blockDatas: [],
+    queries: [],
+  })
   return {
     data,
-    isLoading: isNameHistoryLoading || hasPendingBlocks,
-    isFetching: isNameHistoryFetching || hasFetchingBlocks,
-    isSuccess: isNameHistorySuccess && hasAllSuccessData,
+    isLoading: false,
+    isFetching: false,
+    isSuccess: true,
   }
 }

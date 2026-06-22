@@ -1,5 +1,6 @@
 import approveDnsRegistrar from './approveDnsRegistrar'
 import approveNameWrapper from './approveNameWrapper'
+import approveSubnameRegistrar from './approveSubnameRegistrar'
 import burnFuses from './burnFuses'
 import changePermissions from './changePermissions'
 import claimDnsName from './claimDnsName'
@@ -33,6 +34,7 @@ import wrapName from './wrapName'
 export const transactions = {
   approveDnsRegistrar,
   approveNameWrapper,
+  approveSubnameRegistrar,
   burnFuses,
   changePermissions,
   claimDnsName,

@@ -1,7 +1,4 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { labelhash } from 'viem'
-
-import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
@@ -28,44 +25,15 @@ type QueryKey<TParams extends UseRegistrationDataParameters> = CreateQueryKey<
   'graph'
 >
 
-const gqlQuery = `
-  query getNameDates($id: String!) {
-    registration(id: $id) {
-      registrationDate
-    }
-    nameRegistereds(first: 1, orderBy: blockNumber, orderDirection: desc, where: { registration: $id }) {
-      transactionID
-    }
-  }
-`
-
 export const getRegistrationDataQueryFn =
-  (config: ConfigWithEns) =>
+  (_config: ConfigWithEns) =>
   async <TParams extends UseRegistrationDataParameters>({
-    queryKey: [{ name }, chainId],
+    queryKey: [{ name }],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
-
-    const client = config.getClient({ chainId })
-    const subgraphClient = createSubgraphClient({ client })
-
-    const result = await subgraphClient.request<{
-      registration?: {
-        registrationDate: string
-      }
-      nameRegistereds: {
-        transactionID: string
-      }[]
-    }>(gqlQuery, {
-      id: labelhash(name.split('.')[0]),
-    })
-
-    if (!result.registration) return null
-
-    return {
-      registrationDate: new Date(parseInt(result.registration.registrationDate) * 1000),
-      transactionHash: result.nameRegistereds[0]?.transactionID,
-    }
+    // No subgraph: the original registration date + tx hash are subgraph-only
+    // metadata (not recoverable on-chain), so report none.
+    return null as UseRegistrationDataReturnType
   }
 
 const useRegistrationData = <TParams extends UseRegistrationDataParameters>({

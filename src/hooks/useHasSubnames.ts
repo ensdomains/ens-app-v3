@@ -1,15 +1,11 @@
 import { QueryFunctionContext, queryOptions } from '@tanstack/react-query'
 
-import { getSubnames, Name } from '@ensdomains/ensjs/subgraph'
-
 import { ConfigWithEns, CreateQueryKey } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
+import { getSnrcSubnames } from '@app/utils/snrcSubnames'
 
-import { emptyAddress } from '../utils/constants'
 import { useQueryOptions } from './useQueryOptions'
-
-const FETCH_PAGE_SIZE = 50
 
 type UseHasSubnamesParameters = {
   name?: string | undefined | null
@@ -23,33 +19,14 @@ const hasSubnamesQueryFn =
     if (!name) throw new Error('name is required')
 
     const client = config.getClient({ chainId })
-
-    let cursor: Name[] = []
-    let done = false
-
-    while (!done) {
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        const result = await getSubnames(client, {
-          name,
-          previousPage: cursor,
-          orderBy: 'labelName',
-          orderDirection: 'desc',
-          pageSize: FETCH_PAGE_SIZE,
-        })
-        const subnames = result || []
-        const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
-        if (anyHasOwner) {
-          return true
-        }
-        done = subnames.length !== FETCH_PAGE_SIZE
-        cursor = subnames
-      } catch {
-        return false
-      }
+    // No subgraph: a name "has subnames" iff the SubnameRegistrar lists at least
+    // one still-owned child.
+    try {
+      const subnames = await getSnrcSubnames(client, chainId, name)
+      return subnames.length > 0
+    } catch {
+      return false
     }
-
-    return false
   }
 
 export const useHasSubnames = (name: string) => {

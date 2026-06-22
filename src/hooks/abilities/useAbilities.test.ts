@@ -132,7 +132,19 @@ describe('useAbilities', () => {
       if (index == -1) group.push([[type], result.current.data])
       else group[index][0].push(type)
 
-      const expected = makeMockUseAbilitiesData(type)
+      // SNRC: subnames (3LD+) are soulbound to the 2LD NFT, so useAbilities forces
+      // send/create-subdomain abilities off for them. Mirror that on the expected data.
+      const expected =
+        name.split('.').length > 2
+          ? {
+              ...makeMockUseAbilitiesData(type),
+              canSend: false,
+              canSendOwner: false,
+              canSendManager: false,
+              canCreateSubdomains: false,
+              canCreateSubdomainsError: undefined,
+            }
+          : makeMockUseAbilitiesData(type)
       expect(result.current.data).toEqual(expected)
     })
   })

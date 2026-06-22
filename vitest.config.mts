@@ -29,6 +29,11 @@ export default defineConfig({
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['./test/textencoder-setup.mts', './test/websocket-setup.mts'],
     globalSetup: ['./test/global-setup.mts'],
+    // Under coverage the default worker count oversubscribes CPU and starves async
+    // react-hook-form validation/timers, intermittently failing timing-sensitive
+    // tests. Cap concurrency so each worker stays responsive.
+    minWorkers: 1,
+    maxWorkers: '50%',
     coverage: {
       provider: 'v8',
       include: ['src/**/*'],

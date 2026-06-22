@@ -1,13 +1,10 @@
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { getNetworkFromUrl } from '@app/constants/chains'
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
-import { useIsOffchainName } from '@app/hooks/ensjs/dns/useIsOffchainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
-import { NameWrapper } from './NameWrapper'
 import { PrimaryName } from './PrimaryName'
 import Resolver from './Resolver'
 import Token from './Token/Token'
@@ -31,32 +28,12 @@ type Props = {
 }
 
 const MoreTab = ({ name, nameDetails, abilities }: Props) => {
-  const { canBeWrapped, ownerData, wrapperData, isWrapped, isCachedData, profile } = nameDetails
-
-  const { isConnected, address } = useAccount()
-
-  const isOffchainImport = useIsOffchainName({
-    name,
-    enabled: nameDetails.registrationStatus === 'imported',
-  })
+  const { isWrapped, isCachedData, profile } = nameDetails
 
   return (
     <MoreContainer>
       <Token isWrapped={isWrapped} name={name} />
       {['mainnet', 'sepolia'].includes(getNetworkFromUrl() || '') && <PrimaryName name={name} />}
-      {(isConnected || isWrapped) && !isOffchainImport && (
-        <NameWrapper
-          {...{
-            isWrapped,
-            wrapperData,
-            canBeWrapped,
-            name,
-            profile,
-            ownerData,
-            address,
-          }}
-        />
-      )}
       <Resolver
         name={name}
         canEdit={abilities.canEdit}

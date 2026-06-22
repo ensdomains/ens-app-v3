@@ -12,6 +12,7 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
 import { useRegistrationValueFromRegisterReceipt } from '@app/hooks/pages/register/useRegistrationValueFromRegisterReceipt'
+import { useOnchainNftImage } from '@app/hooks/useOnchainNftImage'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { dateFromDateDiff } from '@app/utils/date'
@@ -67,6 +68,17 @@ const NFTContainer = styled.div(
       width: ${theme.space['80']};
       height: ${theme.space['80']};
     }
+  `,
+)
+
+// The exact on-chain NFT image, rendered the same way wallets do: an <img>
+// pointing at the data:image/svg+xml;base64 URI from the contract.
+const NFTImage = styled.img(
+  () => css`
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   `,
 )
 
@@ -222,6 +234,7 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow, registrationD
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
   const { InvoiceFilled, avatarSrc } = useEthInvoice(name, registrationData.seconds, isMoonpayFlow)
+  const { image: onchainNftImage } = useOnchainNftImage(name)
 
   const nameWithColourEmojis = useMemo(() => {
     const data = tokenise(beautifiedName)
@@ -271,7 +284,11 @@ const Complete = ({ name, beautifiedName, callback, isMoonpayFlow, registrationD
       </TitleContainer>
       <InvoiceContainer>
         <NFTContainer>
-          <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
+          {onchainNftImage ? (
+            <NFTImage src={onchainNftImage} alt={name} />
+          ) : (
+            <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
+          )}
         </NFTContainer>
         {InvoiceFilled}
       </InvoiceContainer>

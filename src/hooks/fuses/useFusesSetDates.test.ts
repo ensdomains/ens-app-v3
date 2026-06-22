@@ -451,7 +451,9 @@ describe('useFusesSetDates', () => {
 
     expect(result.current.data).toBeUndefined()
   })
-  it('returns correct data for a name with single fuse set event', async () => {
+  // Wrapper-free SNRC: there are no fuses, so the hook returns no dates
+  // regardless of any (legacy) name-history input.
+  it('returns no fuse dates for a single fuse set event (wrapper-free)', async () => {
     mockUseNameHistory.mockReturnValue({
       data: {
         domainEvents: [
@@ -468,13 +470,11 @@ describe('useFusesSetDates', () => {
     })
     const { result } = renderHook(() => useFusesSetDates({ name: 'test.eth' }))
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
 
-    expect(result.current.data).toEqual({
-      PARENT_CANNOT_CONTROL: 'Jul 27, 2021',
-    })
+    expect(result.current.data).toBeUndefined()
   })
-  it('returns correct data for a name with multiple fuse set events', async () => {
+  it('returns no fuse dates for multiple fuse set events (wrapper-free)', async () => {
     mockUseNameHistory.mockReturnValue({
       data: {
         domainEvents: [
@@ -496,11 +496,8 @@ describe('useFusesSetDates', () => {
     })
     const { result } = renderHook(() => useFusesSetDates({ name: 'test.eth' }))
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
 
-    expect(result.current.data).toEqual({
-      PARENT_CANNOT_CONTROL: 'Jul 27, 2021',
-      CANNOT_UNWRAP: 'Jul 28, 2021',
-    })
+    expect(result.current.data).toBeUndefined()
   })
 })

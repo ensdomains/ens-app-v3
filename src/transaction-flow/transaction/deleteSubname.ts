@@ -1,7 +1,7 @@
 import type { TFunction } from 'react-i18next'
+import { Address, encodeFunctionData, namehash } from 'viem'
 
-import { deleteSubname } from '@ensdomains/ensjs/wallet'
-
+import { getSnrcAddresses } from '@app/constants/chains'
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 
 type Data = {
@@ -30,12 +30,36 @@ const displayItems = (
   },
 ]
 
-const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) =>
-  deleteSubname.makeFunctionData(connectorClient, {
-    name: data.name,
-    contract: data.contract,
-    asOwner: data.method === 'setRecord',
-  })
+// SNRC: subnames are owned by the SubnameRegistrar (soulbound to the 2LD NFT),
+// so deletion goes through it (gated on the 2LD holder), not a raw registry
+// write. The `contract`/`method` fields in Data are legacy and ignored.
+const deleteSubnameSnippet = [
+  {
+    inputs: [
+      { name: 'parentNode', type: 'bytes32' },
+      { name: 'label', type: 'string' },
+    ],
+    name: 'deleteSubname',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const
+
+const transaction = async ({ client, data }: TransactionFunctionParameters<Data>) => {
+  const subnameRegistrar = getSnrcAddresses(client.chain.id).SubnameRegistrar as Address
+  const labels = data.name.split('.')
+  const label = labels[0]
+  const parent = labels.slice(1).join('.')
+  return {
+    to: subnameRegistrar,
+    data: encodeFunctionData({
+      abi: deleteSubnameSnippet,
+      functionName: 'deleteSubname',
+      args: [namehash(parent), label],
+    }),
+  }
+}
 
 export default {
   displayItems,

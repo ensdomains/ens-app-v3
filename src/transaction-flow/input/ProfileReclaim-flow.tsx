@@ -88,7 +88,6 @@ const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: 
   const handleSubmit = () => {
     const payload = [
       createTransactionItem('createSubname', {
-        contract: 'nameWrapper',
         label,
         parent,
       }),

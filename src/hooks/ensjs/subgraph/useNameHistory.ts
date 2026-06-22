@@ -1,10 +1,6 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 
-import {
-  getNameHistory,
-  GetNameHistoryParameters,
-  GetNameHistoryReturnType,
-} from '@ensdomains/ensjs/subgraph'
+import { GetNameHistoryParameters, GetNameHistoryReturnType } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
@@ -25,15 +21,14 @@ type QueryKey<TParams extends UseNameHistoryParameters> = CreateQueryKey<
 >
 
 export const getNameHistoryQueryFn =
-  (config: ConfigWithEns) =>
-  async <TParams extends UseNameHistoryParameters>({
-    queryKey: [{ name }, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
-    if (!name) throw new Error('name is required')
-
-    const client = config.getClient({ chainId })
-
-    return getNameHistory(client, { name })
+  (
+    config: ConfigWithEns, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ) =>
+  async <TParams extends UseNameHistoryParameters>(
+    context: QueryFunctionContext<QueryKey<TParams>>, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): Promise<GetNameHistoryReturnType> => {
+    // Subgraph removed: no name history available.
+    return null
   }
 
 export const useNameHistory = <TParams extends UseNameHistoryParameters>({

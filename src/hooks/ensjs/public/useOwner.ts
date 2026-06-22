@@ -1,12 +1,26 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
+import { Address, namehash } from 'viem'
+import { readContract } from 'viem/actions'
 
 import { getOwner, GetOwnerParameters, GetOwnerReturnType } from '@ensdomains/ensjs/public'
 
+import { getSnrcAddresses } from '@app/constants/chains'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { emptyAddress } from '@app/utils/constants'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
+
+const subnameRegistrarOwnerOfAbi = [
+  {
+    name: 'ownerOf',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'node', type: 'uint256' }],
+    outputs: [{ type: 'address' }],
+  },
+] as const
 
 type OwnerContract = 'nameWrapper' | 'registry' | 'registrar'
 
@@ -32,7 +46,37 @@ export const getOwnerQueryFn =
 
     const client = config.getClient({ chainId })
 
-    return getOwner(client, { name, ...params })
+    const result = await getOwner(client, { name, ...params })
+
+    // SNRC: subnames are registry-owned by the SubnameRegistrar; their effective
+    // owner/manager is the live 2LD NFT holder, derived via SubnameRegistrar.ownerOf
+    // (the same indirection the PublicResolver uses for record auth). Surface that
+    // holder as `owner` so the UI recognises them as the subname's manager (Edit
+    // profile etc.). 2LDs are owned directly and never hit this branch; a dead/
+    // purged subname returns ownerOf == 0 and is left registrar-owned (uneditable).
+    const subnameRegistrar = getSnrcAddresses(chainId)?.SubnameRegistrar as Address | undefined
+    if (
+      result?.owner &&
+      subnameRegistrar &&
+      subnameRegistrar !== emptyAddress &&
+      result.owner.toLowerCase() === subnameRegistrar.toLowerCase()
+    ) {
+      try {
+        const effectiveOwner = (await readContract(client, {
+          address: subnameRegistrar,
+          abi: subnameRegistrarOwnerOfAbi,
+          functionName: 'ownerOf',
+          args: [BigInt(namehash(name))],
+        })) as Address
+        if (effectiveOwner && effectiveOwner !== emptyAddress) {
+          return { ...result, owner: effectiveOwner }
+        }
+      } catch {
+        /* dead / purged subname — leave registrar-owned */
+      }
+    }
+
+    return result
   }
 
 export const useOwner = <

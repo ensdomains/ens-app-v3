@@ -129,7 +129,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
     () => {
       if (!name || !address || isLoading) return DEFAULT_ABILITIES
       const canExtend = !!name && checkETH2LDFromName(name)
-      return {
+      const abilities = {
         canExtend,
         canSelfExtend: canExtend && isSelfExtendable({ ...basicNameData, address }),
         ...getSendAbilities({
@@ -158,6 +158,21 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
           parentBasicNameData,
         }),
       }
+
+      // SNRC: subnames (3LD+) are soulbound to the 2LD NFT — they have no
+      // independent ownership. You can't send a subname (transferring the 2LD NFT
+      // moves the whole subtree via auto-reclaim), and subnames can't themselves
+      // have subnames in the UI (single-level). Force those abilities off for any
+      // name deeper than a 2LD.
+      if (name.split('.').length > 2) {
+        abilities.canSend = false
+        abilities.canSendOwner = false
+        abilities.canSendManager = false
+        abilities.canCreateSubdomains = false
+        abilities.canCreateSubdomainsError = undefined
+      }
+
+      return abilities
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

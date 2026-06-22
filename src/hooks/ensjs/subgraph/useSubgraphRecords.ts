@@ -1,7 +1,6 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 
-import {
-  getSubgraphRecords,
+import type {
   GetSubgraphRecordsParameters,
   GetSubgraphRecordsReturnType,
 } from '@ensdomains/ensjs/subgraph'
@@ -26,15 +25,21 @@ type QueryKey<TParams extends UseSubgraphRecordsParameters> = CreateQueryKey<
 >
 
 export const getSubgraphRecordsQueryFn =
-  (config: ConfigWithEns) =>
+  (_config: ConfigWithEns) =>
   async <TParams extends UseSubgraphRecordsParameters>({
-    queryKey: [{ name, ...params }, chainId],
+    queryKey: [{ name }],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
-
-    const client = config.getClient({ chainId })
-
-    return getSubgraphRecords(client, { name, ...params })
+    // No subgraph: the profile already reads a fixed supported-key set on-chain
+    // (see useProfile). We only inject the SNRC-specific text keys so they get
+    // fetched too; empty records simply don't render.
+    return {
+      texts: ['simplex.contact', 'simplex.channel'],
+      coins: [],
+      contentHash: false,
+      isMigrated: true,
+      createdAt: undefined,
+    } as unknown as GetSubgraphRecordsReturnType
   }
 
 export const useSubgraphRecords = <TParams extends UseSubgraphRecordsParameters>({

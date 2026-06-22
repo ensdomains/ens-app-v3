@@ -249,34 +249,9 @@ describe('SelectPrimaryName', () => {
     await waitFor(() => expect(mockDispatch).toBeCalled())
   })
 
-  it('should call dispatch if encrpyted name can be decrypted', async () => {
-    mockUseNamesForAddress.mockReturnValueOnce({
-      data: {
-        pages: [
-          [
-            ...new Array(5).fill(0).map((_, i) => makeName(i)),
-            {
-              name: `${encodeLabel('test')}.eth`,
-              id: '0xhash',
-            },
-          ],
-        ],
-      },
-      isLoading: false,
-    })
-    mockGetDecodedName.mockReturnValueOnce(Promise.resolve('test.eth'))
-    render(
-      <SelectPrimaryName
-        data={{ address: '0x123' }}
-        dispatch={mockDispatch}
-        onDismiss={() => {}}
-      />,
-    )
-    await userEvent.click(screen.getByText(`${encodeLabel('test')}.eth`))
-    await userEvent.click(screen.getByTestId('primary-next'))
-    expect(mockDispatch).toHaveBeenCalled()
-  })
-
+  // No subgraph: encrypted-label names are no longer auto-decoded via the graph.
+  // An encrypted label that isn't already known locally must be entered by hand
+  // (the UnknownLabels form), which the next test covers.
   it('should be able to decrpyt name and dispatch', async () => {
     mockUseNamesForAddress.mockReturnValue({
       data: {

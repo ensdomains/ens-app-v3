@@ -49,7 +49,7 @@ export const getReverseRegistryNameQueryFn =
       functionName: 'resolver',
       args: [getReverseNodeHash(address, { ns: 'addr' })],
     })
-    if (!reverseResolver) return null
+    if (!reverseResolver || reverseResolver === emptyAddress) return null
 
     try {
       const reverseResolverName = await readContract(client, {

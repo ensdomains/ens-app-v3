@@ -1,7 +1,5 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { namehash, type Address } from 'viem'
-
-import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
+import { type Address } from 'viem'
 
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
@@ -24,40 +22,17 @@ type QueryKey<TParams extends UseResolverExistsParameters> = CreateQueryKey<
   'graph'
 >
 
-const gqlQuery = `
-  query getResolverExists($id: String!) {
-    resolver(id: $id) {
-      id
-    }
-  }
-`
-
-type GraphResponse = {
-  resolver?: {
-    id: string
-  }
-}
-
 export const getResolverExistsQueryFn =
-  (config: ConfigWithEns) =>
+  (_config: ConfigWithEns) =>
   async <TParams extends UseResolverExistsParameters>({
-    queryKey: [{ name, address }, chainId],
+    queryKey: [{ name, address }],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
     if (!address) throw new Error('address is required')
-
-    const client = config.getClient({ chainId })
-    const subgraphClient = createSubgraphClient({ client })
-
-    try {
-      const { resolver } = await subgraphClient.request<GraphResponse>(gqlQuery, {
-        id: `${address}-${namehash(name)}`,
-      })
-      return !!resolver
-    } catch (e) {
-      // If the graph is down or has an error, we assume the resolver exists for safety
-      return true
-    }
+    // No subgraph: this only gates whether the registration flow pre-clears prior
+    // records on the given resolver. SNRC names are freshly registered with no
+    // pre-existing records, so report none.
+    return false
   }
 
 /**

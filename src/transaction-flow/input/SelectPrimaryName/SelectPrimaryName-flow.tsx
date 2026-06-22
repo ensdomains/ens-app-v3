@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 import { Address, labelhash } from 'viem'
 import { useClient } from 'wagmi'
 
-import { getDecodedName, Name } from '@ensdomains/ensjs/subgraph'
+import type { Name } from '@ensdomains/ensjs/subgraph'
 import { decodeLabelhash, isEncodedLabelhash, saveName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Heading, Typography } from '@ensdomains/thorin'
 
@@ -230,17 +230,9 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
         return validName
       }
 
-      // Attempt to decrypt name
-      validName = (await getDecodedName(client, {
-        name: validName,
-        allowIncomplete: true,
-      })) as string
-      if (!hasEncodedLabel(validName)) {
-        saveName(validName)
-        queryClient.resetQueries({ queryKey: validateKey(data.name?.name) })
-        return validName
-      }
-
+      // No subgraph: names enumerated on-chain already carry readable labels
+      // (BaseRegistrar/SubnameRegistrar labelOf), so there is no subgraph-backed
+      // decryption step — a still-encoded label here is simply invalid.
       throw new Error('invalid_name')
     },
     onSuccess: (name) => {

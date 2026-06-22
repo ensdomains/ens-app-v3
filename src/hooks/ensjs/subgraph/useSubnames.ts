@@ -1,15 +1,12 @@
 import { infiniteQueryOptions, QueryFunctionContext } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import {
-  getSubnames,
-  GetSubnamesParameters,
-  GetSubnamesReturnType,
-} from '@ensdomains/ensjs/subgraph'
+import type { GetSubnamesParameters, GetSubnamesReturnType } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
+import { getSnrcSubnames } from '@app/utils/snrcSubnames'
 
 type UseSubnamesParameters = Omit<PartialBy<GetSubnamesParameters, 'name'>, 'previousPage'>
 
@@ -30,10 +27,29 @@ export const getSubnamesQueryFn =
     pageParam,
   }: QueryFunctionContext<QueryKey<TParams>, GetSubnamesReturnType>) => {
     if (!name) throw new Error('name is required')
+    // No subgraph: enumerate on-chain via the SubnameRegistrar. The whole set is
+    // returned as a single page (SNRC subname sets are small).
+    if (pageParam && pageParam.length > 0) return [] as GetSubnamesReturnType
 
     const client = config.getClient({ chainId })
-
-    return getSubnames(client, { name, ...params, previousPage: pageParam })
+    const search = (params as { searchString?: string }).searchString?.toLowerCase() || ''
+    const subnames = await getSnrcSubnames(client, chainId, name)
+    return subnames
+      .filter((s) => !search || s.label.toLowerCase().includes(search))
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .map((s) => ({
+        name: s.name,
+        labelName: s.label,
+        labelhash: s.labelhash,
+        truncatedName: s.name,
+        owner: s.owner,
+        pccExpired: false,
+        expiryDate: undefined,
+        parentName: name,
+        isMigrated: true,
+        type: 'domain',
+        createdAt: undefined,
+      })) as unknown as GetSubnamesReturnType
   }
 
 const getNextPageParam =

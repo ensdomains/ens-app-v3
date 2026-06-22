@@ -1,11 +1,7 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import {
-  getDecodedName,
-  GetDecodedNameParameters,
-  GetDecodedNameReturnType,
-} from '@ensdomains/ensjs/subgraph'
+import type { GetDecodedNameParameters, GetDecodedNameReturnType } from '@ensdomains/ensjs/subgraph'
 import { checkIsDecrypted } from '@ensdomains/ensjs/utils'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
@@ -27,15 +23,15 @@ type QueryKey<TParams extends UseDecodedNameParameters> = CreateQueryKey<
 >
 
 export const getDecodedNameQueryFn =
-  (config: ConfigWithEns) =>
+  (_config: ConfigWithEns) =>
   async <TParams extends UseDecodedNameParameters>({
-    queryKey: [{ name, ...params }, chainId],
+    queryKey: [{ name }],
   }: QueryFunctionContext<QueryKey<TParams>>) => {
     if (!name) throw new Error('name is required')
-
-    const client = config.getClient({ chainId })
-
-    return getDecodedName(client, { name, ...params })
+    // No subgraph: SNRC labels are known on-chain (BaseRegistrar/SubnameRegistrar
+    // labelOf), and the name passed here is already decoded, so return it as-is
+    // (a plain decoded name string).
+    return name as GetDecodedNameReturnType
   }
 
 export const useDecodedName = <TParams extends UseDecodedNameParameters>({

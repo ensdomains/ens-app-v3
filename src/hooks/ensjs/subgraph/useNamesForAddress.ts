@@ -1,10 +1,9 @@
 import { infiniteQueryOptions, QueryFunctionContext } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
-
-import { Address, keccak256, namehash, parseAbi, parseAbiItem, toBytes } from 'viem'
+import { Address, parseAbi, parseAbiItem } from 'viem'
 import { getBlockNumber, getLogs, readContract } from 'viem/actions'
-import {
-  getNamesForAddress,
+
+import type {
   GetNamesForAddressParameters,
   GetNamesForAddressReturnType,
 } from '@ensdomains/ensjs/subgraph'
@@ -30,7 +29,14 @@ const getNamesForAddressFromChain = async (
   const addresses = getSnrcAddresses(chainId)
   const baseRegistrar = addresses.BaseRegistrarImplementation as Address | undefined
   // eslint-disable-next-line no-console
-  console.log('[chain-scan] chainId=', chainId, 'baseRegistrar=', baseRegistrar, 'address=', address)
+  console.log(
+    '[chain-scan] chainId=',
+    chainId,
+    'baseRegistrar=',
+    baseRegistrar,
+    'address=',
+    address,
+  )
   if (!baseRegistrar) {
     // eslint-disable-next-line no-console
     console.warn('[chain-scan] No BaseRegistrarImplementation address for chainId', chainId)
@@ -87,7 +93,11 @@ const getNamesForAddressFromChain = async (
   console.log('[chain-scan] total logs found:', logs.length, logs.slice(0, 3))
   // Drop tokens later transferred away; keep only those still owned by `address`.
   const stillOwnedIds = new Set<string>()
-  const abi = parseAbi(['function ownerOf(uint256) view returns (address)', 'function nameExpires(uint256) view returns (uint256)'])
+  const abi = parseAbi([
+    'function ownerOf(uint256) view returns (address)',
+    'function nameExpires(uint256) view returns (uint256)',
+    'function labelOf(uint256) view returns (string)',
+  ])
   await Promise.all(
     Array.from(new Set(logs.map((l: any) => l.args.tokenId as bigint))).map(async (tokenId) => {
       try {
@@ -96,7 +106,7 @@ const getNamesForAddressFromChain = async (
           abi,
           functionName: 'ownerOf',
           args: [tokenId],
-        })) as Address;
+        })) as Address
         if (owner?.toLowerCase() === address.toLowerCase()) stillOwnedIds.add(tokenId.toString())
       } catch {
         /* token may have been burned/expired — skip */
@@ -119,7 +129,22 @@ const getNamesForAddressFromChain = async (
   for (const tokenIdStr of stillOwnedIds) {
     const tokenId = BigInt(tokenIdStr)
     const labelhashHex = `0x${tokenId.toString(16).padStart(64, '0')}` as `0x${string}`
-    const label = labels[labelhashHex] || null
+    let label = labels[labelhashHex] || null
+    // v3 BaseRegistrar stores the plaintext label on-chain (labelOf), so we no
+    // longer depend on the localStorage label cache to display a readable name.
+    if (!label) {
+      try {
+        const onchainLabel = (await readContract(client, {
+          address: baseRegistrar,
+          abi,
+          functionName: 'labelOf',
+          args: [tokenId],
+        })) as string
+        if (onchainLabel) label = onchainLabel
+      } catch {
+        /* ignore */
+      }
+    }
     let expiry: bigint = 0n
     try {
       expiry = (await readContract(client, {
@@ -140,7 +165,9 @@ const getNamesForAddressFromChain = async (
       truncatedName: fullName,
       relation: { owner: true, wrappedOwner: false, registrant: true, resolvedAddress: false },
       registrationDate: undefined as any,
-      expiryDate: expiry ? { date: new Date(Number(expiry) * 1000), value: expiry } : undefined as any,
+      expiryDate: expiry
+        ? { date: new Date(Number(expiry) * 1000), value: expiry }
+        : (undefined as any),
       isMigrated: true,
       parentName: tld,
       type: 'registration',
@@ -168,34 +195,22 @@ type QueryKey<TParams extends UseNamesForAddressParameters> = CreateQueryKey<
 export const getNamesForAddressQueryFn =
   (config: ConfigWithEns) =>
   async <TParams extends UseNamesForAddressParameters>({
-    queryKey: [{ address, ...params }, chainId],
+    queryKey: [{ address }, chainId],
     pageParam,
   }: QueryFunctionContext<QueryKey<TParams>, GetNamesForAddressReturnType>) => {
     if (!address) throw new Error('address is required')
 
     const client = config.getClient({ chainId })
 
-    // Local dev and the Sepolia custom deployment both run against contracts
-    // the public ENS subgraph doesn't index — scan the chain via BaseRegistrar
-    // Transfer events instead. When a self-hosted subgraph IS configured
-    // (NEXT_PUBLIC_SUBGRAPH_URL, e.g. the Graph Node in
-    // simplex-namespace-contract/scripts/subgraph), prefer it: it resolves
-    // labels (incl. reserved names) the chain-scan can't recover without a
-    // populated localStorage cache.
-    if (
-      typeof window !== 'undefined' &&
-      !process.env.NEXT_PUBLIC_SUBGRAPH_URL &&
-      (process.env.NEXT_PUBLIC_PROVIDER || process.env.NEXT_PUBLIC_SEPOLIA_DEPLOYMENT_ADDRESSES || process.env.NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES)
-    ) {
-      if (pageParam && pageParam.length > 0) return [] as GetNamesForAddressReturnType
-      try {
-        return await getNamesForAddressFromChain(client, address as Address)
-      } catch {
-        return [] as GetNamesForAddressReturnType
-      }
+    // No subgraph: always enumerate on-chain. We scan BaseRegistrar Transfer
+    // events for tokenIds owned by `address` and resolve labels via the v3
+    // on-chain labelOf. The whole set is returned as one page.
+    if (pageParam && pageParam.length > 0) return [] as GetNamesForAddressReturnType
+    try {
+      return await getNamesForAddressFromChain(client, address as Address)
+    } catch {
+      return [] as GetNamesForAddressReturnType
     }
-
-    return getNamesForAddress(client, { address, ...params, previousPage: pageParam })
   }
 
 const getNextPageParam =

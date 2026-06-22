@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
+import { useAccount } from 'wagmi'
 
 import { validateName } from '@ensdomains/ensjs/utils'
 import { Button, Dialog, Input, PlusSVG } from '@ensdomains/thorin'
@@ -23,6 +24,7 @@ import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { useSubnameRegistrarApproval } from '@app/hooks/useSubnameRegistrarApproval'
 
 import { useValidateSubnameLabel } from '../../hooks/useValidateSubnameLabel'
 import { createTransactionItem } from '../transaction'
@@ -128,6 +130,11 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
 
   const name = `${debouncedLabel}.${parent}`
 
+  const { address } = useAccount()
+  // SNRC: subnames are created via the SubnameRegistrar, which needs a one-time
+  // registry-wide operator approval from the parent owner.
+  const { approved: subnameRegistrarApproved } = useSubnameRegistrarApproval({ address })
+
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
 
   const {
@@ -158,8 +165,10 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
 
   const handleSubmit = () => {
     const payload = [
+      ...(!subnameRegistrarApproved
+        ? [createTransactionItem('approveSubnameRegistrar', { parent })]
+        : []),
       createTransactionItem('createSubname', {
-        contract: isWrapped ? 'nameWrapper' : 'registry',
         label: debouncedLabel,
         parent,
       }),

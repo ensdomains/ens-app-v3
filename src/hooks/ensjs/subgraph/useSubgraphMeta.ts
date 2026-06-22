@@ -1,7 +1,4 @@
 import { QueryFunctionContext } from '@tanstack/react-query'
-import { gql } from 'graphql-request'
-
-import { createSubgraphClient } from '@ensdomains/ensjs/subgraph'
 
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, QueryConfig } from '@app/types'
@@ -25,29 +22,17 @@ export type QueryKey<TParams extends UseSubgraphMetaParameters> = CreateQueryKey
 >
 
 export const getSubgraphMetaQueryFn =
-  (config: ConfigWithEns) =>
-  async <TParams extends UseSubgraphMetaParameters>({
-    queryKey: [, chainId],
-  }: QueryFunctionContext<QueryKey<TParams>>) => {
-    const client = config.getClient({ chainId })
-    const subgraphClient = createSubgraphClient({ client })
-    const query = gql`
-      query getMeta {
-        _meta {
-          hasIndexingErrors
-          block {
-            number
-          }
-        }
-      }
-    `
-    const result = await subgraphClient.request<{
-      _meta: { hasIndexingErrors: boolean; block: { number: number } }
-    }>(query)
-
+  (
+    config: ConfigWithEns, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ) =>
+  async <TParams extends UseSubgraphMetaParameters>(
+    context: QueryFunctionContext<QueryKey<TParams>>, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): Promise<UseSubgraphMetaReturnType> => {
+    // Subgraph removed: report a healthy, fully-synced stub so any
+    // "out of sync / indexing" banner never renders.
     return {
-      hasIndexingErrors: result._meta.hasIndexingErrors,
-      blockNumber: result._meta.block.number,
+      hasIndexingErrors: false,
+      blockNumber: Number.MAX_SAFE_INTEGER,
     }
   }
 

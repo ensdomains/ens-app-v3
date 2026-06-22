@@ -6,8 +6,10 @@ import {
   GetWrapperDataReturnType,
 } from '@ensdomains/ensjs/public'
 
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, PartialBy, QueryConfig } from '@app/types'
+import { emptyAddress } from '@app/utils/constants'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 import { useQuery } from '@app/utils/query/useQuery'
@@ -43,6 +45,15 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   // params
   ...params
 }: TParams & UseWrapperDataConfig) => {
+  // SNRC is wrapper-free: the NameWrapper is the zero address. Calling getData on
+  // address(0) reverts ("returned no data"), and react-query retries keep
+  // isLoading true forever — which blocks useProfileActions (it gates on
+  // isWrapperDataLoading), so no profile action (Edit profile, Extend, Delete
+  // subname, Set primary) ever renders. Skip the query entirely when there is no
+  // NameWrapper; wrapperData is then undefined (i.e. unwrapped), which is correct.
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+  const hasNameWrapper = !!nameWrapperAddress && nameWrapperAddress !== emptyAddress
+
   const initialOptions = useQueryOptions({
     params,
     scopeKey,
@@ -54,7 +65,7 @@ export const useWrapperData = <TParams extends UseWrapperDataParameters>({
   const preparedOptions = prepareQueryOptions({
     queryKey: initialOptions.queryKey,
     queryFn: initialOptions.queryFn,
-    enabled: enabled && !!params.name,
+    enabled: enabled && !!params.name && hasNameWrapper,
     gcTime,
     staleTime,
   })

@@ -117,6 +117,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       subgraphClient.request<GraphResponse>(query).then((res) => {
         return res!._meta.block.number
       }),
+    // No subgraph: the query is disabled (enabled: false) and never polls. Keep
+    // the upstream `0` sentinel — the no-subgraph sync UI is already suppressed by
+    // the useGraphOutOfSync / useHasGraphError bypasses below (gated on
+    // NEXT_PUBLIC_PROVIDER). Do NOT use a large sentinel here: a truthy
+    // currentGraphBlock makes the graph-block reset effect's guard (below)
+    // permanently satisfied, looping queryClient invalidation and making the
+    // post-registration "complete" screen reload endlessly.
     initialData: 0,
     refetchInterval: (q) => {
       if (hasSubgraphSyncErrors.error) return false
@@ -127,10 +134,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
       return false
     },
-    enabled:
-      !!subgraphClient &&
-      !!transactions.find((x) => x.minedData?.blockNumber) &&
-      !hasSubgraphSyncErrors.error,
+    enabled: false,
   })
 
   // reset getSubnames and graph queries when the graph block is updated

@@ -123,7 +123,6 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     isWrapped,
     wrapperData,
     registrationStatus,
-    isBasicLoading,
     refetchIfEnabled,
   } = nameDetails
 
@@ -169,13 +168,17 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     setTab_(value)
   }
 
-  const isWrappedOrLoading = isWrapped || isBasicLoading
+  const isSubname = !!name && name.split('.').length > 2
+  // SNRC is wrapper-free, so the Permissions (fuses) tab never applies. And
+  // subnames (3LD+) are soulbound to the 2LD NFT — the Ownership tab is
+  // meaningless for them; hide it.
   const visibileTabs = useMemo(
     () =>
-      (isWrappedOrLoading ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
-        unsupported ? _tab === 'profile' : _tab,
-      ),
-    [isWrappedOrLoading, unsupported],
+      tabs
+        .filter((_tab) => _tab !== 'permissions')
+        .filter((_tab) => (isSubname ? _tab !== 'ownership' : true))
+        .filter((_tab) => (unsupported ? _tab === 'profile' : _tab)),
+    [unsupported, isSubname],
   )
 
   const abilities = useAbilities({ name: normalisedName })
@@ -187,7 +190,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     shouldRedirect(router, 'Profile.tsx', '/profile', {
       isSelf,
       name,
-      decodedName: profile?.decodedName,
+      decodedName: profile?.decodedName as string | undefined,
       normalisedName,
       visibileTabs,
       tab,
