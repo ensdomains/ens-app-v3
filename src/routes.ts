@@ -144,14 +144,14 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'terms',
-    href: '/legal/terms-of-use',
+    href: 'https://ens.domains/legal/terms-of-use',
     label: 'navigation.terms',
     disabled: false,
     connected: false,
   },
   {
     name: 'privacy',
-    href: '/legal/privacy-policy',
+    href: 'https://ens.domains/legal/privacy-policy',
     label: 'navigation.privacy',
     disabled: false,
     connected: false,

@@ -136,7 +136,11 @@
         "total": "Geschatte kosten"
       },
       "bannerMsg": "Verlengen voor meerdere jaren scheelt netwerk kosten door jaarlijke transacties te voorkomen.",
-      "gasLimitError": "Onvoldoende balans"
+      "gasLimitError": "Onvoldoende balans",
+      "disabled": {
+        "title": "ENS v2 beta is nu gelanceerd op Sepolia",
+        "banner": "Toekomstige verlengingen verlopen via de nieuwe Manager app. Klik <ManagerLink>hier</ManagerLink> om je naam daar te verlengen."
+      }
     },
     "transferProfile": {
       "title": "Transfer Profiel",

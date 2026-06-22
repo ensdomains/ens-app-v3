@@ -231,7 +231,11 @@
         "total": "Total estimado"
       },
       "bannerMsg": "Extender por varios años ahorra dinero en costos de red al evitar transacciones anuales.",
-      "gasLimitError": "No hay suficiente ETH en la billetera"
+      "gasLimitError": "No hay suficiente ETH en la billetera",
+      "disabled": {
+        "title": "La beta de ENS v2 ya está desplegada en Sepolia",
+        "banner": "Las renovaciones futuras se realizarán en la nueva aplicación Manager. Haz clic <ManagerLink>aquí</ManagerLink> para renovar tu nombre allí."
+      }
     },
     "transferProfile": {
       "title": "Transferir perfil",

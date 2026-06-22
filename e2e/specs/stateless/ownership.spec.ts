@@ -1175,7 +1175,8 @@ test.describe('Extend name', () => {
       await extendNamesModal.getExtendButton.click()
       await transactionModal.autoComplete()
       const newTimestamp = await ownershipPage.getExpiryTimestamp()
-      expect(newTimestamp).toEqual(timestamp + 31536000000)
+      // Allow 1 day tolerance for leap year differences
+      expect(Math.abs(newTimestamp - timestamp - 31536000000)).toBeLessThanOrEqual(86400000)
     })
   })
 })

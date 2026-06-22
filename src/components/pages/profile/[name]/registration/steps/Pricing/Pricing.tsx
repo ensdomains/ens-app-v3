@@ -119,6 +119,7 @@ const MoonpayContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 5px;
+  color: var(--thrn-color-text);
 `
 
 const InfoItem = styled.div(

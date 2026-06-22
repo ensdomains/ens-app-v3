@@ -4,6 +4,15 @@
   "loading": "Loading",
   "notFound": "404 Not Found",
   "etherscan": "Etherscan",
+  "upgradeBanner": {
+    "title": "A new ENS app is here!",
+    "subtitle": "Redesigned from the ground up for ENSv2.",
+    "cta": "Open new app"
+  },
+  "legacyAppBanner": {
+    "title": "You're on the legacy ENS app",
+    "body": "This version is no longer maintained and some features may be broken. Use the new app for the full experience."
+  },
   "action": {
     "cancel": "Cancel",
     "change": "Change",
