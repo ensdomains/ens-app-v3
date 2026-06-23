@@ -11,6 +11,7 @@ import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -354,7 +355,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 resolverExists={resolverExists}
                 callback={pricingCallback}
                 isPrimaryLoading={primary.isLoading}
-                hasPrimaryName={!!primary.data?.name}
+                hasPrimaryName={hasValidPrimaryName(primary.data)}
                 registrationData={item}
                 moonpayTransactionStatus={moonpayTransactionStatus}
                 initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}

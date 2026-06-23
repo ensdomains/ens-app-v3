@@ -6,6 +6,7 @@ import { Address } from 'viem'
 import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
+import { getPrimaryDisplayName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBeautifiedName } from '@app/hooks/useBeautifiedName'
 import { TransactionDisplayItem } from '@app/types'
@@ -101,25 +102,22 @@ const AddressSubtitle = styled(Typography)(
 
 const AddressValue = ({ value }: { value: string }) => {
   const primary = usePrimaryName({ address: value as Address })
+  const primaryDisplayName = getPrimaryDisplayName(primary.data)
 
   const AddressTypography = useMemo(
     () =>
-      primary.data?.name ? (
+      primaryDisplayName ? (
         <AddressSubtitle color="grey">{shortenAddress(value)}</AddressSubtitle>
       ) : (
         <ValueTypography fontVariant="bodyBold">{shortenAddress(value)}</ValueTypography>
       ),
-    [primary.data?.name, value],
+    [primaryDisplayName, value],
   )
 
   return (
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
-        {primary.data?.name && (
-          <ValueTypography fontVariant="bodyBold" color="text">
-            {primary.data?.beautifiedName}
-          </ValueTypography>
-        )}
+        {primaryDisplayName && <ValueTypography fontVariant="bodyBold" color="text">{primaryDisplayName}</ValueTypography>}
         {AddressTypography}
       </InnerValueWrapper>
       <AvatarWrapper>

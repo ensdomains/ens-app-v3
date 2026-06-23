@@ -8,6 +8,7 @@ import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { useOwner } from '@app/hooks/ensjs/public/useOwner'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useWrapperData } from '@app/hooks/ensjs/public/useWrapperData'
 import { useGetPrimaryNameTransactionFlowItem } from '@app/hooks/primary/useGetPrimaryNameTransactionFlowItem'
@@ -105,7 +106,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
   })
 
   const isAvailablePrimaryName = checkAvailablePrimaryName(
-    primaryData?.name,
+    hasValidPrimaryName(primaryData) ? primaryData?.name : undefined,
     resolverStatus,
   )({
     name,

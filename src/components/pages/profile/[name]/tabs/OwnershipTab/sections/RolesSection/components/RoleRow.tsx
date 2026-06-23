@@ -16,6 +16,7 @@ import {
 
 import { AvatarWithIdentifier } from '@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier'
 import { useBlockExplorer } from '@app/hooks/chain/useBlockExplorer'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import type { Role } from '@app/hooks/ownership/useRoles/useRoles'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -72,7 +73,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
   const [, copy] = useCopyToClipboard()
 
   const blockExplorerAction = useMemo(() => {
-    const primaryName = primary.data?.name
+    const primaryName = hasValidPrimaryName(primary.data) ? primary.data?.name : undefined
     if (!primaryName || !blockExplorer) return null
     const is2ldEth = checkETH2LDFromName(primaryName)
     const hasToken = is2ldEth || isWrapped
@@ -85,7 +86,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
       onClick: () => window.open(buildAddressUrl(address!), '_blank'),
       icon: () => <OutlinkSVG height={16} width={16} />,
     }
-  }, [primary.data?.name, isWrapped, t, address, blockExplorer, buildAddressUrl])
+  }, [primary.data, isWrapped, t, address, blockExplorer, buildAddressUrl])
 
   const editRolesAction = actions?.find(({ type, disabled }) => type === 'edit-roles' && !disabled)
 
@@ -94,7 +95,7 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     : null
 
   const items: DropdownItem[] = [
-    ...(primary.data?.name
+    ...(hasValidPrimaryName(primary.data)
       ? ([
           {
             label: t('wallet.viewProfile'),
@@ -134,7 +135,11 @@ export const RoleRow = ({ name, address, roles, actions, isWrapped, isEmancipate
     <>
       <Container data-testid={`role-row-${address}`}>
         <InnerContainer>
-          <AvatarWithIdentifier name={primary.data?.name} address={address} size="10" />
+          <AvatarWithIdentifier
+            name={hasValidPrimaryName(primary.data) ? primary.data?.name : undefined}
+            address={address}
+            size="10"
+          />
           <RoleTagContainer data-testid="role-tag-container">
             {roles?.map((role) => (
               <RoleTag key={role} name={name} role={role} isEmancipated={isEmancipated} />

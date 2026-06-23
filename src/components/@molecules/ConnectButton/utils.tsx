@@ -5,6 +5,7 @@ import { Address } from 'viem'
 import { CheckSVG, CogSVG, CopySVG, ExitSVG, PersonSVG, WalletSVG } from '@ensdomains/thorin'
 import type { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { shortenAddress } from '@app/utils/utils'
 
 import BaseLink from '../../@atoms/BaseLink'
@@ -37,7 +38,7 @@ export const getDropdownItems = ({
   address: Address
 }): DropdownItem[] =>
   [
-    ...(primary?.name
+    ...(hasValidPrimaryName(primary)
       ? [
           {
             label: t('wallet.myProfile'),

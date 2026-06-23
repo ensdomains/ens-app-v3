@@ -7,6 +7,7 @@ import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/Avatar
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { getNetworkFromUrl } from '@app/constants/chains'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegistryName'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -144,12 +145,13 @@ export const PrimarySection = () => {
 
   const primary = usePrimaryName({ address })
   const reverseRegistryName = useReverseRegistryName({ address })
+  const hasPrimaryName = hasValidPrimaryName(primary.data)
 
   const isHeritedName =
-    primary.data?.name && !reverseRegistryName.data && reverseRegistryName.isSuccess
+    hasPrimaryName && !reverseRegistryName.data && reverseRegistryName.isSuccess
 
   const { truncatedName, isLoading: basicLoading } = useBasicName({
-    name: primary.data?.name,
+    name: hasPrimaryName ? primary.data?.name : undefined,
     normalised: true,
   })
 
@@ -174,7 +176,7 @@ export const PrimarySection = () => {
   return (
     <Skeleton loading={isLoading} as={SkeletonFiller as any}>
       <Card>
-        {primary.data?.name ? (
+        {hasPrimaryName ? (
           <PrimaryNameContainer data-testid="primary-name-section">
             <PrimaryNameInfo>
               <Typography fontVariant="bodyBold" color="grey">

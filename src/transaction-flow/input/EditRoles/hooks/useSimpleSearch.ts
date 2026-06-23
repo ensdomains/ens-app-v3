@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Address, isAddress } from 'viem'
+import { readContract } from 'viem/actions'
 import { useChainId, useConfig } from 'wagmi'
 
+import { universalResolverReverseSnippet } from '@ensdomains/ensjs/contracts'
 import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
 import { normalise } from '@ensdomains/ensjs/utils'
 
@@ -42,8 +44,24 @@ const queryByAddress = async (
 ): Promise<Result | null> => {
   try {
     const name = await getName(client, { address })
+    if (!name?.name || !name.match) return null
+
+    const ensUniversalResolverAddress = client.chain?.contracts?.ensUniversalResolver?.address
+    if (!ensUniversalResolverAddress) return null
+
+    const rawNameResult = await readContract(client, {
+      address: ensUniversalResolverAddress,
+      abi: universalResolverReverseSnippet,
+      functionName: 'reverse',
+      args: [address, 60n],
+    })
+
+    const [rawName] = rawNameResult
+    const normalizedName = normalise(rawName)
+    if (rawName !== normalizedName) return null
+
     return {
-      name: name?.name,
+      name: normalizedName,
       address,
     }
   } catch {
