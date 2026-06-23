@@ -1,24 +1,76 @@
 import { ReactElement, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useAccount, useChainId, usePublicClient, useWalletClient } from 'wagmi'
 import { getAddress, keccak256, toBytes } from 'viem'
+import { useAccount, useChainId, usePublicClient, useWalletClient } from 'wagmi'
 
-import { Button, Card, Heading, Input, Toggle, Typography } from '@ensdomains/thorin'
+import { Button, Card, Heading, Input, Typography } from '@ensdomains/thorin'
 
-import { Content } from '@app/layouts/Content'
 import { getSnrcAddresses } from '@app/constants/chains'
+import { Content } from '@app/layouts/Content'
 
 const controllerAbi = [
-  { inputs: [], name: 'owner', outputs: [{ type: 'address' }], stateMutability: 'view', type: 'function' },
-  { inputs: [], name: 'minCharLength', outputs: [{ type: 'uint8' }], stateMutability: 'view', type: 'function' },
-  { inputs: [], name: 'nftGateEnabled', outputs: [{ type: 'bool' }], stateMutability: 'view', type: 'function' },
-  { inputs: [{ name: 'hash', type: 'bytes32' }], name: 'reservedNames', outputs: [{ type: 'bool' }], stateMutability: 'view', type: 'function' },
-  { inputs: [{ name: 'newMinCharLength', type: 'uint8' }], name: 'setMinCharLength', outputs: [], stateMutability: 'nonpayable', type: 'function' },
-  { inputs: [], name: 'disableNftGate', outputs: [], stateMutability: 'nonpayable', type: 'function' },
-  { inputs: [{ name: 'names', type: 'string[]' }], name: 'addReservedNames', outputs: [], stateMutability: 'nonpayable', type: 'function' },
-  { inputs: [{ name: 'names', type: 'string[]' }], name: 'removeReservedNames', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
-    inputs: [{ name: 'label', type: 'string' }, { name: 'owner', type: 'address' }, { name: 'duration', type: 'uint256' }],
+    inputs: [],
+    name: 'owner',
+    outputs: [{ type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'minCharLength',
+    outputs: [{ type: 'uint8' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'nftGateEnabled',
+    outputs: [{ type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'hash', type: 'bytes32' }],
+    name: 'reservedNames',
+    outputs: [{ type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'newMinCharLength', type: 'uint8' }],
+    name: 'setMinCharLength',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'disableNftGate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'names', type: 'string[]' }],
+    name: 'addReservedNames',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'names', type: 'string[]' }],
+    name: 'removeReservedNames',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { name: 'label', type: 'string' },
+      { name: 'owner', type: 'address' },
+      { name: 'duration', type: 'uint256' },
+    ],
     name: 'registerReserved',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -49,10 +101,32 @@ const StatusText = styled(Typography)<{ $success?: boolean }>(
   `,
 )
 
+const Mono = styled(Typography)(
+  () => css`
+    font-family: monospace;
+    word-break: break-all;
+  `,
+)
+
+const isZeroish = (addr?: string) => !addr || /^0x0{40}$/i.test(addr)
+
+// Badge for the live re-deployment check. `has` is whether the address has
+// bytecode on the connected chain (undefined while loading).
+const codeBadge = (zero: boolean, has?: boolean) => {
+  if (zero) return { char: '·', color: 'grey' as const }
+  if (has === undefined) return { char: '…', color: 'grey' as const }
+  return has ? { char: '✓', color: 'green' as const } : { char: '✗', color: 'red' as const }
+}
+
 function AdminPanel() {
   const { address } = useAccount()
   const chainId = useChainId()
-  const controllerAddress = getSnrcAddresses(chainId).ETHRegistrarController
+  // Every address the UI uses comes from this bundle (NEXT_PUBLIC_DEPLOYMENT_ADDRESSES);
+  // the wagmi/ensjs chain config is built from the same object, so it can't diverge.
+  // Verifying a re-deployment is therefore a live question — is a contract actually
+  // deployed at each address on the connected chain? — answered by the code check below.
+  const deploymentAddresses = getSnrcAddresses(chainId)
+  const controllerAddress = deploymentAddresses.ETHRegistrarController
   const publicClient = usePublicClient()
   const { data: walletClient } = useWalletClient()
 
@@ -61,6 +135,8 @@ function AdminPanel() {
   const [nftGate, setNftGate] = useState<boolean>(false)
   const [loaded, setLoaded] = useState(false)
   const [status, setStatus] = useState<string>('')
+  // contract name -> has bytecode on the connected chain (absent until checked)
+  const [codeStatus, setCodeStatus] = useState<Record<string, boolean>>({})
 
   const [newMinChar, setNewMinChar] = useState('')
   const [reserveName, setReserveName] = useState('')
@@ -75,13 +151,40 @@ function AdminPanel() {
     if (!publicClient || !controllerAddress) return
     try {
       const [owner, minLen, gate] = await Promise.all([
-        publicClient.readContract({ address: controllerAddress as `0x${string}`, abi: controllerAbi, functionName: 'owner' }),
-        publicClient.readContract({ address: controllerAddress as `0x${string}`, abi: controllerAbi, functionName: 'minCharLength' }),
-        publicClient.readContract({ address: controllerAddress as `0x${string}`, abi: controllerAbi, functionName: 'nftGateEnabled' }),
+        publicClient.readContract({
+          address: controllerAddress as `0x${string}`,
+          abi: controllerAbi,
+          functionName: 'owner',
+        }),
+        publicClient.readContract({
+          address: controllerAddress as `0x${string}`,
+          abi: controllerAbi,
+          functionName: 'minCharLength',
+        }),
+        publicClient.readContract({
+          address: controllerAddress as `0x${string}`,
+          abi: controllerAbi,
+          functionName: 'nftGateEnabled',
+        }),
       ])
       setOwnerAddress(owner as string)
       setMinCharLen(Number(minLen))
       setNftGate(gate as boolean)
+
+      // Live re-deployment check: confirm each non-zero address actually has a
+      // contract on the connected chain (catches a stale env or wrong network).
+      const live = Object.entries(deploymentAddresses).filter(([, a]) => !isZeroish(String(a)))
+      const codes = await Promise.all(
+        live.map(([, a]) =>
+          publicClient.getCode({ address: a as `0x${string}` }).catch(() => undefined),
+        ),
+      )
+      const next: Record<string, boolean> = {}
+      live.forEach(([name], i) => {
+        next[name] = !!codes[i] && codes[i] !== '0x'
+      })
+      setCodeStatus(next)
+
       setLoaded(true)
       setStatus('')
     } catch (e: any) {
@@ -132,7 +235,9 @@ function AdminPanel() {
   if (!controllerAddress) {
     return (
       <Card>
-        <Typography>No controller address configured. Set NEXT_PUBLIC_DEPLOYMENT_ADDRESSES.</Typography>
+        <Typography>
+          No controller address configured. Set NEXT_PUBLIC_DEPLOYMENT_ADDRESSES.
+        </Typography>
       </Card>
     )
   }
@@ -152,6 +257,29 @@ function AdminPanel() {
           <Typography fontVariant="small" color={isOwner ? 'green' : 'red'}>
             {isOwner ? 'You are the owner' : 'You are NOT the owner'}
           </Typography>
+        </Section>
+      </Card>
+
+      <Card>
+        <Section>
+          <Typography fontVariant="largeBold">Contracts in use</Typography>
+          <Typography fontVariant="small">
+            From NEXT_PUBLIC_DEPLOYMENT_ADDRESSES (chainId {chainId}). ✓ = deployed at this address
+            on the connected chain, ✗ = no code (stale env or wrong network), · = intentional zero
+            address.
+          </Typography>
+          {Object.entries(deploymentAddresses).map(([name, addr]) => {
+            const zero = isZeroish(String(addr))
+            const badge = codeBadge(zero, codeStatus[name])
+            return (
+              <Row key={name}>
+                <Typography color={badge.color}>{badge.char}</Typography>
+                <Mono fontVariant="small" color={zero ? 'grey' : 'text'}>
+                  {name}: {String(addr)}
+                </Mono>
+              </Row>
+            )
+          })}
         </Section>
       </Card>
 

@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import StarsSVG from '@app/assets/Stars.svg'
+import { supportedSimplexRecordKeys } from '@app/constants/supportedSimplexRecordKeys'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { useProfile } from '@app/hooks/useProfile'
@@ -188,11 +189,18 @@ export function ProfileEmptyBanner({ name }: { name: string }) {
   const canEditRecords = abilities.data?.canEditRecords
   const records = existingRecords.filter(({ value }) => value)
 
+  // SNRC: prompt to add a SimpleX link whenever neither simplex.contact nor
+  // simplex.channel is set — regardless of other records (a fresh 2LD already has
+  // an eth address record; a fresh subname has none).
+  const hasSimplexLink = records.some(({ key }) =>
+    supportedSimplexRecordKeys.includes(key as (typeof supportedSimplexRecordKeys)[number]),
+  )
+
   const action = (profileActions.profileActions ?? []).find(
     (i) => i.label === t('tabs.profile.actions.editProfile.label'),
   )
 
-  if (records.length || isProfileLoading || !action || !canEditRecords) return null
+  if (hasSimplexLink || isProfileLoading || !action || !canEditRecords) return null
 
   return (
     <Container data-testid="profile-empty-banner">

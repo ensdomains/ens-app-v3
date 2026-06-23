@@ -16,8 +16,8 @@
   "viewDetails": "View Details",
   "banner": {
     "empty": {
-      "title": "Personalize your profile",
-      "description": "Add crypto addresses, social links, an avatar and more!",
+      "title": "Let people connect to you using this name",
+      "description": "Add your SimpleX contact and channel links and more!",
       "action": "Get started"
     },
     "available": {

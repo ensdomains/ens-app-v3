@@ -151,12 +151,15 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const pricingCallback = ({
     seconds,
-    reverseRecord,
     paymentMethodChoice,
     estimatedTotal,
     ethPrice,
     durationType,
   }: RegistrationStepData['pricing']) => {
+    // SNRC: reverse resolution is removed from the deployment, so registrations
+    // never set a primary name — the controller reverts on a non-zero reverse
+    // record and there is no DefaultReverseRegistrar. The Pricing toggle is ignored.
+    const reverseRecord = false
     sendEvent('register:pricing', {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       ens_name: normalisedName,

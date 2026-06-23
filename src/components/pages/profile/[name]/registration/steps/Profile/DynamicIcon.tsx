@@ -11,6 +11,7 @@ type Props = {
 export const DynamicIcon = ({ group, name, showDefault = true }: Props) => {
   if (group === 'address') return <DynamicAddressIcon name={name} showDefault={showDefault} />
   if (group === 'website') return <DynamicContentHashIcon name={name} showDefault={showDefault} />
-  if (group === 'social') return <DynamicSocialIcon name={name} showDefault={showDefault} />
+  if (group === 'social' || group === 'simplex')
+    return <DynamicSocialIcon name={name} showDefault={showDefault} />
   return <DynamicTextIcon name={name} showDefault={showDefault} />
 }

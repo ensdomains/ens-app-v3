@@ -24,7 +24,7 @@ const mockUseProfile = mockFunction(useProfile)
 const mockUseProfileActions = mockFunction(useProfileActions)
 
 describe('ProfileEmptyBanner', () => {
-  it('should not display banner if have records', () => {
+  it('should not display banner if a simplex link is set', () => {
     const name = 'test'
 
     mockUseProfile.mockImplementation(() => ({
@@ -33,6 +33,10 @@ describe('ProfileEmptyBanner', () => {
           {
             key: 'avatar',
             value: 'http://localhost:3000',
+          },
+          {
+            key: 'simplex.contact',
+            value: 'smp://example',
           },
         ],
         coins: [
@@ -65,6 +69,29 @@ describe('ProfileEmptyBanner', () => {
 
     render(<ProfileEmptyBanner name={name} />)
     expect(screen.queryByTestId('profile-empty-banner')).not.toBeInTheDocument()
+  })
+
+  it('should display banner if records exist but no simplex link is set', () => {
+    const name = 'test'
+
+    mockUseProfile.mockImplementation(() => ({
+      data: {
+        texts: [{ key: 'avatar', value: 'http://localhost:3000' }],
+        coins: [{ id: 60, name: 'eth', value: '0x8327FcD61f5e90e1E05A3F49DCbc9346b7d111111' }],
+      },
+      isLoading: false,
+    }))
+
+    mockUseProfileActions.mockImplementation(() => ({
+      profileActions: [
+        {
+          label: 'tabs.profile.actions.editProfile.label',
+        },
+      ],
+    }))
+
+    render(<ProfileEmptyBanner name={name} />)
+    expect(screen.queryByTestId('profile-empty-banner')).toBeInTheDocument()
   })
 
   it('should display banner if have no records', () => {

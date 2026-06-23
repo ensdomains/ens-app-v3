@@ -181,6 +181,11 @@ const OutlinedContainerTitle = styled(Typography)(
   gridAreaStyle,
 )
 
+// SNRC: primary names (reverse records) are unsupported — the deployment has no
+// DefaultReverseRegistrar and the controller reverts on a reverse record. The
+// "set as primary name" toggle is disabled (kept, not deleted, for easy re-enable).
+const SHOW_PRIMARY_NAME = false
+
 const EthInnerCheckbox = ({
   address,
   hasPrimaryName,
@@ -283,7 +288,7 @@ const PaymentChoice = ({
               <Spacer $height="2" />
             </>
           )}
-          {paymentMethodChoice === PaymentMethod.ethereum && hasEnoughEth && (
+          {SHOW_PRIMARY_NAME && paymentMethodChoice === PaymentMethod.ethereum && hasEnoughEth && (
             <>
               <Spacer $height="4" />
               <OutlinedContainer>

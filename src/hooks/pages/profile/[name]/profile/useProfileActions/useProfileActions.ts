@@ -75,6 +75,13 @@ const verificationsButtonTooltip = ({
   return undefined
 }
 
+// SNRC: SimpleX names don't use ENS profile verifications (verifiable credentials),
+// and reverse resolution is removed from the deployment (no DefaultReverseRegistrar),
+// so the "Verifications" and "Set as primary name" profile actions are disabled
+// (kept, not deleted, for easy re-enable).
+const SHOW_VERIFICATIONS = false
+const SHOW_SET_PRIMARY_NAME = false
+
 export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => {
   const { t } = useTranslation('profile')
   const { createTransactionFlow, usePreparedDataInput } = useTransactionFlow()
@@ -159,7 +166,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
 
     const isOwnerOrManager = address === ownerData?.owner || ownerData?.registrant === address
 
-    if (isOwnerOrManager) {
+    if (SHOW_VERIFICATIONS && isOwnerOrManager) {
       actions.push({
         label: t('tabs.profile.actions.verifyProfile.label'),
         tooltipContent: verificationsButtonTooltip({
@@ -176,7 +183,7 @@ export const useProfileActions = ({ name, enabled: enabled_ = true }: Props) => 
     }
 
     const transactionFlowItem = getPrimaryNameTransactionFlowItem?.callBack?.(name)
-    if (isAvailablePrimaryName && !!transactionFlowItem) {
+    if (SHOW_SET_PRIMARY_NAME && isAvailablePrimaryName && !!transactionFlowItem) {
       const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),

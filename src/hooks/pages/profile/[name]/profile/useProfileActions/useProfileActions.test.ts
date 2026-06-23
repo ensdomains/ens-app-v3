@@ -318,7 +318,9 @@ describe('useProfileActions', () => {
     })
   })
 
-  describe('set primary name', () => {
+  // SNRC: "set as primary name" is disabled (reverse resolution removed from the
+  // deployment). Skip the suite for the disabled action rather than delete it.
+  describe.skip('set primary name', () => {
     it('should return an action for a single transaction with base mock data', async () => {
       const { result } = renderHook(() => useProfileActions({ name: 'test.eth' }))
       const setPrimaryAction = result.current.profileActions?.find(
@@ -627,7 +629,9 @@ describe('useProfileActions', () => {
     })
   })
 
-  describe('verifications', () => {
+  // SNRC: profile verifications are disabled for SimpleX names. Skip the suite
+  // for the disabled action rather than delete it.
+  describe.skip('verifications', () => {
     it('should return active verifications button if the user is the manager of unwrapped 2ld eth name', async () => {
       mockUseAbilities.mockReturnValue({
         data: makeMockUseAbilitiesData('eth-unwrapped-2ld:manager'),
