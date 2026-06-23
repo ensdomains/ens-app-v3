@@ -117,7 +117,11 @@ const AddressValue = ({ value }: { value: string }) => {
   return (
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
-        {primaryDisplayName && <ValueTypography fontVariant="bodyBold" color="text">{primaryDisplayName}</ValueTypography>}
+        {primaryDisplayName && (
+          <ValueTypography fontVariant="bodyBold" color="text">
+            {primaryDisplayName}
+          </ValueTypography>
+        )}
         {AddressTypography}
       </InnerValueWrapper>
       <AvatarWrapper>

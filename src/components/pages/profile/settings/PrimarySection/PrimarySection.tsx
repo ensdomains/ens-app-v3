@@ -147,8 +147,7 @@ export const PrimarySection = () => {
   const reverseRegistryName = useReverseRegistryName({ address })
   const hasPrimaryName = hasValidPrimaryName(primary.data)
 
-  const isHeritedName =
-    hasPrimaryName && !reverseRegistryName.data && reverseRegistryName.isSuccess
+  const isHeritedName = hasPrimaryName && !reverseRegistryName.data && reverseRegistryName.isSuccess
 
   const { truncatedName, isLoading: basicLoading } = useBasicName({
     name: hasPrimaryName ? primary.data?.name : undefined,
