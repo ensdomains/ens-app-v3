@@ -54,24 +54,21 @@ export const getPrimaryNameQueryFn =
 
     if (!res || !res.name || (!res.match && !params.allowMismatch)) return null
 
-    // When match=true, res.name is normalized. We need to fetch the raw name
-    // When match=false, res.name is already the raw unnormalized name
+    // A primary name is only valid if the *stored* reverse record is normalized
+    // per ENSIP-15. ensjs `getName` normalizes (lowercases) the name it returns
+    // when match=true, which hides whether the on-chain record was actually stored
+    // in a normalized form. So we read the raw stored name to detect names like
+    // "MetaMask.eth" that resolve correctly but are not normalized (the normalized
+    // form is "metamask.eth"). Surfacing unnormalized names enables name spoofing.
     let originalName = res.name
-    let isNormalized = true
 
     if (res.match) {
-      // For match=true case, fetch the actual raw reverse name
-      // getName() returns a normalized (lowercase) name when match=true, but we need to check
-      // if the actual stored reverse name follows ENS normalization rules (ENSIP-15).
-      // Some names like "MetaMask.eth" may resolve correctly but are not normalized
-      // (should be "metamask.eth"). We fetch the raw name directly from the Universal Resolver
-      // to verify it matches the normalized version, ensuring only properly normalized names
-      // are displayed as valid primary names.
       try {
-        const ensUniversalResolverAddress = client.chain?.contracts?.ensUniversalResolver?.address
+        const ensUniversalResolverAddress =
+          client.chain?.contracts?.ensUniversalResolver?.address
         if (ensUniversalResolverAddress) {
-          // Use the reverse function that takes address and coinType
-          // coinType 60 is for Ethereum mainnet
+          // Use the reverse function that takes address and coinType.
+          // coinType 60 is for Ethereum mainnet.
           const coinType = 60n
 
           const rawNameResult = await readContract(client, {
@@ -84,28 +81,27 @@ export const getPrimaryNameQueryFn =
           // The reverse function returns [name, address, reverseResolver, resolver]
           if (rawNameResult && rawNameResult[0]) {
             ;[originalName] = rawNameResult
-            // Check if the raw name is normalized
-            try {
-              const normalizedVersion = normalise(originalName)
-              isNormalized = originalName === normalizedVersion
-            } catch {
-              // If normalisation fails, treat as non-normalized
-              isNormalized = false
-            }
           }
         }
       } catch {
-        // Fall back to checking if res.name is normalized
-        try {
-          const normalizedVersion = normalise(res.name)
-          isNormalized = res.name === normalizedVersion
-        } catch {
-          isNormalized = false
-        }
+        // If we can't read the raw name, fall back to the (already normalized)
+        // res.name. This is the best we can do without the raw record.
       }
-    } else {
-      // For mismatch case, res.name is already the raw name
-      // Check if the ETH address record for the name matches the input address
+    }
+
+    // Reject any name that is not normalized. An unnormalized reverse record is not
+    // a valid primary name and must never be displayed.
+    let isNormalized = false
+    try {
+      isNormalized = !!originalName && originalName === normalise(originalName)
+    } catch {
+      isNormalized = false
+    }
+    if (!isNormalized) return null
+
+    if (!res.match) {
+      // For the mismatch case, verify the name's ETH address record points back to
+      // the input address before surfacing it.
       try {
         const ethAddressRecord = await getAddressRecord(client, { name: res.name })
         const resolvedAddress = ethAddressRecord?.value
@@ -116,22 +112,13 @@ export const getPrimaryNameQueryFn =
       } catch {
         return null
       }
-
-      originalName = res.name
-      isNormalized = false // Mismatches are treated as non-normalized
     }
-
-    // If the name is not normalized, we should treat it as a mismatch
-    const effectiveMatch = res.match && isNormalized
-
-    // Preserve the original name and decide beautification based on effective match
-    const shouldBeautify = effectiveMatch !== false
 
     return {
       ...res,
-      match: effectiveMatch,
-      beautifiedName: shouldBeautify ? tryBeautify(res.name) : res.name,
-      originalName, // This is the actual raw name from reverse resolution
+      name: originalName,
+      beautifiedName: tryBeautify(originalName),
+      originalName,
     }
   }
 

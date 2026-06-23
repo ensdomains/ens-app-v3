@@ -1,5 +1,6 @@
 import { mockFunction } from '@app/test-utils'
 
+import { readContract } from 'viem/actions'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
@@ -9,9 +10,11 @@ import { ClientWithEns, ConfigWithEns } from '@app/types'
 import { getPrimaryNameQueryFn } from './usePrimaryName'
 
 vi.mock('@ensdomains/ensjs/public')
+vi.mock('viem/actions')
 
 const mockGetName = mockFunction(getName)
 const mockGetAddressRecord = mockFunction(getAddressRecord)
+const mockReadContract = mockFunction(readContract)
 
 const address = '0xaddress'
 const chainId = 1
@@ -23,6 +26,21 @@ const mockClient = {
 } as unknown as ClientWithEns
 const mockConfig = {
   getClient: () => mockClient,
+} as unknown as ConfigWithEns
+
+// Client/config that exposes a Universal Resolver so the raw reverse-name lookup runs
+const mockClientWithUniversalResolver = {
+  chain: {
+    id: chainId,
+    contracts: {
+      ensUniversalResolver: {
+        address: '0xuniversalResolver',
+      },
+    },
+  },
+} as unknown as ClientWithEns
+const mockConfigWithUniversalResolver = {
+  getClient: () => mockClientWithUniversalResolver,
 } as unknown as ConfigWithEns
 
 describe('getPrimaryNameQueryFn', () => {
@@ -121,8 +139,8 @@ describe('getPrimaryNameQueryFn', () => {
       }
     `)
   })
-  
-  it('should preserve original name and not beautify when match is false', async () => {
+
+  it('should return null when the name is not normalized (mismatch case)', async () => {
     mockGetName.mockImplementationOnce(() =>
       Promise.resolve({
         name: 'MetaMask.eth',
@@ -131,31 +149,65 @@ describe('getPrimaryNameQueryFn', () => {
         reverseResolverAddress: '0xreverseResolver',
       }),
     )
-    // Mock getAddressRecord to return the same address so the check passes
-    mockGetAddressRecord.mockImplementationOnce(() =>
-      Promise.resolve({
-        id: 60,
-        name: 'eth',
-        value: address,
-      }),
-    )
     const result = await getPrimaryNameQueryFn(mockConfig)({
       queryKey: [{ address, allowMismatch: true }, chainId, address, undefined, 'getName'],
       meta: {} as any,
       signal: undefined as any,
     })
+    expect(result).toBeNull()
+  })
+
+  it('should return null when match is true but the stored reverse name is not normalized', async () => {
+    mockGetName.mockImplementationOnce(() =>
+      Promise.resolve({
+        // getName normalizes the name it returns when match=true
+        name: 'metamask.eth',
+        match: true,
+        resolverAddress: '0xresolver',
+        reverseResolverAddress: '0xreverseResolver',
+      }),
+    )
+    // The Universal Resolver returns the raw, unnormalized stored reverse name
+    mockReadContract.mockImplementationOnce(() =>
+      Promise.resolve(['MetaMask.eth', address, '0xreverseResolver', '0xresolver']),
+    )
+    const result = await getPrimaryNameQueryFn(mockConfigWithUniversalResolver)({
+      queryKey: [{ address, allowMismatch: false }, chainId, address, undefined, 'getName'],
+      meta: {} as any,
+      signal: undefined as any,
+    })
+    expect(result).toBeNull()
+  })
+
+  it('should return the name when match is true and the stored reverse name is normalized', async () => {
+    mockGetName.mockImplementationOnce(() =>
+      Promise.resolve({
+        name: 'test.eth',
+        match: true,
+        resolverAddress: '0xresolver',
+        reverseResolverAddress: '0xreverseResolver',
+      }),
+    )
+    mockReadContract.mockImplementationOnce(() =>
+      Promise.resolve(['test.eth', address, '0xreverseResolver', '0xresolver']),
+    )
+    const result = await getPrimaryNameQueryFn(mockConfigWithUniversalResolver)({
+      queryKey: [{ address, allowMismatch: false }, chainId, address, undefined, 'getName'],
+      meta: {} as any,
+      signal: undefined as any,
+    })
     expect(result).toMatchInlineSnapshot(`
       {
-        "beautifiedName": "MetaMask.eth",
-        "match": false,
-        "name": "MetaMask.eth",
-        "originalName": "MetaMask.eth",
+        "beautifiedName": "test.eth",
+        "match": true,
+        "name": "test.eth",
+        "originalName": "test.eth",
         "resolverAddress": "0xresolver",
         "reverseResolverAddress": "0xreverseResolver",
       }
     `)
   })
-  
+
   it('should beautify name when match is true', async () => {
     mockGetName.mockImplementationOnce(() =>
       Promise.resolve({
@@ -198,7 +250,7 @@ describe('getPrimaryNameQueryFn', () => {
       Promise.resolve({
         id: 60,
         name: 'eth',
-        value: differentAddress, // ← Points to different address!
+        value: differentAddress, // points to different address
       }),
     )
     const result = await getPrimaryNameQueryFn(mockConfig)({
