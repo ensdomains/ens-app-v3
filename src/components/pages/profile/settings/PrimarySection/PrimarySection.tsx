@@ -274,10 +274,10 @@ export const PrimarySection = () => {
             )}
             <NoNameDescription>
               <Trans
-                ns="settings"
+                t={t}
                 i18nKey="section.primary.noNameDescription"
                 components={{
-                  link: (
+                  primaryNameLink: (
                     <Outlink href="https://support.ens.domains/en/articles/7890756-what-is-a-primary-name" />
                   ),
                 }}
