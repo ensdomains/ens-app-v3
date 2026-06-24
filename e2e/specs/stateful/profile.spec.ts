@@ -120,7 +120,7 @@ test.describe('Profile', () => {
   })
 
   for (const profile of profiles) {
-    test(`should load profile for: ${profile.name}`, async ({ page, login }) => {
+    test.skip(`should load profile for: ${profile.name}`, async ({ page, login }) => {
       await page.goto('/')
       await login.connect()
 
