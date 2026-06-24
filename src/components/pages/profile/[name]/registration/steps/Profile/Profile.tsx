@@ -4,7 +4,6 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match } from 'ts-pattern'
-import { useAccount } from 'wagmi'
 
 import { Button, Dialog, PlusSVG, Typography } from '@ensdomains/thorin'
 
@@ -29,7 +28,11 @@ import { parseSimplexUrls } from '@app/utils/parseSimplexUrls'
 import { CustomProfileRecordInput } from './CustomProfileRecordInput'
 import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
-import { profileEditorFormToProfileRecords } from './profileRecordUtils'
+import {
+  profileEditorFormToProfileRecords,
+  stripEmptySimplexRecords,
+  withDefaultSimplexRecords,
+} from './profileRecordUtils'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
 import { WrappedHeaderButton } from './WrappedHeaderButton'
 
@@ -87,7 +90,6 @@ const SubmitButton = ({
   control: Control<ProfileEditorForm>
   disabled: boolean
 }) => {
-  const { address } = useAccount()
   const { t } = useTranslation('register')
 
   const records = useWatch({
@@ -105,15 +107,12 @@ const SubmitButton = ({
     name: 'header',
   })
 
-  const hasEthRecord = records.some((record) => record.key === 'eth' && record.value === address)
-  const hasAvatar = !!avatar
-  const hasHeader = !!header
-  const hasOneRecord = records.length === 1
-  const isClean = hasEthRecord && !hasAvatar && !hasHeader && hasOneRecord
+  const hasContent =
+    records.some((record) => !!record.value && !!record.value.trim()) || !!avatar || !!header
 
-  const message = isClean
-    ? t('steps.profile.actions.skipProfile')
-    : t('action.next', { ns: 'common' })
+  const message = hasContent
+    ? t('action.next', { ns: 'common' })
+    : t('steps.profile.actions.skipProfile')
 
   return (
     <Button type="submit" disabled={disabled} data-testid="profile-submit-button">
@@ -165,7 +164,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
     errorForRecordAtIndex,
     isDirtyForRecordAtIndex,
     hasErrors,
-  } = useProfileEditorForm(registrationData.records)
+  } = useProfileEditorForm(withDefaultSimplexRecords(registrationData.records))
 
   const [isAvatarDropdownOpen, setIsAvatarDropdownOpen] = useState(false)
 
@@ -220,7 +219,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
     setAvatarSrcStorage()
     setHeaderSrcStorage()
     const nativeEvent = e?.nativeEvent as SubmitEvent | undefined
-    const newRecords = profileEditorFormToProfileRecords(data)
+    const newRecords = stripEmptySimplexRecords(profileEditorFormToProfileRecords(data))
 
     callback({
       records: newRecords,
@@ -384,7 +383,6 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
                       shouldTouch: true,
                     })
                   }}
-                  onDelete={() => handleDeleteRecord(field, index)}
                 />
               ))
               .otherwise(() => (

@@ -17,6 +17,22 @@ export const isEthAddressRecord = (record: ProfileRecord): boolean => {
   return record.group === 'address' && record.key === 'eth' && record.type === 'addr'
 }
 
+export const withDefaultSimplexRecords = (records: ProfileRecord[]): ProfileRecord[] => {
+  const missing = supportedSimplexRecordKeys
+    .filter((key) => !records.some((record) => record.key === key))
+    .map((key) => ({ key, group: 'simplex', type: 'text', value: '' }) as ProfileRecord)
+  return [...missing, ...records]
+}
+
+export const stripEmptySimplexRecords = (records: ProfileRecord[]): ProfileRecord[] =>
+  records.filter(
+    (record) =>
+      !(
+        (supportedSimplexRecordKeys as readonly string[]).includes(record.key) &&
+        !record.value?.trim()
+      ),
+  )
+
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
   clearRecords = false,
@@ -257,17 +273,7 @@ export const profileToProfileRecords = (profile?: Profile): ProfileRecord[] => {
   const abi: ProfileRecord[] = records.abi?.abi
     ? [{ key: 'abi', type: 'abi', group: 'other', value: JSON.stringify(records.abi.abi) }]
     : []
-  const eth: ProfileRecord[] = addresses.find(isEthAddressRecord)
-    ? []
-    : [
-        {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
-      ]
-  const profileRecords = [...texts, ...addresses, ...website, ...abi, ...eth]
+  const profileRecords = [...texts, ...addresses, ...website, ...abi]
   const sortedProfileRecords = profileRecords.sort(sortProfileRecords)
   return sortedProfileRecords
 }
@@ -282,8 +288,14 @@ export const getProfileRecordsDiff = (
         (previousRecord) =>
           previousRecord.key === currentRecord.key && previousRecord.group === currentRecord.group,
       )
-      // remove records that are empty
-      if (!currentRecord.value && !isEthAddressRecord(currentRecord)) return null
+      // remove records that are empty — except eth and simplex, which are always-present
+      // fields removed by clearing their value (so an empty value must still diff to a delete)
+      if (
+        !currentRecord.value &&
+        !isEthAddressRecord(currentRecord) &&
+        !(supportedSimplexRecordKeys as readonly string[]).includes(currentRecord.key)
+      )
+        return null
       // record is new
       if (!identicalRecord) return currentRecord
       // record is updated

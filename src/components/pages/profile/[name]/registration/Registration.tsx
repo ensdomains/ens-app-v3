@@ -188,26 +188,14 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       payload: referrerHex,
       selected,
     })
-    if (!item.queue.includes('profile')) {
-      // if profile is not in queue, set the default profile data
-      dispatch({
-        name: 'setProfileData',
-        payload: {
-          records: [{ key: 'eth', group: 'address', type: 'addr', value: address! }],
-          clearRecords: resolverExists,
-          resolverAddress: defaultResolverAddress,
-        },
-        selected,
-      })
-      if (reverseRecord) {
-        // if reverse record is selected, add the profile step to the queue
-        dispatch({
-          name: 'setQueue',
-          payload: ['pricing', 'profile', 'info', 'transactions', 'complete'],
-          selected,
-        })
-      }
-    }
+    dispatch({
+      name: 'setProfileData',
+      payload: {
+        records: item.records,
+        resolverAddress: defaultResolverAddress,
+      },
+      selected,
+    })
 
     // If profile is in queue and reverse record is selected, make sure that eth record is included and is set to address
     if (item.queue.includes('profile') && reverseRecord) {

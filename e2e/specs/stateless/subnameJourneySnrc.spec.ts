@@ -89,7 +89,6 @@ test('SNRC: register 2LD + subname (both with simplex.contact), then transfer th
   await test.step('add simplex.contact to the 2LD', async () => {
     await profilePage.goto(name)
     await profilePage.editProfileButton.click()
-    await profilePage.profileEditorAddInputs([CONTACT_KEY])
     await expect(contactInput(page)).toBeVisible()
     await contactInput(page).fill('https://smp1.example.im/2ld#H1')
     await profilePage.profileEditor.getByTestId('profile-submit-button').click()
@@ -111,7 +110,6 @@ test('SNRC: register 2LD + subname (both with simplex.contact), then transfer th
 
     await profilePage.goto(subname)
     await profilePage.editProfileButton.click()
-    await profilePage.profileEditorAddInputs([CONTACT_KEY])
     await expect(contactInput(page)).toBeVisible()
     await contactInput(page).fill('https://smp1.example.im/sub#H1')
     await profilePage.profileEditor.getByTestId('profile-submit-button').click()

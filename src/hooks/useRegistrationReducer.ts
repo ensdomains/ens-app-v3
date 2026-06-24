@@ -18,7 +18,7 @@ const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 4
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
-  queue: ['pricing', 'info', 'transactions', 'complete'],
+  queue: ['pricing', 'profile', 'info', 'transactions', 'complete'],
   seconds: yearsToSeconds(1),
   reverseRecord: false,
   records: [],
@@ -48,7 +48,7 @@ const getDefaultRegistrationDuration = () => ONE_YEAR
 
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
   stepIndex: 0,
-  queue: ['pricing', 'info', 'transactions', 'complete'],
+  queue: ['pricing', 'profile', 'info', 'transactions', 'complete'],
   seconds: getDefaultRegistrationDuration(),
   reverseRecord: false,
   records: [],

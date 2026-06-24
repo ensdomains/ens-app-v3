@@ -47,7 +47,6 @@ test.describe('MultiUrlField — simplex.contact / simplex.channel', () => {
     await login.connect()
 
     await profilePage.editProfileButton.click()
-    await profilePage.profileEditorAddInputs([MULTI_URL_KEY])
 
     // First row should now be present.
     await expect(inputAt(page, 0)).toBeVisible()
@@ -117,7 +116,7 @@ test.describe('MultiUrlField — simplex.contact / simplex.channel', () => {
     await expect(inputAt(page, 1)).toHaveValue('https://smp2.example.im/a#H2')
   })
 
-  test('removing the only URL row deletes the simplex.contact record entirely', async ({
+  test('clearing the only URL row empties the field but keeps it (non-removable)', async ({
     page,
     login,
     makeName,
@@ -131,13 +130,13 @@ test.describe('MultiUrlField — simplex.contact / simplex.channel', () => {
     await login.connect()
 
     await profilePage.editProfileButton.click()
-    await profilePage.profileEditorAddInputs([MULTI_URL_KEY])
 
     await inputAt(page, 0).fill('https://smp1.example.im/a#H1')
 
-    // Click trash on the only row → the record should be removed from the
-    // editor entirely. The field is no longer rendered.
+    // Simplex fields are always-present (like the ENS eth address field): the
+    // trash clears the value rather than removing the field.
     await trashAt(page, 0).click()
-    await expect(page.getByTestId(`multi-url-field-${MULTI_URL_KEY}`)).not.toBeVisible()
+    await expect(page.getByTestId(`multi-url-field-${MULTI_URL_KEY}`)).toBeVisible()
+    await expect(inputAt(page, 0)).toHaveValue('')
   })
 })

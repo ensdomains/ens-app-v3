@@ -8,6 +8,8 @@ import {
   getProfileRecordsDiff,
   profileRecordsToRecordOptions,
   profileToProfileRecords,
+  stripEmptySimplexRecords,
+  withDefaultSimplexRecords,
 } from './profileRecordUtils'
 
 describe('profileRecordsToRecordOptions', () => {
@@ -573,12 +575,6 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
-        {
           key: 'ipfs',
           type: 'contenthash',
           group: 'website',
@@ -598,12 +594,6 @@ describe('profileToProfileRecords', () => {
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
-        {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
         {
           key: 'ipfs',
           type: 'contenthash',
@@ -625,12 +615,6 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
-        {
           key: 'skynet',
           type: 'contenthash',
           group: 'website',
@@ -650,12 +634,6 @@ describe('profileToProfileRecords', () => {
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
-        {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
         {
           key: 'swarm',
           type: 'contenthash',
@@ -677,12 +655,6 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
-        {
           key: 'onion',
           type: 'contenthash',
           group: 'website',
@@ -702,12 +674,6 @@ describe('profileToProfileRecords', () => {
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
       const records = [
-        {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
         {
           key: 'onion',
           type: 'contenthash',
@@ -729,12 +695,6 @@ describe('profileToProfileRecords', () => {
       }
       const records = [
         {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
-        {
           key: 'arweave',
           type: 'contenthash',
           group: 'website',
@@ -753,14 +713,7 @@ describe('profileToProfileRecords', () => {
         isMigrated: true,
         createdAt: createDateAndValue(new Date('2020-01-01T00:00:00.000Z').getTime()),
       }
-      const records = [
-        {
-          key: 'eth',
-          type: 'addr',
-          group: 'address',
-          value: '',
-        },
-      ]
+      const records: ProfileRecord[] = []
       expect(profileToProfileRecords(profile)).toEqual(records)
     })
   })
@@ -867,5 +820,77 @@ describe('getProfileRecordsDiff', () => {
     ]
     const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
     expect(recordsDiff).toEqual([])
+  })
+
+  it('should return a simplex record with value "" if it is cleared (always-present field)', () => {
+    const currentRecords: ProfileRecord[] = [
+      { key: 'simplex.contact', type: 'text', group: 'simplex', value: '' },
+    ]
+    const previousRecords: ProfileRecord[] = [
+      { key: 'simplex.contact', type: 'text', group: 'simplex', value: 'https://contact' },
+    ]
+    const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+    expect(recordsDiff).toEqual([
+      { key: 'simplex.contact', type: 'text', group: 'simplex', value: '' },
+    ])
+  })
+
+  it('should return an empty array if a simplex record is empty in both records', () => {
+    const currentRecords: ProfileRecord[] = [
+      { key: 'simplex.channel', type: 'text', group: 'simplex', value: '' },
+    ]
+    const previousRecords: ProfileRecord[] = [
+      { key: 'simplex.channel', type: 'text', group: 'simplex', value: '' },
+    ]
+    const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+    expect(recordsDiff).toEqual([])
+  })
+})
+
+describe('withDefaultSimplexRecords', () => {
+  it('should prepend empty simplex.contact and simplex.channel when absent', () => {
+    expect(withDefaultSimplexRecords([])).toEqual([
+      { key: 'simplex.contact', group: 'simplex', type: 'text', value: '' },
+      { key: 'simplex.channel', group: 'simplex', type: 'text', value: '' },
+    ])
+  })
+
+  it('should keep existing records and only add the missing simplex record', () => {
+    const records: ProfileRecord[] = [
+      { key: 'simplex.contact', group: 'simplex', type: 'text', value: 'https://contact' },
+    ]
+    expect(withDefaultSimplexRecords(records)).toEqual([
+      { key: 'simplex.channel', group: 'simplex', type: 'text', value: '' },
+      { key: 'simplex.contact', group: 'simplex', type: 'text', value: 'https://contact' },
+    ])
+  })
+
+  it('should not add any simplex record when both are present', () => {
+    const records: ProfileRecord[] = [
+      { key: 'simplex.contact', group: 'simplex', type: 'text', value: 'https://contact' },
+      { key: 'simplex.channel', group: 'simplex', type: 'text', value: 'https://channel' },
+    ]
+    expect(withDefaultSimplexRecords(records)).toEqual(records)
+  })
+})
+
+describe('stripEmptySimplexRecords', () => {
+  it('should drop empty simplex records but keep filled ones and other records', () => {
+    const records: ProfileRecord[] = [
+      { key: 'simplex.contact', group: 'simplex', type: 'text', value: 'https://contact' },
+      { key: 'simplex.channel', group: 'simplex', type: 'text', value: '' },
+      { key: 'eth', group: 'address', type: 'addr', value: '0x123' },
+    ]
+    expect(stripEmptySimplexRecords(records)).toEqual([
+      { key: 'simplex.contact', group: 'simplex', type: 'text', value: 'https://contact' },
+      { key: 'eth', group: 'address', type: 'addr', value: '0x123' },
+    ])
+  })
+
+  it('should treat whitespace-only simplex values as empty', () => {
+    const records: ProfileRecord[] = [
+      { key: 'simplex.contact', group: 'simplex', type: 'text', value: '   ' },
+    ]
+    expect(stripEmptySimplexRecords(records)).toEqual([])
   })
 })
