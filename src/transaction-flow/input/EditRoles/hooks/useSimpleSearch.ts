@@ -42,10 +42,9 @@ const queryByAddress = async (
 ): Promise<Result | null> => {
   try {
     const name = await getName(client, { address })
-    if (!name?.name || !name.match) return null
 
     return {
-      name: name.name,
+      name: name?.name,
       address,
     }
   } catch {
