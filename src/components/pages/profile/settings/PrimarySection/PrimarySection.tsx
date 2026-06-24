@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components'
 
 import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography } from '@ensdomains/thorin'
 
-import { Outlink } from '@app/components/Outlink'
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
+import { Outlink } from '@app/components/Outlink'
 import { getNetworkFromUrl } from '@app/constants/chains'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
 import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
