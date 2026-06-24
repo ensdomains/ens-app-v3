@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi'
 import { Button, Card, NametagSVG, RecordItem, Tag, Typography } from '@ensdomains/thorin'
 
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { usePrimaryNames } from '@app/hooks/primary/usePrimaryNames'
 import { useProfile } from '@app/hooks/useProfile'
@@ -89,7 +90,7 @@ export const PrimaryName = ({ name }: PrimaryNameProps) => {
           <Typography fontVariant="headingFour">{t('tabs.more.primaryName.title')}</Typography>
           <QuestionTooltip content={t('tabs.more.primaryName.tooltip')} />
         </TitleRow>
-        {walletPrimaryname?.name === name && (
+        {hasValidPrimaryName(walletPrimaryname) && walletPrimaryname?.name === name && (
           <TagContainer>
             <Tag colorStyle="greenSecondary" size="small">
               <NametagSVG />

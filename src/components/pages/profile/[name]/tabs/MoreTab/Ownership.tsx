@@ -14,6 +14,7 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { GetDnsOwnerQueryKey, UseDnsOwnerError } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { getPrimaryDisplayName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useOwners } from '@app/hooks/useOwners'
 import { makeIntroItem } from '@app/transaction-flow/intro'
@@ -129,22 +130,23 @@ const OwnerDetailContainer = styled.div(
 const Owner = ({ address, label }: OwnerItem) => {
   const { t } = useTranslation('common')
   const primary = usePrimaryName({ address })
+  const primaryDisplayName = getPrimaryDisplayName(primary.data)
 
   return (
     <BaseLinkWithHistory passHref href={`/address/${address}`}>
       <OwnerContainer as="a">
         <OwnerDetailContainer>
           <AvatarWithZorb
-            label={primary.data?.name || address}
+            label={primary.data?.name ?? address}
             address={address}
             name={primary.data?.name}
             size="10"
           />
           <TextContainer>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
-              {primary.data?.beautifiedName || shortenAddress(address)}
+              {primaryDisplayName || shortenAddress(address)}
             </Name>
-            {primary.data?.name && (
+            {primaryDisplayName && (
               <Typography data-testid={`owner-button-address-${label}`}>
                 {shortenAddress(address)}
               </Typography>

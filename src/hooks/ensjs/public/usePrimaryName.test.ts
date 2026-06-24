@@ -1,17 +1,20 @@
 import { mockFunction } from '@app/test-utils'
 
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getAddressRecord, getName } from '@ensdomains/ensjs/public'
 
 import { ClientWithEns, ConfigWithEns } from '@app/types'
 
 import { getPrimaryNameQueryFn } from './usePrimaryName'
+import { readContract } from 'viem/actions'
 
 vi.mock('@ensdomains/ensjs/public')
+vi.mock('viem/actions')
 
 const mockGetName = mockFunction(getName)
 const mockGetAddressRecord = mockFunction(getAddressRecord)
+const mockReadContract = mockFunction(readContract)
 
 const address = '0xaddress'
 const chainId = 1
@@ -19,6 +22,11 @@ const chainId = 1
 const mockClient = {
   chain: {
     id: chainId,
+    contracts: {
+      ensUniversalResolver: {
+        address: '0xresolver',
+      },
+    },
   },
 } as unknown as ClientWithEns
 const mockConfig = {
@@ -26,6 +34,10 @@ const mockConfig = {
 } as unknown as ConfigWithEns
 
 describe('getPrimaryNameQueryFn', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('should call getName', async () => {
     mockGetName.mockImplementationOnce(() => Promise.resolve({}))
     const result = await getPrimaryNameQueryFn(mockConfig)({
@@ -39,6 +51,7 @@ describe('getPrimaryNameQueryFn', () => {
     )
   })
   it('should return name when name is returned and matches', async () => {
+    mockReadContract.mockImplementationOnce(() => Promise.resolve(['test.eth']))
     mockGetName.mockImplementationOnce(() =>
       Promise.resolve({
         name: 'test.eth',
@@ -62,6 +75,23 @@ describe('getPrimaryNameQueryFn', () => {
         "reverseResolverAddress": "0xreverseResolver",
       }
     `)
+  })
+  it('should return null for unnormalized raw reverse names by default', async () => {
+    mockReadContract.mockImplementationOnce(() => Promise.resolve(['MetaMask.eth']))
+    mockGetName.mockImplementationOnce(() =>
+      Promise.resolve({
+        name: 'metamask.eth',
+        match: true,
+        resolverAddress: '0xresolver',
+        reverseResolverAddress: '0xreverseResolver',
+      }),
+    )
+    const result = await getPrimaryNameQueryFn(mockConfig)({
+      queryKey: [{ address, allowMismatch: false }, chainId, address, undefined, 'getName'],
+      meta: {} as any,
+      signal: undefined as any,
+    })
+    expect(result).toBeNull()
   })
   it('should return null when no name is returned', async () => {
     mockGetName.mockImplementationOnce(() => Promise.resolve(null))
@@ -157,6 +187,7 @@ describe('getPrimaryNameQueryFn', () => {
   })
   
   it('should beautify name when match is true', async () => {
+    mockReadContract.mockImplementationOnce(() => Promise.resolve(['test.eth']))
     mockGetName.mockImplementationOnce(() =>
       Promise.resolve({
         name: 'test.eth',
