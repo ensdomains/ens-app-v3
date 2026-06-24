@@ -65,6 +65,17 @@ jobs:
         env:
           NEXT_PUBLIC_CHAIN_NAME: mainnet
           NEXT_PUBLIC_SIMPLEX_TLD: testing
+          # Dedicated mainnet RPC (replaces the shared DRPC/Tenderly fallback keys).
+          # This Alchemy key is origin-restricted to *.simplex.chat + spend-capped, so
+          # it is safe to ship in the bundle. Rotate via Alchemy if abused.
+          #
+          # Deliberately inline rather than a GitHub secret: NEXT_PUBLIC_* is inlined into
+          # the static export at build time, so the key lands in the public JS bundle no
+          # matter where it comes from. A GH secret would only hide it from the repo, not
+          # from end users — it provides no meaningful protection for a client-shipped key.
+          # The actual safeguards are the origin allowlist + spend cap (above), or a
+          # server-side proxy if the key must truly stay private.
+          NEXT_PUBLIC_MAINNET_RPC_URL: https://eth-mainnet.g.alchemy.com/v2/h4DH2Ryi1evqyV54f3Faw
         run: |
           export NEXT_PUBLIC_MAINNET_DEPLOYMENT_ADDRESSES="$(node -e "process.stdout.write(JSON.stringify(JSON.parse(require('fs').readFileSync('deployments.mainnet.testing.json','utf8'))))")"
           pnpm build
