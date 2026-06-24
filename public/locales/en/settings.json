@@ -21,7 +21,7 @@
     },
     "primary": {
       "title": "Primary Name",
-      "noNameDescription": "A primary name links your address to a name, allowing dApps to display a name as your profile when connected to them. Learn about primary names",
+      "noNameDescription": "A primary name links your address to a name, allowing dApps to display a name as your profile when connected to them. Only normalized names will be shown. <link>Learn about primary names</link>",
       "choosePrimaryName": "Choose primary name",
       "inheritedFromDefault": "Inherited from default",
       "networkSpecificPrimaryNames": {

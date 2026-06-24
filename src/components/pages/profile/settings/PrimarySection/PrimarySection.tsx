@@ -1,8 +1,9 @@
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Card, CrossSVG, PersonPlusSVG, Skeleton, Typography } from '@ensdomains/thorin'
 
+import { Outlink } from '@app/components/Outlink'
 import { AvatarWithLink } from '@app/components/@molecules/AvatarWithLink/AvatarWithLink'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { getNetworkFromUrl } from '@app/constants/chains'
@@ -271,7 +272,17 @@ export const PrimarySection = () => {
                 </NoNameButton>
               </>
             )}
-            <NoNameDescription>{t('section.primary.noNameDescription')}</NoNameDescription>
+            <NoNameDescription>
+              <Trans
+                ns="settings"
+                i18nKey="section.primary.noNameDescription"
+                components={{
+                  link: (
+                    <Outlink href="https://support.ens.domains/en/articles/7890756-what-is-a-primary-name" />
+                  ),
+                }}
+              />
+            </NoNameDescription>
           </NoNameContainer>
         )}
 
