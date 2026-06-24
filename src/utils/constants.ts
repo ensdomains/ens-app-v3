@@ -9,7 +9,10 @@ export const MOONPAY_WORKER_URL: { [key: number]: string } = {
 
 export const FAUCET_WORKER_URL = 'https://ens-faucet.ens-cf.workers.dev'
 
-export const WC_PROJECT_ID = '9b14144d470af1e03ab9d88aaa127332'
+// SNRC: WalletConnect/Reown project owned by SimpleX (relay origin allowlist
+// covers *.simplex.chat). Override per deployment with NEXT_PUBLIC_WC_PROJECT_ID.
+export const WC_PROJECT_ID =
+  process.env.NEXT_PUBLIC_WC_PROJECT_ID || 'a04774beddf87081f3301392b3ba07d8'
 
 // 102% of price as buffer for fluctuations
 export const CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE = 102n
