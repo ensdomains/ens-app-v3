@@ -311,6 +311,20 @@ describe('validateExpiry', () => {
     })
     expect(result).toEqual(expiry)
   })
+  it('should return expiry for a 2ld .testing/.simplex name without fuses (no NameWrapper)', () => {
+    const expiry = new Date()
+    expect(validateExpiry({ name: 'test.testing', expiry, fuses: undefined as any })).toEqual(
+      expiry,
+    )
+    expect(validateExpiry({ name: 'test.simplex', expiry, fuses: undefined as any })).toEqual(
+      expiry,
+    )
+  })
+  it('should return undefined for a .testing subname without fuses', () => {
+    const expiry = new Date()
+    const result = validateExpiry({ name: 'sub.test.testing', expiry, fuses: undefined as any })
+    expect(result).toEqual(undefined)
+  })
 })
 
 describe('getResolverWrapperAwareness', () => {
