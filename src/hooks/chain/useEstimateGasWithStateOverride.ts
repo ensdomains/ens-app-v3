@@ -232,6 +232,18 @@ const estimateIndividualGas = async <TName extends TransactionName>({
       params: [formattedRequest, 'latest', formattedOverrides],
     })
     .then((g) => hexToBigInt(g))
+    .catch((err) => {
+      // E5: the register estimate relies on a hardcoded storage-slot override
+      // (calculateTransactions.ts, slot 260) to make the commitment look old enough. If
+      // that slot ever drifts (e.g. a SimplexController upgrade reorders storage), the
+      // override misses and this estimate reverts CommitmentNotFound — which must not
+      // block the pricing step, because the real register tx (which has a genuine
+      // on-chain commitment) is unaffected. Fall back to a conservative gas figure for
+      // register only (~470k observed on mainnet; 700k buffers it); rethrow everything
+      // else so genuine reverts still surface to the user.
+      if (name === 'registerName') return 700_000n
+      throw err
+    })
 }
 
 export const estimateGasWithStateOverrideQueryFn =

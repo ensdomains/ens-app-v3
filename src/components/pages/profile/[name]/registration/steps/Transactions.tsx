@@ -229,15 +229,21 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     registrationData,
   })
 
+  // E3 (clock-skew race): run the on-chain register simulation through the commit
+  // `complete` stage too, not just `sent`. It simulates register() against real chain
+  // state (and includes the payment value), so it succeeds only once the commitment is
+  // genuinely minCommitmentAge old on-chain — a clock-independent readiness signal that
+  // replaces the wall-clock gate (which fired early when the user's clock ran ahead).
+  const simulateRegistrationEnabled = commitTx?.stage === 'sent' || commitTx?.stage === 'complete'
   const { isSuccess: isSimulateRegistrationSuccess } = useSimulateRegistration({
     registrationParams,
     query: {
-      enabled: commitTx?.stage === 'sent',
-      retry: commitTx?.stage === 'sent',
+      enabled: simulateRegistrationEnabled,
+      retry: simulateRegistrationEnabled,
       retryDelay: 5_000,
     },
   })
-  const canRegisterOverride = isSimulateRegistrationSuccess && commitTx?.stage !== 'complete'
+  const canRegisterOverride = isSimulateRegistrationSuccess
 
   const checkRegistered = useCheckRegistered({
     name,
@@ -472,7 +478,13 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
               .otherwise(() => false)}
             startTimestamp={commitTimestamp}
             size="large"
-            callback={() => setCommitComplete(true)}
+            // E3: the visual countdown runs on wall-clock, which can finish before the
+            // commitment is minCommitmentAge old on-chain if the user's clock is fast.
+            // Only mark ready once the on-chain simulation confirms; otherwise readiness
+            // arrives via canRegisterOverride when the simulation succeeds.
+            callback={() => {
+              if (isSimulateRegistrationSuccess) setCommitComplete(true)
+            }}
           />
         </StyledCountdown>
         <CountDownInner

@@ -1,7 +1,7 @@
 import { infiniteQueryOptions, QueryFunctionContext } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
-import { Address, parseAbi, parseAbiItem } from 'viem'
-import { getBlockNumber, getLogs, readContract } from 'viem/actions'
+import { Address, parseAbi } from 'viem'
+import { readContract } from 'viem/actions'
 
 import type {
   GetNamesForAddressParameters,
@@ -13,11 +13,17 @@ import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
 
-// No-subgraph fallback: scan BaseRegistrar Transfer events to find tokenIds
-// (labelhashes) owned by `address`, then resolve the labels via ensjs' label
-// cache in localStorage (populated whenever a name is searched/registered).
-// Used for both local Hardhat (chainId 1337) and our custom Sepolia deployment
-// (chainId 11155111).
+// SNRC v3 BaseRegistrar is ERC721Enumerable, so read the owner's tokens directly
+// (balanceOf + tokenOfOwnerByIndex) instead of scanning Transfer logs — fast,
+// trustless, no indexer, and no eth_getLogs range limits. tokenId == labelhash; the
+// on-chain labelOf index gives the plaintext label (no localStorage cache needed).
+const baseRegistrarReadAbi = parseAbi([
+  'function balanceOf(address) view returns (uint256)',
+  'function tokenOfOwnerByIndex(address, uint256) view returns (uint256)',
+  'function labelOf(uint256) view returns (string)',
+  'function nameExpires(uint256) view returns (uint256)',
+])
+
 const getNamesForAddressFromChain = async (
   client: any,
   address: Address,
@@ -28,152 +34,68 @@ const getNamesForAddressFromChain = async (
   // would fall through to the empty localhost bundle and return [].
   const addresses = getSnrcAddresses(chainId)
   const baseRegistrar = addresses.BaseRegistrarImplementation as Address | undefined
-  // eslint-disable-next-line no-console
-  console.log(
-    '[chain-scan] chainId=',
-    chainId,
-    'baseRegistrar=',
-    baseRegistrar,
-    'address=',
-    address,
-  )
-  if (!baseRegistrar) {
-    // eslint-disable-next-line no-console
-    console.warn('[chain-scan] No BaseRegistrarImplementation address for chainId', chainId)
-    return []
-  }
+  if (!baseRegistrar) return []
   const tld = (process.env.NEXT_PUBLIC_SIMPLEX_TLD || 'testing') as string
 
-  // Public mainnet + Sepolia RPCs cap eth_getLogs at 10k blocks per call;
-  // scanning from genesis would reject. Chunk over recent history on both.
-  // Locally (Hardhat) the chain is fresh, so we can scan from 0 in one call.
-  const event = parseAbiItem(
-    'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
-  )
-  let logs: any[] = []
-  const needsChunking = chainId === 1 || chainId === 11155111
-  if (needsChunking) {
-    const latest = await getBlockNumber(client)
-    const WINDOW = 9999n
-    // ~5 days at 12s blocks. Bump if you need to find registrations older
-    // than this. Mainnet deploys are recent, so 40k blocks covers easily.
-    const SCAN_DEPTH = 40000n
-    const start = latest > SCAN_DEPTH ? latest - SCAN_DEPTH : 0n
-    // eslint-disable-next-line no-console
-    console.log('[chain-scan] window', { chainId, latest, start, depth: SCAN_DEPTH })
-    for (let from = start; from <= latest; from += WINDOW + 1n) {
-      const to = from + WINDOW > latest ? latest : from + WINDOW
-      try {
-        const chunk = await getLogs(client, {
-          address: baseRegistrar,
-          event,
-          args: { to: address },
-          fromBlock: from,
-          toBlock: to,
-        })
-        // eslint-disable-next-line no-console
-        console.log('[chain-scan] chunk', { from, to, found: chunk.length })
-        logs.push(...chunk)
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('[chain-scan] getLogs failed', { from, to }, e)
-      }
-    }
-  } else {
-    logs = await getLogs(client, {
-      address: baseRegistrar,
-      event,
-      args: { to: address },
-      fromBlock: 0n,
-      toBlock: 'latest',
-    })
-  }
-
-  // eslint-disable-next-line no-console
-  console.log('[chain-scan] total logs found:', logs.length, logs.slice(0, 3))
-  // Drop tokens later transferred away; keep only those still owned by `address`.
-  const stillOwnedIds = new Set<string>()
-  const abi = parseAbi([
-    'function ownerOf(uint256) view returns (address)',
-    'function nameExpires(uint256) view returns (uint256)',
-    'function labelOf(uint256) view returns (string)',
-  ])
-  await Promise.all(
-    Array.from(new Set(logs.map((l: any) => l.args.tokenId as bigint))).map(async (tokenId) => {
-      try {
-        const owner = (await readContract(client, {
-          address: baseRegistrar,
-          abi,
-          functionName: 'ownerOf',
-          args: [tokenId],
-        })) as Address
-        if (owner?.toLowerCase() === address.toLowerCase()) stillOwnedIds.add(tokenId.toString())
-      } catch {
-        /* token may have been burned/expired — skip */
-      }
-    }),
-  )
-
-  // Look up label strings from ensjs' localStorage cache; tokenId = labelhash.
-  const labels: Record<string, string> = (() => {
-    if (typeof window === 'undefined') return {}
-    try {
-      return JSON.parse(window.localStorage.getItem('ensjs:labels') || '{}')
-    } catch {
-      return {}
-    }
-  })()
+  // ERC721Enumerable: enumerate the owner's tokenIds (labelhashes) on-chain.
+  const balance = (await readContract(client, {
+    address: baseRegistrar,
+    abi: baseRegistrarReadAbi,
+    functionName: 'balanceOf',
+    args: [address],
+  })) as bigint
+  const tokenIds = (await Promise.all(
+    Array.from({ length: Number(balance) }, (_, i) =>
+      readContract(client, {
+        address: baseRegistrar,
+        abi: baseRegistrarReadAbi,
+        functionName: 'tokenOfOwnerByIndex',
+        args: [address, BigInt(i)],
+      }).catch(() => null),
+    ),
+  )) as (bigint | null)[]
 
   const now = Math.floor(Date.now() / 1000)
   const results: GetNamesForAddressReturnType = []
-  for (const tokenIdStr of stillOwnedIds) {
-    const tokenId = BigInt(tokenIdStr)
-    const labelhashHex = `0x${tokenId.toString(16).padStart(64, '0')}` as `0x${string}`
-    let label = labels[labelhashHex] || null
-    // v3 BaseRegistrar stores the plaintext label on-chain (labelOf), so we no
-    // longer depend on the localStorage label cache to display a readable name.
-    if (!label) {
-      try {
-        const onchainLabel = (await readContract(client, {
-          address: baseRegistrar,
-          abi,
-          functionName: 'labelOf',
-          args: [tokenId],
-        })) as string
-        if (onchainLabel) label = onchainLabel
-      } catch {
-        /* ignore */
-      }
-    }
-    let expiry: bigint = 0n
-    try {
-      expiry = (await readContract(client, {
+  await Promise.all(
+    tokenIds.map(async (tokenId) => {
+      if (tokenId == null) return
+      const labelhashHex = `0x${tokenId.toString(16).padStart(64, '0')}` as `0x${string}`
+      const label = (await readContract(client, {
         address: baseRegistrar,
-        abi,
+        abi: baseRegistrarReadAbi,
+        functionName: 'labelOf',
+        args: [tokenId],
+      }).catch(() => '')) as string
+      const expiry = (await readContract(client, {
+        address: baseRegistrar,
+        abi: baseRegistrarReadAbi,
         functionName: 'nameExpires',
         args: [tokenId],
-      })) as bigint
-    } catch {
-      /* ignore */
-    }
-    const labelDisplay = label ?? `[${labelhashHex.slice(2)}]`
-    const fullName = `${labelDisplay}.${tld}`
-    results.push({
-      name: fullName,
-      labelName: label,
-      labelhash: labelhashHex,
-      truncatedName: fullName,
-      relation: { owner: true, wrappedOwner: false, registrant: true, resolvedAddress: false },
-      registrationDate: undefined as any,
-      expiryDate: expiry
-        ? { date: new Date(Number(expiry) * 1000), value: expiry }
-        : (undefined as any),
-      isMigrated: true,
-      parentName: tld,
-      type: 'registration',
-      pccExpired: false,
-    } as any)
-  }
+      }).catch(() => 0n)) as bigint
+      // ERC721Enumerable still counts an expired-but-not-yet-re-registered name (the
+      // SNRC ownerOf reverts on expiry, but the enumeration set isn't pruned), so skip
+      // expired names to match the previous Transfer-scan + ownerOf behaviour.
+      if (expiry && Number(expiry) <= now) return
+      const labelDisplay = label || `[${labelhashHex.slice(2)}]`
+      const fullName = `${labelDisplay}.${tld}`
+      results.push({
+        name: fullName,
+        labelName: label || null,
+        labelhash: labelhashHex,
+        truncatedName: fullName,
+        relation: { owner: true, wrappedOwner: false, registrant: true, resolvedAddress: false },
+        registrationDate: undefined as any,
+        expiryDate: expiry
+          ? { date: new Date(Number(expiry) * 1000), value: expiry }
+          : (undefined as any),
+        isMigrated: true,
+        parentName: tld,
+        type: 'registration',
+        pccExpired: false,
+      } as any)
+    }),
+  )
   return results
 }
 
@@ -202,9 +124,9 @@ export const getNamesForAddressQueryFn =
 
     const client = config.getClient({ chainId })
 
-    // No subgraph: always enumerate on-chain. We scan BaseRegistrar Transfer
-    // events for tokenIds owned by `address` and resolve labels via the v3
-    // on-chain labelOf. The whole set is returned as one page.
+    // No subgraph: always enumerate on-chain via ERC721Enumerable
+    // (balanceOf + tokenOfOwnerByIndex on BaseRegistrar) and resolve labels via
+    // the v3 on-chain labelOf. The whole set is returned as one page.
     if (pageParam && pageParam.length > 0) return [] as GetNamesForAddressReturnType
     try {
       return await getNamesForAddressFromChain(client, address as Address)
