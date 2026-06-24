@@ -26,14 +26,13 @@ vi.mock('next/head', () => ({
 // Mock hooks
 vi.mock('@app/hooks/usePrimaryProfile', () => ({
   usePrimaryProfile: ({ address }: { address: string }) => {
-    if (address === '0x43e47385f6b3f8bdbe02c210bf5c74b6c34ff441') {
+    if (address === '0x1111111111111111111111111111111111111111') {
       return {
         data: {
-          name: 'metamask.eth',
-          originalName: 'MetaMask.eth',
-          match: false,
+          name: 'test.eth',
+          match: true,
           texts: [
-            { key: 'description', value: 'MetaMask wallet' },
+            { key: 'description', value: 'Test profile' },
           ],
         },
         isLoading: false,
@@ -57,10 +56,9 @@ vi.mock('@app/hooks/chain/useChainName', () => ({
 }))
 
 vi.mock('@app/components/ProfileSnippet', () => ({
-  ProfileSnippet: ({ name, hasMismatch, button }: any) => (
+  ProfileSnippet: ({ name, button }: any) => (
     <div data-testid="profile-snippet">
       <span data-testid="profile-name">{name}</span>
-      {hasMismatch && <span data-testid="has-mismatch">Mismatch</span>}
       {button && <span data-testid="button-type">{button}</span>}
     </div>
   ),
@@ -113,30 +111,30 @@ describe('Address Page', () => {
     </QueryClientProvider>
   )
 
-  it('should display MetaMask.eth with original capitalization', async () => {
+  it('should display a valid primary name', async () => {
+    vi.mocked(useRouter).mockReturnValueOnce({
+      isReady: true,
+      query: { address: '0x1111111111111111111111111111111111111111' },
+    } as any)
+
     render(<Page />, { wrapper })
 
     await waitFor(() => {
       const profileName = screen.getByTestId('profile-name')
-      expect(profileName.textContent).toBe('MetaMask.eth')
+      expect(profileName.textContent).toBe('test.eth')
     })
   })
 
-  it('should indicate mismatch when primary name does not match', async () => {
+  it('should show View Profile button for valid names', async () => {
+    vi.mocked(useRouter).mockReturnValueOnce({
+      isReady: true,
+      query: { address: '0x1111111111111111111111111111111111111111' },
+    } as any)
+
     render(<Page />, { wrapper })
 
     await waitFor(() => {
-      expect(screen.getByTestId('has-mismatch')).toBeInTheDocument()
-    })
-  })
-
-  it('should not show View Profile button for mismatched names', async () => {
-    render(<Page />, { wrapper })
-
-    await waitFor(() => {
-      // When hasMismatch is true, button prop should be undefined, so button-type should not exist
-      const buttonType = screen.queryByTestId('button-type')
-      expect(buttonType).not.toBeInTheDocument()
+      expect(screen.getByTestId('button-type').textContent).toBe('viewProfile')
     })
   })
 
@@ -154,13 +152,11 @@ describe('Address Page', () => {
     })
   })
 
-  it('should pass hasMismatch prop to ProfileSnippet', async () => {
+  it('should show NoProfileSnippet when unnormalized names are filtered out', async () => {
     render(<Page />, { wrapper })
 
     await waitFor(() => {
-      const profileSnippet = screen.getByTestId('profile-snippet')
-      expect(profileSnippet).toBeInTheDocument()
-      expect(screen.getByTestId('has-mismatch')).toBeInTheDocument()
+      expect(screen.getByTestId('no-profile-snippet')).toBeInTheDocument()
     })
   })
 })
