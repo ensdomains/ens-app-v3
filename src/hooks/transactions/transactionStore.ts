@@ -448,8 +448,25 @@ export function createTransactionStore(config_: ConfigWithEns) {
             )
           })
 
-          transactionRequestCache.set(hash, requestPromise)
-          return requestPromise
+          const trackedPromise = requestPromise.catch((err) => {
+            // A wallet can silently reprice/replace a pending tx, so the hash we are
+            // watching never appears on-chain and viem rejects (after its internal
+            // retries) — yet the operation still confirms under the replacement hash
+            // and the flow recovers via its own on-chain status check. Report this as
+            // info instead of letting it surface as an unhandled-promise console error.
+            if (err?.name === 'WaitForTransactionReceiptTimeoutError') {
+              // eslint-disable-next-line no-console
+              console.info(
+                `Transaction ${hash} is no longer tracked under this hash: it never appeared on-chain — the wallet most likely sped it up or replaced it, so it confirms under a different hash. This is expected and not an error.`,
+              )
+              return
+            }
+            // eslint-disable-next-line no-console
+            console.error(`Transaction ${hash} failed while waiting for confirmation:`, err)
+          })
+
+          transactionRequestCache.set(hash, trackedPromise)
+          return trackedPromise
         }),
     )
   }
