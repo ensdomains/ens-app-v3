@@ -21,7 +21,7 @@ test.describe('Un-normalised Name Display', () => {
     ).toBeVisible()
   })
 
-  test('should check un-normalised name is showing with warning @mainnet', async ({ page }) => {
+  test('should check un-normalised name is not showing @mainnet', async ({ page }) => {
     // Enter ENS app
     await page.goto('/')
 
@@ -29,11 +29,8 @@ test.describe('Un-normalised Name Display', () => {
     await page.goto(`/${address2}`)
     await expect(page.getByText('0x43e...ff441')).toBeVisible()
 
-    // Check it says X.eth and has un-normalised warning
-    await expect(page.getByTestId('profile-snippet-name')).toHaveText('MetaMask.eth')
-    await expect(page.getByTestId('profile-snippet').locator('text=Unnormalized name')).toHaveText(
-      'Unnormalized name',
-    )
+    // Check no primary name is shown for unnormalised name
+    await expect(page.getByTestId('profile-snippet-name')).not.toBeVisible()
 
     // Check View Profile button isn't visible
     await expect(

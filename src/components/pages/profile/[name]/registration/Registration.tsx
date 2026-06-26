@@ -11,7 +11,9 @@ import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
+import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useReferrer } from '@app/hooks/useReferrer'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
@@ -23,6 +25,7 @@ import { sendEvent } from '@app/utils/analytics/events'
 import { getReferrerHex } from '@app/utils/referrer'
 import { isLabelTooLong, secondsToYears } from '@app/utils/utils'
 
+import RegistrationDisabledBanner from './RegistrationDisabledBanner'
 import Complete from './steps/Complete'
 import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
@@ -124,6 +127,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     address: defaultResolverAddress,
     name: normalisedName,
   })
+
+  const { data: isControllerActive, isLoading: isControllerActiveLoading } =
+    useIsEthRegistrarControllerActive()
+  const isRegistrationDisabled = isControllerActive === false
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
@@ -317,7 +324,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         noTitle
         title={beautifiedName}
         hideHeading={step === 'complete'}
-        loading={labelTooLong ? false : isLoading || primary.isLoading || resolverExistsLoading}
+        loading={
+          labelTooLong
+            ? false
+            : isLoading || primary.isLoading || resolverExistsLoading || isControllerActiveLoading
+        }
         singleColumnContent
         inlineHeading
       >
@@ -333,9 +344,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               </BaseLinkWithHistory>
             </ViewProfileContainer>
           ),
-          trailing: match([labelTooLong, step])
-            .with([true, P._], () => <Helper alert="error">{t('error.nameTooLong')}</Helper>)
-            .with([false, 'pricing'], () => (
+          trailing: match([labelTooLong, isRegistrationDisabled, step])
+            .with([true, P._, P._], () => <Helper alert="error">{t('error.nameTooLong')}</Helper>)
+            .with([false, true, P._], () => <RegistrationDisabledBanner name={normalisedName} />)
+            .with([false, false, 'pricing'], () => (
               <Pricing
                 name={normalisedName}
                 beautifiedName={beautifiedName}
@@ -343,13 +355,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 resolverExists={resolverExists}
                 callback={pricingCallback}
                 isPrimaryLoading={primary.isLoading}
-                hasPrimaryName={!!primary.data?.name}
+                hasPrimaryName={hasValidPrimaryName(primary.data)}
                 registrationData={item}
                 moonpayTransactionStatus={moonpayTransactionStatus}
                 initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}
               />
             ))
-            .with([false, 'profile'], () => (
+            .with([false, false, 'profile'], () => (
               <Profile
                 name={normalisedName}
                 resolverExists={resolverExists}
@@ -357,7 +369,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 callback={profileCallback}
               />
             ))
-            .with([false, 'info'], () => (
+            .with([false, false, 'info'], () => (
               <Info
                 name={normalisedName}
                 registrationData={item}
@@ -365,7 +377,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 onProfileClick={infoProfileCallback}
               />
             ))
-            .with([false, 'transactions'], () => (
+            .with([false, false, 'transactions'], () => (
               <Transactions
                 name={normalisedName}
                 registrationData={item}
@@ -373,7 +385,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 callback={transactionsCallback}
               />
             ))
-            .with([false, 'complete'], () => (
+            .with([false, false, 'complete'], () => (
               <Complete
                 name={normalisedName}
                 beautifiedName={beautifiedName}

@@ -8,6 +8,7 @@ import { Button, Typography } from '@ensdomains/thorin'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
+import { getPrimaryDisplayName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { shortenAddress } from '@app/utils/utils'
@@ -58,15 +59,16 @@ const OwnerWithEns = styled.div(
 
 const NameOwnerItem = ({ address }: { address?: Address }) => {
   const { data: nameData } = usePrimaryName({ address })
+  const primaryDisplayName = getPrimaryDisplayName(nameData)
 
-  if (nameData?.name) {
+  if (nameData?.name && primaryDisplayName) {
     return (
       <OwnerContainer>
         <OwnerWithEns>
           <Typography weight="bold">
-            {nameData.beautifiedName.length > 12
-              ? `${nameData.beautifiedName.slice(0, 12)}...`
-              : nameData.beautifiedName}
+            {primaryDisplayName.length > 12
+              ? `${primaryDisplayName.slice(0, 12)}...`
+              : primaryDisplayName}
           </Typography>
           <Typography weight="bold">{shortenAddress(address)}</Typography>
         </OwnerWithEns>

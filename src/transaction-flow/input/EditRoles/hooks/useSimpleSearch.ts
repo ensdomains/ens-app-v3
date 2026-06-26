@@ -42,6 +42,7 @@ const queryByAddress = async (
 ): Promise<Result | null> => {
   try {
     const name = await getName(client, { address })
+
     return {
       name: name?.name,
       address,

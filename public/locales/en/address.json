@@ -9,7 +9,7 @@
   "view": "View",
   "noProfile": {
     "title": "No primary name set",
-    "message": "This wallet needs to set a primary name to create a profile"
+    "message": "This wallet needs to set a primary name to create a profile. Only normalized names are shown."
   },
   "noResults": "No names found",
   "errors": {

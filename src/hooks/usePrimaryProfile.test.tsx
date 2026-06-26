@@ -16,7 +16,7 @@ describe('usePrimaryProfile', () => {
     vi.clearAllMocks()
   })
 
-  it('should pass allowMismatch: true to usePrimaryName', () => {
+  it('should call usePrimaryName without mismatch allowance', () => {
     const address = '0x1234567890abcdef' as any
     
     mockUsePrimaryName.mockReturnValue({
@@ -36,7 +36,6 @@ describe('usePrimaryProfile', () => {
     expect(mockUsePrimaryName).toHaveBeenCalledWith({
       address,
       enabled: true,
-      allowMismatch: true,
     })
   })
 
@@ -77,38 +76,6 @@ describe('usePrimaryProfile', () => {
         match: primaryData.match,
         originalName: primaryData.originalName,
         ...recordsData,
-      })
-    })
-  })
-
-  it('should handle mismatched names correctly', async () => {
-    const address = '0x43e47385f6b3f8bdbe02c210bf5c74b6c34ff441' as any
-    const primaryData = {
-      name: 'metamask.eth',
-      originalName: 'MetaMask.eth',
-      match: false,
-      beautifiedName: 'MetaMask.eth',
-    }
-    
-    mockUsePrimaryName.mockReturnValue({
-      data: primaryData,
-      isLoading: false,
-      isFetching: false,
-    } as any)
-    
-    mockUseRecords.mockReturnValue({
-      data: null,
-      isLoading: false,
-      isFetching: false,
-    } as any)
-
-    const { result } = renderHook(() => usePrimaryProfile({ address }))
-
-    await waitFor(() => {
-      expect(result.current.data).toEqual({
-        name: 'metamask.eth',
-        match: false,
-        originalName: 'MetaMask.eth',
       })
     })
   })

@@ -25,6 +25,10 @@ import { VerificationBadgeVerifierTooltipContent } from '@app/components/@molecu
 import { VerificationBadge } from '@app/components/@molecules/VerificationBadge/VerificationBadge'
 import { useBlockExplorer } from '@app/hooks/chain/useBlockExplorer'
 import { useCoinChain } from '@app/hooks/chain/useCoinChain'
+import {
+  getPrimaryDisplayName,
+  hasValidPrimaryName,
+} from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getDestinationAsHref } from '@app/routes'
@@ -310,6 +314,8 @@ export const OwnerProfileButton = ({
     address: addressOrNameOrDate as Address,
     enabled: dataType === 'address',
   })
+  const primaryDisplayName = getPrimaryDisplayName(primary.data)
+  const hasPrimaryName = hasValidPrimaryName(primary.data)
 
   const { link, ...recordItemPartialProps } = useMemo(() => {
     const base = {
@@ -341,11 +347,11 @@ export const OwnerProfileButton = ({
     if (dataType === 'address')
       return {
         ...base,
-        link: primary.data?.name
+        link: hasPrimaryName
           ? getDestinationAsHref(createUrlObject(`/profile/${primary.data?.name}`, { referrer }))
           : getDestinationAsHref(createUrlObject(`/address/${addressOrNameOrDate}`, { referrer })),
         children:
-          primary.data?.beautifiedName ||
+          primaryDisplayName ||
           (breakpoints.sm ? shortenAddress(addressOrNameOrDate) : addressOrNameOrDate.slice(0, 5)),
       } as const
     return {
@@ -358,8 +364,9 @@ export const OwnerProfileButton = ({
     addressOrNameOrDate,
     label,
     breakpoints,
+    hasPrimaryName,
     primary.data?.name,
-    primary.data?.beautifiedName,
+    primaryDisplayName,
     referrer,
     t,
   ])
@@ -374,7 +381,7 @@ export const OwnerProfileButton = ({
           onClick: () => router.push(link),
         }
       : undefined,
-    primary.data?.name
+    hasPrimaryName
       ? {
           icon: CopyIcon,
           label: 'Copy name',

@@ -18,13 +18,16 @@ import { emptyAddress } from '@app/utils/constants'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
+export type PrimaryNameData = NonNullable<GetNameReturnType> & {
+  beautifiedName: string
+  originalName?: string
+}
+
 type UsePrimaryNameParameters = PartialBy<GetNameParameters, 'address'> & {
   allowMismatch?: boolean
 }
 
-type UsePrimaryNameReturnType =
-  | (NonNullable<GetNameReturnType> & { beautifiedName: string; originalName?: string })
-  | null
+type UsePrimaryNameReturnType = PrimaryNameData | null
 
 type UsePrimaryNameConfig = QueryConfig<UsePrimaryNameReturnType, Error>
 
@@ -125,12 +128,12 @@ export const getPrimaryNameQueryFn =
     const effectiveMatch = res.match && isNormalized
 
     // Preserve the original name and decide beautification based on effective match
-    const shouldBeautify = effectiveMatch !== false
+    if (!effectiveMatch && !params.allowMismatch) return null
 
     return {
       ...res,
       match: effectiveMatch,
-      beautifiedName: shouldBeautify ? tryBeautify(res.name) : res.name,
+      beautifiedName: effectiveMatch ? tryBeautify(res.name) : originalName,
       originalName, // This is the actual raw name from reverse resolution
     }
   }

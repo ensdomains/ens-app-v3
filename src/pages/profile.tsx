@@ -2,6 +2,7 @@ import type { Hex } from 'viem'
 import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -19,8 +20,10 @@ export default function Page() {
   const { address } = useAccount()
 
   const primary = usePrimaryName({ address: address as Hex })
+  const primaryData = primary.data
+  const primaryName = primaryData && hasValidPrimaryName(primaryData) ? primaryData.name : undefined
 
-  const name = isSelf && primary.data?.name ? primary.data.name : _name
+  const name = isSelf && primaryName ? primaryName : _name
 
   // Skip graph for for initial load and router redirect
   const nameDetails = useNameDetails({ name })

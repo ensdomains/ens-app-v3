@@ -4,6 +4,15 @@
   "loading": "加载中",
   "notFound": "404 未找到",
   "etherscan": "Etherscan",
+  "upgradeBanner": {
+    "title": "全新的 ENS 应用来了！",
+    "subtitle": "为 ENSv2 从头重新设计。",
+    "cta": "打开新应用"
+  },
+  "legacyAppBanner": {
+    "title": "您正在使用旧版 ENS 应用",
+    "body": "此版本不再维护，部分功能可能无法使用。请使用新应用以获得完整体验。"
+  },
   "action": {
     "cancel": "取消",
     "change": "更改",
