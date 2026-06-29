@@ -41,7 +41,7 @@ describe('SearchViewResult', () => {
     expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
   })
 
-  it('describes the disabled reason without overriding the row identity (AC6)', () => {
+  it('describes the disabled reason via aria-describedby without overriding the row identity', () => {
     render(<SearchViewResult address={owner} excludeRole="owner" roles={roles} />)
 
     const button = screen.getByTestId(`search-result-${owner}`)
@@ -85,7 +85,7 @@ describe('SearchViewResult', () => {
     expect(screen.queryByTestId(`search-result-already-set-${fresh}`)).toBeNull()
   })
 
-  it('matches the role-holder address case-insensitively on BOTH sides (AC7)', () => {
+  it('matches the role-holder address case-insensitively on both sides', () => {
     // Production addresses arrive EIP-55 checksummed (mixed-case) from on-chain reads on
     // BOTH the stored role record and the searched address. Use two differently-cased
     // forms of the same address so the match relies on lowercasing each side — removing
@@ -101,7 +101,7 @@ describe('SearchViewResult', () => {
     ).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
   })
 
-  it('ignores role records with an undefined address without disabling or crashing (AC7)', () => {
+  it('ignores role records with an undefined address without disabling or crashing', () => {
     // e.g. eth-record is undefined when no ETH address is set — must not match or throw.
     const undefinedAddressRoles: RoleRecord[] = [
       { role: 'eth-record', address: undefined },
@@ -113,5 +113,17 @@ describe('SearchViewResult', () => {
 
     expect(screen.getByTestId(`search-result-${fresh}`)).toBeEnabled()
     expect(screen.queryByTestId(`search-result-already-set-${fresh}`)).toBeNull()
+  })
+
+  it('keeps the row enabled when the address holds a role whose name merely contains excludeRole', () => {
+    // 'parent-owner' contains the substring 'owner'; the disable must be an EXACT role match,
+    // so sending/editing the 'owner' role must not disable a parent-owner holder. Guards
+    // against a `.includes`/`startsWith` regression on the role comparison.
+    const parentOwner = '0xparentowner' as Address
+    const substringRoles: RoleRecord[] = [{ role: 'parent-owner', address: parentOwner }]
+    render(<SearchViewResult address={parentOwner} excludeRole="owner" roles={substringRoles} />)
+
+    expect(screen.getByTestId(`search-result-${parentOwner}`)).toBeEnabled()
+    expect(screen.queryByTestId(`search-result-already-set-${parentOwner}`)).toBeNull()
   })
 })
