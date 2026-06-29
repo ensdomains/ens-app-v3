@@ -36,15 +36,23 @@ describe('SearchViewResult', () => {
     expect(screen.getByTestId(`search-result-${owner}`)).toBeDisabled()
     const message = screen.getByTestId(`search-result-already-set-${owner}`)
     expect(message).toBeVisible()
-    expect(message).toHaveTextContent('roles.owner.title')
+    // Assert the full explanatory copy (the alreadySet stem + the role name), not just the
+    // role-title fragment — a bare role Tag would also contain 'roles.owner.title'.
+    expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
   })
 
   it('exposes the reason via an accessible name on the disabled control', () => {
     render(<SearchViewResult address={owner} excludeRole="owner" roles={roles} />)
 
     const button = screen.getByTestId(`search-result-${owner}`)
-    expect(button).toHaveAttribute('aria-label', expect.stringContaining('roles.owner.title'))
-    expect(button).toHaveAttribute('title', expect.stringContaining('roles.owner.title'))
+    expect(button).toHaveAttribute(
+      'aria-label',
+      'input.sendName.views.search.alreadySet.roles.owner.title',
+    )
+    expect(button).toHaveAttribute(
+      'title',
+      'input.sendName.views.search.alreadySet.roles.owner.title',
+    )
   })
 
   it('names the role that caused the disable, not the address first role, for a multi-role address', () => {
@@ -53,7 +61,7 @@ describe('SearchViewResult', () => {
 
     expect(screen.getByTestId(`search-result-${multi}`)).toBeDisabled()
     const message = screen.getByTestId(`search-result-already-set-${multi}`)
-    expect(message).toHaveTextContent('roles.manager.title')
+    expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.manager.title')
     expect(message).not.toHaveTextContent('roles.owner.title')
   })
 
@@ -68,6 +76,32 @@ describe('SearchViewResult', () => {
 
   it('stays enabled with no message for an address that holds no roles', () => {
     render(<SearchViewResult address={fresh} excludeRole="owner" roles={roles} />)
+
+    expect(screen.getByTestId(`search-result-${fresh}`)).toBeEnabled()
+    expect(screen.queryByTestId(`search-result-already-set-${fresh}`)).toBeNull()
+  })
+
+  it('matches the role-holder address case-insensitively (AC7)', () => {
+    // The searched address differs only by letter-case from the stored owner address.
+    const mixedCase = '0xAbCdEf' as Address
+    const caseRoles: RoleRecord[] = [{ role: 'owner', address: '0xabcdef' as Address }]
+    render(<SearchViewResult address={mixedCase} excludeRole="owner" roles={caseRoles} />)
+
+    expect(screen.getByTestId(`search-result-${mixedCase}`)).toBeDisabled()
+    expect(screen.getByTestId(`search-result-already-set-${mixedCase}`)).toHaveTextContent(
+      'input.sendName.views.search.alreadySet.roles.owner.title',
+    )
+  })
+
+  it('ignores role records with an undefined address without disabling or crashing (AC7)', () => {
+    // e.g. eth-record is undefined when no ETH address is set — must not match or throw.
+    const undefinedAddressRoles: RoleRecord[] = [
+      { role: 'eth-record', address: undefined },
+      { role: 'owner', address: owner },
+    ]
+    render(
+      <SearchViewResult address={fresh} excludeRole="eth-record" roles={undefinedAddressRoles} />,
+    )
 
     expect(screen.getByTestId(`search-result-${fresh}`)).toBeEnabled()
     expect(screen.queryByTestId(`search-result-already-set-${fresh}`)).toBeNull()

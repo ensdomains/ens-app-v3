@@ -120,7 +120,7 @@ describe('SendName', () => {
     await userEvent.type(screen.getByTestId('send-name-search-input'), 'owner')
     const message = screen.getByTestId('search-result-already-set-0xowner')
     expect(message).toBeVisible()
-    expect(message).toHaveTextContent('roles.owner.title')
+    expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
   })
 
   it('should keep a fresh address selectable with no already-set message', async () => {

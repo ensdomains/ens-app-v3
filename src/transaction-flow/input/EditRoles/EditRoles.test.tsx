@@ -205,7 +205,7 @@ describe('EditRoles', () => {
     await waitFor(() => {
       const message = screen.getByTestId('search-result-already-set-0xowner')
       expect(message).toBeVisible()
-      expect(message).toHaveTextContent('roles.owner.title')
+      expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
     })
     await userEvent.click(screen.getByRole('button', { name: 'action.cancel' }))
 
@@ -216,7 +216,9 @@ describe('EditRoles', () => {
     await waitFor(() => {
       const message = screen.getByTestId('search-result-already-set-0xmanager')
       expect(message).toBeVisible()
-      expect(message).toHaveTextContent('roles.manager.title')
+      expect(message).toHaveTextContent(
+        'input.sendName.views.search.alreadySet.roles.manager.title',
+      )
     })
     await userEvent.click(screen.getByRole('button', { name: 'action.cancel' }))
 
@@ -227,7 +229,9 @@ describe('EditRoles', () => {
     await waitFor(() => {
       const message = screen.getByTestId('search-result-already-set-0xeth-record')
       expect(message).toBeVisible()
-      expect(message).toHaveTextContent('roles.eth-record.title')
+      expect(message).toHaveTextContent(
+        'input.sendName.views.search.alreadySet.roles.eth-record.title',
+      )
     })
     await userEvent.click(screen.getByRole('button', { name: 'action.cancel' }))
   })
