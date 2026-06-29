@@ -41,12 +41,16 @@ describe('SearchViewResult', () => {
     expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
   })
 
-  it('exposes the reason via an accessible name on the disabled control', () => {
+  it('describes the disabled reason without overriding the row identity (AC6)', () => {
     render(<SearchViewResult address={owner} excludeRole="owner" roles={roles} />)
 
     const button = screen.getByTestId(`search-result-${owner}`)
-    expect(button).toHaveAttribute(
-      'aria-label',
+    // An aria-label would replace the avatar/address accessible name; instead the reason
+    // is linked via aria-describedby (pointing at the visible message) and the title tooltip.
+    expect(button).not.toHaveAttribute('aria-label')
+    const describedBy = button.getAttribute('aria-describedby')
+    expect(describedBy).toBe(`search-result-already-set-${owner}`)
+    expect(document.getElementById(describedBy as string)).toHaveTextContent(
       'input.sendName.views.search.alreadySet.roles.owner.title',
     )
     expect(button).toHaveAttribute(
@@ -81,16 +85,20 @@ describe('SearchViewResult', () => {
     expect(screen.queryByTestId(`search-result-already-set-${fresh}`)).toBeNull()
   })
 
-  it('matches the role-holder address case-insensitively (AC7)', () => {
-    // The searched address differs only by letter-case from the stored owner address.
-    const mixedCase = '0xAbCdEf' as Address
-    const caseRoles: RoleRecord[] = [{ role: 'owner', address: '0xabcdef' as Address }]
-    render(<SearchViewResult address={mixedCase} excludeRole="owner" roles={caseRoles} />)
+  it('matches the role-holder address case-insensitively on BOTH sides (AC7)', () => {
+    // Production addresses arrive EIP-55 checksummed (mixed-case) from on-chain reads on
+    // BOTH the stored role record and the searched address. Use two differently-cased
+    // forms of the same address so the match relies on lowercasing each side — removing
+    // `.toLowerCase()` from either side of the comparison would fail this test.
+    const storedChecksummed = '0xAbCdEf' as Address
+    const searchedDifferentCase = '0xaBcDeF' as Address
+    const caseRoles: RoleRecord[] = [{ role: 'owner', address: storedChecksummed }]
+    render(<SearchViewResult address={searchedDifferentCase} excludeRole="owner" roles={caseRoles} />)
 
-    expect(screen.getByTestId(`search-result-${mixedCase}`)).toBeDisabled()
-    expect(screen.getByTestId(`search-result-already-set-${mixedCase}`)).toHaveTextContent(
-      'input.sendName.views.search.alreadySet.roles.owner.title',
-    )
+    expect(screen.getByTestId(`search-result-${searchedDifferentCase}`)).toBeDisabled()
+    expect(
+      screen.getByTestId(`search-result-already-set-${searchedDifferentCase}`),
+    ).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
   })
 
   it('ignores role records with an undefined address without disabling or crashing (AC7)', () => {

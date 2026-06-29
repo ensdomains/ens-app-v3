@@ -86,13 +86,16 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
           value: t(`roles.${role}.title`, { ns: 'common' }),
         })
       : undefined
+  const alreadySetMessageId = `search-result-already-set-${address}`
 
   return (
     <Container
       data-testid={`search-result-${address}`}
       type="button"
       disabled={markers.hasRole}
-      aria-label={alreadySetMessage}
+      // Describe the disabled reason without overriding the row's accessible name
+      // (an aria-label would replace the avatar/address identity for screen readers).
+      aria-describedby={alreadySetMessage ? alreadySetMessageId : undefined}
       title={alreadySetMessage}
       {...props}
     >
@@ -106,7 +109,7 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
       </LeftContainer>
       {markers.hasRole ? (
         <RightContainer>
-          <AlreadySetMessage data-testid={`search-result-already-set-${address}`}>
+          <AlreadySetMessage id={alreadySetMessageId} data-testid={alreadySetMessageId}>
             {alreadySetMessage}
           </AlreadySetMessage>
         </RightContainer>
