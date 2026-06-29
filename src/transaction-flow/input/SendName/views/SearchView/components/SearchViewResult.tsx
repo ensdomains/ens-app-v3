@@ -27,6 +27,14 @@ const TagText = styled.span(
   `,
 )
 
+const AlreadySetMessage = styled.span(
+  ({ theme }) => css`
+    color: ${theme.colors.greyPrimary};
+    font-size: ${theme.fontSizes.small};
+    text-align: right;
+  `,
+)
+
 const Container = styled.button(
   ({ theme }) => css`
     width: 100%;
@@ -70,11 +78,22 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
     return { userRoles, hasRole, primaryRole }
   }, [roles, role, address])
 
+  // When disabled, the message must name the role that caused the disable (excludeRole),
+  // not the address's first role (primaryRole), which may differ for multi-role addresses.
+  const alreadySetMessage =
+    markers.hasRole && role
+      ? t('input.sendName.views.search.alreadySet', {
+          value: t(`roles.${role}.title`, { ns: 'common' }),
+        })
+      : undefined
+
   return (
     <Container
       data-testid={`search-result-${address}`}
       type="button"
       disabled={markers.hasRole}
+      aria-label={alreadySetMessage}
+      title={alreadySetMessage}
       {...props}
     >
       <LeftContainer>
@@ -85,12 +104,20 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
           size="8"
         />
       </LeftContainer>
-      {markers.primaryRole && (
+      {markers.hasRole ? (
         <RightContainer>
-          <Tag>
-            <TagText>{t(`roles.${markers.primaryRole?.role}.title`, { ns: 'common' })}</TagText>
-          </Tag>
+          <AlreadySetMessage data-testid={`search-result-already-set-${address}`}>
+            {alreadySetMessage}
+          </AlreadySetMessage>
         </RightContainer>
+      ) : (
+        markers.primaryRole && (
+          <RightContainer>
+            <Tag>
+              <TagText>{t(`roles.${markers.primaryRole?.role}.title`, { ns: 'common' })}</TagText>
+            </Tag>
+          </RightContainer>
+        )
       )}
     </Container>
   )
