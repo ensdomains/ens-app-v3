@@ -21,3 +21,14 @@ export const timezoneOptions = timezones.map((timezone) => ({
   value: timezone,
   label: timezone.replace(/_/g, ' '),
 })) as ComponentProps<typeof Select>['options']
+
+// Returns the picker options, prepending `value` as a synthetic option when it is
+// not already a canonical zone — a record written before this feature, or a zone
+// the runtime's Intl build does not enumerate — so the Select can display it and
+// round-trip it instead of showing the value as unset.
+export const timezoneOptionsWithValue = (
+  value?: string,
+): ComponentProps<typeof Select>['options'] =>
+  value && !timezoneOptions?.some((option) => option.value === value)
+    ? [{ value, label: value.replace(/_/g, ' ') }, ...(timezoneOptions ?? [])]
+    : timezoneOptions

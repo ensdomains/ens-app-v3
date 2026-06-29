@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { CrossSVG, Select } from '@ensdomains/thorin'
 
-import { timezoneOptions } from '@app/constants/timezoneOptions'
+import { timezoneOptionsWithValue } from '@app/constants/timezoneOptions'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 const Container = styled.div(
@@ -113,35 +113,24 @@ export const TimezonePicker = ({
           control={control}
           name={`records.${index}.value`}
           rules={validator ? { validate: validator } : undefined}
-          render={({ field }) => {
-            // A pre-existing record (or a zone the runtime's Intl build does not
-            // list) won't be in timezoneOptions; surface it so it displays and
-            // round-trips instead of appearing unset.
-            const options =
-              field.value && !timezoneOptions?.some((option) => option.value === field.value)
-                ? [
-                    { value: field.value, label: field.value.replace(/_/g, ' ') },
-                    ...timezoneOptions,
-                  ]
-                : timezoneOptions
-            return (
-              <Select
-                autocomplete
-                size="medium"
-                label={label ?? ''}
-                labelSecondary={secondaryLabel}
-                placeholder={placeholder}
-                options={options}
-                value={field.value}
-                showDot
-                validated={validated}
-                error={error}
-                disabled={disabled}
-                onChange={(e) => field.onChange(e.target.value)}
-                onBlur={field.onBlur}
-              />
-            )
-          }}
+          render={({ field }) => (
+            <Select
+              autocomplete
+              size="medium"
+              label={label ?? ''}
+              labelSecondary={secondaryLabel}
+              placeholder={placeholder}
+              // Surface a pre-existing / non-enumerated value so it isn't shown as unset.
+              options={timezoneOptionsWithValue(field.value)}
+              value={field.value}
+              showDot
+              validated={validated}
+              error={error}
+              disabled={disabled}
+              onChange={(e) => field.onChange(e.target.value)}
+              onBlur={field.onBlur}
+            />
+          )}
         />
       </SelectWrapper>
       <ButtonContainer>

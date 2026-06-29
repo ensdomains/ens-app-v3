@@ -157,6 +157,55 @@ describe('useProfileEditorForm', () => {
       ).toBe('string')
     })
 
+    it('should pass timezone validation with a valid IANA zone', async () => {
+      const { result } = renderHook(() => useProfileEditorForm(records))
+      expect(
+        await result.current.validatorForRecord({
+          key: 'timezone',
+          group: 'general',
+          type: 'text',
+        })('Europe/London'),
+      ).toBe(true)
+    })
+
+    it('should pass timezone validation when the value is empty', async () => {
+      const { result } = renderHook(() => useProfileEditorForm(records))
+      expect(
+        await result.current.validatorForRecord({
+          key: 'timezone',
+          group: 'general',
+          type: 'text',
+        })(''),
+      ).toBe(true)
+    })
+
+    it('should fail timezone validation with an invalid zone', async () => {
+      const { result } = renderHook(() => useProfileEditorForm(records))
+      expect(
+        typeof (await result.current.validatorForRecord({
+          key: 'timezone',
+          group: 'general',
+          type: 'text',
+        })('Not/AZone')),
+      ).toBe('string')
+    })
+
+    it('should not block a pre-existing non-IANA timezone the user has not changed', async () => {
+      const { result } = renderHook(() =>
+        useProfileEditorForm([
+          ...records,
+          { key: 'timezone', group: 'general', type: 'text', value: 'PST' },
+        ]),
+      )
+      expect(
+        await result.current.validatorForRecord({
+          key: 'timezone',
+          group: 'general',
+          type: 'text',
+        })('PST'),
+      ).toBe(true)
+    })
+
     it('should fail validation for a custom key with a duplicate key value', async () => {
       // In use, the record will be added twice to the list of records
       const { result } = renderHook(() =>
