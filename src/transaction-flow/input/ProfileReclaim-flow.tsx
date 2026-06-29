@@ -16,6 +16,7 @@ import {
   profileEditorFormToProfileRecords,
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { TimezonePicker } from '@app/components/pages/profile/[name]/registration/steps/Profile/TimezonePicker'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
@@ -149,6 +150,20 @@ const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: 
                       validator={validatorForRecord(field)}
                       validated={isDirtyForRecordAtIndex(index)}
                       error={errorForRecordAtIndex(index, 'key')}
+                      onDelete={() => handleDeleteRecord(field, index)}
+                    />
+                  ))
+                  .with({ key: 'timezone' }, () => (
+                    <TimezonePicker
+                      key={field.id}
+                      control={control}
+                      index={index}
+                      label={labelForRecord(field)}
+                      secondaryLabel={secondaryLabelForRecord(field)}
+                      placeholder={placeholderForRecord(field)}
+                      error={errorForRecordAtIndex(index)}
+                      validated={isDirtyForRecordAtIndex(index)}
+                      validator={validatorForRecord(field)}
                       onDelete={() => handleDeleteRecord(field, index)}
                     />
                   ))

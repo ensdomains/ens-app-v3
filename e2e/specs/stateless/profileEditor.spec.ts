@@ -180,7 +180,9 @@ test.describe('timezone', () => {
       await profilePage.profileEditorAddInputs(['timezone'])
       const picker = profilePage.profileEditor.getByTestId('profile-record-input-timezone')
       await expect(picker).toBeVisible()
-      // The picker is a searchable IANA Select, not a free-text input.
+      // The picker is a searchable IANA Select, not a free-text input. The search
+      // input only mounts once the dropdown is open, so open it before typing.
+      await picker.getByTestId('select-container').getByRole('button').click()
       await picker.getByTestId('select-input').fill('Tokyo')
       await profilePage.profileEditor.getByTestId('select-option-Asia/Tokyo').click()
       await profilePage.profileEditor.getByTestId('profile-submit-button').click()

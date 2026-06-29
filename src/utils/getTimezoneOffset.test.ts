@@ -61,6 +61,21 @@ describe('getTimezoneOffset', () => {
     expect(july).toBe('+01:00')
   })
 
+  it('is DST-aware on the viewer side (the offset shifts when the viewer enters DST)', () => {
+    // Target Asia/Tokyo is +09:00 year-round; viewer Europe/London is GMT in
+    // January and BST (+01:00) in July, so the relative offset drops by an hour.
+    const january = getTimezoneOffset('Asia/Tokyo', {
+      now: new Date('2024-01-15T12:00:00Z'),
+      viewerTimeZone: 'Europe/London',
+    })
+    const july = getTimezoneOffset('Asia/Tokyo', {
+      now: new Date('2024-07-15T12:00:00Z'),
+      viewerTimeZone: 'Europe/London',
+    })
+    expect(january).toBe('+09:00')
+    expect(july).toBe('+08:00')
+  })
+
   it('returns null for unset or invalid zones', () => {
     expect(getTimezoneOffset(undefined, { now: NOW, viewerTimeZone: 'UTC' })).toBeNull()
     expect(getTimezoneOffset('', { now: NOW, viewerTimeZone: 'UTC' })).toBeNull()

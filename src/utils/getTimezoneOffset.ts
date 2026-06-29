@@ -13,7 +13,7 @@ type GetTimezoneOffsetOptions = {
  * the `Intl.DateTimeFormat` constructor throw a `RangeError`; we treat anything
  * that throws as invalid so callers can render nothing rather than crash.
  */
-export const isValidTimezone = (timeZone?: string): boolean => {
+export const isValidTimezone = (timeZone?: string): timeZone is string => {
   if (!timeZone || typeof timeZone !== 'string') return false
   try {
     // Throws RangeError for unknown time zones.
@@ -84,7 +84,7 @@ export const getTimezoneOffset = (
   const now = options.now ?? new Date()
   const viewerTimeZone = options.viewerTimeZone ?? getViewerTimeZone()
   try {
-    const targetOffset = getZoneOffsetMinutes(timeZone as string, now)
+    const targetOffset = getZoneOffsetMinutes(timeZone, now)
     const viewerOffset = isValidTimezone(viewerTimeZone)
       ? getZoneOffsetMinutes(viewerTimeZone, now)
       : -now.getTimezoneOffset()

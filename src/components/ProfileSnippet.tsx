@@ -358,7 +358,7 @@ export const ProfileSnippet = ({
               {timezoneOffset && (
                 <Timezone data-testid="profile-snippet-timezone">
                   <ClockSVG />
-                  <Typography id="profile-tz">{`${timezone} (${timezoneOffset})`}</Typography>
+                  <Typography>{`${timezone} (${timezoneOffset})`}</Typography>
                 </Timezone>
               )}
               {url && (
