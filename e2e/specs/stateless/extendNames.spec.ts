@@ -719,7 +719,13 @@ test('should handle URL-based renew parameter', async ({ page, login, makeName }
   })
 
   await test.step('should handle large duration', async () => {
-    await page.goto(`/${name}?renew=315360000`) // 10 years
+    // URL value is raw seconds; compute calendar-aware seconds for 10 years
+    // so the modal's calendar diff displays exactly "10 years extension".
+    const tenYearsInSeconds = secondsFromDateDiff({
+      startDate: new Date(),
+      additionalYears: 10,
+    })
+    await page.goto(`/${name}?renew=${tenYearsInSeconds}`)
     await login.connect()
     await expect(page.getByText('10 years extension', { exact: true })).toBeVisible()
   })
@@ -738,7 +744,11 @@ test('should handle URL-based renew for names in grace period', async ({
   })
 
   await test.step('should allow extend in grace period', async () => {
-    await page.goto(`/${name}?renew=94608000`) // 3 years
+    const threeYearsInSeconds = secondsFromDateDiff({
+      startDate: new Date(),
+      additionalYears: 3,
+    })
+    await page.goto(`/${name}?renew=${threeYearsInSeconds}`)
     await login.connect()
 
     await expect(page.getByText(`${name} has expired`)).toBeVisible()
