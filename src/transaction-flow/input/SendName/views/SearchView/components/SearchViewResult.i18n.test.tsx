@@ -91,4 +91,15 @@ describe('SearchViewResult (real i18n copy)', () => {
     expect(screen.queryByTestId(`search-result-already-set-${fresh}`)).toBeNull()
     expect(screen.queryByText(/This address is already/)).toBeNull()
   })
+
+  it('preserves the real localized role Tag for a non-conflicting address holding another role', () => {
+    // manager holds the 'manager' role; sending the 'owner' role does not disable it, so the
+    // existing role Tag must still render the real localized title (common:roles.manager.title).
+    // Exercises the Tag's real i18n binding a key-echo mock cannot — a missing key or dropped
+    // `ns: 'common'` would surface a raw key here instead of "manager".
+    renderWithRealI18n(<SearchViewResult address={manager} excludeRole="owner" roles={roles} />)
+
+    expect(screen.queryByTestId(`search-result-already-set-${manager}`)).toBeNull()
+    expect(screen.getByText('manager')).toBeVisible()
+  })
 })

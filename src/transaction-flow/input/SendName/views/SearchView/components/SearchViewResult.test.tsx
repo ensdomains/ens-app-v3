@@ -72,7 +72,12 @@ describe('SearchViewResult', () => {
   it('stays enabled with no message when the address holds a different role than excludeRole', () => {
     render(<SearchViewResult address={manager} excludeRole="owner" roles={roles} />)
 
-    expect(screen.getByTestId(`search-result-${manager}`)).toBeEnabled()
+    const button = screen.getByTestId(`search-result-${manager}`)
+    expect(button).toBeEnabled()
+    // Enabled rows must not carry the disabled-reason ARIA/tooltip — guards against an
+    // unconditional aria-describedby that would dangle at an unrendered message element.
+    expect(button).not.toHaveAttribute('aria-describedby')
+    expect(button).not.toHaveAttribute('title')
     expect(screen.queryByTestId(`search-result-already-set-${manager}`)).toBeNull()
     // the existing role badge is preserved for non-conflicting results
     expect(screen.getByText('roles.manager.title')).toBeVisible()
