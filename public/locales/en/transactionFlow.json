@@ -363,6 +363,7 @@
         },
         "search": {
           "placeholder": "ENS name or Ethereum address",
+          "alreadySet": "This address is already the {{value}}",
           "views": {
             "error": {
               "message": "Something went wrong. Please try again."

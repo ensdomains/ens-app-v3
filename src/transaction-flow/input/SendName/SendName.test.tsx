@@ -114,4 +114,19 @@ describe('SendName', () => {
     await userEvent.type(screen.getByTestId('send-name-search-input'), 'owner')
     expect(screen.getByTestId('search-result-0xowner')).toBeDisabled()
   })
+
+  it('should show an already-set message naming the role on the disabled send role row', async () => {
+    render(<SendName data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />)
+    await userEvent.type(screen.getByTestId('send-name-search-input'), 'owner')
+    const message = screen.getByTestId('search-result-already-set-0xowner')
+    expect(message).toBeVisible()
+    expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
+  })
+
+  it('should keep a fresh address selectable with no already-set message', async () => {
+    render(<SendName data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />)
+    await userEvent.type(screen.getByTestId('send-name-search-input'), 'nick')
+    expect(screen.getByTestId('search-result-0xnick')).toBeEnabled()
+    expect(screen.queryByTestId('search-result-already-set-0xnick')).toBeNull()
+  })
 })
