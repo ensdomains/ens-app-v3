@@ -29,6 +29,7 @@ import { useNameType } from '@app/hooks/nameType/useNameType'
 import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
+import { useParentBasicName } from '@app/hooks/useParentBasicName'
 import { useReferrer } from '@app/hooks/useReferrer'
 import { useZorb } from '@app/hooks/useZorb'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
@@ -266,6 +267,43 @@ const ExtendNames = ({
   const extendedDate = expiryDate ? new Date(expiryDate.getTime() + seconds * 1000) : undefined
   const expiryTimestamp = extendedDate ? Math.floor(extendedDate.getTime() / 1000) : undefined
 
+  // For a PCC subname, NameWrapper.extendExpiry silently clamps the requested
+  // expiry down to the parent's wrapper expiry. Read the parent's *wrapper*
+  // expiry so the picker can cap at it — for a .eth 2LD parent this already
+  // includes the +90d grace, the exact on-chain clamp ceiling. NB: the parent's
+  // plain registrar expiry (useExpiry) would be 90 days short and wrongly block
+  // valid extensions, so we deliberately use wrapperData.expiry here.
+  const parentBasicName = useParentBasicName({
+    name: names[0],
+    enabled: isExpiryEnabled && isSubnameExtension,
+  })
+  const parentExpirySeconds =
+    parentBasicName.wrapperData?.expiry?.value !== undefined
+      ? Number(parentBasicName.wrapperData.expiry.value)
+      : undefined
+  const subnameExpirySeconds =
+    expiryData?.expiry?.value !== undefined ? Number(expiryData.expiry.value) : undefined
+
+  // Headroom between the subname's current expiry and its parent's expiry.
+  const subnameHeadroomSeconds =
+    isSubnameExtension && parentExpirySeconds !== undefined && subnameExpirySeconds !== undefined
+      ? parentExpirySeconds - subnameExpirySeconds
+      : undefined
+
+  // Already at (or within minSeconds of) the parent expiry: nothing to extend.
+  const isAtMaxExpiry = subnameHeadroomSeconds !== undefined && subnameHeadroomSeconds < minSeconds
+  // Only wire the cap when there is at least minSeconds of headroom; otherwise
+  // the min-bump and max-clamp effects in DateSelection would fight (render loop).
+  const maxSeconds =
+    subnameHeadroomSeconds !== undefined && !isAtMaxExpiry ? subnameHeadroomSeconds : undefined
+
+  // Backstop: never dispatch an expiry beyond the parent's, even if the picker
+  // value somehow slipped past the cap.
+  const cappedExpiryTimestamp =
+    isSubnameExtension && expiryTimestamp !== undefined && parentExpirySeconds !== undefined
+      ? Math.min(expiryTimestamp, parentExpirySeconds)
+      : expiryTimestamp
+
   const {
     data: { gasEstimate: estimatedGasLimit, gasCost: transactionFee },
     error: estimateGasLimitError,
@@ -280,7 +318,7 @@ const ExtendNames = ({
               name: names[0],
               duration: seconds,
               startDateTimestamp: expiryDate?.getTime(),
-              expiryTimestamp: expiryTimestamp ?? 0,
+              expiryTimestamp: cappedExpiryTimestamp ?? 0,
             },
           }
         : {
@@ -304,7 +342,9 @@ const ExtendNames = ({
     enabled:
       !!address &&
       seconds > 0 &&
-      (isSubnameExtension ? !!expiryTimestamp : !isSubname && !!totalRentFee && totalRentFee > 0n),
+      (isSubnameExtension
+        ? !!cappedExpiryTimestamp
+        : !isSubname && !!totalRentFee && totalRentFee > 0n),
   })
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
@@ -394,17 +434,17 @@ const ExtendNames = ({
       title: t('input.extendNames.title', { name: names.at(0), count: names.length }),
       alert: undefined,
       buttonProps: {
-        disabled: isRegisterLoading || shouldBlockSubnameExtension,
+        disabled: isRegisterLoading || shouldBlockSubnameExtension || isAtMaxExpiry,
         onClick: () => {
-          if (shouldBlockSubnameExtension) return
-          if (isSubnameExtension && !expiryTimestamp) return
+          if (shouldBlockSubnameExtension || isAtMaxExpiry) return
+          if (isSubnameExtension && !cappedExpiryTimestamp) return
           if (!isSubname && !totalRentFee) return
           const transactions = isSubnameExtension
             ? createTransactionItem('extendSubnameExpiry', {
                 name: names[0],
                 duration: seconds,
                 startDateTimestamp: expiryDate?.getTime(),
-                expiryTimestamp: expiryTimestamp!,
+                expiryTimestamp: cappedExpiryTimestamp!,
               })
             : createTransactionItem('extendNames', {
                 names,
@@ -461,6 +501,17 @@ const ExtendNames = ({
           .with(['name-list', false], () => {
             return <NamesList names={names} />
           })
+          .with(
+            [P._, false],
+            () => isAtMaxExpiry,
+            () => (
+              <DisabledContainer>
+                <Helper alert="info" data-testid="extend-names-at-max-expiry">
+                  {t('input.extendNames.maxExpiryReached')}
+                </Helper>
+              </DisabledContainer>
+            ),
+          )
           .otherwise(() => (
             <>
               <PlusMinusWrapper>
@@ -469,6 +520,7 @@ const ExtendNames = ({
                     {...{ seconds, setSeconds }}
                     name={names[0]}
                     minSeconds={minSeconds}
+                    maxSeconds={maxSeconds}
                     mode="extend"
                     expiry={Number(expiryData?.expiry.value)}
                     durationType={durationType}

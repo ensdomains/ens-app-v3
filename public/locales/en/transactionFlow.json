@@ -241,6 +241,7 @@
       },
       "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
       "gasLimitError": "Not enough ETH in wallet",
+      "maxExpiryReached": "This subname is already at its maximum expiry.",
       "disabled": {
         "title": "ENS v2 beta is now deployed on Sepolia",
         "banner": "Future renewals will be in the new Manager app. Click <ManagerLink>here</ManagerLink> to renew your name there."

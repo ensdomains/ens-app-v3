@@ -19,6 +19,12 @@ const YearsViewSwitch = styled.button(
   `,
 )
 
+const MaxViewSwitch = styled(YearsViewSwitch)(
+  ({ theme }) => css`
+    margin-right: ${theme.space['2']};
+  `,
+)
+
 const Container = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -38,6 +44,7 @@ export const DateSelection = ({
   onChangeDurationType,
   name,
   minSeconds,
+  maxSeconds,
   mode = 'register',
   expiry,
 }: {
@@ -46,6 +53,7 @@ export const DateSelection = ({
   durationType: 'years' | 'date'
   name?: string
   minSeconds: number
+  maxSeconds?: number
   mode?: 'register' | 'extend'
   expiry?: number
   onChangeDurationType?: (type: 'years' | 'date') => void
@@ -54,10 +62,32 @@ export const DateSelection = ({
 
   const { t } = useTranslation()
 
+  // Whole years available within the cap (floored). `undefined` => uncapped.
+  const maxYears =
+    maxSeconds !== undefined
+      ? calculateDatesDiff(
+          new Date(currentTime * 1000),
+          new Date((currentTime + maxSeconds) * 1000),
+        ).diff.years
+      : undefined
+
+  // Under a year of headroom can't be represented by the years counter, so
+  // restrict to the date picker only in that case (WEB-110 risk note).
+  const canPickByYears = maxYears === undefined || maxYears >= 1
+  const effectiveDurationType = canPickByYears ? durationType : 'date'
+
   useEffect(() => {
     if (minSeconds > seconds) setSeconds(minSeconds)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minSeconds, seconds])
+
+  // Clamp down when a cap is set (or resolves asynchronously) below the
+  // current selection. Only wired when headroom >= minSeconds, so this never
+  // fights the min-bump effect above.
+  useEffect(() => {
+    if (maxSeconds !== undefined && seconds > maxSeconds) setSeconds(maxSeconds)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxSeconds, seconds])
 
   const dateInYears = calculateDatesDiff(
     new Date(currentTime * 1000),
@@ -66,22 +96,26 @@ export const DateSelection = ({
 
   // When the duration type is years, normalise the seconds to a year value
   useEffect(() => {
-    if (durationType === 'years' && currentTime) {
+    if (effectiveDurationType === 'years' && currentTime) {
+      const additionalYears =
+        maxYears !== undefined
+          ? Math.min(maxYears, Math.max(1, dateInYears))
+          : Math.max(1, dateInYears)
       setSeconds(
         secondsFromDateDiff({
           startDate: new Date(currentTime * 1000),
-          additionalYears: Math.max(1, dateInYears),
+          additionalYears,
         }),
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateInYears, durationType])
+  }, [dateInYears, effectiveDurationType])
 
   const isSafeApp = isInsideSafe()
 
   return (
     <Container>
-      {durationType === 'date' && !isSafeApp ? (
+      {effectiveDurationType === 'date' && !isSafeApp ? (
         <Calendar
           value={currentTime + seconds}
           onChange={(e) => {
@@ -93,11 +127,13 @@ export const DateSelection = ({
           highlighted
           name={name}
           min={currentTime + minSeconds}
+          max={maxSeconds !== undefined ? currentTime + maxSeconds : undefined}
         />
       ) : (
         <PlusMinusControl
           highlighted
           minValue={1}
+          maxValue={maxYears}
           value={dateInYears}
           onChange={(e) => {
             const newYears = parseInt(e.target.value)
@@ -119,7 +155,22 @@ export const DateSelection = ({
           postFix: mode === 'register' ? ' registration. ' : ' extension. ',
           t,
         })}
-        {!isSafeApp && (
+        {maxSeconds !== undefined && (
+          <MaxViewSwitch
+            type="button"
+            data-testid="date-selection-max"
+            onClick={() => {
+              // Switch to the date view so the exact (possibly non-year-aligned)
+              // max sticks — the years-normalisation effect would otherwise
+              // round it back down.
+              onChangeDurationType?.('date')
+              setSeconds(maxSeconds)
+            }}
+          >
+            {t('calendar.max', { ns: 'common' })}
+          </MaxViewSwitch>
+        )}
+        {!isSafeApp && canPickByYears && (
           <YearsViewSwitch
             type="button"
             data-testid="date-selection"

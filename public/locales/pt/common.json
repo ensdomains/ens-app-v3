@@ -413,7 +413,8 @@
   },
   "calendar": {
     "pick_by_years": "Selecionar por anos",
-    "pick_by_date": "Selecionar por data"
+    "pick_by_date": "Selecionar por data",
+    "max": "Máx"
   },
   "verification": {
     "verifiedBy": "Verificado por {{issuer}}",

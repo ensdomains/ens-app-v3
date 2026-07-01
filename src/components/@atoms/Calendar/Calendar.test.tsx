@@ -22,6 +22,7 @@ mockUseBreakpoint.mockReturnValue({
 
 const value = 3600
 const min = 0
+const max = 3600 + 86400 * 5 // five days after `value`
 
 describe('Calendar', () => {
   it('should render correctly and set default attributes', () => {
@@ -40,6 +41,28 @@ describe('Calendar', () => {
     render(<Calendar value={min} onChange={() => {}} min={value} name="test.eth" />)
 
     expect(screen.getByTestId('calendar')).toHaveValue(secondsToDateInput(value))
+  })
+  it('should not set a max attribute when max is undefined', () => {
+    render(<Calendar value={value} onChange={() => {}} name="test.eth" />)
+    expect(screen.getByTestId('calendar')).not.toHaveAttribute('max')
+  })
+  it('should allow setting maximum date', () => {
+    render(<Calendar value={value} onChange={() => {}} max={max} name="test.eth" />)
+    expect(screen.getByTestId('calendar')).toHaveAttribute('max', secondsToDateInput(max))
+  })
+  it('should clamp a picked date down to the maximum', () => {
+    const onChange = vi.fn()
+    render(<Calendar value={value} onChange={onChange} max={max} name="test.eth" />)
+
+    const calendarInput = screen.getByTestId('calendar')
+    // pick a date well beyond the max
+    const beyondMax = secondsToDateInput(max + 86400 * 10)
+    fireEvent.change(calendarInput, { target: { value: beyondMax } })
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    const receivedDate = onChange.mock.calls[0][0].currentTarget.valueAsDate
+    // clamped exactly to the max seconds
+    expect(receivedDate.getTime()).toEqual(max * 1000)
   })
   it('should handle timezone offset correctly', async () => {
     const OnChange = vi.fn()

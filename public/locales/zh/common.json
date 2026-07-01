@@ -413,7 +413,8 @@
   },
   "calendar": {
     "pick_by_years": "选择年份",
-    "pick_by_date": "选择日期"
+    "pick_by_date": "选择日期",
+    "max": "最长"
   },
   "verification": {
     "verifiedBy": "已通过 {{ issuer }} 验证",
