@@ -10,7 +10,7 @@ import {
   type TransactionType,
   type Transport,
 } from 'viem'
-import { createConfig, createStorage, fallback, http, webSocket } from 'wagmi'
+import { createConfig, createStorage, http } from 'wagmi'
 import { localhost, mainnet, sepolia } from 'wagmi/chains'
 
 import { ccipRequest } from '@ensdomains/ensjs/utils'
@@ -18,6 +18,8 @@ import { ccipRequest } from '@ensdomains/ensjs/utils'
 import { getChainsFromUrl, SupportedChain } from '@app/constants/chains'
 
 import { isInsideSafe } from '../safe'
+import { getCustomRpcForChain } from './customRpc'
+import { buildChainTransport, drpcUrl, drpcWsUrl } from './transports'
 import { rainbowKitConnectors } from './wallets'
 
 const isLocalProvider = !!process.env.NEXT_PUBLIC_PROVIDER
@@ -44,27 +46,8 @@ const unicornConnector = inAppWalletConnector({
   },
 })
 
-const tenderlyKey = process.env.NEXT_PUBLIC_TENDERLY_KEY || '4imxc4hQfRjxrVB2kWKvTo'
-const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY || 'AnmpasF2C0JBqeAEzxVO8aRuvzLTrWcR75hmDonbV6cR'
-
-const tenderlyUrl = (chainName: string) => `https://${chainName}.gateway.tenderly.co/${tenderlyKey}`
-export const drpcUrl = (chainName: string) =>
-  `https://lb.drpc.org/ogrpc?network=${
-    chainName === 'mainnet' ? 'ethereum' : chainName
-  }&dkey=${drpcKey}`
-
-export const drpcWsUrl = (chainName: string) =>
-  `wss://lb.drpc.org/ogws?network=${
-    chainName === 'mainnet' ? 'ethereum' : chainName
-  }&dkey=${drpcKey}`
-
-const initialiseTransports = (chainName: string) => {
-  return fallback([
-    webSocket(drpcWsUrl(chainName)), // Primary: instant block updates via subscription
-    http(drpcUrl(chainName)), // Fallback 1: DRPC HTTP
-    http(tenderlyUrl(chainName)), // Fallback 2: Tenderly HTTP
-  ])
-}
+// Re-exported for backwards compatibility with existing importers/mocks.
+export { drpcUrl, drpcWsUrl }
 
 export const prefix = 'wagmi'
 
@@ -101,6 +84,8 @@ const localStorageWithInvertMiddleware = (): Storage | undefined => {
 }
 
 export const transports = {
+  // The localhost provider is a plain http transport pointed at the dev anvil node; custom
+  // RPC overrides only ever apply to the active production chain (mainnet or sepolia).
   ...(isLocalProvider
     ? ({
         [localhost.id]: http(process.env.NEXT_PUBLIC_PROVIDER!) as unknown as FallbackTransport,
@@ -109,8 +94,14 @@ export const transports = {
         // this is a hack to make the types happy, dont remove pls
         [localhost.id]: HttpTransport
       })),
-  [mainnet.id]: initialiseTransports('mainnet'),
-  [sepolia.id]: initialiseTransports('sepolia'),
+  [mainnet.id]: buildChainTransport({
+    chainName: 'mainnet',
+    customRpc: getCustomRpcForChain(mainnet.id),
+  }),
+  [sepolia.id]: buildChainTransport({
+    chainName: 'sepolia',
+    customRpc: getCustomRpcForChain(sepolia.id),
+  }),
 } as const
 
 // This is a workaround to fix MetaMask defaulting to the wrong transaction type
