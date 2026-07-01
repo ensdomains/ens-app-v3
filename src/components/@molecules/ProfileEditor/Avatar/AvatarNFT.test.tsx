@@ -1,11 +1,20 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
+import {
+  fireEvent,
+  mockFunction,
+  render,
+  screen,
+  userEvent,
+  waitFor,
+  within,
+} from '@app/test-utils'
 
 import * as ReactQuery from '@tanstack/react-query'
 import React from 'react'
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 import { useAccount, useClient } from 'wagmi'
 
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import * as UseInfiniteQuery from '@app/utils/query/useInfiniteQuery'
 
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
@@ -18,9 +27,22 @@ vi.mock('@app/hooks/chain/useCurrentBlockTimestamp', () => ({
 vi.mock('@app/hooks/chain/useChainName', () => ({
   useChainName: () => 'mainnet',
 }))
+vi.mock('@app/hooks/useNameDetails')
 
 const mockUseClient = mockFunction(useClient)
 const mockUseAccount = mockFunction(useAccount)
+const mockUseNameDetails = mockFunction(useNameDetails)
+
+const CONNECTED_ADDRESS = '0x0000000000000000000000000000000000000001'
+const MANAGER_ADDRESS = '0x0000000000000000000000000000000000000002'
+const REGISTRANT_ADDRESS = '0x0000000000000000000000000000000000000003'
+const ETH_RECORD_ADDRESS = '0x0000000000000000000000000000000000000004'
+
+// The `owner` query param each getNfts fetch was called with, in call order.
+const fetchedOwners = () =>
+  (fetch as unknown as Mock).mock.calls.map((call) =>
+    new URL(call[0] as string).searchParams.get('owner'),
+  )
 
 const mockHandleSubmit = vi.fn()
 const mockHandleCancel = vi.fn()
@@ -81,7 +103,15 @@ global.fetch = vi.fn(() => Promise.resolve({ json: mockFetch }))
 beforeEach(() => {
   mockFetch.mockClear()
   mockFetch = vi.fn()
+  ;(fetch as unknown as Mock).mockClear()
   mockUseAccount.mockReturnValue({ address: `0x${Date.now()}` })
+  // Default: no owner rows and no eth record, so the only source is the connected
+  // wallet and the source selector stays hidden (matching pre-feature behaviour).
+  mockUseNameDetails.mockReturnValue({
+    profile: { coins: [] },
+    ownerData: undefined,
+    wrapperData: undefined,
+  })
   mockUseClient.mockReturnValue({
     chain: {
       id: 1,
@@ -172,7 +202,7 @@ describe('<AvatarNFT />', () => {
 
     render(<AvatarNFT {...props} />)
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     await waitFor(() =>
       expect(
         screen.queryByTestId('nft-0-0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
@@ -241,7 +271,7 @@ describe('<AvatarNFT />', () => {
       pageParam: 'test123',
     }
     await queryFn(mockContext as any)
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3))
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
     // @ts-ignore
     expect(fetch.mock.lastCall[0]).toMatch(/pageKey=test123/)
   })
@@ -296,5 +326,144 @@ describe('<AvatarNFT />', () => {
     await waitFor(() =>
       expect(screen.getByText('input.profileEditor.tabs.avatar.nft.noResults')).toBeVisible(),
     )
+  })
+
+  describe('avatar source selector', () => {
+    // Legacy (unwrapped) name owned by manager + registrant, with an eth address record.
+    const mockLegacyName = () => {
+      mockUseAccount.mockReturnValue({ address: CONNECTED_ADDRESS })
+      mockUseNameDetails.mockReturnValue({
+        profile: { coins: [{ id: 60, name: 'eth', value: ETH_RECORD_ADDRESS }] },
+        ownerData: { owner: MANAGER_ADDRESS, registrant: REGISTRANT_ADDRESS },
+        wrapperData: undefined,
+      })
+    }
+
+    beforeEach(() => {
+      mockFetch.mockImplementation(() =>
+        Promise.resolve({
+          ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+          totalCount: 5,
+        }),
+      )
+    })
+
+    const clickSource = (testId: string) =>
+      fireEvent.click(within(screen.getByTestId(testId)).getByRole('button', { hidden: true }))
+
+    it('defaults to browsing the connected wallet NFTs', async () => {
+      mockLegacyName()
+      render(<AvatarNFT {...props} />)
+
+      await waitFor(() => expect(fetch).toHaveBeenCalled())
+      expect(fetchedOwners()[0]).toBe(CONNECTED_ADDRESS)
+    })
+
+    it('lists connected wallet, manager, owner and eth record as deduped sources', async () => {
+      mockLegacyName()
+      render(<AvatarNFT {...props} />)
+
+      const selector = await screen.findByTestId('nft-source-selector')
+      expect(within(selector).getByTestId('nft-source-wallet')).toBeInTheDocument()
+      expect(within(selector).getByTestId('nft-source-owner-button-owner')).toBeInTheDocument()
+      expect(
+        within(selector).getByTestId('nft-source-owner-button-registrant'),
+      ).toBeInTheDocument()
+      expect(within(selector).getByTestId('nft-source-eth-record')).toBeInTheDocument()
+
+      // Assert each source's rendered label key, so a swapped labelKey (e.g. manager vs
+      // owner, or wallet vs eth record) fails here even though the testIds are unchanged.
+      // (The test i18n mock ignores the `ns` option, so namespace routing isn't asserted.)
+      expect(
+        within(screen.getByTestId('nft-source-wallet')).getByText(
+          'input.profileEditor.tabs.avatar.nft.address.owned',
+        ),
+      ).toBeInTheDocument()
+      expect(
+        within(screen.getByTestId('nft-source-owner-button-owner')).getByText('name.manager'),
+      ).toBeInTheDocument()
+      expect(
+        within(screen.getByTestId('nft-source-owner-button-registrant')).getByText('name.owner'),
+      ).toBeInTheDocument()
+      expect(
+        within(screen.getByTestId('nft-source-eth-record')).getByText(
+          'input.profileEditor.tabs.avatar.nft.address.other',
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('refetches with the selected source address as owner', async () => {
+      mockLegacyName()
+      render(<AvatarNFT {...props} />)
+
+      await screen.findByTestId('nft-source-selector')
+
+      clickSource('nft-source-owner-button-registrant')
+      await waitFor(() => expect(fetchedOwners()).toContain(REGISTRANT_ADDRESS))
+
+      clickSource('nft-source-eth-record')
+      await waitFor(() => expect(fetchedOwners()).toContain(ETH_RECORD_ADDRESS))
+    })
+
+    it('collapses to a single source and hides the selector when addresses match case-insensitively', async () => {
+      const lower = `0x${'a'.repeat(40)}` as `0x${string}`
+      const upper = `0x${'A'.repeat(40)}` as `0x${string}`
+      mockUseAccount.mockReturnValue({ address: lower })
+      mockUseNameDetails.mockReturnValue({
+        profile: { coins: [{ id: 60, name: 'eth', value: upper }] },
+        ownerData: { owner: upper, registrant: upper },
+        wrapperData: undefined,
+      })
+
+      render(<AvatarNFT {...props} />)
+
+      await waitFor(() => expect(screen.getByTestId('avatar-search-input')).toBeInTheDocument())
+      expect(screen.queryByTestId('nft-source-selector')).not.toBeInTheDocument()
+      expect(fetchedOwners().every((owner) => owner === lower)).toBe(true)
+    })
+
+    it('surfaces a wrapped name owner as one source without a separate registrant', async () => {
+      mockUseAccount.mockReturnValue({ address: CONNECTED_ADDRESS })
+      mockUseNameDetails.mockReturnValue({
+        profile: { coins: [] },
+        ownerData: { owner: MANAGER_ADDRESS, registrant: REGISTRANT_ADDRESS },
+        wrapperData: {
+          owner: MANAGER_ADDRESS,
+          fuses: { parent: { PARENT_CANNOT_CONTROL: false } },
+        },
+      })
+
+      render(<AvatarNFT {...props} />)
+
+      const selector = await screen.findByTestId('nft-source-selector')
+      expect(within(selector).getByTestId('nft-source-owner-button-manager')).toBeInTheDocument()
+      expect(
+        within(selector).queryByTestId('nft-source-owner-button-registrant'),
+      ).not.toBeInTheDocument()
+      expect(within(selector).queryByTestId('nft-source-eth-record')).not.toBeInTheDocument()
+    })
+
+    it('submits an NFT picked from a non-connected source', async () => {
+      mockLegacyName()
+      render(<AvatarNFT {...props} />)
+
+      await screen.findByTestId('nft-source-selector')
+      clickSource('nft-source-owner-button-owner')
+      await waitFor(() => expect(fetchedOwners()).toContain(MANAGER_ADDRESS))
+
+      await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
+      fireEvent.load(screen.getByTestId('nft-image-0-0x0'))
+      await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeEnabled())
+      fireEvent.click(screen.getByTestId('nft-0-0x0'))
+      await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible())
+      fireEvent.click(screen.getByText('action.confirm'))
+      await waitFor(() =>
+        expect(mockHandleSubmit).toHaveBeenCalledWith(
+          'nft',
+          'eip155:1/erc1155:0x0/0',
+          'https://localhost/test-media-gateway.png',
+        ),
+      )
+    })
   })
 })

@@ -15,8 +15,8 @@
             "loadError": "NFT cannot be loaded",
             "noNFTs": "No NFTs found for this address.",
             "address": {
-              "owned": "Owned",
-              "other": "Other"
+              "owned": "Your wallet",
+              "other": "ETH record"
             },
             "selected": {
               "title": "Selected NFT",
