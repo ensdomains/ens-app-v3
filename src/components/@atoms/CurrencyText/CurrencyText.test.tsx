@@ -26,4 +26,9 @@ describe('CurrencyText', () => {
     render(<CurrencyText eth={4444444444444444444n} currency="eth" />)
     expect(screen.getByText('4.4444 ETH')).toBeVisible()
   })
+
+  it('should render zero ETH as a loaded value', async () => {
+    render(<CurrencyText eth={0n} currency="eth" />)
+    expect(screen.getByText('0 ETH')).toBeVisible()
+  })
 })
