@@ -62,8 +62,12 @@ const FullInvoice = ({
         color: seconds < 30 * ONE_DAY ? ('orangePrimary' as Colors) : undefined,
       },
       {
+        // The network fee is never legitimately 0; a 0n value means the gas
+        // estimate is still loading, so pass undefined to render a skeleton
+        // instead of a misleading "0 ETH" (which the Invoice/CurrencyText now
+        // render for genuine zero values, e.g. free subname extensions).
         label: t('invoice.estimatedNetworkFee'),
-        value: estimatedGasFee,
+        value: estimatedGasFee || undefined,
       },
       ...(hasPremium
         ? [
