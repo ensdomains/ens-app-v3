@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { Button, Helper, NametagSVG, Tag, Typography } from '@ensdomains/thorin'
 
+import ClockSVG from '@app/assets/Clock.svg'
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import VerifiedPersonSVG from '@app/assets/VerifiedPerson.svg'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
@@ -12,6 +13,7 @@ import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { getTimezoneOffset } from '@app/utils/getTimezoneOffset'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -158,6 +160,23 @@ const LocationAndUrl = styled.div(
   `,
 )
 
+const Timezone = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['1']};
+    color: ${theme.colors.greyPrimary};
+
+    svg {
+      display: block;
+      width: ${theme.space['4']};
+      height: ${theme.space['4']};
+    }
+  `,
+)
+
 const TagsContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -246,6 +265,8 @@ export const ProfileSnippet = ({
   const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value
   const recordName = getTextRecord?.('name')?.value
+  const timezone = getTextRecord?.('timezone')?.value
+  const timezoneOffset = getTimezoneOffset(timezone)
 
   const { canSelfExtend, canEdit } = abilities.data ?? {}
 
@@ -327,12 +348,18 @@ export const ProfileSnippet = ({
           {description && (
             <Typography data-testid="profile-snippet-description">{description}</Typography>
           )}
-          {(url || location) && (
+          {(url || location || timezoneOffset) && (
             <LocationAndUrl>
               {location && (
                 <Typography id="profile-loc" data-testid="profile-snippet-location">
                   {location}
                 </Typography>
+              )}
+              {timezoneOffset && (
+                <Timezone data-testid="profile-snippet-timezone">
+                  <ClockSVG />
+                  <Typography>{`${timezone} (${timezoneOffset})`}</Typography>
+                </Timezone>
               )}
               {url && (
                 <a href={url} data-testid="profile-snippet-url" target="_blank" rel="noreferrer">

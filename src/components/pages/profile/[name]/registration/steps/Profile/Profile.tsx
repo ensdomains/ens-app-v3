@@ -26,6 +26,7 @@ import { CustomProfileRecordInput } from './CustomProfileRecordInput'
 import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
 import { profileEditorFormToProfileRecords } from './profileRecordUtils'
+import { TimezonePicker } from './TimezonePicker'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
 import { WrappedHeaderButton } from './WrappedHeaderButton'
 
@@ -342,6 +343,20 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
                   validator={validatorForRecord(field)}
                   validated={isDirtyForRecordAtIndex(index)}
                   error={errorForRecordAtIndex(index, 'key')}
+                  onDelete={() => handleDeleteRecord(field, index)}
+                />
+              ))
+              .with({ key: 'timezone' }, () => (
+                <TimezonePicker
+                  key={field.id}
+                  control={control}
+                  index={index}
+                  label={labelForRecord(field)}
+                  secondaryLabel={secondaryLabelForRecord(field)}
+                  placeholder={placeholderForRecord(field)}
+                  error={errorForRecordAtIndex(index)}
+                  validated={isDirtyForRecordAtIndex(index)}
+                  validator={validatorForRecord(field)}
                   onDelete={() => handleDeleteRecord(field, index)}
                 />
               ))

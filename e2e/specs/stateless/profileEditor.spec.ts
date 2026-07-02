@@ -149,6 +149,68 @@ test.describe('profile', () => {
   })
 })
 
+test.describe('timezone', () => {
+  // Pin the viewer's zone so the rendered offset is deterministic and DST-free:
+  // Asia/Kolkata is +05:30 year-round and Asia/Tokyo is +09:00, so the profile
+  // (Tokyo) always reads as +03:30 ahead of the viewer (Kolkata).
+  test.use({ timezoneId: 'Asia/Kolkata' })
+
+  test('should add, save, display and clear a timezone record via the picker', async ({
+    login,
+    makeName,
+    makePageObject,
+  }) => {
+    test.slow()
+    const name = await makeName({
+      label: 'timezone',
+      type: 'legacy',
+      resolver: legacyResolver,
+    })
+
+    const profilePage = makePageObject('ProfilePage')
+    const recordsPage = makePageObject('RecordsPage')
+    const transactionModal = makePageObject('TransactionModal')
+
+    await profilePage.goto(name)
+    await login.connect()
+
+    await profilePage.editProfileButton.click()
+
+    await test.step('selects a timezone from the searchable picker', async () => {
+      await profilePage.profileEditorAddInputs(['timezone'])
+      const picker = profilePage.profileEditor.getByTestId('profile-record-input-timezone')
+      await expect(picker).toBeVisible()
+      // The picker is a searchable IANA Select, not a free-text input. The search
+      // input only mounts once the dropdown is open, so open it before typing.
+      await picker.getByTestId('select-container').getByRole('button').click()
+      await picker.getByTestId('select-input').fill('Tokyo')
+      await profilePage.profileEditor.getByTestId('select-option-Asia/Tokyo').click()
+      await profilePage.profileEditor.getByTestId('profile-submit-button').click()
+      await transactionModal.autoComplete()
+    })
+
+    await test.step('writes a single timezone text record', async () => {
+      await recordsPage.goto(name)
+      await expect(recordsPage.getRecordValue('text', 'timezone')).toHaveText('Asia/Tokyo')
+    })
+
+    await test.step('shows a viewer-relative offset in the profile header', async () => {
+      await profilePage.goto(name)
+      await expect(profilePage.record('text', 'timezone')).toContainText('Asia/Tokyo (+03:30)')
+    })
+
+    await test.step('clearing the timezone deletes the record', async () => {
+      await profilePage.editProfileButton.click()
+      await profilePage.profileEditorClearButton('timezone').click()
+      await profilePage.profileEditor.getByTestId('profile-submit-button').click()
+      await transactionModal.autoComplete()
+
+      await recordsPage.goto(name)
+      await expect(recordsPage.getRecordButton('text', 'timezone')).toHaveCount(0)
+    })
+  })
+})
+
 test.describe('legacy resolver', () => {
   test('should be able to add/update profile records without migration', async ({
     page,
