@@ -160,3 +160,63 @@ test.describe('Select Primary Name', () => {
     await expect(settingsPage.getPrimaryNameLabel()).toHaveText(name, { timeout: 15000 })
   })
 })
+
+test.describe('Custom RPC endpoint', () => {
+  test('validates, probes, persists and resets a custom RPC endpoint', async ({
+    page,
+    login,
+    makePageObject,
+  }) => {
+    const settingsPage = makePageObject('SettingsPage')
+
+    await page.goto('/')
+    await login.connect()
+    await settingsPage.goto()
+    await expect(settingsPage.rpcSection).toBeVisible()
+
+    // Use a same-origin sentinel so the probe fetch needs no CORS, and intercept it to report
+    // the active (anvil) chain id 0x539 = 1337 so the save-time liveness probe passes.
+    const { origin } = new URL(page.url())
+    const customUrl = `${origin}/__ens_custom_rpc`
+    let probed = false
+    await page.route('**/__ens_custom_rpc', async (route) => {
+      probed = true
+      const body = route.request().postDataJSON()
+      const reply = (req: { id?: number }) => ({
+        jsonrpc: '2.0',
+        id: req?.id ?? 1,
+        result: '0x539',
+      })
+      const payload = Array.isArray(body) ? body.map(reply) : reply(body)
+      await route.fulfill({ contentType: 'application/json', body: JSON.stringify(payload) })
+    })
+
+    const readStore = () => page.evaluate(() => window.localStorage.getItem('customRpcUrls'))
+
+    // Invalid URL: inline error and save disabled.
+    await settingsPage.rpcUrlInput.fill('not a url')
+    await expect(page.getByText(/Enter a valid URL/i)).toBeVisible()
+    await expect(settingsPage.rpcSaveButton).toBeDisabled()
+
+    // Valid URL: probe succeeds and a reload prompt appears.
+    await settingsPage.rpcUrlInput.fill(customUrl)
+    await expect(settingsPage.rpcSaveButton).toBeEnabled()
+    await settingsPage.rpcSaveButton.click()
+    await expect(settingsPage.rpcReloadButton).toBeVisible()
+    expect(probed).toBe(true)
+    expect(await readStore()).toContain('__ens_custom_rpc')
+
+    // Reset clears the stored entry for the active chain.
+    await settingsPage.rpcResetButton.click()
+    await expect(settingsPage.rpcUrlInput).toHaveValue('')
+    expect(await readStore()).not.toContain('__ens_custom_rpc')
+
+    // Re-save, then confirm the override survives a full page reload (per-device persistence).
+    await settingsPage.rpcUrlInput.fill(customUrl)
+    await expect(settingsPage.rpcSaveButton).toBeEnabled()
+    await settingsPage.rpcSaveButton.click()
+    await expect(settingsPage.rpcReloadButton).toBeVisible()
+    await page.reload()
+    expect(await readStore()).toContain('__ens_custom_rpc')
+  })
+})
