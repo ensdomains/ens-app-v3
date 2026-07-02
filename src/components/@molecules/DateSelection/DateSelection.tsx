@@ -6,9 +6,9 @@ import { Typography } from '@ensdomains/thorin'
 
 import { Calendar } from '@app/components/@atoms/Calendar/Calendar'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { roundDurationWithDay, secondsFromDateDiff } from '@app/utils/date'
+import { calculateDatesDiff, roundDurationWithDay, secondsFromDateDiff } from '@app/utils/date'
 import { isInsideSafe } from '@app/utils/safe'
-import { formatDurationOfDates, secondsToYears } from '@app/utils/utils'
+import { formatDurationOfDates } from '@app/utils/utils'
 
 const YearsViewSwitch = styled.button(
   ({ theme }) => css`
@@ -59,7 +59,10 @@ export const DateSelection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minSeconds, seconds])
 
-  const dateInYears = Math.floor(secondsToYears(seconds))
+  const dateInYears = calculateDatesDiff(
+    new Date(currentTime * 1000),
+    new Date((currentTime + seconds) * 1000),
+  ).diff.years
 
   // When the duration type is years, normalise the seconds to a year value
   useEffect(() => {
