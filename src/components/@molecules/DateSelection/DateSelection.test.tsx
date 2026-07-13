@@ -88,4 +88,78 @@ describe('DateSelection', () => {
 
     expect(screen.getByText('unit.years.1 registration.')).toBeVisible()
   })
+
+  const expiry = 1700000000
+
+  it('should not show a Max link when maxSeconds is undefined', () => {
+    render(
+      <DateSelection minSeconds={0} seconds={ONE_YEAR} setSeconds={() => {}} durationType="years" />,
+    )
+    expect(screen.queryByTestId('date-selection-max')).not.toBeInTheDocument()
+  })
+
+  it('should show a Max link that sets seconds to maxSeconds exactly', async () => {
+    const setSeconds = vi.fn()
+    render(
+      <DateSelection
+        minSeconds={ONE_DAY}
+        maxSeconds={ONE_YEAR * 2}
+        seconds={ONE_YEAR}
+        setSeconds={setSeconds}
+        durationType="date"
+        expiry={expiry}
+        onChangeDurationType={() => {}}
+      />,
+    )
+    await userEvent.click(screen.getByTestId('date-selection-max'))
+    expect(setSeconds).toHaveBeenCalledWith(ONE_YEAR * 2)
+  })
+
+  it('should clamp seconds down to maxSeconds when the cap is below the selection', async () => {
+    const setSeconds = vi.fn()
+    render(
+      <DateSelection
+        minSeconds={ONE_DAY}
+        maxSeconds={ONE_YEAR}
+        seconds={ONE_YEAR * 3}
+        setSeconds={setSeconds}
+        durationType="date"
+        expiry={expiry}
+        onChangeDurationType={() => {}}
+      />,
+    )
+    await waitFor(() => expect(setSeconds).toHaveBeenCalledWith(ONE_YEAR))
+  })
+
+  it('should hide the years toggle when headroom is under a year', () => {
+    render(
+      <DateSelection
+        minSeconds={ONE_DAY}
+        maxSeconds={ONE_DAY * 30}
+        seconds={ONE_DAY * 10}
+        setSeconds={() => {}}
+        durationType="date"
+        expiry={expiry}
+        onChangeDurationType={() => {}}
+      />,
+    )
+    expect(screen.queryByTestId('date-selection')).not.toBeInTheDocument()
+    expect(screen.getByTestId('date-selection-max')).toBeInTheDocument()
+  })
+
+  it('caps the years counter at the whole years available within maxSeconds', () => {
+    // ~2.5 years of headroom → the counter is capped at 2 whole years
+    render(
+      <DateSelection
+        minSeconds={ONE_DAY}
+        maxSeconds={Math.floor(ONE_YEAR * 2.5)}
+        seconds={ONE_YEAR}
+        setSeconds={() => {}}
+        durationType="years"
+        expiry={expiry}
+        onChangeDurationType={() => {}}
+      />,
+    )
+    expect(screen.getByTestId('plus-minus-control-input')).toHaveAttribute('max', '2')
+  })
 })
