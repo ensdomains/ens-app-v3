@@ -23,6 +23,7 @@ import {
   profileEditorFormToProfileRecords,
   profileToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { TimezonePicker } from '@app/components/pages/profile/[name]/registration/steps/Profile/TimezonePicker'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useResolverStatus } from '@app/hooks/resolver/useResolverStatus'
@@ -445,6 +446,21 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     validator={validatorForRecord(field)}
                     validated={isDirtyForRecordAtIndex(index)}
                     error={errorForRecordAtIndex(index, 'key')}
+                    onDelete={() => {
+                      handleDeleteRecord(field, index)
+                    }}
+                  />
+                ) : field.key === 'timezone' ? (
+                  <TimezonePicker
+                    key={field.id}
+                    control={control}
+                    index={index}
+                    label={labelForRecord(field)}
+                    secondaryLabel={secondaryLabelForRecord(field)}
+                    placeholder={placeholderForRecord(field)}
+                    error={errorForRecordAtIndex(index)}
+                    validated={isDirtyForRecordAtIndex(index)}
+                    validator={validatorForRecord(field)}
                     onDelete={() => {
                       handleDeleteRecord(field, index)
                     }}

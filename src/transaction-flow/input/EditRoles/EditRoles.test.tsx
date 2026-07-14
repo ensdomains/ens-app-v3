@@ -195,6 +195,60 @@ describe('EditRoles', () => {
     await userEvent.click(screen.getByRole('button', { name: 'action.cancel' }))
   })
 
+  it('should show an already-set message naming the role being edited', async () => {
+    render(<EditRoles data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />)
+
+    await userEvent.click(
+      within(screen.getByTestId('role-card-owner')).getByTestId('role-card-change-button'),
+    )
+    await userEvent.type(screen.getByTestId('edit-roles-search-input'), 'owner')
+    await waitFor(() => {
+      const message = screen.getByTestId('search-result-already-set-0xowner')
+      expect(message).toBeVisible()
+      expect(message).toHaveTextContent('input.sendName.views.search.alreadySet.roles.owner.title')
+    })
+    await userEvent.click(screen.getByRole('button', { name: 'action.cancel' }))
+
+    await userEvent.click(
+      within(screen.getByTestId('role-card-manager')).getByTestId('role-card-change-button'),
+    )
+    await userEvent.type(screen.getByTestId('edit-roles-search-input'), 'manager')
+    await waitFor(() => {
+      const message = screen.getByTestId('search-result-already-set-0xmanager')
+      expect(message).toBeVisible()
+      expect(message).toHaveTextContent(
+        'input.sendName.views.search.alreadySet.roles.manager.title',
+      )
+    })
+    await userEvent.click(screen.getByRole('button', { name: 'action.cancel' }))
+
+    await userEvent.click(
+      within(screen.getByTestId('role-card-eth-record')).getByTestId('role-card-change-button'),
+    )
+    await userEvent.type(screen.getByTestId('edit-roles-search-input'), 'eth-record')
+    await waitFor(() => {
+      const message = screen.getByTestId('search-result-already-set-0xeth-record')
+      expect(message).toBeVisible()
+      expect(message).toHaveTextContent(
+        'input.sendName.views.search.alreadySet.roles.eth-record.title',
+      )
+    })
+    await userEvent.click(screen.getByRole('button', { name: 'action.cancel' }))
+  })
+
+  it('should keep a fresh address selectable with no already-set message', async () => {
+    render(<EditRoles data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />)
+
+    await userEvent.click(
+      within(screen.getByTestId('role-card-owner')).getByTestId('role-card-change-button'),
+    )
+    await userEvent.type(screen.getByTestId('edit-roles-search-input'), 'nick')
+    await waitFor(() => {
+      expect(screen.getByTestId('search-result-0xnick')).toBeEnabled()
+    })
+    expect(screen.queryByTestId('search-result-already-set-0xnick')).toBeNull()
+  })
+
   it('should show shortcuts for setting to self or setting to 0x0', async () => {
     render(<EditRoles data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />)
     // Change owner first

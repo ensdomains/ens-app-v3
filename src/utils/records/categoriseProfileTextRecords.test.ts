@@ -41,6 +41,18 @@ describe('categoriseProfileTextRecords', () => {
     })
   })
 
+  it('should categorise a timezone record as general, not other', () => {
+    const result = categoriseAndTransformTextRecords({
+      texts: [
+        { key: 'timezone', value: 'Europe/London' },
+        { key: 'other', value: 'value' },
+      ],
+      contentHash: undefined,
+    })
+    expect(result.general).toEqual([{ key: 'timezone', value: 'Europe/London' }])
+    expect(result.other).toEqual([{ key: 'other', value: 'value', type: 'text', iconKey: 'other' }])
+  })
+
   it('should not return a contenthash record item if it is undefined', () => {
     const result = categoriseAndTransformTextRecords({
       texts: [

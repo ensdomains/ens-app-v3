@@ -87,9 +87,39 @@ describe('ProfileSnippet', () => {
         hasMismatch={true}
       />
     )
-    
+
     expect(screen.getByText('name.yourPrimaryName')).toBeInTheDocument()
     expect(screen.getByText('name.unnormalized')).toBeInTheDocument()
+  })
+
+  it('should render the timezone with a viewer-relative offset', () => {
+    render(
+      <ProfileSnippet
+        name="test.eth"
+        getTextRecord={(key) => (key === 'timezone' ? { value: 'Europe/London' } : undefined)}
+      />,
+    )
+
+    const timezone = screen.getByTestId('profile-snippet-timezone')
+    // Offset is relative to the test runner's zone, so assert on the format only.
+    expect(timezone.textContent).toMatch(/^Europe\/London \([+-]\d{2}:\d{2}\)$/)
+  })
+
+  it('should not render the timezone when it is unset', () => {
+    render(<ProfileSnippet name="test.eth" getTextRecord={() => undefined} />)
+
+    expect(screen.queryByTestId('profile-snippet-timezone')).not.toBeInTheDocument()
+  })
+
+  it('should not render the timezone when it is invalid', () => {
+    render(
+      <ProfileSnippet
+        name="test.eth"
+        getTextRecord={(key) => (key === 'timezone' ? { value: 'Not/AZone' } : undefined)}
+      />,
+    )
+
+    expect(screen.queryByTestId('profile-snippet-timezone')).not.toBeInTheDocument()
   })
 })
 

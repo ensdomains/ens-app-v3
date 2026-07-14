@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 import { DevSection } from '@app/components/pages/profile/settings/DevSection'
 import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection/PrimarySection'
 import { PrivacySection } from '@app/components/pages/profile/settings/PrivacySection'
+import { RpcSection } from '@app/components/pages/profile/settings/RpcSection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection/TransactionSection'
 import { WalletSection } from '@app/components/pages/profile/settings/WalletSection'
 import { useSubgraphMeta } from '@app/hooks/ensjs/subgraph/useSubgraphMeta'
@@ -47,6 +48,7 @@ export default function Page() {
             <TransactionSection />
             <WalletSection />
             <PrivacySection />
+            <RpcSection />
             {IS_DEV_ENVIRONMENT && <DevSection />}
           </OtherWrapper>
         ),

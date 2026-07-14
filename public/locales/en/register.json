@@ -50,13 +50,15 @@
               "name": "Nickname",
               "url": "Website",
               "location": "Location",
-              "description": "Short Bio"
+              "description": "Short Bio",
+              "timezone": "Timezone"
             },
             "placeholder": {
               "name": "John Smith",
               "url": "https://ens.domains",
               "location": "Metaverse",
-              "description": "I'm a yield farmer from rural Tennessee."
+              "description": "I'm a yield farmer from rural Tennessee.",
+              "timezone": "Search for a timezone"
             }
           },
           "media": {

@@ -19,6 +19,35 @@
         "clearHistory": "Clear search history"
       }
     },
+    "rpc": {
+      "title": "Custom RPC endpoint",
+      "description": "By default the app uses an ENS-operated RPC endpoint. You can point it at your own JSON-RPC endpoint instead. This is stored on this device only and applies to the network this app serves.",
+      "label": "RPC URL",
+      "placeholder": "https://your-node.example",
+      "exclusive": {
+        "title": "Use only my RPC endpoint",
+        "description": "Disable the ENS-operated fallback so all requests go to your endpoint.",
+        "warning": "With no fallback, the app may stop working if your endpoint goes down or blocks browser requests."
+      },
+      "action": {
+        "save": "Save",
+        "reset": "Reset",
+        "reload": "Reload to apply"
+      },
+      "errors": {
+        "validate": {
+          "required": "Enter an RPC URL",
+          "invalidUrl": "Enter a valid URL",
+          "invalidProtocol": "URL must start with http:// or https://"
+        },
+        "probe": {
+          "wrongChain": "This endpoint reports a different network (chain ID {{chainId}}) and cannot be used here.",
+          "unreachable": "Could not reach this endpoint. Check the URL and that it allows browser (CORS) requests.",
+          "timeout": "This endpoint took too long to respond.",
+          "invalidResponse": "This endpoint did not return a valid JSON-RPC response."
+        }
+      }
+    },
     "primary": {
       "title": "Primary Name",
       "noNameDescription": "A primary name links your address to a name, allowing dApps to display a name as your profile when connected to them. Only normalized names are shown. <primaryNameLink>Learn about primary names</primaryNameLink>",
