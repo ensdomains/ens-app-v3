@@ -113,6 +113,15 @@ const yearsToGasPercent = (targetYears: bigint, f: bigint, y: bigint) => {
   return rounded
 }
 
+const MINIMUM_SAVINGS_THRESHOLD = 5
+
+export const hasMeaningfulGasSavings = (yearlyFee: bigint, transactionFee: bigint): boolean => {
+  const oneYearGasPercent = yearsToGasPercent(1n, transactionFee, yearlyFee)
+  const fiveYearGasPercent = yearsToGasPercent(5n, transactionFee, yearlyFee)
+  const savingsPercent = oneYearGasPercent - fiveYearGasPercent
+  return savingsPercent >= MINIMUM_SAVINGS_THRESHOLD
+}
+
 const gasPercentToYears = (targetPercent: bigint, f: bigint, y: bigint, min: number) => {
   const fp = f / 100n
   const yp = y / 100n

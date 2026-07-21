@@ -21,7 +21,10 @@ import {
 
 import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
+import {
+  hasMeaningfulGasSavings,
+  RegistrationTimeComparisonBanner,
+} from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { ConnectButton } from '@app/components/@molecules/ConnectButton/ConnectButton'
 import { DateSelection } from '@app/components/@molecules/DateSelection/DateSelection'
@@ -582,7 +585,8 @@ const Pricing = ({
       ) : (
         !!unsafeDisplayYearlyFee &&
         !!unsafeDisplayEstimatedGasFee &&
-        !!gasPrice && (
+        !!gasPrice &&
+        hasMeaningfulGasSavings(unsafeDisplayYearlyFee, unsafeDisplayEstimatedGasFee) && (
           <RegistrationTimeComparisonBanner
             yearlyFee={unsafeDisplayYearlyFee}
             transactionFee={unsafeDisplayEstimatedGasFee}
