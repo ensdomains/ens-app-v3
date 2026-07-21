@@ -22,7 +22,9 @@ const { createConfig, WagmiProvider } = await vi.importActual<typeof import('wag
 
 window.scroll = vi.fn() as (opts?: ScrollOptions) => void
 
-vi.mock('@app/hooks/useRegistrationReducer', () => vi.fn(() => ({ item: { stepIndex: 0 } })))
+vi.mock('@app/hooks/useRegistrationReducer', () => ({
+  default: vi.fn(() => ({ item: { stepIndex: 0 } })),
+}))
 
 export const mockUseAccountReturnValue = { address: '0x123' }
 

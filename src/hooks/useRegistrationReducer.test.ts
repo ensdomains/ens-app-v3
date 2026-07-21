@@ -1,9 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { isHex, pad } from 'viem'
+import { encodeFunctionData, isHex, namehash, pad, parseAbi } from 'viem'
 
-import { EMPTY_BYTES32 } from '@ensdomains/ensjs/utils'
+import { EMPTY_BYTES32, generateRecordCallArray } from '@ensdomains/ensjs/utils'
 
-import { SelectedItemProperties } from '@app/components/pages/profile/[name]/registration/types'
+import { profileRecordsToRecordOptions } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import {
+  RegistrationReducerAction,
+  RegistrationReducerData,
+  SelectedItemProperties,
+} from '@app/components/pages/profile/[name]/registration/types'
+import { ProfileRecord } from '@app/constants/profileRecordOptions'
+
+import { reducer } from './useRegistrationReducer'
 
 // Test the getReferrerHex function behavior
 describe('useRegistrationReducer - referrer storage', () => {
@@ -152,5 +160,82 @@ describe('useRegistrationReducer - referrer storage', () => {
     // so that when reducer creates a new item, it has the referrer
     expect(createAction.selected.referrer).toBeDefined()
     expect(createAction.selected.referrer).toBe(paddedReferrer)
+  })
+})
+
+const selectedItem: SelectedItemProperties = {
+  address: '0x1234567890123456789012345678901234567890',
+  name: 'test.eth',
+  chainId: 1,
+}
+
+const ethRecord: ProfileRecord = {
+  key: 'eth',
+  group: 'address',
+  type: 'addr',
+  value: '0x1234567890123456789012345678901234567890',
+}
+
+const setProfileData = (
+  payload: Extract<RegistrationReducerAction, { name: 'setProfileData' }>['payload'],
+): RegistrationReducerAction => ({ name: 'setProfileData', selected: selectedItem, payload })
+
+const applyActions = (...actions: RegistrationReducerAction[]) =>
+  actions.reduce<RegistrationReducerData>(reducer, { items: [] }).items[0]
+
+describe('useRegistrationReducer - setProfileData', () => {
+  it('should default clearRecords to false on a newly created item', () => {
+    const item = applyActions(setProfileData({ records: [ethRecord] }))
+    expect(item.clearRecords).toBe(false)
+  })
+
+  it('should store clearRecords when the payload sets it to true', () => {
+    const item = applyActions(setProfileData({ records: [ethRecord], clearRecords: true }))
+    expect(item.clearRecords).toBe(true)
+  })
+
+  it('should store clearRecords when the payload sets it to false', () => {
+    const item = applyActions(
+      setProfileData({ records: [ethRecord], clearRecords: true }),
+      setProfileData({ records: [ethRecord], clearRecords: false }),
+    )
+    expect(item.clearRecords).toBe(false)
+  })
+
+  it('should keep the stored clearRecords when a later payload omits it', () => {
+    const item = applyActions(
+      setProfileData({ records: [ethRecord], clearRecords: true }),
+      setProfileData({ records: [ethRecord] }),
+    )
+    expect(item.clearRecords).toBe(true)
+  })
+})
+
+describe('useRegistrationReducer - stored profile data as resolver calls', () => {
+  const node = namehash(selectedItem.name)
+  // hand-written ABI on purpose: an oracle independent of the ensjs snippet that
+  // generateRecordCallArray itself encodes with (deliberate deviation from the ensjs-ABI rule)
+  const clearRecordsCall = encodeFunctionData({
+    abi: parseAbi(['function clearRecords(bytes32 node)']),
+    functionName: 'clearRecords',
+    args: [node],
+  })
+
+  const callArrayForStoredItem = (clearRecords?: boolean) => {
+    const item = applyActions(setProfileData({ records: [ethRecord], clearRecords }))
+    const recordOptions = profileRecordsToRecordOptions(item.records, item.clearRecords)
+    return { recordOptions, calls: generateRecordCallArray({ namehash: node, ...recordOptions }) }
+  }
+
+  it('should include the clearRecords call when the stored item has clearRecords set', () => {
+    const { recordOptions, calls } = callArrayForStoredItem(true)
+    expect(recordOptions.clearRecords).toBe(true)
+    expect(calls).toContain(clearRecordsCall)
+  })
+
+  it('should not include the clearRecords call when the stored item has clearRecords false', () => {
+    const { recordOptions, calls } = callArrayForStoredItem(false)
+    expect(recordOptions.clearRecords).toBe(false)
+    expect(calls).not.toContain(clearRecordsCall)
   })
 })

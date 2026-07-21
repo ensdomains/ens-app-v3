@@ -71,7 +71,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
-        resolverExists
       />,
     )
   })
@@ -82,7 +81,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
-        resolverExists
       />,
     )
     await userEvent.click(screen.getByTestId('profile-submit-button'))
@@ -95,7 +93,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
-        resolverExists
       />,
     )
     await userEvent.click(screen.getByTestId('profile-back-button'))
@@ -110,7 +107,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData({ resolverAddress: '0x456' })}
         callback={mockCallback}
-        resolverExists
       />,
     )
     await userEvent.click(screen.getByTestId('profile-submit-button'))
@@ -121,18 +117,17 @@ describe('Profile', () => {
     )
   })
 
-  it('should return callback with clearRecords set as false if resolverExists is false', async () => {
+  it('should return callback with clearRecords true when the resolver is the default public resolver', async () => {
     render(
       <Profile
         name={name}
-        registrationData={makeRegistrationData()}
+        registrationData={makeRegistrationData({ clearRecords: false })}
         callback={mockCallback}
-        resolverExists={false}
       />,
     )
     await userEvent.click(screen.getByTestId('profile-submit-button'))
     await waitFor(() =>
-      expect(mockCallback).toHaveBeenCalledWith(makeExpectedCallbackData({ clearRecords: false })),
+      expect(mockCallback).toHaveBeenCalledWith(makeExpectedCallbackData({ clearRecords: true })),
     )
   })
 
@@ -142,7 +137,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData({ reverseRecord: true })}
         callback={mockCallback}
-        resolverExists
       />,
     )
 
@@ -157,7 +151,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
-        resolverExists
       />,
     )
 
@@ -183,7 +176,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData()}
         callback={mockCallback}
-        resolverExists
       />,
     )
     await userEvent.click(screen.getByTestId('show-add-profile-records-modal-button'))
@@ -234,7 +226,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData(overrides)}
         callback={mockCallback}
-        resolverExists
       />,
     )
     await userEvent.click(screen.getByTestId('profile-submit-button'))
@@ -259,7 +250,6 @@ describe('Profile', () => {
         name={name}
         registrationData={makeRegistrationData(overrides)}
         callback={mockCallback}
-        resolverExists
       />,
     )
     await userEvent.click(screen.getByTestId('profile-submit-button'))

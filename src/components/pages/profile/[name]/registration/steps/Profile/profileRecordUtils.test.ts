@@ -1,4 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { decodeFunctionData, namehash } from 'viem'
+import { assert, describe, expect, it } from 'vitest'
+
+import { publicResolverClearRecordsSnippet } from '@ensdomains/ensjs/contracts'
+import { generateRecordCallArray } from '@ensdomains/ensjs/utils'
 
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Profile } from '@app/types'
@@ -59,6 +63,31 @@ describe('profileRecordsToRecordOptions', () => {
       clearRecords: true,
     }
     expect(profileRecordsToRecordOptions(records, true)).toEqual(options)
+  })
+
+  it('should include a clearRecords call for registration record options', () => {
+    const records: ProfileRecord[] = [
+      {
+        key: 'eth',
+        value: '0x1234567890123456789012345678901234567890',
+        group: 'address',
+        type: 'addr',
+      },
+    ]
+    const recordOptions = profileRecordsToRecordOptions(records, true)
+
+    expect(recordOptions.clearRecords).toBe(true)
+
+    const node = namehash('test.eth')
+    const [clearRecordsCall] = generateRecordCallArray({ namehash: node, ...recordOptions })
+
+    assert(clearRecordsCall)
+    expect(
+      decodeFunctionData({ abi: publicResolverClearRecordsSnippet, data: clearRecordsCall }),
+    ).toEqual({
+      functionName: 'clearRecords',
+      args: [node],
+    })
   })
 
   it('should remove records with empty key', () => {
