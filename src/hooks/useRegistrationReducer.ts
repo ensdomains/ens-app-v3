@@ -16,7 +16,7 @@ import { sendEvent } from '@app/utils/analytics/events'
 import { getReferrerHex } from '@app/utils/referrer'
 import { ONE_YEAR, yearsToSeconds } from '@app/utils/utils'
 
-const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 4
+const REGISTRATION_REDUCER_DATA_ITEM_VERSION = 5
 
 const defaultData: RegistrationReducerDataItem = {
   stepIndex: 0,
@@ -30,8 +30,6 @@ const defaultData: RegistrationReducerDataItem = {
   started: false,
   address: EMPTY_ADDRESS,
   name: '',
-  isMoonpayFlow: false,
-  externalTransactionId: '',
   chainId: 1,
   durationType: 'years',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
@@ -61,8 +59,6 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   resolverAddress: EMPTY_ADDRESS,
   secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
   started: false,
-  isMoonpayFlow: false,
-  externalTransactionId: '',
   version: REGISTRATION_REDUCER_DATA_ITEM_VERSION,
   durationType: 'years',
   referrer: selected.referrer || EMPTY_BYTES32,
@@ -152,22 +148,6 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     case 'setProfileData': {
       if (action.payload.records) item.records = action.payload.records
       if (action.payload.resolverAddress) item.resolverAddress = action.payload.resolverAddress
-      break
-    }
-    case 'setExternalTransactionId': {
-      item.isMoonpayFlow = true
-      item.externalTransactionId = action.externalTransactionId
-      break
-    }
-    case 'moonpayTransactionCompleted': {
-      item.externalTransactionId = ''
-      item.stepIndex = item.queue.findIndex((step) => step === 'complete')
-
-      sendEvent('register:complete', {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        ens_name: item.name,
-      })
-
       break
     }
     case 'setReferrer': {
