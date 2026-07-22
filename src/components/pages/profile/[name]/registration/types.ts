@@ -12,16 +12,10 @@ type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
 
-export enum PaymentMethod {
-  ethereum = 'ethereum',
-  moonpay = 'moonpay',
-}
-
 export type RegistrationStepData = {
   pricing: {
     seconds: number
     reverseRecord: boolean
-    paymentMethodChoice: PaymentMethod | ''
     estimatedTotal?: bigint
     ethPrice?: bigint
     durationType: 'date' | 'years'
@@ -51,11 +45,9 @@ export type SelectedItemProperties = {
 }
 
 export type RegistrationReducerDataItem = Prettify<
-  Omit<RegistrationData, 'paymentMethodChoice'> & {
+  RegistrationData & {
     stepIndex: number
     queue: RegistrationStep[]
-    isMoonpayFlow: boolean
-    externalTransactionId: string
     version: number
     referrer?: Hex
   } & SelectedItemProperties
@@ -82,7 +74,7 @@ export type RegistrationReducerAction =
   | {
       name: 'setPricingData'
       selected: SelectedItemProperties
-      payload: Omit<RegistrationStepData['pricing'], 'paymentMethodChoice'>
+      payload: RegistrationStepData['pricing']
     }
   | {
       name: 'setProfileData'
@@ -111,18 +103,7 @@ export type RegistrationReducerAction =
       selected: SelectedItemProperties
     }
   | {
-      name: 'setExternalTransactionId'
-      selected: SelectedItemProperties
-      externalTransactionId: string
-    }
-  | {
-      name: 'moonpayTransactionCompleted'
-      selected: SelectedItemProperties
-    }
-  | {
       name: 'setReferrer'
       selected: SelectedItemProperties
       payload: Hex
     }
-
-export type MoonpayTransactionStatus = 'pending' | 'completed' | 'failed' | 'waitingAuthorization'
