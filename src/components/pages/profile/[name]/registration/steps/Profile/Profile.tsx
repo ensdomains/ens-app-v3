@@ -130,16 +130,14 @@ type ModalOption =
 type Props = {
   name: string
   registrationData: RegistrationReducerDataItem
-  resolverExists: boolean | undefined
   callback: (data: RegistrationStepData['profile'] & BackObj) => void
 }
 
-const Profile = ({ name, callback, registrationData, resolverExists }: Props) => {
+const Profile = ({ name, callback, registrationData }: Props) => {
   const { t } = useTranslation('register')
 
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
-  const clearRecords =
-    registrationData.resolverAddress === defaultResolverAddress ? resolverExists : false
+  const clearRecords = registrationData.resolverAddress === defaultResolverAddress
   const backRef = useRef<HTMLButtonElement>(null)
 
   const {

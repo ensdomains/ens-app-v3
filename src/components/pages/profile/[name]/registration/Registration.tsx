@@ -17,7 +17,6 @@ import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIs
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useReferrer } from '@app/hooks/useReferrer'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
-import { useResolverExists } from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -123,10 +122,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   )
   const { normalisedName, beautifiedName = '' } = nameDetails
   const defaultResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
-  const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists({
-    address: defaultResolverAddress,
-    name: normalisedName,
-  })
 
   const { data: isControllerActive, isLoading: isControllerActiveLoading } =
     useIsEthRegistrarControllerActive()
@@ -192,7 +187,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         name: 'setProfileData',
         payload: {
           records: [{ key: 'eth', group: 'address', type: 'addr', value: address! }],
-          clearRecords: resolverExists,
+          clearRecords: true,
           resolverAddress: defaultResolverAddress,
         },
         selected,
@@ -222,6 +217,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const profileCallback = ({
     records,
+    clearRecords,
     resolverAddress,
     back,
   }: RegistrationStepData['profile'] & BackObj) => {
@@ -236,7 +232,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       })
     }
 
-    dispatch({ name: 'setProfileData', payload: { records, resolverAddress }, selected })
+    dispatch({
+      name: 'setProfileData',
+      payload: { records, clearRecords, resolverAddress },
+      selected,
+    })
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
@@ -324,11 +324,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         noTitle
         title={beautifiedName}
         hideHeading={step === 'complete'}
-        loading={
-          labelTooLong
-            ? false
-            : isLoading || primary.isLoading || resolverExistsLoading || isControllerActiveLoading
-        }
+        loading={labelTooLong ? false : isLoading || primary.isLoading || isControllerActiveLoading}
         singleColumnContent
         inlineHeading
       >
@@ -352,7 +348,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 name={normalisedName}
                 beautifiedName={beautifiedName}
                 gracePeriodEndDate={nameDetails.gracePeriodEndDate}
-                resolverExists={resolverExists}
                 callback={pricingCallback}
                 isPrimaryLoading={primary.isLoading}
                 hasPrimaryName={hasValidPrimaryName(primary.data)}
@@ -362,12 +357,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               />
             ))
             .with([false, false, 'profile'], () => (
-              <Profile
-                name={normalisedName}
-                resolverExists={resolverExists}
-                registrationData={item}
-                callback={profileCallback}
-              />
+              <Profile name={normalisedName} registrationData={item} callback={profileCallback} />
             ))
             .with([false, false, 'info'], () => (
               <Info

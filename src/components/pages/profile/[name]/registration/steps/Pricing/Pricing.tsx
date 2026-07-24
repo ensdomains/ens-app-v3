@@ -478,7 +478,6 @@ export type PricingProps = {
   gracePeriodEndDate: Date | undefined
   beautifiedName: string
 
-  resolverExists: boolean | undefined
   callback: (props: RegistrationStepData['pricing']) => void
   isPrimaryLoading: boolean
   hasPrimaryName: boolean
@@ -499,7 +498,6 @@ const Pricing = ({
   isPrimaryLoading,
   hasPrimaryName,
   registrationData,
-  resolverExists,
   moonpayTransactionStatus,
   initiateMoonpayRegistrationMutation,
 }: PricingProps) => {
@@ -544,7 +542,6 @@ const Pricing = ({
       reverseRecord,
       seconds,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
-      clearRecords: resolverExists,
       resolverAddress,
     },
   })

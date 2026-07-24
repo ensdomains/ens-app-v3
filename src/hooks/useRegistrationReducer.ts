@@ -58,6 +58,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   seconds: getDefaultRegistrationDuration(),
   reverseRecord: false,
   records: [],
+  clearRecords: false,
   resolverAddress: EMPTY_ADDRESS,
   secret: randomSecret({ platformDomain: 'enslabs.eth', campaign: 3 }),
   started: false,
@@ -82,7 +83,7 @@ export const getSelectedIndex = (
   )
 
 /* eslint-disable no-param-reassign */
-const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
+export const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
   let selectedItemInx = getSelectedIndex(state, action.selected)
 
   if (!isBrowser) return state
@@ -151,6 +152,8 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     }
     case 'setProfileData': {
       if (action.payload.records) item.records = action.payload.records
+      // an explicit false must overwrite a stored true, so an omitted flag is the only no-op
+      if (action.payload.clearRecords !== undefined) item.clearRecords = action.payload.clearRecords
       if (action.payload.resolverAddress) item.resolverAddress = action.payload.resolverAddress
       break
     }
