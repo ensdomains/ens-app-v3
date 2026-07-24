@@ -542,7 +542,6 @@ const Pricing = ({
       reverseRecord,
       seconds,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
-      clearRecords: true,
       resolverAddress,
     },
   })
