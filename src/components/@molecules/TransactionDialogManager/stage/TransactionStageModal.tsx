@@ -35,7 +35,7 @@ import {
 } from '@app/transaction-flow/types'
 import { ConfigWithEns } from '@app/types'
 import { sendEvent } from '@app/utils/analytics/events'
-import { getReadableError } from '@app/utils/errors'
+import { getReadableError, isCommitmentTooNewError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
 import { computeCacheBustFlags } from '@app/utils/transactionCacheBust'
@@ -426,6 +426,13 @@ export const TransactionStageModal = ({
     ...preparedOptions,
     enabled: canEnableTransactionRequest,
     refetchOnMount: 'always',
+    // A `CommitmentTooNew` revert means the commitment hasn't aged into the
+    // chain's view of "now" yet, so retry until it has. A normal slot is 12s,
+    // but a missed slot pushes the next block out to 24s - cover that worst
+    // case. `useInvalidateOnBlock` below is the primary recovery mechanism;
+    // this is cover for a slow block watcher.
+    retry: (failureCount, error) => isCommitmentTooNewError(error) && failureCount < 8,
+    retryDelay: 3_000,
   })
 
   const {
@@ -436,6 +443,14 @@ export const TransactionStageModal = ({
   const request = request_?.data
   const requestError = request_?.error || requestError_
   const isTransactionRequestCachedData = getIsCachedData(transactionRequestQuery)
+
+  // `failureReason` holds the error of the most recent failed attempt while
+  // retries are still in flight; `requestError` only becomes set once they're
+  // exhausted. Checking both keeps the waiting state stable for the whole
+  // retry window, then lets the error surface normally if it never resolves.
+  const isWaitingForCommitment =
+    isCommitmentTooNewError(transactionRequestQuery.failureReason) ||
+    isCommitmentTooNewError(requestError)
 
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest && process.env.NEXT_PUBLIC_ETH_NODE !== 'anvil',
@@ -510,10 +525,14 @@ export const TransactionStageModal = ({
     return (
       <>
         <WalletIcon as={WalletSVG} />
-        <MessageTypography>{t('transaction.dialog.confirm.message')}</MessageTypography>
+        <MessageTypography>
+          {isWaitingForCommitment
+            ? t('transaction.dialog.confirm.waitingForBlockMessage')
+            : t('transaction.dialog.confirm.message')}
+        </MessageTypography>
       </>
     )
-  }, [stage, t, transaction.sendTime])
+  }, [stage, t, transaction.sendTime, isWaitingForCommitment])
 
   const HelperContent = useMemo(() => {
     if (!helper) return null
@@ -584,6 +603,18 @@ export const TransactionStageModal = ({
       )
     }
 
+    if (isWaitingForCommitment) {
+      return (
+        <Button
+          disabled
+          suffix={() => <Spinner color="background" />}
+          data-testid="transaction-modal-confirm-button"
+        >
+          {t('transaction.dialog.confirm.waitingForBlock')}
+        </Button>
+      )
+    }
+
     if (preTransactionError?.type === 'insufficientFunds')
       return <Button disabled>{t('transaction.dialog.confirm.insufficientFunds')}</Button>
 
@@ -621,6 +652,7 @@ export const TransactionStageModal = ({
     actionName,
     preTransactionError,
     isParaConnected,
+    isWaitingForCommitment,
   ])
 
   return (
@@ -638,7 +670,9 @@ export const TransactionStageModal = ({
             {t('transaction.viewEtherscan')}
           </Outlink>
         )}
-        {preTransactionError && <Helper alert="error">{preTransactionError.message}</Helper>}
+        {preTransactionError && !isWaitingForCommitment && (
+          <Helper alert="error">{preTransactionError.message}</Helper>
+        )}
       </Dialog.Content>
       <Dialog.Footer
         currentStep={currentStep}
