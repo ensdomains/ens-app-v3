@@ -5,10 +5,9 @@ import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 import { useAccount, useChainId } from 'wagmi'
 
-import { Dialog, Helper, Typography } from '@ensdomains/thorin'
+import { Helper, Typography } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
@@ -23,7 +22,7 @@ import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { sendEvent } from '@app/utils/analytics/events'
 import { getReferrerHex } from '@app/utils/referrer'
-import { isLabelTooLong, secondsToYears } from '@app/utils/utils'
+import { isLabelTooLong } from '@app/utils/utils'
 
 import RegistrationDisabledBanner from './RegistrationDisabledBanner'
 import Complete from './steps/Complete'
@@ -31,8 +30,7 @@ import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
-import { BackObj, PaymentMethod, RegistrationStepData } from './types'
-import { useMoonpayRegistration } from './useMoonpayRegistration'
+import { BackObj, RegistrationStepData } from './types'
 
 const ViewProfileContainer = styled.div(
   ({ theme }) => css`
@@ -64,49 +62,6 @@ type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   isLoading: boolean
 }
-
-const StyledInnerDialog = styled(InnerDialog)(
-  ({ theme }) => css`
-    height: 85vh;
-    max-height: 85vh;
-    margin: -${theme.space['4']};
-    width: calc(100% + 2 * ${theme.space['4']});
-    gap: 0;
-    overflow: hidden;
-    border-top-left-radius: ${theme.radii['3xLarge']};
-    border-top-right-radius: ${theme.radii['3xLarge']};
-    @media (min-width: ${theme.breakpoints.sm}px) {
-      height: 90vh;
-      max-height: 720px;
-      width: calc(80vw - 2 * ${theme.space['6']});
-      max-width: ${theme.space['128']};
-      margin: -${theme.space['6']};
-      border-bottom-left-radius: ${theme.radii['3xLarge']};
-      border-bottom-right-radius: ${theme.radii['3xLarge']};
-    }
-  `,
-)
-
-const MoonPayHeader = styled.div(
-  ({ theme }) => css`
-    width: 100%;
-    background-color: ${theme.colors.greySurface};
-    color: ${theme.colors.greyPrimary};
-    padding: ${theme.space['4']};
-  `,
-)
-
-const MoonPayIFrame = styled.iframe(
-  ({ theme }) => css`
-    max-width: 590px; /* Prevent moonpay iframe from going into modal mode */
-    padding: ${theme.space['2']};
-    background-color: #fff;
-
-    @media (prefers-color-scheme: dark) {
-      background-color: #1c1c1e;
-    }
-  `,
-)
 
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
@@ -142,18 +97,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
-  const {
-    moonpayUrl,
-    initiateMoonpayRegistrationMutation,
-    hasMoonpayModal,
-    setHasMoonpayModal,
-    moonpayTransactionStatus,
-  } = useMoonpayRegistration(dispatch, normalisedName, selected, item)
-
   const pricingCallback = ({
     seconds,
     reverseRecord,
-    paymentMethodChoice,
     estimatedTotal,
     ethPrice,
     durationType,
@@ -167,15 +113,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       eth_price: ethPrice ?? 0n,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      payment_method: paymentMethodChoice,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       add_reverse_record: reverseRecord,
     })
 
-    if (paymentMethodChoice === PaymentMethod.moonpay) {
-      initiateMoonpayRegistrationMutation.mutate(secondsToYears(seconds))
-      return
-    }
     dispatch({
       name: 'setPricingData',
       payload: { seconds, reverseRecord, durationType },
@@ -308,13 +248,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, step, selected, router.asPath])
 
-  const onDismissMoonpayModal = () => {
-    if (moonpayTransactionStatus === 'waitingAuthorization') {
-      return
-    }
-    setHasMoonpayModal(false)
-  }
-
   return (
     <>
       <Head>
@@ -357,8 +290,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 isPrimaryLoading={primary.isLoading}
                 hasPrimaryName={hasValidPrimaryName(primary.data)}
                 registrationData={item}
-                moonpayTransactionStatus={moonpayTransactionStatus}
-                initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}
               />
             ))
             .with([false, false, 'profile'], () => (
@@ -391,33 +322,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 beautifiedName={beautifiedName}
                 callback={onComplete}
                 registrationData={item}
-                isMoonpayFlow={item.isMoonpayFlow}
               />
             ))
             .exhaustive(),
         }}
       </Content>
-      <Dialog
-        open={hasMoonpayModal}
-        variant="blank"
-        onDismiss={onDismissMoonpayModal}
-        onClose={onDismissMoonpayModal}
-      >
-        <StyledInnerDialog>
-          <MoonPayHeader>
-            <Typography fontVariant="bodyBold" color="grey">
-              {t('steps.info.moonpayModalHeader')}
-            </Typography>
-          </MoonPayHeader>
-          <MoonPayIFrame
-            title="Moonpay Checkout"
-            width="100%"
-            height="100%"
-            src={moonpayUrl}
-            id="moonpayIframe"
-          />
-        </StyledInnerDialog>
-      </Dialog>
     </>
   )
 }

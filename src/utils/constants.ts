@@ -2,11 +2,6 @@ export const emptyAddress = '0x0000000000000000000000000000000000000000'
 
 export const GRACE_PERIOD = 90 * 24 * 60 * 60 * 1000
 
-export const MOONPAY_WORKER_URL: { [key: number]: string } = {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  1: 'https://moonpay-worker.ens-cf.workers.dev',
-}
-
 export const FAUCET_WORKER_URL = 'https://ens-faucet.ens-cf.workers.dev'
 
 export const WC_PROJECT_ID = '9b14144d470af1e03ab9d88aaa127332'

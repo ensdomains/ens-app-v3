@@ -137,7 +137,6 @@ test.describe.serial('normal registration', () => {
     })
 
     await test.step('should have payment choice ethereum checked and show primary name setting as checked', async () => {
-      await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
       await expect(registrationPage.primaryNameToggle).toBeChecked()
     })
 
@@ -371,7 +370,6 @@ test.describe.serial('normal registration', () => {
 
     await page.getByTestId('primary-name-toggle').uncheck()
 
-    await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(page.getByTestId('primary-name-toggle')).not.toBeChecked({ timeout: 1000 })
 
     // should show set profile button on info step
@@ -468,7 +466,6 @@ test('should allow normal registration, from disconnected to connected state', a
   await login.connect()
 
   await test.step('should have payment choice ethereum checked and show primary name setting as checked', async () => {
-    await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
     await expect(registrationPage.primaryNameToggle).toBeChecked()
   })
 
@@ -678,7 +675,6 @@ test('registering a premium name with no records should not be wrapped', async (
   await login.connect()
 
   await page.getByTestId('primary-name-toggle').uncheck()
-  await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
@@ -735,7 +731,6 @@ test('registering a premium name with primary name not set should not be wrapped
   await page.goto(`/${premiumName}/register`)
   await login.connect()
 
-  await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
@@ -805,7 +800,6 @@ test('registering a premium name with existing records should not be wrapped', a
   await page.goto(`/${premiumName}/register`)
   await login.connect()
 
-  await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
@@ -856,7 +850,6 @@ test('registering a wrapped premium name should not be wrapped', async ({
   await login.connect()
 
   await page.getByTestId('primary-name-toggle').uncheck()
-  await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
@@ -908,7 +901,6 @@ test('should allow registering a name and resuming from the commit toast', async
   await page.goto(`/${name}/register`)
   await login.connect()
 
-  await page.getByTestId('payment-choice-ethereum').click()
   await page.getByTestId('primary-name-toggle').uncheck()
   await page.getByTestId('next-button').click()
   await page.getByTestId('next-button').click()
@@ -934,7 +926,6 @@ test('should allow registering with a specific date', async ({ page, login, make
   await page.goto(`/${name}/register`)
   await login.connect()
 
-  await page.getByTestId('payment-choice-ethereum').check()
   await registrationPage.primaryNameToggle.uncheck()
 
   await test.step('should be able to pick by date', async () => {
@@ -976,7 +967,6 @@ test('should allow registering with a specific date', async ({ page, login, make
   })
 
   // should have payment choice ethereum checked and show primary name setting as checked
-  await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
   await expect(registrationPage.primaryNameToggle).not.toBeChecked()
 
   await test.step('should show correct price marker data for unwrapped registration (for 2.5 years)', async () => {
@@ -1041,7 +1031,6 @@ test('should allow registering a premium name with a specific date with referrer
     expect(page.getByText('2 years, 6 months registration', { exact: true })).toBeVisible()
   })
 
-  await page.getByTestId('payment-choice-ethereum').click()
   await page.getByTestId('primary-name-toggle').check()
 
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
@@ -1129,7 +1118,6 @@ test('should allow registering a premium name for two months', async ({
     expect(page.getByText(/2 months .* registration/)).toBeVisible()
   })
 
-  await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
@@ -1212,7 +1200,6 @@ test('should not allow registering a premium name for less than 28 days', async 
     expect(page.getByText('28 days registration', { exact: true })).toBeVisible()
   })
 
-  await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
   await page.getByTestId('next-button').click()
   if (await page.getByTestId('profile-submit-button').isVisible()) {
@@ -1288,7 +1275,6 @@ test('should allow normal registration for a month', async ({
   })
 
   // should have payment choice ethereum checked and show primary name setting as checked
-  await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
   await expect(registrationPage.primaryNameToggle).toBeChecked()
 
   // should show adjusted gas estimate when primary name setting checked
@@ -1423,7 +1409,6 @@ test('should not allow normal registration less than 28 days', async ({
   })
 
   // should have payment choice ethereum checked and show primary name setting as checked
-  await expect(page.getByTestId('payment-choice-ethereum')).toBeChecked()
   await expect(registrationPage.primaryNameToggle).toBeChecked()
 
   // should show adjusted gas estimate when primary name setting checked
@@ -1621,7 +1606,6 @@ test.describe('Error handling', () => {
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 
     await test.step('pricing page', async () => {
-      await page.getByTestId('payment-choice-ethereum').check()
       await registrationPage.primaryNameToggle.uncheck()
       await page.getByTestId('next-button').click()
     })
@@ -1675,7 +1659,6 @@ test.describe('Error handling', () => {
     await expect(page.getByRole('heading', { name: `Register ${name}` })).toBeVisible()
 
     await test.step('pricing page', async () => {
-      await page.getByTestId('payment-choice-ethereum').check()
       await registrationPage.primaryNameToggle.uncheck()
       await page.getByTestId('next-button').click()
     })
@@ -1822,7 +1805,6 @@ test('should allow registering a premium name for two months, user should connec
 
   await login.connect()
 
-  await page.getByTestId('payment-choice-ethereum').click()
   await expect(page.getByTestId('invoice-item-2-amount')).toBeVisible()
 
   await page.getByTestId('next-button').click()
@@ -1866,7 +1848,6 @@ test.describe('Registration with Referrer', () => {
     })
 
     await test.step('should complete pricing step', async () => {
-      await page.getByTestId('payment-choice-ethereum').check()
       await page.getByTestId('primary-name-toggle').uncheck()
       await page.getByTestId('next-button').click()
     })
@@ -1932,7 +1913,6 @@ test.describe('Registration with Referrer', () => {
     })
 
     await test.step('should complete pricing step', async () => {
-      await page.getByTestId('payment-choice-ethereum').check()
       await page.getByTestId('primary-name-toggle').uncheck()
       await page.getByTestId('next-button').click()
     })

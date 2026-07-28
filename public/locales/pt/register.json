@@ -179,22 +179,7 @@
         "Aguardar 60 segundos para que o temporizador termine",
         "Completar uma segunda transação para garantir seu nome"
       ],
-      "moonpayItems": [
-        "Criar ou fazer login em uma conta existente da MoonPay",
-        "Usar seu cartão de crédito ou débito para completar uma única transação"
-      ],
-      "setupProfile": "Desejo configurar meu perfil primeiro",
-      "paymentMethod": "Método de pagamento",
-      "notEnoughEth": "Não há ETH suficiente na carteira",
-      "creditOrDebit": "Cartão de crédito ou débito",
-      "additionalFee": "Taxa de processamento adicional",
-      "pendingMoonpayTransaction": "Sua transação com a MoonPay está sendo processada. Isso pode levar até dois minutos. Você pode verificar o progresso no e-mail de confirmação que recebeu.",
-      "failedMoonpayTransaction": "Sua transação com a MoonPay falhou. Tente novamente ou escolha o método 'Ethereum'.",
-      "ethereum": "Ethereum",
-      "processing": "Processando",
-      "poweredBy": "Desenvolvido por",
-      "moonpayModalHeader": "Pagamento com MoonPay",
-      "moonpayTestCard": "Detalhes do cartão de teste"
+      "setupProfile": "Desejo configurar meu perfil primeiro"
     },
     "transactions": {
       "heading": "Quase pronto",

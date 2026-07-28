@@ -133,7 +133,6 @@ const Confetti = dynamic(() =>
 const useEthInvoice = (
   name: string,
   seconds: number,
-  isMoonpayFlow: boolean,
 ): { InvoiceFilled?: React.ReactNode; avatarSrc?: string } => {
   const { t } = useTranslation('register')
   const { address } = useAccount()
@@ -205,8 +204,6 @@ const useEthInvoice = (
     )
   }, [isLoading, registrationValue, commitReceipt, registerReceipt, t, name, seconds])
 
-  if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
-
   return { InvoiceFilled, avatarSrc }
 }
 
@@ -215,13 +212,12 @@ type Props = {
   beautifiedName: string
   callback: (toProfile: boolean) => void
   registrationData: RegistrationReducerDataItem
-  isMoonpayFlow: boolean
 }
 
-const Complete = ({ name, beautifiedName, callback, isMoonpayFlow, registrationData }: Props) => {
+const Complete = ({ name, beautifiedName, callback, registrationData }: Props) => {
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
-  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, registrationData.seconds, isMoonpayFlow)
+  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, registrationData.seconds)
 
   const nameWithColourEmojis = useMemo(() => {
     const data = tokenise(beautifiedName)
