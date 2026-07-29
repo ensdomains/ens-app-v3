@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
-import { Button, Tag, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
@@ -74,23 +74,6 @@ const ButtonStack = styled.div(
     @media (max-width: 640px) {
       flex-direction: column;
     }
-  `,
-)
-
-const AbstractionContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['2']};
-  `,
-)
-
-const AbstractionHeading = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: ${theme.space['2']};
   `,
 )
 
@@ -194,24 +177,6 @@ const Resolver = ({
           </>
         )}
       </ButtonStack>
-      {isAbstracted && (
-        <AbstractionContainer data-testid="resolver-abstraction">
-          <AbstractionHeading>
-            <Typography color="text" fontVariant="bodyBold">
-              {t('tabs.more.resolver.abstraction.label')}
-            </Typography>
-            <Tag colorStyle="accentSecondary">ENSv2</Tag>
-          </AbstractionHeading>
-          <Typography color="textSecondary" fontVariant="small">
-            {t('tabs.more.resolver.abstraction.description')}
-          </Typography>
-          <RecordItem
-            type="text"
-            data-testid="resolver-abstraction-address"
-            value={registryOrSubgraphResolverAddress || ''}
-          />
-        </AbstractionContainer>
-      )}
     </Container>
   )
 }

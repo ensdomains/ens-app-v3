@@ -277,11 +277,7 @@
         "outdated": "Outdated",
         "wildcard": "Wildcard",
         "version": "Version",
-        "etherscan": "Etherscan",
-        "abstraction": {
-          "label": "ENSv2 resolver",
-          "description": "This name resolves through an ENSv2 abstraction layer. The resolver above is the true resolver; requests are proxied through the abstraction resolver below."
-        }
+        "etherscan": "Etherscan"
       },
       "fuses": {
         "label": "Fuses",
