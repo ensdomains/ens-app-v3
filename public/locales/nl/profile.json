@@ -179,10 +179,8 @@
     "ownerManagerChoice": "Moet eigenaar of manager versturen",
     "unknown": "Unknown error",
     "notMigrated": "Deze naam is nog niet gemigreerd naar de nieuwe registry.",
-    "featureNotAvailable": "Somige functies zijn nog niet beschikbaar, maar je kan nogsteeds ",
-    "featureNotAvailableLink": "deze naam bekijken in de oude app.",
-    "migrationNotAvailable": "Migreren naar de nieuwe registry is nog niet beschikbaar, maar je kan nogsteeds ",
-    "migrationNotAvailableLink": "deze naam migreren in de oude app.",
+    "legacyRegistryAvailable": "Deze naam bestaat in de oude registry van vóór de migratie in 2020 en is beschikbaar om te registreren. ",
+    "legacyRegistryAvailableLink": "Registreer deze naam.",
     "addressLength": "Indien adres moet die 42 karakters lang zijn"
   }
 }

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { nameLevel, parentName } from './name'
+import { createDateAndValue } from '@app/utils/utils'
+
+import { isStaleLegacyRegistryName, nameLevel, parentName } from './name'
 
 describe('nameLevel', () => {
   it('should return correct value for a subname ', () => {
@@ -17,6 +19,29 @@ describe('nameLevel', () => {
 
   it('should return the correct value for [root]', () => {
     expect(nameLevel('[root]')).toEqual('root')
+  })
+})
+
+describe('isStaleLegacyRegistryName', () => {
+  it('should return true for a .eth 2LD with no expiry', () => {
+    expect(isStaleLegacyRegistryName({ parentName: 'eth', expiryDate: null })).toBe(true)
+  })
+
+  it('should return false for a .eth 2LD with an expiry', () => {
+    expect(
+      isStaleLegacyRegistryName({
+        parentName: 'eth',
+        expiryDate: createDateAndValue(new Date('2020-01-01').getTime()),
+      }),
+    ).toBe(false)
+  })
+
+  it('should return false for a subname with no expiry', () => {
+    expect(isStaleLegacyRegistryName({ parentName: 'test.eth', expiryDate: null })).toBe(false)
+  })
+
+  it('should return false for a DNS 2LD with no expiry', () => {
+    expect(isStaleLegacyRegistryName({ parentName: 'com', expiryDate: null })).toBe(false)
   })
 })
 
