@@ -2,12 +2,13 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
 
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Tag, Typography } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useUnderlyingResolver } from '@app/hooks/resolver/useUnderlyingResolver'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { emptyAddress } from '@app/utils/constants'
@@ -76,6 +77,23 @@ const ButtonStack = styled.div(
   `,
 )
 
+const AbstractionContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['2']};
+  `,
+)
+
+const AbstractionHeading = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${theme.space['2']};
+  `,
+)
+
 const Resolver = ({
   name,
   canEditResolver,
@@ -117,6 +135,18 @@ const Resolver = ({
     )
     .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
+  // Under ENSv2 the registry/subgraph resolver may be the `ENSV1Resolver`
+  // abstraction contract. If so, this reveals the true underlying resolver.
+  const { underlyingResolver, isAbstracted } = useUnderlyingResolver({
+    name,
+    resolverAddress: registryOrSubgraphResolverAddress,
+    enabled:
+      !!registryOrSubgraphResolverAddress && registryOrSubgraphResolverAddress !== emptyAddress,
+  })
+
+  const displayedResolverAddress =
+    isAbstracted && underlyingResolver ? underlyingResolver : registryOrSubgraphResolverAddress
+
   return (
     <Container $isCached={isCachedData}>
       <HeadingContainer>
@@ -130,7 +160,7 @@ const Resolver = ({
         <RecordItem
           type="text"
           data-testid="resolver-address"
-          value={registryOrSubgraphResolverAddress || ''}
+          value={displayedResolverAddress || ''}
         />
         {canEdit && !hasGraphError && (
           <>
@@ -164,6 +194,24 @@ const Resolver = ({
           </>
         )}
       </ButtonStack>
+      {isAbstracted && (
+        <AbstractionContainer data-testid="resolver-abstraction">
+          <AbstractionHeading>
+            <Typography color="text" fontVariant="bodyBold">
+              {t('tabs.more.resolver.abstraction.label')}
+            </Typography>
+            <Tag colorStyle="accentSecondary">ENSv2</Tag>
+          </AbstractionHeading>
+          <Typography color="textSecondary" fontVariant="small">
+            {t('tabs.more.resolver.abstraction.description')}
+          </Typography>
+          <RecordItem
+            type="text"
+            data-testid="resolver-abstraction-address"
+            value={registryOrSubgraphResolverAddress || ''}
+          />
+        </AbstractionContainer>
+      )}
     </Container>
   )
 }
