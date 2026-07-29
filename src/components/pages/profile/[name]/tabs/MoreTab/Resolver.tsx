@@ -123,8 +123,6 @@ const Resolver = ({
   const { underlyingResolver, isAbstracted } = useUnderlyingResolver({
     name,
     resolverAddress: registryOrSubgraphResolverAddress,
-    enabled:
-      !!registryOrSubgraphResolverAddress && registryOrSubgraphResolverAddress !== emptyAddress,
   })
 
   const displayedResolverAddress =

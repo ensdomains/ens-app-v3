@@ -21,7 +21,6 @@ type UseUnderlyingResolverParameters = {
   name: string
   /** The currently-known resolver, from the registry/subgraph. */
   resolverAddress: string | undefined
-  enabled?: boolean
 }
 
 /**
@@ -36,7 +35,6 @@ type UseUnderlyingResolverParameters = {
 export const useUnderlyingResolver = ({
   name,
   resolverAddress,
-  enabled = true,
 }: UseUnderlyingResolverParameters) => {
   const query = useReadContract({
     abi: ensV1ResolverAbstractionSnippet,
@@ -44,7 +42,7 @@ export const useUnderlyingResolver = ({
     functionName: 'getResolver',
     args: [dnsEncodeName(name)],
     query: {
-      enabled: enabled && !!name && !!resolverAddress && resolverAddress !== emptyAddress,
+      enabled: !!name && !!resolverAddress && resolverAddress !== emptyAddress,
       // The call reverts for resolvers that do not implement `getResolver`.
       // That is an expected outcome, not a transient failure, so never retry.
       retry: false,
