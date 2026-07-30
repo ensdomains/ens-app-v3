@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { Address } from 'viem'
 
-import { isSelfExtendable } from '@app/components/pages/profile/[name]/tabs/OwnershipTab/sections/ExpirySection/hooks/useExpiryActions'
+import { nameLevel } from '@app/utils/name'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
@@ -14,6 +15,7 @@ import { getDeleteAbilities } from './utils/getDeleteAbilities'
 import { getEditAbilities } from './utils/getEditAbilities'
 import { getReclaimAbilities } from './utils/getReclaimAbilities'
 import { getSendAbilities } from './utils/getSendAbilities'
+import { isNameOwnerOrManager, isSelfExtendable } from './utils/isSelfExtendable'
 
 type ExtendAbilities = {
   canExtend: boolean
@@ -84,6 +86,33 @@ export const DEFAULT_ABILITIES: Abilities = {
   canSendManager: false,
 }
 
+const canExtendPccSubname = ({
+  name,
+  address,
+  basicNameData,
+  parentBasicNameData,
+}: {
+  name: string
+  address: Address
+  basicNameData: ReturnType<typeof useBasicName>
+  parentBasicNameData: ReturnType<typeof useParentBasicName>
+}) => {
+  const { wrapperData } = basicNameData
+  const isPccSubname =
+    name.endsWith('.eth') &&
+    nameLevel(name) === 'subname' &&
+    !!wrapperData?.fuses.parent.PARENT_CANNOT_CONTROL
+  if (!isPccSubname) return false
+
+  const isSubnameOwnerAllowed =
+    !!wrapperData?.fuses.parent.CAN_EXTEND_EXPIRY && isSelfExtendable({ ...basicNameData, address })
+  const isParentOwner =
+    parentBasicNameData.registrationStatus !== 'gracePeriod' &&
+    isNameOwnerOrManager({ ...parentBasicNameData, address })
+
+  return isSubnameOwnerAllowed || isParentOwner
+}
+
 type UseAbilitiesParameters = {
   name: string
   enabled?: boolean
@@ -128,7 +157,14 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
   const data: Abilities | undefined = useMemo(
     () => {
       if (!name || !address || isLoading) return DEFAULT_ABILITIES
-      const canExtend = !!name && checkETH2LDFromName(name)
+      const canExtend =
+        checkETH2LDFromName(name) ||
+        canExtendPccSubname({
+          name,
+          address,
+          basicNameData,
+          parentBasicNameData,
+        })
       return {
         canExtend,
         canSelfExtend: canExtend && isSelfExtendable({ ...basicNameData, address }),

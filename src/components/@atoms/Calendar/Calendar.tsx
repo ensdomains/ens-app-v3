@@ -70,16 +70,20 @@ type Props = {
   unit?: string
   name?: string
   min?: number
+  max?: number
 } & Omit<InputProps, 'value' | 'defaultValue' | 'min' | 'max' | 'name'>
 
 export const Calendar = forwardRef(
   (
-    { value, name, onBlur, highlighted, min, onChange, ...props }: Props,
+    { value, name, onBlur, highlighted, min, max, onChange, ...props }: Props,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
     const [minDuratiion] = useState(min ?? value)
     const minDate = secondsToDate(minDuratiion)
+    // Derive maxDate live (not useState-captured) so an async-resolved cap
+    // isn't permanently disabled if `max` was undefined on first paint.
+    const maxDate = max !== undefined ? secondsToDate(max) : undefined
 
     const breakpoint = useBreakpoint()
 
@@ -93,6 +97,7 @@ export const Calendar = forwardRef(
           ref={inputRef}
           value={secondsToDateInput(value)}
           min={secondsToDateInput(minDuratiion)}
+          max={max !== undefined ? secondsToDateInput(max) : undefined}
           onFocus={(e) => {
             e.target.select()
           }}
@@ -107,8 +112,10 @@ export const Calendar = forwardRef(
               newValueAsDate.getTime() + newValueAsDate.getTimezoneOffset() * 60 * 1000,
             )
 
-            const limitedValueAsDate =
+            let limitedValueAsDate =
               minDate > normalizedValueAsDate ? minDate : normalizedValueAsDate
+            // Clamp the picked value down to the max when a cap is set.
+            if (maxDate && limitedValueAsDate > maxDate) limitedValueAsDate = maxDate
             onChange({
               ...e,
               currentTarget: { ...e.currentTarget, valueAsDate: limitedValueAsDate },

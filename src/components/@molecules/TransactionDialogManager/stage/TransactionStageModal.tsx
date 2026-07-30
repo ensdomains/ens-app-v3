@@ -186,7 +186,7 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
   const [{ progress }, setProgress] = useState({ progress: 0, timeLeft: 45 })
 
   const intervalFunc = useCallback(
-    (interval?: NodeJS.Timeout) => {
+    (interval?: ReturnType<typeof setInterval>) => {
       const timeElapsed = Date.now() - time.start
       const _timeLeft = time.ms - timeElapsed
       const _progress = Math.min((timeElapsed / (timeElapsed + _timeLeft)) * 100, 100)

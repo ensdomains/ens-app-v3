@@ -42,4 +42,20 @@ describe('Invoice', () => {
     expect(screen.getByText('total')).toBeVisible()
     expect(screen.getByText('$3.00')).toBeVisible()
   })
+
+  it('should render zero values without treating them as loading', async () => {
+    render(
+      <Invoice
+        items={[
+          { label: 'free line', value: 0n },
+          { label: 'line 1', value: 1000000000000000000n },
+        ]}
+        totalLabel="total"
+        unit="eth"
+      />,
+    )
+
+    expect(screen.getByTestId('invoice-item-0-amount')).toHaveTextContent('0 ETH')
+    expect(screen.getByTestId('invoice-total')).toHaveTextContent('1.0000 ETH')
+  })
 })

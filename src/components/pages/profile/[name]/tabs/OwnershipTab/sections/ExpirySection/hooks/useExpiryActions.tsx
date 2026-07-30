@@ -1,26 +1,14 @@
 import { useTranslation } from 'react-i18next'
-import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { GetOwnerReturnType, GetWrapperDataReturnType } from '@ensdomains/ensjs/public'
 import { CalendarSVG, FastForwardSVG } from '@ensdomains/thorin'
 
+import { useAbilities } from '@app/hooks/abilities/useAbilities'
+import { isSelfExtendable } from '@app/hooks/abilities/utils/isSelfExtendable'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { nameLevel } from '@app/utils/name'
 
 import type { useExpiryDetails } from './useExpiryDetails'
-
-export const isSelfExtendable = ({
-  ownerData,
-  wrapperData,
-  address,
-}: {
-  ownerData?: GetOwnerReturnType
-  wrapperData?: GetWrapperDataReturnType
-  address?: Address
-}) => {
-  return ownerData?.registrant === address || wrapperData?.owner === address
-}
 
 type ExpiryAction = {
   label: string
@@ -54,14 +42,13 @@ export const useExpiryActions = ({
 }): UseExpiryActionsReturnType | null => {
   const { t } = useTranslation('common')
   const { address, isConnected } = useAccount()
+  const abilities = useAbilities({ name })
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
 
-  // TODO: remove this when we add support for extending wrapped subnames
-  const is2ld = nameLevel(name) === '2ld'
-
   const expiryDate = expiryDetails?.find(({ type }) => type === 'expiry')?.date
-  if (!expiryDate || !is2ld) return null
+  if (!expiryDate) return null
+
   return [
     {
       label: t('action.setReminder'),
@@ -70,7 +57,7 @@ export const useExpiryActions = ({
       primary: false,
       expiryDate,
     },
-    ...(isConnected
+    ...(isConnected && abilities.data?.canExtend
       ? [
           {
             label: t('action.extend'),

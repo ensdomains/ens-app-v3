@@ -262,7 +262,9 @@ export const ImportTransaction = ({
         <InvoiceItemBox>
           <Typography>{t('estimatedNetworkCost')}</Typography>
           <Typography data-testid="import-cost">
-            <CurrencyText eth={gasCost} currency={currencyDisplay} />
+            {/* gasCost is 0n while the estimate is loading; render a skeleton
+                rather than a misleading "0 ETH" by passing undefined. */}
+            <CurrencyText eth={gasCost || undefined} currency={currencyDisplay} />
           </Typography>
         </InvoiceItemBox>
         <InvoiceItemBox>

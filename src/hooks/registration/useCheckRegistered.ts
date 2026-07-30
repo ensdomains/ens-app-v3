@@ -34,7 +34,9 @@ export const useCheckRegistered = ({
       }, 5000)
       // We don't need to clear the interval when checkRegistered is true because it will lead
       // to a page redirect and the unmounting of the component
-      return () => interval && clearInterval(interval)
+      return () => {
+        clearInterval(interval)
+      }
     }
   }, [active, name, queryClient, checkRegistered])
 

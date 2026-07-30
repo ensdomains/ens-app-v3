@@ -427,7 +427,8 @@
   },
   "calendar": {
     "pick_by_years": "Pick by years",
-    "pick_by_date": "Pick by date"
+    "pick_by_date": "Pick by date",
+    "max": "Max"
   },
   "verification": {
     "verifiedBy": "Verified by {{ issuer }}",

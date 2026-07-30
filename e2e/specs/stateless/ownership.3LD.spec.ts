@@ -1621,7 +1621,12 @@ test.describe('Wrapped & Emancipated 3LD, Wrapped 2LD - Parent Owner and Manager
 
     expect(await ownershipPage.getExpiryTimestamp()).not.toBeNull()
 
+    // The connected account is the subname owner, but CAN_EXTEND_EXPIRY is not
+    // burned and it is not the parent owner, so it cannot extend the expiry.
     await expect(ownershipPage.extendButton).toHaveCount(0)
-    await expect(ownershipPage.setReminder).toHaveCount(0)
+    // The subname is emancipated and therefore has its own expiry, so the
+    // "set reminder" action is surfaced. (Previously subnames showed no expiry
+    // actions at all; pcc subname support now surfaces reminders for them.)
+    await expect(ownershipPage.setReminder).toHaveCount(1)
   })
 })

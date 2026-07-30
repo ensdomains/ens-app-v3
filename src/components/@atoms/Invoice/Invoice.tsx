@@ -6,6 +6,8 @@ import { CurrencyDisplay } from '@app/types'
 
 import { CurrencyText } from '../CurrencyText/CurrencyText'
 
+const hasValue = (value?: bigint): value is bigint => value !== undefined
+
 const Container = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']};
@@ -50,9 +52,11 @@ type Props = {
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
   const filteredItems = items
     .map(({ value, bufferPercentage }) =>
-      value && unit === 'eth' && bufferPercentage ? (value * bufferPercentage) / 100n : value,
+      hasValue(value) && unit === 'eth' && bufferPercentage
+        ? (value * bufferPercentage) / 100n
+        : value,
     )
-    .filter((x): x is bigint => !!x)
+    .filter(hasValue)
   const total = filteredItems.reduce((a, b) => a + b, 0n)
   const hasEmptyItems = filteredItems.length !== items.length
 
@@ -61,9 +65,13 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
       {items.map(({ label, value, bufferPercentage, color }, inx) => (
         <LineItem data-testid={`invoice-item-${inx}`} $color={color} key={label}>
           <div>{label}</div>
-          <Skeleton loading={!value}>
+          <Skeleton loading={value === undefined}>
             <div data-testid={`invoice-item-${inx}-amount`}>
-              <CurrencyText bufferPercentage={bufferPercentage} eth={value || 0n} currency={unit} />
+              {/* Pass `value` through as-is: an undefined value is a loading
+                  state (CurrencyText renders the "0.0000 ETH" placeholder),
+                  while a genuine 0n renders as "0 ETH". Coercing to 0n here
+                  would make loading items indistinguishable from real zeros. */}
+              <CurrencyText bufferPercentage={bufferPercentage} eth={value} currency={unit} />
             </div>
           </Skeleton>
         </LineItem>
@@ -72,7 +80,7 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
         <div>{totalLabel}</div>
         <Skeleton loading={hasEmptyItems}>
           <div data-testid="invoice-total">
-            <CurrencyText eth={hasEmptyItems ? 0n : total} currency={unit} />
+            <CurrencyText eth={hasEmptyItems ? undefined : total} currency={unit} />
           </div>
         </Skeleton>
       </Total>
