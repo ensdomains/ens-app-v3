@@ -15,8 +15,7 @@ const SUPPORT_LINKS = {
   nameWrapper: 'https://support.ens.domains/en/articles/7902532-name-wrapper-overview',
   dnsNames:
     'https://support.ens.domains/en/articles/9565578-can-i-use-my-dns-domain-as-an-ens-name',
-  gaslessDnssec:
-    'https://support.ens.domains/en/articles/8834820-gasless-dns-import#h_b92a64180f',
+  gaslessDnssec: 'https://support.ens.domains/en/articles/8834820-gasless-dns-import#h_b92a64180f',
   'offchain-not-in-names':
     'https://support.ens.domains/en/articles/8874842-find-your-names-on-the-my-names-page',
   owner: undefined,
