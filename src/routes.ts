@@ -13,6 +13,8 @@ import {
   PersonSVG,
 } from '@ensdomains/thorin'
 
+import { getSupportLink } from '@app/utils/supportLinks'
+
 export type PublicRoute =
   | 'search'
   | 'governance'
@@ -101,7 +103,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'support',
-    href: 'https://support.ens.domains',
+    href: getSupportLink('home'),
     label: 'navigation.support',
     disabled: false,
     connected: false,

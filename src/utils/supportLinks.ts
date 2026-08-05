@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 const SUPPORT_LINKS = {
+  home: 'https://support.ens.domains',
+  transactionTroubleshooting:
+    'https://support.ens.domains/en/articles/13449264-fix-eth-registration-errors',
   homoglyphs:
     'https://support.ens.domains/en/articles/7901658-what-are-homoglyphs-and-lookalike-ens-names',
   namesAndSubnames: 'https://support.ens.domains/en/articles/8883890-create-delete-ens-subnames',

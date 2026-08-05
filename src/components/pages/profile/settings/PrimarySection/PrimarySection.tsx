@@ -14,6 +14,7 @@ import { useReverseRegistryName } from '@app/hooks/ensjs/public/useReverseRegist
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
+import { getSupportLink } from '@app/utils/supportLinks'
 
 import { NetworkSpecificPrimaryNamesSection } from './NetworkSpecificPrimaryNamesSection'
 
@@ -278,7 +279,7 @@ export const PrimarySection = () => {
                 i18nKey="section.primary.noNameDescription"
                 components={{
                   primaryNameLink: (
-                    <Outlink href="https://support.ens.domains/en/articles/7890756-what-is-a-primary-name" />
+                    <Outlink href={getSupportLink('primaryName')} />
                   ),
                 }}
               />
