@@ -463,8 +463,10 @@
   },
   "errors": {
     "invalidName": "This name is invalid.",
+    "shortName": ".eth names must be at least 3 characters.",
     "invalidAddress": "Not a valid address",
     "expiringSoon": "The grace period for this name ends on {{date}}. If it isn’t extended before this date, it will become available for registration.",
+    "expiringSoonShortName": "The grace period for this name ends on {{date}}. Extending isn’t available for .eth names under 3 characters, and they can’t be re-registered.",
     "hasExpired": "{{ name }} has expired",
     "ownerManagerChoice": "Must send owner or manager",
     "unknown": "Unknown error",

@@ -4,6 +4,7 @@ import { mockFunction, renderHook, screen } from '@app/test-utils'
 import { useConnectModal } from '@getpara/rainbowkit'
 import mockRouter from 'next-router-mock'
 import { useSearchParams } from 'next/navigation'
+import { labelhash } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, type UseAccountReturnType } from 'wagmi'
 
@@ -620,6 +621,46 @@ describe('useRenew', () => {
     renderHook(() => useRenew('test.eth'))
 
     expect(mockShowExtendNamesInput).not.toHaveBeenCalled()
+  })
+
+  it('should not open Extend Names for an on.eth-shaped registered short name', () => {
+    mockRouter.push('/on.eth?renew=123')
+    mockUseBasicName.mockReturnValue({
+      registrationStatus: 'registered',
+      isLoading: false,
+      isValid: true,
+      isShort: true,
+      isETH: true,
+      is2LD: true,
+      name: 'on.eth',
+    })
+
+    renderHook(() => useRenew('on.eth'))
+
+    expect(mockShowExtendNamesInput).not.toHaveBeenCalled()
+  })
+
+  // `parseInput` calls an unhealed label short, so a renewal link for a normal-length name must
+  // not be turned away by the short-name policy while the subgraph catches up.
+  it('should open Extend Names for a name whose label is still an encoded labelhash', () => {
+    const encodedName = `[${labelhash('nick').slice(2)}].eth`
+    mockRouter.push(`/${encodedName}?renew=123`)
+    mockUseBasicName.mockReturnValue({
+      registrationStatus: 'registered',
+      isLoading: false,
+      isValid: true,
+      isShort: true,
+      isETH: true,
+      is2LD: true,
+      name: encodedName,
+    })
+
+    renderHook(() => useRenew(encodedName))
+
+    expect(mockShowExtendNamesInput).toHaveBeenCalledWith(
+      `extend-names-${encodedName}`,
+      expect.objectContaining({ names: [encodedName] }),
+    )
   })
 
   it('should do nothing when registration status is loading', () => {

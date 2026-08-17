@@ -46,11 +46,14 @@ export const useExpiryActions = ({
   expiryDetails,
   ownerData,
   wrapperData,
+  canExtend,
 }: {
   name: string
   expiryDetails: ReturnType<typeof useExpiryDetails>['data']
   ownerData?: GetOwnerReturnType
   wrapperData?: GetWrapperDataReturnType
+  /** Short .eth 2LDs keep their expiry panel, but the app does not offer to extend them. */
+  canExtend: boolean
 }): UseExpiryActionsReturnType | null => {
   const { t } = useTranslation('common')
   const { address, isConnected } = useAccount()
@@ -70,7 +73,7 @@ export const useExpiryActions = ({
       primary: false,
       expiryDate,
     },
-    ...(isConnected
+    ...(isConnected && canExtend
       ? [
           {
             label: t('action.extend'),

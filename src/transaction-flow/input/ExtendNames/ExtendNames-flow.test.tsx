@@ -1,5 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { labelhash } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 import { useAccount, useBalance } from 'wagmi'
 
@@ -151,5 +152,82 @@ describe('Extendnames', () => {
     )
     expect(screen.getAllByText('input.extendNames.disabled.title').length).toBeGreaterThan(0)
     expect(screen.queryByText('action.next')).not.toBeInTheDocument()
+  })
+  it('should make a persisted on.eth renewal a dead end without registrar reads', () => {
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['on.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    expect(screen.getAllByText('input.extendNames.shortName.title').length).toBeGreaterThan(0)
+    expect(screen.getByText('input.extendNames.shortName.description')).toBeVisible()
+    expect(screen.queryByText('action.next')).not.toBeInTheDocument()
+    expect(mockUsePrice).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+    expect(mockUseExpiry).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+    expect(mockUseEstimateGasWithStateOverride).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: false }),
+    )
+  })
+  // `renew()` in the new Manager app carries no length minimum, so where renewals have moved there a
+  // short name is not a dead end — it just cannot be renewed here. The Manager link is the answer.
+  it('should prefer the disabled banner over the short-name view when the ETHRegistrarController has been removed', () => {
+    mockUseIsEthRegistrarControllerActive.mockReturnValueOnce({
+      data: false,
+      isLoading: false,
+    } as any)
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['on.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    expect(screen.getAllByText('input.extendNames.disabled.title').length).toBeGreaterThan(0)
+    expect(screen.queryByText('input.extendNames.shortName.description')).not.toBeInTheDocument()
+  })
+  // Which of the two dead ends a short name gets depends on that registrar read, so it waits for it
+  // rather than claiming the wrong one first.
+  it('should not show the short-name view while the registrar read is still in flight', () => {
+    mockUseIsEthRegistrarControllerActive.mockReturnValueOnce({
+      data: undefined,
+      isLoading: true,
+    } as any)
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['on.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    expect(screen.queryByText('input.extendNames.shortName.description')).not.toBeInTheDocument()
+  })
+  // An unhealed label is short only in the sense that nothing can measure it, so the flow has to
+  // price and offer the renewal exactly as it would for the decoded name.
+  it('should extend a name whose label is still an encoded labelhash', () => {
+    const encodedName = `[${labelhash('nick').slice(2)}].eth`
+    render(
+      <ExtendNames
+        {...{
+          data: { names: [encodedName], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+
+    expect(screen.queryByText('input.extendNames.shortName.title')).not.toBeInTheDocument()
+    expect(screen.getByTestId('extend-names-confirm')).not.toHaveAttribute('disabled')
+    expect(mockUsePrice).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }))
   })
 })

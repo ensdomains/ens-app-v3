@@ -2,7 +2,7 @@ import { mockFunction, renderHook } from '@app/test-utils'
 
 import { dequal } from 'dequal'
 import { match, P } from 'ts-pattern'
-import { Address } from 'viem'
+import { Address, labelhash } from 'viem'
 // import { writeFileSync} from 'fs'
 import { afterAll, describe, expect, it, vi } from 'vitest'
 
@@ -93,6 +93,63 @@ describe('useAbilities', () => {
       const { result } = renderHook(() => useAbilities({ name }))
 
       expect(result.current.data?.canEditRecords).toBe(true)
+    })
+    it('should not allow an on.eth-shaped registered short name to be extended', () => {
+      mockUseAccountSafely.mockReturnValue({ address: account })
+      mockUseBasicName.mockReturnValue({
+        isValid: true,
+        isShort: true,
+        isETH: true,
+        is2LD: true,
+        name: 'on.eth',
+        ownerData: {
+          ownershipLevel: 'registrar',
+          owner: account,
+          registrant: account,
+        },
+        isLoading: false,
+      })
+      mockUseParentBasicName.mockReturnValue({ isLoading: false })
+      mockUseResolverIsAuthorised.mockReturnValue({
+        data: { isAuthorised: true, isValid: true },
+        isLoading: false,
+      })
+      mockUseHasSubnames.mockReturnValue({ data: false, isLoading: false })
+
+      const { result } = renderHook(() => useAbilities({ name: 'on.eth' }))
+
+      expect(result.current.data?.canExtend).toBe(false)
+      expect(result.current.data?.canSelfExtend).toBe(false)
+    })
+    // A name the subgraph has not healed looks short to `parseInput`, and extending it is the
+    // renewal path that would be lost most quietly.
+    it('should allow a name whose label is still an encoded labelhash to be extended', () => {
+      const encodedName = `[${labelhash('nick').slice(2)}].eth`
+      mockUseAccountSafely.mockReturnValue({ address: account })
+      mockUseBasicName.mockReturnValue({
+        isValid: true,
+        isShort: true,
+        isETH: true,
+        is2LD: true,
+        name: encodedName,
+        ownerData: {
+          ownershipLevel: 'registrar',
+          owner: account,
+          registrant: account,
+        },
+        isLoading: false,
+      })
+      mockUseParentBasicName.mockReturnValue({ isLoading: false })
+      mockUseResolverIsAuthorised.mockReturnValue({
+        data: { isAuthorised: true, isValid: true },
+        isLoading: false,
+      })
+      mockUseHasSubnames.mockReturnValue({ data: false, isLoading: false })
+
+      const { result } = renderHook(() => useAbilities({ name: encodedName }))
+
+      expect(result.current.data?.canExtend).toBe(true)
+      expect(result.current.data?.canSelfExtend).toBe(true)
     })
   })
 

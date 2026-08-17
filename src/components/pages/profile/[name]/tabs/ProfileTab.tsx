@@ -18,6 +18,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useOwners } from '@app/hooks/useOwners'
 import { useVerifiedRecords } from '@app/hooks/verification/useVerifiedRecords/useVerifiedRecords'
 import { categoriseAndTransformTextRecords } from '@app/utils/records/categoriseProfileTextRecords'
+import { isShortEth2LD } from '@app/utils/shortName'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
 import { getVerificationRecordItemProps } from '@app/utils/verification/getVerificationRecordItems'
@@ -59,6 +60,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     pccExpired,
     gracePeriodEndDate,
   } = nameDetails
+  const isShortName = isShortEth2LD(nameDetails)
 
   const abilities = useAbilities({ name })
 
@@ -93,9 +95,10 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     [gracePeriodEndDate],
   )
   const snippetButton = useMemo(() => {
+    if (isShortName) return undefined
     if (isExpired) return 'register'
     if (abilities.data?.canExtend) return 'extend'
-  }, [isExpired, abilities.data?.canExtend])
+  }, [isExpired, isShortName, abilities.data?.canExtend])
 
   const getTextRecord = (key: string) => profile?.texts?.find((x) => x.key === key)
 

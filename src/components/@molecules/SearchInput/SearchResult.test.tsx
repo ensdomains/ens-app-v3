@@ -1,7 +1,7 @@
 import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
 import { ComponentProps } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -15,8 +15,6 @@ const mockUseBasicName = mockFunction(useBasicName)
 const mockUsePrimaryName = mockFunction(usePrimaryName)
 
 describe('SearchResult', () => {
-  mockUseBasicName.mockReturnValue({ registrationStatus: 'available', beautifiedName: 'nick.eth' })
-
   const baseMockData: SearchResultProps = {
     hoverCallback: vi.fn(),
     clickCallback: vi.fn(),
@@ -28,6 +26,13 @@ describe('SearchResult', () => {
     },
     usingPlaceholder: false,
   }
+
+  beforeEach(() => {
+    mockUseBasicName.mockReturnValue({
+      registrationStatus: 'available',
+      beautifiedName: 'nick.eth',
+    })
+  })
 
   it('should render with basic data', () => {
     render(<SearchResult {...baseMockData} />)
@@ -89,6 +94,109 @@ describe('SearchResult', () => {
     const element = screen.getByText('nick.eth')
     fireEvent.click(element)
     expect(baseMockData.clickCallback).toHaveBeenCalledWith(0)
+  })
+  it('should not allow an unregistered short .eth result to be clicked', () => {
+    const clickCallback = vi.fn()
+    mockUseBasicName.mockReturnValue({
+      registrationStatus: 'short',
+      beautifiedName: '12.eth',
+      name: '12.eth',
+      isValid: true,
+      isShort: true,
+      isETH: true,
+      is2LD: true,
+      isLoading: false,
+    })
+
+    render(
+      <SearchResult
+        {...baseMockData}
+        clickCallback={clickCallback}
+        searchItem={{ nameType: 'eth', text: '12.eth' }}
+      />,
+    )
+
+    fireEvent.click(screen.getByText('12.eth'))
+    expect(clickCallback).not.toHaveBeenCalled()
+    expect(screen.getByTestId('search-result-name')).toHaveStyle('pointer-events: none')
+    expect(screen.getByText('search.status.short')).toBeVisible()
+  })
+  it('should keep a registered on.eth-shaped short result clickable', () => {
+    const clickCallback = vi.fn()
+    mockUseBasicName.mockReturnValue({
+      registrationStatus: 'registered',
+      beautifiedName: 'on.eth',
+      name: 'on.eth',
+      isValid: true,
+      isShort: true,
+      isETH: true,
+      is2LD: true,
+      isLoading: false,
+    })
+
+    render(
+      <SearchResult
+        {...baseMockData}
+        clickCallback={clickCallback}
+        searchItem={{ nameType: 'eth', text: 'on.eth' }}
+      />,
+    )
+
+    fireEvent.click(screen.getByText('on.eth'))
+    expect(clickCallback).toHaveBeenCalledWith(0)
+    expect(screen.getByTestId('search-result-name')).toHaveStyle('cursor: pointer')
+  })
+  // The keyboard path in SearchInput only refuses a route for the `short` status, so a grace-period
+  // short must stay clickable here too — otherwise the row looks inert but Enter still navigates.
+  it('should keep a short result in its grace period clickable', () => {
+    const clickCallback = vi.fn()
+    mockUseBasicName.mockReturnValue({
+      registrationStatus: 'gracePeriod',
+      beautifiedName: 'on.eth',
+      name: 'on.eth',
+      isValid: true,
+      isShort: true,
+      isETH: true,
+      is2LD: true,
+      isLoading: false,
+    })
+
+    render(
+      <SearchResult
+        {...baseMockData}
+        clickCallback={clickCallback}
+        searchItem={{ nameType: 'eth', text: 'on.eth' }}
+      />,
+    )
+
+    fireEvent.click(screen.getByText('on.eth'))
+    expect(clickCallback).toHaveBeenCalledWith(0)
+    expect(screen.getByTestId('search-result-name')).toHaveStyle('cursor: pointer')
+  })
+  it('should not allow a short result to be clicked while its status is still loading', () => {
+    const clickCallback = vi.fn()
+    mockUseBasicName.mockReturnValue({
+      registrationStatus: undefined,
+      beautifiedName: '12.eth',
+      name: '12.eth',
+      isValid: true,
+      isShort: true,
+      isETH: true,
+      is2LD: true,
+      isLoading: true,
+    })
+
+    render(
+      <SearchResult
+        {...baseMockData}
+        clickCallback={clickCallback}
+        searchItem={{ nameType: 'eth', text: '12.eth' }}
+      />,
+    )
+
+    fireEvent.click(screen.getByText('12.eth'))
+    expect(clickCallback).not.toHaveBeenCalled()
+    expect(screen.getByTestId('search-result-name')).toHaveStyle('pointer-events: none')
   })
   it('should show address as clickable', () => {
     mockUsePrimaryName.mockReturnValue({
