@@ -27,6 +27,14 @@ const TagText = styled.span(
   `,
 )
 
+const AlreadySetMessage = styled.span(
+  ({ theme }) => css`
+    color: ${theme.colors.greyPrimary};
+    font-size: ${theme.fontSizes.small};
+    text-align: right;
+  `,
+)
+
 const Container = styled.button(
   ({ theme }) => css`
     width: 100%;
@@ -70,11 +78,25 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
     return { userRoles, hasRole, primaryRole }
   }, [roles, role, address])
 
+  // When disabled, the message must name the role that caused the disable (excludeRole),
+  // not the address's first role (primaryRole), which may differ for multi-role addresses.
+  const alreadySetMessage =
+    markers.hasRole && role
+      ? t('input.sendName.views.search.alreadySet', {
+          value: t(`roles.${role}.title`, { ns: 'common' }),
+        })
+      : undefined
+  const alreadySetMessageId = `search-result-already-set-${address}`
+
   return (
     <Container
       data-testid={`search-result-${address}`}
       type="button"
       disabled={markers.hasRole}
+      // Describe the disabled reason without overriding the row's accessible name
+      // (an aria-label would replace the avatar/address identity for screen readers).
+      aria-describedby={alreadySetMessage ? alreadySetMessageId : undefined}
+      title={alreadySetMessage}
       {...props}
     >
       <LeftContainer>
@@ -85,12 +107,20 @@ export const SearchViewResult = ({ address, name, excludeRole: role, roles, ...p
           size="8"
         />
       </LeftContainer>
-      {markers.primaryRole && (
+      {markers.hasRole ? (
         <RightContainer>
-          <Tag>
-            <TagText>{t(`roles.${markers.primaryRole?.role}.title`, { ns: 'common' })}</TagText>
-          </Tag>
+          <AlreadySetMessage id={alreadySetMessageId} data-testid={alreadySetMessageId}>
+            {alreadySetMessage}
+          </AlreadySetMessage>
         </RightContainer>
+      ) : (
+        markers.primaryRole && (
+          <RightContainer>
+            <Tag>
+              <TagText>{t(`roles.${markers.primaryRole?.role}.title`, { ns: 'common' })}</TagText>
+            </Tag>
+          </RightContainer>
+        )
       )}
     </Container>
   )

@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components'
 import { CrossSVG, LeftChevronSVG, PersonSVG } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
@@ -225,7 +226,7 @@ export const TabBar = () => {
   const { address } = useAccountSafely()
   const primary = usePrimaryName({ address })
 
-  const hasPrimary = !!primary.data?.name
+  const hasPrimary = hasValidPrimaryName(primary.data)
   const hasBack = !!router.query.from
 
   const [isOpen, setIsOpen] = useState(false)
@@ -267,7 +268,7 @@ export const TabBar = () => {
                   address={address}
                   isOpen={isOpen}
                   setIsOpen={setIsOpen}
-                  name={primary.data?.name}
+                  name={hasPrimary ? primary.data?.name : undefined}
                 />
               </>
             )}

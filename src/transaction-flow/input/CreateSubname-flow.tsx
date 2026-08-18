@@ -17,6 +17,7 @@ import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/r
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
 import { profileEditorFormToProfileRecords } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { TimezonePicker } from '@app/components/pages/profile/[name]/registration/steps/Profile/TimezonePicker'
 import { WrappedAvatarButton } from '@app/components/pages/profile/[name]/registration/steps/Profile/WrappedAvatarButton'
 import { WrappedHeaderButton } from '@app/components/pages/profile/[name]/registration/steps/Profile/WrappedHeaderButton'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
@@ -267,6 +268,20 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
                       validator={validatorForRecord(field)}
                       validated={isDirtyForRecordAtIndex(index)}
                       error={errorForRecordAtIndex(index, 'key')}
+                      onDelete={() => handleDeleteRecord(field, index)}
+                    />
+                  ))
+                  .with({ key: 'timezone' }, () => (
+                    <TimezonePicker
+                      key={field.id}
+                      control={control}
+                      index={index}
+                      label={labelForRecord(field)}
+                      secondaryLabel={secondaryLabelForRecord(field)}
+                      placeholder={placeholderForRecord(field)}
+                      error={errorForRecordAtIndex(index)}
+                      validated={isDirtyForRecordAtIndex(index)}
+                      validator={validatorForRecord(field)}
                       onDelete={() => handleDeleteRecord(field, index)}
                     />
                   ))

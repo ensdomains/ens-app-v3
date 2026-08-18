@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { keepPreviousData } from '@tanstack/react-query'
-import { ReactNode, useCallback, useState } from 'react'
+import { Key, ReactNode, useCallback, useMemo, useState } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme, keyframes } from 'styled-components'
 import { useAccount, useClient } from 'wagmi'
@@ -14,9 +14,11 @@ import {
   Typography,
 } from '@ensdomains/thorin'
 
+import { LegacyDropdown } from '@app/components/@molecules/LegacyDropdown/LegacyDropdown'
 import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useOwners } from '@app/hooks/useOwners'
 import { getSupportedChainContractAddress } from '@app/utils/getSupportedChainContractAddress'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
 
@@ -242,13 +244,18 @@ const FilterContainer = styled.div(
     @media (min-width: ${theme.breakpoints.sm}px) {
       margin-bottom: ${theme.space['6']};
     }
+  `,
+)
 
-    & > button {
-      flex-basis: 100px;
-      margin-bottom: -${theme.space['4']};
-      @media (min-width: ${theme.breakpoints.sm}px) {
-        margin-bottom: -${theme.space['6']};
-      }
+// Keeps the source selector at its content width (so the search input takes the rest)
+// and bottom-aligns it with the DialogInput, which pulls itself up by the same amount.
+const SourceSelectorContainer = styled.div(
+  ({ theme }) => css`
+    flex-shrink: 0;
+    margin-bottom: -${theme.space['4']};
+
+    @media (min-width: ${theme.breakpoints.sm}px) {
+      margin-bottom: -${theme.space['6']};
     }
   `,
 )
@@ -338,16 +345,63 @@ const NftItem = ({
   )
 }
 
-function useProfileAddresses(name: string) {
-  const { profile } = useNameDetails({ name })
+type AvatarSource = {
+  address: string
+  // i18n key for the source's role label. Owner rows resolve in the `common`
+  // namespace (see `ns`); wallet/eth rows use the component's `transactionFlow` default.
+  labelKey: string
+  ns?: 'common'
+  testId: string
+}
 
-  const addresses = (profile?.coins ?? []).filter((x) => ['eth'].includes(x.name.toLowerCase()))
+// Ordered, case-insensitively deduped set of addresses whose NFTs can be browsed as
+// an avatar source: the connected wallet (default), the name's manager/owner rows
+// (from `useOwners`), and the eth address record. Connected wallet is kept first so
+// the default browsing behaviour is unchanged.
+function useAvatarSources(name: string, connectedAddress?: string): readonly AvatarSource[] {
+  const { profile, ownerData, wrapperData } = useNameDetails({ name })
+  const owners = useOwners({ ownerData, wrapperData })
 
-  const ethAddress = addresses[0]?.value
+  return useMemo(() => {
+    const ethAddress = (profile?.coins ?? []).find((coin) => coin.name.toLowerCase() === 'eth')
+      ?.value
 
-  return {
-    ethAddress,
-  }
+    const candidates: AvatarSource[] = [
+      ...(connectedAddress
+        ? [
+            {
+              address: connectedAddress,
+              labelKey: 'input.profileEditor.tabs.avatar.nft.address.owned',
+              testId: 'nft-source-wallet',
+            },
+          ]
+        : []),
+      ...owners.map<AvatarSource>((owner) => ({
+        address: owner.address,
+        labelKey: owner.label,
+        ns: 'common',
+        testId: `nft-source-${owner.testId}`,
+      })),
+      ...(ethAddress
+        ? [
+            {
+              address: ethAddress,
+              labelKey: 'input.profileEditor.tabs.avatar.nft.address.other',
+              testId: 'nft-source-eth-record',
+            },
+          ]
+        : []),
+    ]
+
+    const seen = new Set<string>()
+    return candidates.filter((source) => {
+      if (!source.address) return false
+      const key = source.address.toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [profile, owners, connectedAddress])
 }
 
 export const AvatarNFT = ({
@@ -365,13 +419,22 @@ export const AvatarNFT = ({
   const { address: _address } = useAccount()
   const address = _address!
 
-  const { ethAddress } = useProfileAddresses(name)
+  const sources = useAvatarSources(name, _address)
 
   const [searchedInput, setSearchedInput] = useState('')
   const [selectedAddress, setSelectedAddress] = useState<string>(address)
   const [selectedNFT, setSelectedNFT] = useState<number | null>(null)
 
-  const { data: NFTPages, fetchNextPage, isLoading } = useNtfs(chain, selectedAddress)
+  // Resolve the selected source from the (possibly async-changing) source list, falling
+  // back to the first source. Both the dropdown label and the NFT query read the resolved
+  // source's address, so they can never disagree even if `selectedAddress` drops out of
+  // `sources` (e.g. owner data refetches).
+  const selectedSource =
+    sources.find((source) => source.address.toLowerCase() === selectedAddress.toLowerCase()) ??
+    sources[0]
+  const fetchAddress = selectedSource?.address ?? selectedAddress
+
+  const { data: NFTPages, fetchNextPage, isLoading } = useNtfs(chain, fetchAddress)
 
   const NFTs = (NFTPages?.pages ?? [])
     .reduce((prev, curr) => [...prev, ...curr.ownedNfts], [] as OwnedNFT[])
@@ -381,11 +444,8 @@ export const AvatarNFT = ({
   const hasNextPage = !!NFTPages?.pages[NFTPages.pages.length - 1].pageKey
   const fetchPage = useCallback(() => fetchNextPage(), [fetchNextPage])
 
-  const handleSelectAddress = () => {
-    if (!ethAddress) return
-
-    setSelectedAddress((prev) => (prev === address ? ethAddress : address))
-  }
+  const getSourceLabel = (source: AvatarSource) =>
+    t(source.labelKey, source.ns ? { ns: source.ns } : undefined)
 
   if (selectedNFT !== null) {
     const nftReference = NFTs?.[selectedNFT]!
@@ -432,16 +492,31 @@ export const AvatarNFT = ({
 
   const searchBox = (
     <FilterContainer>
-      {!ethAddress ||
-        (address !== ethAddress && (
-          <Button onClick={handleSelectAddress}>
-            {t(
-              `input.profileEditor.tabs.avatar.nft.address.${
-                selectedAddress === address ? 'other' : 'owned'
-              }`,
-            )}
-          </Button>
-        ))}
+      {sources.length > 1 && (
+        <SourceSelectorContainer>
+          <LegacyDropdown
+            shortThrow
+            keepMenuOnTop
+            inheritContentWidth
+            data-testid="nft-source-selector"
+            label={selectedSource ? getSourceLabel(selectedSource) : ''}
+            items={sources.map((source) => ({
+              label: getSourceLabel(source),
+              value: source.address,
+              color: 'text',
+              onClick: () => {
+                setSelectedAddress(source.address)
+                setSelectedNFT(null)
+              },
+              wrapper: (children: ReactNode, key: Key) => (
+                <div data-testid={source.testId} key={key}>
+                  {children}
+                </div>
+              ),
+            }))}
+          />
+        </SourceSelectorContainer>
+      )}
       <DialogInput
         icon={<MagnifyingGlassSVG />}
         hideLabel

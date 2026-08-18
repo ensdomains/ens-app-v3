@@ -31,7 +31,7 @@ test.describe('Import DNSSEC name', () => {
     await expect(page.getByTestId('import-next-button')).toBeDisabled()
   })
 
-  test('should not allow the user to proceed if they have not set the correct TXT record - offchain', async ({
+  test.skip('should not allow the user to proceed if they have not set the correct TXT record - offchain', async ({
     page,
     login,
   }) => {

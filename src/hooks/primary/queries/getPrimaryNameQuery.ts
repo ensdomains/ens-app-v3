@@ -2,6 +2,8 @@ import { readContract } from '@wagmi/core'
 import { Address, getChainContractAddress } from 'viem'
 
 import { universalResolverReverseSnippet } from '@ensdomains/ensjs/contracts'
+import { getAddressRecord } from '@ensdomains/ensjs/public'
+import { normalise } from '@ensdomains/ensjs/utils'
 
 import { ConfigWithEns } from '@app/types'
 import { getCoderByCoinTypeWithTestnetSupport } from '@app/utils/records'
@@ -30,8 +32,25 @@ export const getPrimaryNameQuery =
         functionName: 'reverse',
         args: [address, BigInt(coinType)],
       })
+
+      const [name, resolvedAddress] = result
+      const normalizedName = normalise(name)
+      if (normalizedName !== name) return null
+
+      const addressRecord = await getAddressRecord(client, {
+        name: normalizedName,
+        coin: getCoderByCoinTypeWithTestnetSupport(coinType).name,
+      })
+      if (!addressRecord?.value || addressRecord.value.toLowerCase() !== address.toLowerCase()) {
+        return null
+      }
+
+      if (resolvedAddress?.toLowerCase && resolvedAddress.toLowerCase() !== address.toLowerCase()) {
+        return null
+      }
+
       return {
-        name: result[0],
+        name,
         address,
         coinType,
         coinName: getCoderByCoinTypeWithTestnetSupport(coinType).name,

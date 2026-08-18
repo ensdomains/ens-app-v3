@@ -5,10 +5,7 @@ import type {
   DnsImportType,
   DnsStep,
 } from '@app/components/pages/import/[name]/useDnsImportReducer'
-import {
-  PaymentMethod,
-  RegistrationStep,
-} from '@app/components/pages/profile/[name]/registration/types'
+import { RegistrationStep } from '@app/components/pages/profile/[name]/registration/types'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 
 export type EventDefs = {
@@ -131,30 +128,9 @@ export type EventDefs = {
      */
     eth_price: bigint
     /**
-     * The payment method used
-     */
-    payment_method: PaymentMethod | ''
-    /**
      * Whether a reverse record was added
      */
     add_reverse_record?: boolean
-  }
-
-  /**
-   * Triggered when a moonpay payment starts and a external transaction is created
-   */
-  'register:moonpay_start': {
-    ens_name: string
-    external_transaction_id: string
-    duration: number
-  }
-
-  /**
-   * After a moonpay payment is completed
-   */
-  'register:moonpay_complete': {
-    ens_name: string
-    external_transaction_id: string
   }
 
   /**

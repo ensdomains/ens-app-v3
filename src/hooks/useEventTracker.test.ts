@@ -1,9 +1,7 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import { formatUnits } from 'viem'
 import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 
-import { PaymentMethod } from '@app/components/pages/profile/[name]/registration/types'
 import { useChainName } from '@app/hooks/chain/useChainName'
 import { trackEvent } from '@app/utils/analytics'
 
@@ -42,34 +40,6 @@ describe('useEventTracker', () => {
     expect(trackEvent).toBeCalledWith(eventName, chain, { name })
   },
   )
-
-  it('should call trackEvent with correct arguments with payment_selected event name', async () => {
-    const duration = 62985600
-    const paymentMethod = 'ethereum' as PaymentMethod
-    const estimatedTotal = 6818890518377750n
-    const ethPrice = 156058000000n
-    const paymentAmount = formatUnits((estimatedTotal * ethPrice) / BigInt(1e8), 18)
-
-    const { result } = renderHook(() => useEventTracker())
-    result.current.trackEvent({
-      eventName: 'payment_selected',
-      customProperties: {
-        duration,
-        paymentMethod,
-        estimatedTotal,
-        ethPrice,
-        durationType: 'years',
-      },
-    })
-
-    expect(trackEvent).toBeCalledTimes(1)
-    expect(trackEvent).toBeCalledWith('payment_selected', chain, {
-      duration,
-      currencyUnit: 'eth',
-      paymentType: 'eth',
-      paymentAmount,
-    })
-  })
 
   test.each([
     'commit_started',

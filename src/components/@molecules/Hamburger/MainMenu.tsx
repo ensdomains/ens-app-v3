@@ -16,7 +16,6 @@ import {
   WalletSVG,
 } from '@ensdomains/thorin'
 
-import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
 import SocialDiscourse from '@app/assets/social/SocialDiscourse.svg'
 import SocialDiscourseColour from '@app/assets/social/SocialDiscourseColour.svg'
 import SocialGithub from '@app/assets/social/SocialGithub.svg'
@@ -328,7 +327,6 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: HamburgerView) =>
       <SocialSection>
         <SocialIcon Icon={SocialX} color="black" href={ENS_LINKS.X} />
         <SocialIcon Icon={SocialGithub} color="#0F0F0F" href={ENS_LINKS.GITHUB} />
-        <SocialIcon Icon={SocialDiscord} color="#7F83FF" href={ENS_LINKS.DISCORD} />
         <SocialIcon Icon={SocialMirror} ColoredIcon={SocialMirrorColour} href={ENS_LINKS.MIRROR} />
         <SocialIcon
           Icon={SocialDiscourse}

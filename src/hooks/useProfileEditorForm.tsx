@@ -13,6 +13,7 @@ import { normalizeCoinAddress } from '@app/utils/coin'
 import { validateAccount } from '@app/validators/validateAccount'
 import { validateCryptoAddress } from '@app/validators/validateAddress'
 import { validateContentHash } from '@app/validators/validateContentHash'
+import { validateTimezone } from '@app/validators/validateTimezone'
 import { validateUrl } from '@app/validators/validateUrl'
 
 import { ContentHashProvider } from '../utils/contenthash'
@@ -101,6 +102,15 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const validatorForRecord = (record: ProfileRecord) => {
     if (record.key === 'contentHash') return validateContentHash('all')
     if (record.key === 'url') return validateUrl
+    if (record.key === 'timezone')
+      return (value?: string) => {
+        if (validateTimezone(value)) return true
+        // Don't block saving over a pre-existing non-IANA value the user hasn't
+        // touched (e.g. an informal `timezone` record set before this feature).
+        const existing = existingRecords.find((r) => r.group === 'general' && r.key === 'timezone')
+        if (existing && value === existing.value) return true
+        return t('steps.profile.errors.invalidValue') as string
+      }
     if (record.group === 'address') {
       return (value?: string) => {
         const address_ = normalizeCoinAddress({ coin: record.key, address: value })

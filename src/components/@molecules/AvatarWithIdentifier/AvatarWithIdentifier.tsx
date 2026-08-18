@@ -4,6 +4,7 @@ import { Address } from 'viem'
 import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
+import { getPrimaryDisplayName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { QuerySpace } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
@@ -55,7 +56,7 @@ export const AvatarWithIdentifier = ({
     enabled: !name,
   })
 
-  const _name = primary.data?.beautifiedName || name
+  const _name = name || getPrimaryDisplayName(primary.data)
   const _title = _name || (shortenAddressAsTitle ? shortenAddress(address) : address)
   const _subtitle = subtitle || (_name ? shortenAddress(address) : undefined)
 

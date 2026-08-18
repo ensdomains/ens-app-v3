@@ -7,6 +7,7 @@ import { useConnections, useDisconnect } from 'wagmi'
 import { Button, PersonSVG, Profile } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { getPrimaryDisplayName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import useHasPendingTransactions from '@app/hooks/transactions/useHasPendingTransactions'
 import { useCopied } from '@app/hooks/useCopied'
@@ -134,7 +135,7 @@ const HeaderProfile = ({ address }: { address: Address }) => {
   return (
     <Profile
       address={address}
-      ensName={primary?.beautifiedName}
+      ensName={getPrimaryDisplayName(primary)}
       dropdownItems={getDropdownItems({
         primary,
         disconnect,

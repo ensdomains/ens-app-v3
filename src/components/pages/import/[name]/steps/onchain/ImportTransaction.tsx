@@ -13,6 +13,7 @@ import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGas
 import { useGasPrice } from '@app/hooks/chain/useGasPrice'
 import { useDnsImportData } from '@app/hooks/ensjs/dns/useDnsImportData'
 import { useDnsOwner } from '@app/hooks/ensjs/dns/useDnsOwner'
+import { getPrimaryDisplayName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
 import { useApprovedForAll } from '@app/hooks/useApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -78,13 +79,12 @@ const InvoiceDnsOwnerContainer = styled.div(
 
 const InvoiceDnsOwner = ({ dnsOwner }: { dnsOwner: Address }) => {
   const { data: primary } = usePrimaryName({ address: dnsOwner })
+  const primaryDisplayName = getPrimaryDisplayName(primary)
 
   return (
     <InvoiceDnsOwnerContainer>
       <div>
-        {primary?.beautifiedName && (
-          <Typography fontVariant="bodyBold">{primary.beautifiedName}</Typography>
-        )}
+        {primaryDisplayName && <Typography fontVariant="bodyBold">{primaryDisplayName}</Typography>}
         <Typography fontVariant="small" color="grey">
           {shortenAddress(dnsOwner)}
         </Typography>

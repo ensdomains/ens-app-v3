@@ -7,9 +7,11 @@ import {
   GetNamesForAddressReturnType,
 } from '@ensdomains/ensjs/subgraph'
 
+import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useQueryOptions } from '@app/hooks/useQueryOptions'
 import { ConfigWithEns, CreateQueryKey, InfiniteQueryConfig, PartialBy } from '@app/types'
 import { useInfiniteQuery } from '@app/utils/query/useInfiniteQuery'
+import { removeStaleWrappedNameData } from '@app/utils/removeStaleWrappedNameData'
 
 type UseNamesForAddressParameters = Omit<
   PartialBy<GetNamesForAddressParameters, 'address'>,
@@ -85,10 +87,31 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
 
   const [unfilteredPages, setUnfilteredPages] = useState<GetNamesForAddressReturnType>([])
 
-  const infiniteData = useMemo(
-    () => (data?.pages ? data?.pages.reduce((acc, page) => [...acc, ...page], []) : []),
-    [data?.pages],
-  )
+  const nameWrapperAddress = useContractAddress({ contract: 'ensNameWrapper' })
+
+  // stale wrapped data is removed here rather than in the query function so that the
+  // raw pages are preserved in the cache, since ensjs relies on the last page's data
+  // to create the pagination cursor for the next page
+  const { normalisedData, infiniteData } = useMemo(() => {
+    if (!data) {
+      return {
+        normalisedData: data,
+        infiniteData: [] as GetNamesForAddressReturnType,
+      }
+    }
+
+    const pages = data.pages.map((page) =>
+      removeStaleWrappedNameData({ names: page, nameWrapperAddress }),
+    )
+
+    return {
+      normalisedData: { ...data, pages },
+      infiniteData: pages.reduce<GetNamesForAddressReturnType>(
+        (acc, page) => [...acc, ...page],
+        [],
+      ),
+    }
+  }, [data, nameWrapperAddress])
 
   useEffect(() => {
     if (!paramsWithLowercaseSearchString.filter?.searchString) {
@@ -115,9 +138,9 @@ export const useNamesForAddress = <TParams extends UseNamesForAddressParameters>
   const nameCount = infiniteDataWithFetchingFill.length || 0
 
   return {
-    data,
+    data: normalisedData,
     infiniteData: infiniteDataWithFetchingFill,
-    page: data?.pages[0] || [],
+    page: normalisedData?.pages[0] || [],
     nameCount,
     status,
     isFetched,

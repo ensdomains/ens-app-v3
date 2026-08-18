@@ -24,7 +24,6 @@ async function performRegistration(name: string): Promise<void> {
   console.log('✅ Registration page loaded')
 
   // Payment + primary toggle
-  await page.locator('[data-testid="payment-choice-ethereum"]').check()
   await page.locator('[data-testid="primary-name-toggle"]').check()
 
   // Proceed to profile step

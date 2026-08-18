@@ -15,8 +15,8 @@
             "loadError": "NFT cannot be loaded",
             "noNFTs": "No NFTs found for this address.",
             "address": {
-              "owned": "Owned",
-              "other": "Other"
+              "owned": "Your wallet",
+              "other": "ETH record"
             },
             "selected": {
               "title": "Selected NFT",
@@ -363,6 +363,7 @@
         },
         "search": {
           "placeholder": "ENS name or Ethereum address",
+          "alreadySet": "This address is already the {{value}}",
           "views": {
             "error": {
               "message": "Something went wrong. Please try again."

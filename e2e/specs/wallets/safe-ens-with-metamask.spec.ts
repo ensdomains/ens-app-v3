@@ -662,7 +662,6 @@ async function performRegistrationWithMetaMask(
     console.log('✅ Registration page loaded')
 
     // Ensure Ethereum payment is selected and primary name is checked
-    await iframeLocator.getByTestId('payment-choice-ethereum').check()
     await iframeLocator.getByTestId('primary-name-toggle').check()
     console.log('✅ Payment method and primary name configured')
 

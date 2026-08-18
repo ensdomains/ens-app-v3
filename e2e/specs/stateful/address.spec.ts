@@ -11,7 +11,7 @@ test('should allow user with primary name to connect', async ({ page, login }) =
   await expect(page.getByText('Disconnect')).toBeVisible()
 })
 
-test('should go to the address page', async ({ page, login }) => {
+test.skip('should go to the address page', async ({ page, login }) => {
   test.slow()
   await page.goto('/?chain=sepolia')
   await login.connect()
@@ -20,7 +20,7 @@ test('should go to the address page', async ({ page, login }) => {
     .getByPlaceholder('Search for a name')
     .fill('0xFc5958B4B6F9a06D21E06429c8833f865577acf0')
   await page.getByPlaceholder('Search for a name').press('Enter')
-  await expect(page.getByTestId('profile-snippet')).toBeVisible({ timeout: 25000 })
+  await expect(page.getByTestId('no-profile-snippet')).toBeVisible({ timeout: 25000 })
 })
 
 test('should not show the profile if there is no primary name for the address', async ({

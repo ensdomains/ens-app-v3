@@ -17,7 +17,7 @@ export const usePrimaryProfile = ({ address, enabled = true }: UsePrimaryProfile
     data: primary,
     isLoading: isPrimaryLoading,
     isFetching: isPrimaryFetching,
-  } = usePrimaryName({ address, enabled, allowMismatch: true })
+  } = usePrimaryName({ address, enabled })
 
   const {
     data: profile,

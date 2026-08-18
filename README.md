@@ -198,9 +198,6 @@ gas-estimate-worker: [url](https://gas-estimate-worker.ens-cf.workers.dev/),
 
 app-v3-maintenance: [url](https://app-v3-maintenance.ens-cf.workers.dev/)
 
-moonpay-worker: [url](https://moonpay-worker.ens-cf.workers.dev/),
-[src](https://github.com/ensdomains/moonpay-worker)
-
 etherscan-api worker: [url](https://etherscan-api.ens-cf.workers.dev)
 
 #### Data indexing

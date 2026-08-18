@@ -8,6 +8,7 @@ export const textIcons = {
   location: dynamic(() => import('./TextLocation.svg')),
   name: dynamic(() => import('./TextName.svg')),
   publicKey: dynamic(() => import('./TextPublicKey.svg')),
+  timezone: dynamic(() => import('./TextTimezone.svg')),
 }
 
 export const DynamicTextIcon = ({
