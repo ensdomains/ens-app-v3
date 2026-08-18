@@ -10,6 +10,11 @@ import {
 } from '@app/constants/supportedSocialRecordKeys'
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { VerificationProtocol } from '@app/transaction-flow/input/VerifyProfile/VerifyProfile-flow'
+import { isAgentRegistrationKey } from '@app/utils/agentRegistration/parseAgentRegistrationKey'
+import {
+  AgentRegistrationRecord,
+  transformAgentRegistrationRecord,
+} from '@app/utils/agentRegistration/transformAgentRegistrationRecord'
 
 import { contentHashToString } from '../contenthash'
 import {
@@ -41,8 +46,18 @@ export const categoriseAndTransformTextRecords = ({
     general: DecodedText[]
     accounts: ProfileAccountRecord[]
     other: ProfileOtherRecord[]
+    agentRegistrations: AgentRegistrationRecord[]
   }>(
     (acc, record) => {
+      // Check for agent-registration records first
+      if (isAgentRegistrationKey(record.key)) {
+        const agentRecord = transformAgentRegistrationRecord(record)
+        if (agentRecord) {
+          return { ...acc, agentRegistrations: [...acc.agentRegistrations, agentRecord] }
+        }
+        // If parsing fails, fall through to treat as "other" record
+      }
+
       const normalisedRecord = normaliseProfileAccountsRecord(record)
       if (
         supportedSocialRecordKeys.includes(
@@ -77,6 +92,7 @@ export const categoriseAndTransformTextRecords = ({
       general: [],
       accounts: [],
       other: [],
+      agentRegistrations: [],
     },
   )
 
