@@ -38,6 +38,7 @@ import { sendEvent } from '@app/utils/analytics/events'
 import { getReadableError } from '@app/utils/errors'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
 import { useQuery } from '@app/utils/query/useQuery'
+import { getSupportLink } from '@app/utils/supportLinks'
 import { computeCacheBustFlags } from '@app/utils/transactionCacheBust'
 import { hasParaConnection, makeEtherscanLink } from '@app/utils/utils'
 
@@ -220,7 +221,7 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
         <Outlink
           iconPosition="before"
           icon={QuestionCircleSVG}
-          href="https://support.ens.domains/en/articles/13608541-transaction-troubleshooting"
+          href={getSupportLink('transactionTroubleshooting')}
         >
           {t('transaction.dialog.sent.learn')}
         </Outlink>
