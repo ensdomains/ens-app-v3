@@ -213,6 +213,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverStatus = useResolverStatus({
     name,
   })
+  const currentResolverAddress =
+    resolverStatus.data?.effectiveResolverAddress ?? profile?.resolverAddress
 
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
@@ -593,7 +595,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         .with('migrateProfileSelector', () => (
           <MigrateProfileSelectorView
             name={name}
-            currentResolverAddress={profile?.resolverAddress!}
+            currentResolverAddress={currentResolverAddress!}
             latestResolverAddress={resolverAddress!}
             hasCurrentProfile={resolverStatus.data?.hasProfile!}
             onBack={() => {

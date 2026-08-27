@@ -46,6 +46,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const roles = useRoles(name)
   const resolver = useResolver({ name })
   const resolverSupport = useResolverHasInterfaces({
+    name,
     interfaceNames: ['VersionableResolver'],
     resolverAddress: resolver.data as Address,
     enabled: !!resolver.data,

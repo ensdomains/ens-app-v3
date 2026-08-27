@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useChainId } from 'wagmi'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import { useResolverIsAuthorised } from '@app/hooks/resolver/useResolverIsAuthorised'
 import { useResolverType } from '@app/hooks/resolver/useResolverType'
 import { useProfile } from '@app/hooks/useProfile'
@@ -40,6 +41,13 @@ export const useResolverStatus = ({
   const { data: profile } = internalProfile
   const profileResolverAddress = profile?.resolverAddress
 
+  const effectiveResolver = useEffectiveResolverAddress({
+    name,
+    resolverAddress: profileResolverAddress,
+    enabled: enabled && !internalProfile.isLoading,
+  })
+  const effectiveResolverAddress = effectiveResolver.data
+
   const resolverType = useResolverType({
     name,
     enabled: enabled && !internalProfile.isLoading,
@@ -67,10 +75,14 @@ export const useResolverStatus = ({
     resolverType.isLoading ||
     resolverIsAuthorised.isLoading ||
     latestResolverProfile.isLoading ||
-    internalProfile.isLoading
+    internalProfile.isLoading ||
+    effectiveResolver.isLoading
 
   const isFetching =
-    resolverType.isFetching || resolverIsAuthorised.isFetching || latestResolverProfile.isFetching
+    resolverType.isFetching ||
+    resolverIsAuthorised.isFetching ||
+    latestResolverProfile.isFetching ||
+    effectiveResolver.isFetching
 
   const { isError } = resolverType
 
@@ -84,6 +96,7 @@ export const useResolverStatus = ({
       isOutdatedResolver: false,
       isAuthorized: false,
       isNameWrapperAware: false,
+      effectiveResolverAddress: undefined as string | undefined,
       hasProfile: false,
       hasMigratedProfile: false,
       isMigratedProfileEqual: false,
@@ -95,9 +108,15 @@ export const useResolverStatus = ({
       hasResolver: !!profileResolverAddress && profileResolverAddress !== emptyAddress,
       hasLatestResolver: resolverType.data?.type === 'latest',
       isOutdatedResolver: resolverType.data?.type === 'outdated',
-      isNameWrapperAware: profileResolverAddress
-        ? getResolverWrapperAwareness({ resolverAddress: profileResolverAddress, chainId })
+      // Wrapper awareness belongs to the resolver that actually runs the
+      // writes, which is the underlying one when the name is abstracted.
+      isNameWrapperAware: effectiveResolverAddress
+        ? getResolverWrapperAwareness({ resolverAddress: effectiveResolverAddress, chainId })
         : false,
+      // The resolver a consumer should read records from or judge: the
+      // underlying resolver when the name is abstracted, the registry
+      // resolver otherwise.
+      effectiveResolverAddress,
       hasProfile: profileHasRecords(profile),
     }
 
@@ -141,6 +160,7 @@ export const useResolverStatus = ({
     migratedRecordsMatch,
     profile,
     profileResolverAddress,
+    effectiveResolverAddress,
     resolverType.data?.type,
     isLoading,
     enabled,

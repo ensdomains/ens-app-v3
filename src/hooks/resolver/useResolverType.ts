@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useChainId } from 'wagmi'
 
 import { getKnownResolverData } from '@app/constants/resolverAddressData'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import { useRegistryResolver } from '@app/hooks/resolver/useRegistryResolver'
 import { emptyAddress } from '@app/utils/constants'
 
@@ -43,18 +44,36 @@ export const useResolverType = ({ name, enabled: enabled_ = true }: UseResolverT
     name,
     enabled,
   })
-  const resolverAddress = profile.data?.resolverAddress ?? ''
+  const registryResolverAddress = profile.data?.resolverAddress
+
+  const effectiveResolver = useEffectiveResolverAddress({
+    name,
+    resolverAddress: registryResolverAddress,
+    enabled,
+  })
+  const resolverAddress = effectiveResolver.data ?? ''
 
   const registryResolver = useRegistryResolver({
     name,
     enabled,
   })
 
-  const isLoading = isWrappedQuery.isLoading || profile.isLoading || registryResolver.isLoading
-  const { isFetching } = registryResolver
+  const isLoading =
+    isWrappedQuery.isLoading ||
+    profile.isLoading ||
+    registryResolver.isLoading ||
+    effectiveResolver.isLoading
+  const isFetching = registryResolver.isFetching || effectiveResolver.isFetching
   const { isError } = registryResolver
 
-  const isWildcard = isWildcardCalc({ registryResolver, resolverAddress, profile })
+  // Wildcard resolution is a registry-level fact: the registry has no resolver
+  // for this name but the profile resolved one anyway, from an ancestor. Both
+  // sides of that comparison stay the registry-reported addresses.
+  const isWildcard = isWildcardCalc({
+    registryResolver,
+    resolverAddress: registryResolverAddress ?? '',
+    profile,
+  })
 
   const data = useMemo(() => {
     if (!enabled || isLoading) return

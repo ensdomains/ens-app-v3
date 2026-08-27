@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
+import type { Address } from 'viem'
 
 import { Button, Typography } from '@ensdomains/thorin'
 
@@ -8,6 +9,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { emptyAddress } from '@app/utils/constants'
@@ -117,6 +119,13 @@ const Resolver = ({
     )
     .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
+  // Where the registry resolver is an ENSv2 abstraction contract, the address
+  // worth showing is the resolver behind it.
+  const effectiveResolver = useEffectiveResolverAddress({
+    name,
+    resolverAddress: registryOrSubgraphResolverAddress as Address,
+  })
+
   return (
     <Container $isCached={isCachedData}>
       <HeadingContainer>
@@ -130,7 +139,7 @@ const Resolver = ({
         <RecordItem
           type="text"
           data-testid="resolver-address"
-          value={registryOrSubgraphResolverAddress || ''}
+          value={effectiveResolver.data || registryOrSubgraphResolverAddress || ''}
         />
         {canEdit && !hasGraphError && (
           <>
