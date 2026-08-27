@@ -1,12 +1,13 @@
 import { mockFunction, render } from '@app/test-utils'
 
+import { labelhash } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress'
 import { createDateAndValue } from '@app/utils/utils'
 
-import { NameListView } from './NameListView'
+import { isNameExtendable, NameListView } from './NameListView'
 
 vi.mock('next/router', async () => await vi.importActual('next-router-mock'))
 vi.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem')
@@ -27,6 +28,19 @@ window.IntersectionObserver = mockIntersectionObserver
 window.scroll = vi.fn() as () => void
 
 describe('NameListView', () => {
+  it('should not offer registered short .eth names for bulk extension', () => {
+    expect(isNameExtendable({ name: 'on.eth', parentName: 'eth' })).toBe(false)
+    expect(isNameExtendable({ name: 'nick.eth', parentName: 'eth' })).toBe(true)
+  })
+
+  // The subgraph hands this list unhealed labels routinely, and `parseInput` calls them short
+  // because it has nothing to measure. They are ordinary names and keep their extend checkbox.
+  it('should still offer a name whose label is an encoded labelhash for bulk extension', () => {
+    const encodedName = `[${labelhash('nick').slice(2)}].eth`
+
+    expect(isNameExtendable({ name: encodedName, parentName: 'eth' })).toBe(true)
+  })
+
   it('should render if there are results', () => {
     mockTaggedNameItem.mockImplementation(mockComponent as any)
     mockUseNamesForAddress.mockReturnValue({

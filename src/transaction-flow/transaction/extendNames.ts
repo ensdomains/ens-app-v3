@@ -5,6 +5,7 @@ import { getPrice } from '@ensdomains/ensjs/public'
 
 import renewNames from '@app/overrides/ensjs/renewNames'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { isShortEth2LDName } from '@app/utils/shortName'
 
 import { calculateValueWithBuffer, formatDurationOfDates, formatExpiry } from '../../utils/utils'
 
@@ -61,6 +62,10 @@ const transaction = async ({
   data,
 }: TransactionFunctionParameters<Data>) => {
   const { names, duration, referrer, hasWrapped } = data
+  if (names.some(isShortEth2LDName)) {
+    throw new Error('Extending is not available for short .eth names')
+  }
+
   const price = await getPrice(client, {
     nameOrNames: names,
     duration,

@@ -7,6 +7,7 @@ import { Button, Card, Dropdown } from '@ensdomains/thorin'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { useCalendarOptions } from '@app/hooks/useCalendarOptions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { isShortEth2LD } from '@app/utils/shortName'
 
 import { EarnifiDialog } from '../../../MoreTab/Miscellaneous/EarnifiDialog'
 import { ExpiryPanel } from './components/ExpiryPanel'
@@ -88,6 +89,7 @@ export const ExpirySection = ({ name, details }: Props) => {
     expiryDetails: expiry.data,
     ownerData: details.ownerData,
     wrapperData: details.wrapperData,
+    canExtend: !isShortEth2LD(details),
   })
   const { options: calendarOptions, makeEvent } = useCalendarOptions(`Renew ${name}`)
 

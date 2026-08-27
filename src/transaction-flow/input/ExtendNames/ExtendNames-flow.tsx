@@ -34,6 +34,7 @@ import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
 import { getReferrerHex } from '@app/utils/referrer'
+import { isShortEth2LDName } from '@app/utils/shortName'
 import { ONE_DAY, ONE_YEAR, secondsToYears, yearsToSeconds } from '@app/utils/time'
 import useUserConfig from '@app/utils/useUserConfig'
 import { deriveYearlyFee, formatDurationOfDates } from '@app/utils/utils'
@@ -44,7 +45,7 @@ import { SearchViewLoadingView } from '../SendName/views/SearchView/views/Search
 import { getManagerRenewUrl } from './utils/getManagerRenewUrl'
 import { validateExtendNamesDuration } from './utils/validateExtendNamesDuration'
 
-type View = 'name-list' | 'no-ownership-warning' | 'registration' | 'disabled'
+type View = 'name-list' | 'no-ownership-warning' | 'registration' | 'disabled' | 'short-name'
 
 const DisabledContainer = styled.div(
   ({ theme }) => css`
@@ -219,6 +220,7 @@ const ExtendNames = ({
   )
   const years = secondsToYears(seconds)
   const [durationType, setDurationType] = useState<'years' | 'date'>('years')
+  const hasShortName = names.some(isShortEth2LDName)
 
   const referrer = useReferrer()
   const referrerHex = getReferrerHex(referrer)
@@ -237,6 +239,7 @@ const ExtendNames = ({
   const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
   const { data: priceData, isLoading: isPriceLoading } = usePrice({
+    enabled: !hasShortName,
     nameOrNames: names,
     duration: seconds,
   })
@@ -246,7 +249,7 @@ const ExtendNames = ({
   const previousYearlyFee = usePreviousDistinct(yearlyFee) || 0n
   const isShowingPreviousYearlyFee = yearlyFee === 0n && previousYearlyFee > 0n
 
-  const isExpiryEnabled = names.length === 1
+  const isExpiryEnabled = names.length === 1 && !hasShortName
   const { data: expiryData, isLoading: isExpiryLoading } = useExpiry({
     enabled: isExpiryEnabled,
     name: names[0],
@@ -281,7 +284,7 @@ const ExtendNames = ({
         ],
       },
     ],
-    enabled: !!totalRentFee && !!address && seconds > 0 && totalRentFee > 0n,
+    enabled: !hasShortName && !!totalRentFee && !!address && seconds > 0 && totalRentFee > 0n,
   })
 
   const previousTransactionFee = usePreviousDistinct(transactionFee) || 0n
@@ -307,37 +310,43 @@ const ExtendNames = ({
   // post ENS v2 beta), short-circuit the whole flow with a disabled view
   // that points users to the new Manager app. The on-chain renew() call
   // would otherwise revert.
-  const flow: View[] = useMemo(
-    () =>
-      isRenewalDisabled
-        ? ['disabled']
-        : match([names.length, isSelf])
-            .with(
-              [P.when((length) => length > 1), true],
-              () => ['name-list', 'registration'] as View[],
-            )
-            .with(
-              [P.when((length) => length > 1), P._],
-              () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
-            )
-            .with([P._, true], () => ['registration'] as View[])
-            .otherwise(() => ['no-ownership-warning', 'registration'] as View[]),
-    [names.length, isSelf, isRenewalDisabled],
-  )
+  const flow: View[] = useMemo(() => {
+    // Where renewals have moved to the new Manager app, the Manager link is the answer for every
+    // name: `renew()` carries no length minimum there, so a short name is not a dead end — this app
+    // simply is not the place to renew it. Hence disabled outranks the short-name view.
+    if (isRenewalDisabled) return ['disabled']
+    if (hasShortName) return ['short-name']
+    return match([names.length, isSelf])
+      .with([P.when((length) => length > 1), true], () => ['name-list', 'registration'] as View[])
+      .with(
+        [P.when((length) => length > 1), P._],
+        () => ['no-ownership-warning', 'name-list', 'registration'] as View[],
+      )
+      .with([P._, true], () => ['registration'] as View[])
+      .otherwise(() => ['no-ownership-warning', 'registration'] as View[])
+  }, [hasShortName, names.length, isSelf, isRenewalDisabled])
   const [viewIdx, setViewIdx] = useState(0)
   const incrementView = () => setViewIdx(() => Math.min(flow.length - 1, viewIdx + 1))
   const decrementView = () => (viewIdx <= 0 ? onDismiss() : setViewIdx(viewIdx - 1))
   const view = flow[viewIdx]
 
+  // A short name needs none of the pricing reads to reach its dead end, but it does need the
+  // registrar answer, since that is what now decides which of the two dead ends it gets.
   const isBaseDataLoading =
-    !isAccountConnected ||
-    isBalanceLoading ||
-    isExpiryEnabledAndLoading ||
-    isEthPriceLoading ||
-    isControllerActiveLoading
+    isControllerActiveLoading ||
+    (!hasShortName &&
+      (!isAccountConnected || isBalanceLoading || isExpiryEnabledAndLoading || isEthPriceLoading))
   const isRegisterLoading = isPriceLoading || (isEstimateGasLoading && !estimateGasLimitError)
 
   const { title, alert, buttonProps } = match(view)
+    .with('short-name', () => ({
+      title: t('input.extendNames.shortName.title'),
+      alert: 'warning' as const,
+      buttonProps: {
+        onClick: onDismiss,
+        children: t('action.close', { ns: 'common' }),
+      },
+    }))
     .with('disabled', () => ({
       title: t('input.extendNames.disabled.title'),
       alert: 'warning' as const,
@@ -399,6 +408,9 @@ const ExtendNames = ({
       <Dialog.Content data-testid="extend-names-modal">
         {match([view, isBaseDataLoading])
           .with([P._, true], () => <SearchViewLoadingView />)
+          .with(['short-name', false], () => (
+            <CenteredMessage>{t('input.extendNames.shortName.description')}</CenteredMessage>
+          ))
           .with(['disabled', false], () => (
             <DisabledContainer>
               <Banner alert="warning" title={t('input.extendNames.disabled.title')}>

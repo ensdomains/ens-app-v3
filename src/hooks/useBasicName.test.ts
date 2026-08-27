@@ -115,6 +115,54 @@ describe('useBasicName', () => {
       )
     })
   })
+  // `12.eth` and `on.eth` look identical until the chain answers, so a short .eth 2LD is looked up
+  // like any other name. Only the price is skipped: it can never be registered at any price.
+  describe('short 2LD .eth', () => {
+    beforeEach(() => {
+      mockUseValidate.mockReturnValue({
+        isValid: true,
+        is2LD: true,
+        isETH: true,
+        isShort: true,
+        name: 'on.eth',
+        labelCount: 2,
+      })
+    })
+
+    it('should query for the owner', () => {
+      renderHook(() => useBasicName({ name: 'on.eth' }))
+      expect(mockUseOwner).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }))
+    })
+
+    it('should query for the wrapper data', () => {
+      renderHook(() => useBasicName({ name: 'on.eth' }))
+      expect(mockUseWrapperData).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }))
+    })
+
+    it('should query for the expiry', () => {
+      renderHook(() => useBasicName({ name: 'on.eth' }))
+      expect(mockUseExpiry).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }))
+    })
+
+    it('should query for the address record', () => {
+      renderHook(() => useBasicName({ name: 'on.eth' }))
+      expect(mockUseAddressRecord).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }))
+    })
+
+    it('should not query for the price', () => {
+      renderHook(() => useBasicName({ name: 'on.eth' }))
+      expect(mockUsePrice).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+    })
+
+    it('should not calculate a status while the owner lookup is loading', () => {
+      mockUseOwner.mockReturnValue({ data: undefined, isLoading: true })
+
+      const { result } = renderHook(() => useBasicName({ name: 'on.eth' }))
+
+      expect(result.current.registrationStatus).toBeUndefined()
+      expect(mockGetRegistrationStatus).not.toHaveBeenCalled()
+    })
+  })
   describe('2LD non .eth', () => {
     beforeEach(() => {
       mockUseValidate.mockReturnValue({

@@ -4,6 +4,7 @@ import { getAddress } from 'viem'
 import { truncateFormat } from '@ensdomains/ensjs/utils'
 
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
+import { isShortEth2LD } from '@app/utils/shortName'
 import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { useContractAddress } from './chain/useContractAddress'
@@ -35,13 +36,17 @@ export const useBasicName = ({
 }: UseBasicNameOptions) => {
   const validation = useValidate({ input: name!, enabled: enabled && !!name })
 
-  const { name: _normalisedName, isValid, isShort, isETH, is2LD } = validation
+  const { name: _normalisedName, isValid, isETH, is2LD } = validation
 
   const normalisedName = normalised ? name! : _normalisedName
 
   const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
-  const commonEnabled = enabled && !!name && isValid && !(isETH && isShort)
+  // Short .eth 2LDs are looked up like any other name: it takes the ownership and expiry reads to
+  // tell a real one (`on.eth`) from an unregisterable one (`12.eth`). Only the price is left out,
+  // since a short name can never be registered or hold a temporary premium.
+  const commonEnabled = enabled && !!name && isValid
+  const isShortEthName = isShortEth2LD(validation)
   const isRoot = name === '[root]'
 
   const {
@@ -70,7 +75,7 @@ export const useBasicName = ({
   } = usePrice({
     nameOrNames: normalisedName,
     duration: yearsToSeconds(1),
-    enabled: commonEnabled && !isRoot && isETH && is2LD,
+    enabled: commonEnabled && !isRoot && isETH && is2LD && !isShortEthName,
   })
   const {
     data: addrData,
