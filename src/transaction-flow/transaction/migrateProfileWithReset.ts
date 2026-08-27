@@ -8,6 +8,7 @@ import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { profileRecordsToKeyValue, recordsWithCointypeCoins } from '@app/utils/records'
+import { getUnderlyingResolver } from '@app/utils/resolver/getUnderlyingResolver'
 
 type Data = {
   name: string
@@ -38,9 +39,11 @@ const transaction = async ({
   data,
 }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress } = data
+  const sourceResolverAddress =
+    (await getUnderlyingResolver(client, { name, resolverAddress })) ?? resolverAddress
   const subgraphRecords = await getSubgraphRecords(client, {
     name,
-    resolverAddress,
+    resolverAddress: sourceResolverAddress,
   })
   const profile = await getRecords(client, {
     name,
@@ -48,9 +51,9 @@ const transaction = async ({
     coins: subgraphRecords?.coins || [],
     abi: true,
     contentHash: true,
-    resolver: resolverAddress
+    resolver: sourceResolverAddress
       ? {
-          address: resolverAddress,
+          address: sourceResolverAddress,
           fallbackOnly: false,
         }
       : undefined,

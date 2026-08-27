@@ -6,6 +6,7 @@ import { getResolver } from '@ensdomains/ensjs/public'
 import { setAddressRecord } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { getUnderlyingResolver } from '@app/utils/resolver/getUnderlyingResolver'
 
 type Data = {
   name: string
@@ -40,10 +41,18 @@ const transaction = async ({
   connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const resolverAddress = data?.latestResolver
+  const registryResolverAddress = data?.latestResolver
     ? getChainContractAddress({ client, contract: 'ensPublicResolver' })
     : await getResolver(client, { name: data.name })
-  if (!resolverAddress) throw new Error('No resolver found')
+  if (!registryResolverAddress) throw new Error('No resolver found')
+  // The latest public resolver is the target by construction; only a
+  // registry-reported resolver can be an ENSv2 abstraction contract.
+  const resolverAddress = data?.latestResolver
+    ? registryResolverAddress
+    : (await getUnderlyingResolver(client, {
+        name: data.name,
+        resolverAddress: registryResolverAddress,
+      })) ?? registryResolverAddress
   let address
   try {
     address = getAddress(data.address)

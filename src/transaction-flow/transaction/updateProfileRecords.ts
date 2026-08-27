@@ -11,6 +11,7 @@ import {
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { recordOptionsToToupleList, recordsWithCointypeCoins } from '@app/utils/records'
+import { getUnderlyingResolver } from '@app/utils/resolver/getUnderlyingResolver'
 
 type Data = {
   name: string
@@ -79,6 +80,7 @@ const transaction = async ({
   data,
 }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress, records, previousRecords = [], clearRecords } = data
+  const underlyingResolver = await getUnderlyingResolver(client, { name, resolverAddress })
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
 
   const recordOptions = await profileRecordsToRecordOptionsWithDeleteAbiArray(client, {
@@ -88,7 +90,7 @@ const transaction = async ({
   })
   return setRecords.makeFunctionData(connectorClient, {
     name,
-    resolverAddress,
+    resolverAddress: underlyingResolver ?? resolverAddress,
     ...recordsWithCointypeCoins(recordOptions),
   })
 }

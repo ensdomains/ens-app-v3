@@ -7,6 +7,7 @@ import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { recordOptionsToToupleList, recordsWithCointypeCoins } from '@app/utils/records'
+import { getUnderlyingResolver } from '@app/utils/resolver/getUnderlyingResolver'
 
 type Data = {
   name: string
@@ -51,12 +52,20 @@ const displayItems = ({ name, records }: Data, t: TFunction): TransactionDisplay
   ]
 }
 
-const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+const transaction = async ({
+  client,
+  connectorClient,
+  data,
+}: TransactionFunctionParameters<Data>) => {
+  const underlyingResolver = await getUnderlyingResolver(client, {
+    name: data.name,
+    resolverAddress: data.resolverAddress,
+  })
   return setRecords.makeFunctionData(connectorClient, {
     name: data.name,
     ...recordsWithCointypeCoins(data.records),
     clearRecords: true,
-    resolverAddress: data.resolverAddress,
+    resolverAddress: underlyingResolver ?? data.resolverAddress,
   })
 }
 
