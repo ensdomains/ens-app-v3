@@ -8,6 +8,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useUnderlyingResolver } from '@app/hooks/resolver/useUnderlyingResolver'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { emptyAddress } from '@app/utils/constants'
@@ -117,6 +118,16 @@ const Resolver = ({
     )
     .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
+  // Under ENSv2 the registry/subgraph resolver may be the `ENSV1Resolver`
+  // abstraction contract. If so, this reveals the true underlying resolver.
+  const { underlyingResolver, isAbstracted } = useUnderlyingResolver({
+    name,
+    resolverAddress: registryOrSubgraphResolverAddress,
+  })
+
+  const displayedResolverAddress =
+    isAbstracted && underlyingResolver ? underlyingResolver : registryOrSubgraphResolverAddress
+
   return (
     <Container $isCached={isCachedData}>
       <HeadingContainer>
@@ -130,7 +141,7 @@ const Resolver = ({
         <RecordItem
           type="text"
           data-testid="resolver-address"
-          value={registryOrSubgraphResolverAddress || ''}
+          value={displayedResolverAddress || ''}
         />
         {canEdit && !hasGraphError && (
           <>
