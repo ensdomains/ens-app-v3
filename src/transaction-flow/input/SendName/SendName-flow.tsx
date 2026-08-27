@@ -94,6 +94,9 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   }
 
   const onSubmit = ({ recipient, transactions }: SendNameForm) => {
+    // The record transactions below pin the judged resolver address; do not
+    // build them from a still-resolving support check.
+    if (resolverSupport.isLoading) return
     const isOwnerOrManager =
       account.address === basic.ownerData?.owner || basic.ownerData?.registrant === account.address
 

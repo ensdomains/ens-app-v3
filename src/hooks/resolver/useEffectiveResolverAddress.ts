@@ -39,6 +39,15 @@ export const useEffectiveResolverAddress = ({
     // Judging a name against the abstraction contract is the bug this hook
     // exists to prevent, so there is no address to report until the probe has
     // answered one way or the other.
+    //
+    // A probe ERROR (transport failure on the first fetch) deliberately falls
+    // back to the supplied registry address rather than reporting nothing:
+    // for a non-abstracted name that address is the correct answer, and for
+    // an abstracted name every judgement made against it fails closed (the
+    // abstraction supports no resolver interfaces), so no editor unblocks and
+    // no write flow pins it while it is wrong. A refetch error never replaces
+    // previously fetched data. Erroring the composed hooks instead would take
+    // every ordinary name down with one flaky RPC round trip.
     data: isLoading ? undefined : underlyingResolverAddress ?? resolverAddress,
     isAbstracted: !!underlyingResolverAddress,
     isLoading,

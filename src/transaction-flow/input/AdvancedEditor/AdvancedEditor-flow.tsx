@@ -104,10 +104,12 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     [fetchedProfile, effectiveResolver.data, dispatch, name],
   )
 
+  const isEditorDataLoading = isProfileLoading || effectiveResolver.isLoading
+
   const advancedEditorForm = useAdvancedEditor({
     name,
     profile,
-    isLoading: isProfileLoading,
+    isLoading: isEditorDataLoading,
     callback: handleCreateTransaction,
     overwrites: transaction?.data.records,
   })
@@ -117,7 +119,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     onDismiss?.()
   }
 
-  if (isProfileLoading) return null
+  if (isEditorDataLoading) return null
 
   return (
     <>

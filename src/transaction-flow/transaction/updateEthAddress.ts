@@ -11,7 +11,12 @@ type Data = {
   name: string
   address: Address
   latestResolver?: boolean
-  /** Pinned write target, judged by the caller; falls back to a lookup. */
+  /**
+   * Pinned write target, judged by the caller — the underlying resolver when
+   * the name is abstracted. Falls back to a registry lookup when absent, and
+   * is ignored when `latestResolver` is set (an explicit go-to-latest always
+   * targets the latest public resolver).
+   */
   resolverAddress?: Address
 }
 
@@ -42,11 +47,9 @@ const transaction = async ({
   connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const resolverAddress =
-    data.resolverAddress ??
-    (data?.latestResolver
-      ? getChainContractAddress({ client, contract: 'ensPublicResolver' })
-      : await getResolver(client, { name: data.name }))
+  const resolverAddress = data?.latestResolver
+    ? getChainContractAddress({ client, contract: 'ensPublicResolver' })
+    : data.resolverAddress ?? (await getResolver(client, { name: data.name }))
   if (!resolverAddress) throw new Error('No resolver found')
   let address
   try {

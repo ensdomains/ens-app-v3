@@ -5,8 +5,10 @@ import { Address } from 'viem'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
+import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
@@ -34,6 +36,13 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const abilities = useAbilities({ name })
   const basic = useBasicName({ name })
   const account = useAccountSafely()
+  // The eth-record write must target the resolver that actually holds the
+  // records: the underlying resolver when the name is abstracted.
+  const resolver = useResolver({ name })
+  const effectiveResolver = useEffectiveResolverAddress({
+    name,
+    resolverAddress: resolver.data ?? undefined,
+  })
   const isLoading = roles.isLoading || abilities.isLoading || basic.isLoading
 
   const form = useForm<EditRolesForm>({
@@ -73,7 +82,11 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
     )
     const transactions = [
       dirtyValues['eth-record']
-        ? createTransactionItem('updateEthAddress', { name, address: dirtyValues['eth-record'] })
+        ? createTransactionItem('updateEthAddress', {
+            name,
+            address: dirtyValues['eth-record'],
+            resolverAddress: effectiveResolver.data,
+          })
         : null,
       dirtyValues.manager
         ? makeTransferNameOrSubnameTransactionItem({
