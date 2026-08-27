@@ -8,7 +8,6 @@ import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import type { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
 import { profileRecordsToKeyValue, recordsWithCointypeCoins } from '@app/utils/records'
-import { getUnderlyingResolver } from '@app/utils/resolver/getUnderlyingResolver'
 
 type Data = {
   name: string
@@ -39,16 +38,7 @@ const transaction = async ({
   connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const sourceResolverAddress = data.resolverAddress
-    ? (await getUnderlyingResolver(client, {
-        name: data.name,
-        resolverAddress: data.resolverAddress,
-      })) ?? data.resolverAddress
-    : undefined
-  const subgraphRecords = await getSubgraphRecords(client, {
-    ...data,
-    resolverAddress: sourceResolverAddress,
-  })
+  const subgraphRecords = await getSubgraphRecords(client, data)
   if (!subgraphRecords) throw new Error('No subgraph records found')
   const profile = await getRecords(connectorClient, {
     name: data.name,
@@ -56,9 +46,9 @@ const transaction = async ({
     coins: subgraphRecords.coins,
     abi: true,
     contentHash: true,
-    resolver: sourceResolverAddress
+    resolver: data.resolverAddress
       ? {
-          address: sourceResolverAddress,
+          address: data.resolverAddress,
           fallbackOnly: false,
         }
       : undefined,
@@ -68,6 +58,16 @@ const transaction = async ({
     contract: 'ensPublicResolver',
   })
   if (!profile) throw new Error('No profile found')
+  // This flow only exists to carry an existing profile over. An empty result
+  // here means the source records were not found (e.g. the subgraph does not
+  // key them by the supplied resolver address), and migrating it would write
+  // a blank profile — fail visibly instead.
+  const hasRecordsToMigrate =
+    (profile.texts?.length ?? 0) > 0 ||
+    (profile.coins?.length ?? 0) > 0 ||
+    !!profile.contentHash ||
+    !!profile.abi
+  if (!hasRecordsToMigrate) throw new Error('No records found to migrate')
   const records = await profileRecordsToKeyValue(profile)
 
   return setRecords.makeFunctionData(connectorClient, {

@@ -219,13 +219,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
-      if (!profile?.resolverAddress) return
+      if (!currentResolverAddress) return
       dispatch({
         name: 'setTransactions',
         payload: [
           createTransactionItem('updateProfileRecords', {
             name,
-            resolverAddress: profile.resolverAddress,
+            resolverAddress: currentResolverAddress,
             records,
             previousRecords: existingRecords,
             clearRecords: false,
@@ -234,7 +234,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [profile, name, existingRecords, dispatch],
+    [currentResolverAddress, name, existingRecords, dispatch],
   )
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
@@ -298,6 +298,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         transactions: [
           createTransactionItem('migrateProfile', {
             name,
+            resolverAddress: currentResolverAddress,
           }),
           createTransactionItem('updateResolver', {
             name,
@@ -356,7 +357,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         transactions: [
           createTransactionItem('migrateProfileWithReset', {
             name,
-            resolverAddress: profile?.resolverAddress!,
+            resolverAddress: currentResolverAddress!,
           }),
           createTransactionItem('updateResolver', {
             name,

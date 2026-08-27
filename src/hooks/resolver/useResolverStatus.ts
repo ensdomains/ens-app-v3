@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import type { Address } from 'viem'
 import { useChainId } from 'wagmi'
 
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
@@ -96,7 +97,7 @@ export const useResolverStatus = ({
       isOutdatedResolver: false,
       isAuthorized: false,
       isNameWrapperAware: false,
-      effectiveResolverAddress: undefined as string | undefined,
+      effectiveResolverAddress: undefined as Address | undefined,
       hasProfile: false,
       hasMigratedProfile: false,
       isMigratedProfileEqual: false,

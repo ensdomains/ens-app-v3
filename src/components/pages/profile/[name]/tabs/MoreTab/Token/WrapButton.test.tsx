@@ -134,7 +134,10 @@ describe('WrapButton', () => {
 
     expect(args[0]).toBe('wrapName-test123.eth')
     expect(args[1].transactions[0].name).toEqual('migrateProfile')
-    expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
+    expect(args[1].transactions[0].data).toEqual({
+      name: 'test123.eth',
+      resolverAddress: '0x456',
+    })
     expect(args[1].transactions[1].name).toEqual('wrapName')
     expect(args[1].transactions[1].data).toEqual({ name: 'test123.eth' })
   })
@@ -355,7 +358,10 @@ describe('WrapButton', () => {
 
     expect(args[0]).toBe('wrapName-sub.test123.eth')
     expect(args[1].transactions[0].name).toEqual('migrateProfile')
-    expect(args[1].transactions[0].data).toEqual({ name: 'sub.test123.eth' })
+    expect(args[1].transactions[0].data).toEqual({
+      name: 'sub.test123.eth',
+      resolverAddress: '0x456',
+    })
     expect(args[1].transactions[1].name).toEqual('wrapName')
     expect(args[1].transactions[1].data).toEqual({ name: 'sub.test123.eth' })
   })

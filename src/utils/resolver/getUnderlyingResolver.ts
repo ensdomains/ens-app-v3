@@ -13,7 +13,7 @@ import {
   type Address,
   type Hex,
 } from 'viem'
-import { call } from 'viem/actions'
+import { call, getCode } from 'viem/actions'
 
 import type { ClientWithEns } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
@@ -118,5 +118,17 @@ export const getUnderlyingResolver = async (
     throw error
   })
 
-  return decodeUnderlyingResolver({ data: result.data, abstractionAddress: resolverAddress })
+  const underlyingResolver = decodeUnderlyingResolver({
+    data: result.data,
+    abstractionAddress: resolverAddress,
+  })
+  if (!underlyingResolver) return null
+
+  // A resolver must be a contract. A well-shaped answer pointing at a
+  // codeless address would make every record write to it succeed as a silent
+  // no-op, so it is not an abstraction answer worth honouring.
+  const underlyingResolverCode = await getCode(client, { address: underlyingResolver })
+  if (!underlyingResolverCode || underlyingResolverCode === '0x') return null
+
+  return underlyingResolver
 }

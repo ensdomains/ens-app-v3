@@ -7,24 +7,26 @@ import { KNOWN_RESOLVER_DATA } from '@app/constants/resolverAddressData'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { useProfileEditorReducer } from '@app/transaction-flow/input/ProfileEditor/hooks/useProfileEditorReducer'
 
+import { useSupportedInterfaces } from '../ensjs/public/useSupportedInterfaces'
 import { useIsWrapped } from '../useIsWrapped'
 import { useProfile } from '../useProfile'
-import { useResolverHasInterfaces } from '../useResolverHasInterfaces'
 import { useRegistryResolver } from './useRegistryResolver'
 import { useResolverStatus } from './useResolverStatus'
 import { useUnderlyingResolver } from './useUnderlyingResolver'
 
-// Only the edges are mocked: the chain reads, and the abstraction probe itself.
+// Only the chain-read edges are mocked: the abstraction probe, the profile,
+// registry, wrapped-status, supportsInterface and gas-estimate reads.
 // Everything between them — useEffectiveResolverAddress, useResolverType,
-// useResolverIsAuthorised, useResolverStatus and the ProfileEditor reducer —
-// runs for real, because the bug this covers lives in how they compose.
+// useResolverHasInterfaces, useResolverIsAuthorised, useResolverStatus and the
+// ProfileEditor reducer — runs for real, because the bug this covers lives in
+// how they compose.
 vi.mock('wagmi', async (importOriginal) => ({
   ...(await importOriginal<typeof import('wagmi')>()),
   useEstimateGas: vi.fn(),
 }))
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/useIsWrapped')
-vi.mock('@app/hooks/useResolverHasInterfaces')
+vi.mock('@app/hooks/ensjs/public/useSupportedInterfaces')
 vi.mock('@app/hooks/resolver/useRegistryResolver')
 vi.mock('@app/hooks/resolver/useUnderlyingResolver')
 vi.mock('@app/hooks/chain/useContractAddress')
@@ -32,7 +34,7 @@ vi.mock('@app/hooks/chain/useContractAddress')
 const mockUseEstimateGas = mockFunction(useEstimateGas)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseIsWrapped = mockFunction(useIsWrapped)
-const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
+const mockUseSupportedInterfaces = mockFunction(useSupportedInterfaces)
 const mockUseRegistryResolver = mockFunction(useRegistryResolver)
 const mockUseUnderlyingResolver = mockFunction(useUnderlyingResolver)
 const mockUseContractAddress = mockFunction(useContractAddress)
@@ -76,7 +78,13 @@ beforeEach(() => {
   mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
   mockUseContractAddress.mockReturnValue(latestResolverAddress)
   mockUseEstimateGas.mockReturnValue({ isLoading: false })
-  mockUseResolverHasInterfaces.mockReturnValue({ data: [false], isLoading: false })
+  mockUseSupportedInterfaces.mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    isFetching: false,
+    status: 'pending',
+    isCachedData: false,
+  })
   mockUseUnderlyingResolver.mockReturnValue({
     data: latestResolverAddress,
     isLoading: false,

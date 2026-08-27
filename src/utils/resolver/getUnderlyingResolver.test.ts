@@ -6,7 +6,7 @@ import {
   type Address,
   type Hex,
 } from 'viem'
-import { call } from 'viem/actions'
+import { call, getCode } from 'viem/actions'
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 
 import type { ClientWithEns } from '@app/types'
@@ -18,7 +18,7 @@ import {
   getUnderlyingResolver,
 } from './getUnderlyingResolver'
 
-vi.mock('viem/actions', () => ({ call: vi.fn() }))
+vi.mock('viem/actions', () => ({ call: vi.fn(), getCode: vi.fn() }))
 
 const abstractionAddress = '0x1111111111111111111111111111111111111111'
 const underlyingAddress = '0x2222222222222222222222222222222222222222'
@@ -93,9 +93,11 @@ describe('decodeUnderlyingResolver', () => {
 describe('getUnderlyingResolver', () => {
   const client = {} as ClientWithEns
   const mockCall = call as unknown as Mock
+  const mockGetCode = getCode as unknown as Mock
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockGetCode.mockResolvedValue('0x6080')
   })
 
   it('returns the underlying resolver for a well-formed abstraction answer', async () => {
@@ -108,7 +110,23 @@ describe('getUnderlyingResolver', () => {
       }),
     ).resolves.toEqual(getAddress(underlyingAddress))
     expect(mockCall).toHaveBeenCalledTimes(1)
+    expect(mockGetCode).toHaveBeenCalledWith(client, { address: getAddress(underlyingAddress) })
   })
+
+  it.each([undefined, '0x'])(
+    'treats an answer pointing at a codeless address as "not abstracted" (code: %s)',
+    async (code) => {
+      mockCall.mockResolvedValueOnce({ data: returndata(underlyingAddress, emptyAddress) })
+      mockGetCode.mockResolvedValueOnce(code)
+
+      await expect(
+        getUnderlyingResolver(client, {
+          name: 'test.eth',
+          resolverAddress: abstractionAddress as Address,
+        }),
+      ).resolves.toBeNull()
+    },
+  )
 
   it.each([
     new ContractFunctionRevertedError({

@@ -103,7 +103,9 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
       transactions,
       isOwnerOrManager,
       abilities: abilities.data,
-      resolverAddress: resolver.data,
+      // The underlying resolver when the name is abstracted — the same
+      // address the VersionableResolver support check above judged.
+      resolverAddress: resolverSupport.resolverAddress ?? resolver.data,
     })
 
     if (_transactions.length === 0) return

@@ -5,7 +5,6 @@ import { setTextRecord } from '@ensdomains/ensjs/wallet'
 
 import { VERIFICATION_RECORD_KEY } from '@app/constants/verification'
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
-import { getUnderlyingResolver } from '@app/utils/resolver/getUnderlyingResolver'
 import { labelForVerificationProtocol } from '@app/utils/verification/labelForVerificationProtocol'
 
 import type { VerificationProtocol } from '../input/VerifyProfile/VerifyProfile-flow'
@@ -36,19 +35,14 @@ const displayItems = ({ name, verifier }: Data, t: TFunction): TransactionDispla
 
 // TODO: Implement a function that identifies the url for the issuer and only removes that uri
 
-const transaction = async ({
-  client,
-  connectorClient,
-  data,
-}: TransactionFunctionParameters<Data>) => {
+const transaction = async ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
   const { name, resolverAddress } = data
-  const underlyingResolver = await getUnderlyingResolver(client, { name, resolverAddress })
 
   return setTextRecord.makeFunctionData(connectorClient, {
     name,
     key: VERIFICATION_RECORD_KEY,
     value: '',
-    resolverAddress: underlyingResolver ?? resolverAddress,
+    resolverAddress,
   })
 }
 export default {
