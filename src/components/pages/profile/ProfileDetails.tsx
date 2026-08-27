@@ -9,6 +9,7 @@ import { Outlink } from '@app/components/Outlink'
 import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import { useProfileActions } from '@app/hooks/pages/profile/[name]/profile/useProfileActions/useProfileActions'
 import { useOwners } from '@app/hooks/useOwners'
+import { AgentRegistrationRecord } from '@app/utils/agentRegistration/transformAgentRegistrationRecord'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import {
   ProfileAccountRecord,
@@ -16,6 +17,7 @@ import {
 } from '@app/utils/records/categoriseProfileTextRecords'
 import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
+import { AgentProfileButton } from './AgentProfileButton'
 import {
   AddressProfileButton,
   OtherProfileButton,
@@ -304,6 +306,7 @@ export const ProfileDetails = ({
   otherRecords = [],
   addresses = [],
   verificationRecords = [],
+  agentRegistrations = [],
   expiryDate,
   pccExpired,
   owners,
@@ -316,6 +319,7 @@ export const ProfileDetails = ({
   otherRecords: ProfileOtherRecord[]
   addresses: Array<Record<'key' | 'value', string>>
   verificationRecords?: Array<Record<'key' | 'value', string>>
+  agentRegistrations?: AgentRegistrationRecord[]
   expiryDate: Date | undefined
   pccExpired: boolean
   owners: ReturnType<typeof useOwners>
@@ -350,6 +354,13 @@ export const ProfileDetails = ({
           supported={coinsWithIcons}
           array={addresses}
           button={AddressProfileButton}
+        />
+        <ProfileSection
+          label="agents"
+          condition={agentRegistrations.length > 0}
+          array={agentRegistrations}
+          button={AgentProfileButton}
+          name={name}
         />
         <ProfileSection
           label="otherRecords"
