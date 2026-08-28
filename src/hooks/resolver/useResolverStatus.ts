@@ -114,9 +114,10 @@ export const useResolverStatus = ({
       isNameWrapperAware: effectiveResolverAddress
         ? getResolverWrapperAwareness({ resolverAddress: effectiveResolverAddress, chainId })
         : false,
-      // The resolver a consumer should read records from or judge: the
-      // underlying resolver when the name is abstracted, the registry
-      // resolver otherwise.
+      // The resolver a name should be JUDGED and DISPLAYED by: the underlying
+      // resolver when the name is abstracted, the registry resolver otherwise.
+      // Never a write target or a migration source — records are written to
+      // the registry resolver (see WEB-688 Known risks).
       effectiveResolverAddress,
       hasProfile: profileHasRecords(profile),
     }

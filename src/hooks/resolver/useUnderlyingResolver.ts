@@ -41,9 +41,10 @@ export const underlyingResolverQueryFn =
 /**
  * Probes a resolver for the ENSv2 abstraction layer, returning the resolver
  * behind it or `null` when there is none. The probe itself (ABI, decode
- * guards, revert handling) lives in
- * `@app/utils/resolver/getUnderlyingResolver` so transaction builders can use
- * the same single implementation. Prefer
+ * guards, revert handling) lives in `@app/utils/resolver/getUnderlyingResolver`.
+ * The result is for JUDGING and DISPLAYING a name only; record writes and
+ * migrations target the registry resolver, so no transaction builder consumes
+ * this. Prefer
  * {@link import('./useEffectiveResolverAddress').useEffectiveResolverAddress},
  * which folds the answer back into a single address to judge a name by.
  */
