@@ -110,6 +110,12 @@ describe('getUnderlyingResolver', () => {
       }),
     ).resolves.toEqual(getAddress(underlyingAddress))
     expect(mockCall).toHaveBeenCalledTimes(1)
+    // The probe must never follow an OffchainLookup revert to a
+    // contract-supplied URL.
+    expect(mockCall).toHaveBeenCalledWith(
+      expect.objectContaining({ ccipRead: false }),
+      expect.anything(),
+    )
     expect(mockGetCode).toHaveBeenCalledWith(client, { address: getAddress(underlyingAddress) })
   })
 

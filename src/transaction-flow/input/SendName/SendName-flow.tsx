@@ -133,7 +133,11 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
       {match([canSend, view])
         .with([false, P._], () => <CannotSendView onDismiss={onDismiss} />)
         .with([true, 'confirmation'], () => (
-          <ConfirmationView onBack={onBack} onSubmit={form.handleSubmit(onSubmit)} />
+          <ConfirmationView
+            onBack={onBack}
+            onSubmit={form.handleSubmit(onSubmit)}
+            loading={resolverSupport.isLoading}
+          />
         ))
         .with([true, 'summary'], () => (
           <SummaryView

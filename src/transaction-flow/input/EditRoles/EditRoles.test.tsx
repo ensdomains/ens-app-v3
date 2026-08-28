@@ -46,6 +46,23 @@ vi.mock('@app/hooks/ownership/useRoles/useRoles', () => ({
   }),
 }))
 
+vi.mock('@app/hooks/useProfile', () => ({
+  useProfile: () => ({
+    data: undefined,
+    isLoading: false,
+  }),
+}))
+
+vi.mock('@app/hooks/resolver/useEffectiveResolverAddress', () => ({
+  useEffectiveResolverAddress: () => ({
+    data: undefined,
+    isAbstracted: false,
+    isLoading: false,
+    isFetching: false,
+    isCachedData: false,
+  }),
+}))
+
 vi.mock('@app/hooks/abilities/useAbilities', () => ({
   useAbilities: () => ({
     data: {

@@ -103,7 +103,12 @@ export const getUnderlyingResolver = async (
   if (!isAddress(resolverAddress, { strict: false })) return null
   if (isAddressEqual(resolverAddress, emptyAddress)) return null
 
-  const result = await call(client, {
+  // The answer must be an L1 contract (enforced below), so an OffchainLookup
+  // revert is meaningless here — and following it would let any contract a
+  // name points at direct the viewer's browser to a URL of its choosing.
+  // Disable viem's CCIP-Read handling for this one probe.
+  const probeClient = { ...client, ccipRead: false as const }
+  const result = await call(probeClient, {
     to: resolverAddress,
     data: encodeFunctionData({
       abi: ensV1ResolverGetResolverSnippet,

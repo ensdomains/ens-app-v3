@@ -5,11 +5,11 @@ import { Address } from 'viem'
 
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useAccountSafely } from '@app/hooks/account/useAccountSafely'
-import { useResolver } from '@app/hooks/ensjs/public/useResolver'
 import useRoles, { Role, RoleRecord } from '@app/hooks/ownership/useRoles/useRoles'
 import { getAvailableRoles } from '@app/hooks/ownership/useRoles/utils/getAvailableRoles'
 import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import { useBasicName } from '@app/hooks/useBasicName'
+import { useProfile } from '@app/hooks/useProfile'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
 import { makeTransferNameOrSubnameTransactionItem } from '@app/transaction-flow/transaction/utils/makeTransferNameOrSubnameTransactionItem'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -37,11 +37,13 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const basic = useBasicName({ name })
   const account = useAccountSafely()
   // The eth-record write must target the resolver that actually holds the
-  // records: the underlying resolver when the name is abstracted.
-  const resolver = useResolver({ name })
+  // records: the underlying resolver when the name is abstracted. The profile
+  // is the same source every other pinning flow judges by, and it is already
+  // warm from the profile page.
+  const profile = useProfile({ name })
   const effectiveResolver = useEffectiveResolverAddress({
     name,
-    resolverAddress: resolver.data ?? undefined,
+    resolverAddress: profile.data?.resolverAddress,
   })
   const isLoading = roles.isLoading || abilities.isLoading || basic.isLoading
 
@@ -65,6 +67,9 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
   }, [isLoading, roles.data, abilities.data, form, isLoaded])
 
   const onSubmit = () => {
+    // The eth-record transaction below pins the judged resolver address; do
+    // not build it from a still-resolving lookup.
+    if (profile.isLoading || effectiveResolver.isLoading) return
     const dirtyValues = form
       .getValues('roles')
       .filter((_, i) => {

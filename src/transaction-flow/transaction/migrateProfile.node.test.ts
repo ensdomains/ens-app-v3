@@ -74,6 +74,10 @@ describe('migrateProfile transaction', () => {
 
     await migrateProfile.transaction({ client, connectorClient, data })
 
+    expect(mockGetSubgraphRecords).toHaveBeenCalledWith(
+      client,
+      expect.objectContaining({ resolverAddress: sourceResolver }),
+    )
     expect(mockGetRecords).toHaveBeenCalledWith(
       connectorClient,
       expect.objectContaining({
