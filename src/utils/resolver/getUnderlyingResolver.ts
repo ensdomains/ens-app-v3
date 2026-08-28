@@ -28,9 +28,8 @@ import { dnsEncodeName } from '@app/utils/reverse'
  * `getResolver` with the resolver actually behind it. An ordinary v1 resolver
  * has no such function and reverts, which is the answer for ~every name today.
  *
- * This signature could not be verified against contracts-v2 from this machine
- * (see `Spec defects` in the WEB-688 run record). If it is wrong, this module
- * is the only thing that needs to change.
+ * If the deployed signature differs, this module is the only thing that
+ * needs to change.
  */
 export const ensV1ResolverGetResolverSnippet = parseAbi([
   'function getResolver(bytes name) view returns (address resolver, address offchain)',
