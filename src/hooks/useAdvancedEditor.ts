@@ -314,7 +314,6 @@ const useAdvancedEditor = ({ name, profile, isLoading, overwrites, callback }: P
 
   const { data: [hasAbiInterface] = [undefined], isLoading: isLoadingAbiInterface } =
     useResolverHasInterfaces({
-      name,
       interfaceNames: ['AbiResolver'],
       resolverAddress: profile?.resolverAddress!,
       enabled: !isLoading,

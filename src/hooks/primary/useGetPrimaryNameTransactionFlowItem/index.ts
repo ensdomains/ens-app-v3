@@ -96,9 +96,6 @@ export const useGetPrimaryNameTransactionFlowItem = (
             name,
             address,
             latestResolver: !resolverStatus?.isAuthorized,
-            // The judged write target: the underlying resolver when the name
-            // is abstracted. Ignored by the builder when latestResolver is set.
-            resolverAddress: resolverStatus?.effectiveResolverAddress,
           }),
         )
       }
@@ -132,7 +129,6 @@ export const useGetPrimaryNameTransactionFlowItem = (
     resolverAddress,
     resolverStatus?.hasMigratedRecord,
     resolverStatus?.isAuthorized,
-    resolverStatus?.effectiveResolverAddress,
     t,
   ])
 

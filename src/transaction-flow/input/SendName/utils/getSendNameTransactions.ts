@@ -29,11 +29,7 @@ export const getSendNameTransactions = ({
 
   const _transactions = [
     setEthRecordOnly
-      ? createTransactionItem('updateEthAddress', {
-          name,
-          address: recipient,
-          resolverAddress: resolverAddress ?? undefined,
-        })
+      ? createTransactionItem('updateEthAddress', { name, address: recipient })
       : null,
     setEthRecordAndResetProfile && resolverAddress
       ? createTransactionItem('resetProfileWithRecords', {

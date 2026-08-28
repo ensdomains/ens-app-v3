@@ -49,12 +49,10 @@ const OutlinkWrapper = styled.div(
 
 type Props = {
   onSubmit: () => void
-  /** Disables confirmation while transaction prerequisites are resolving. */
-  loading?: boolean
   onBack: () => void
 }
 
-export const ConfirmationView = ({ onSubmit, onBack, loading }: Props) => {
+export const ConfirmationView = ({ onSubmit, onBack }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const link = getSupportLink('sendingNames')
   const formRef = useRef<HTMLFormElement>(null)
@@ -89,8 +87,6 @@ export const ConfirmationView = ({ onSubmit, onBack, loading }: Props) => {
         trailing={
           <Button
             data-testid="send-name-confirm-button"
-            loading={loading}
-            disabled={loading}
             onClick={() => {
               formRef.current?.dispatchEvent(
                 new Event('submit', { cancelable: true, bubbles: true }),

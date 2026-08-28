@@ -14,11 +14,9 @@ type Props = {
   onSelectIndex: (index: number) => void
   onCancel: () => void
   onSubmit: () => void
-  /** Disables saving while transaction prerequisites are resolving. */
-  loading?: boolean
 }
 
-export const MainView = ({ onSelectIndex, onCancel, onSubmit, loading }: Props) => {
+export const MainView = ({ onSelectIndex, onCancel, onSubmit }: Props) => {
   const { t } = useTranslation()
   const { control } = useFormContext<EditRolesForm>()
   const { fields: roles } = useFieldArray<EditRolesForm>({ control, name: 'roles' })
@@ -56,8 +54,7 @@ export const MainView = ({ onSelectIndex, onCancel, onSubmit, loading }: Props) 
         trailing={
           <Button
             data-testid="edit-roles-save-button"
-            loading={loading}
-            disabled={!isDirty || loading}
+            disabled={!isDirty}
             onClick={() => {
               ref.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
             }}

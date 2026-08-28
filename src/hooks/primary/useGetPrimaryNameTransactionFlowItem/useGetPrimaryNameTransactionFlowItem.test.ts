@@ -15,11 +15,7 @@ const mockUseReverseRegistryName = mockFunction(useReverseRegistryName)
 const mockUseContractAddress = mockFunction(useContractAddress)
 
 const createResolverStatusData = (
-  overwrites: {
-    isAuthorized?: boolean
-    hasMigratedRecord?: boolean
-    effectiveResolverAddress?: string
-  } = {},
+  overwrites: { isAuthorized?: boolean; hasMigratedRecord?: boolean } = {},
 ) =>
   ({
     isAuthorized: true,
@@ -183,9 +179,7 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
         isWrapped: false,
         profileAddress: '0x1234',
         resolverAddress: '0xresolver',
-        resolverStatus: createResolverStatusData({
-          effectiveResolverAddress: '0x2000000000000000000000000000000000000002',
-        }),
+        resolverStatus: createResolverStatusData(),
       }),
     )
     expect(result.current.callBack?.('test.eth')).toMatchObject({
@@ -194,9 +188,6 @@ describe('useGetPrimaryNameTransactionFlowItem', () => {
           data: {
             name: 'test.eth',
             address: '0x123',
-            latestResolver: false,
-            // The judged (underlying) resolver is pinned as the write target.
-            resolverAddress: '0x2000000000000000000000000000000000000002',
           },
           name: 'updateEthAddress',
         },

@@ -1,6 +1,6 @@
 import { render, screen, userEvent, waitFor, within } from '@app/test-utils'
 
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 import EditRoles from './EditRoles-flow'
 
@@ -46,19 +46,6 @@ vi.mock('@app/hooks/ownership/useRoles/useRoles', () => ({
   }),
 }))
 
-const registryResolver = '0x1000000000000000000000000000000000000001'
-const underlyingResolver = '0x2000000000000000000000000000000000000002'
-
-const mockUseProfile = vi.fn()
-vi.mock('@app/hooks/useProfile', () => ({
-  useProfile: () => mockUseProfile(),
-}))
-
-const mockUseEffectiveResolverAddress = vi.fn()
-vi.mock('@app/hooks/resolver/useEffectiveResolverAddress', () => ({
-  useEffectiveResolverAddress: () => mockUseEffectiveResolverAddress(),
-}))
-
 vi.mock('@app/hooks/abilities/useAbilities', () => ({
   useAbilities: () => ({
     data: {
@@ -101,23 +88,6 @@ vi.mock('@app/components/@molecules/AvatarWithIdentifier/AvatarWithIdentifier', 
 }))
 
 const mockDispatch = vi.fn()
-
-beforeEach(() => {
-  mockDispatch.mockClear()
-  // An abstracted name by default: the registry reports the abstraction, the
-  // probe resolves the underlying resolver every write must target.
-  mockUseProfile.mockReturnValue({
-    data: { resolverAddress: registryResolver },
-    isLoading: false,
-  })
-  mockUseEffectiveResolverAddress.mockReturnValue({
-    data: underlyingResolver,
-    isAbstracted: true,
-    isLoading: false,
-    isFetching: false,
-    isCachedData: false,
-  })
-})
 
 beforeAll(() => {
   const spyiedScroll = vi.spyOn(window, 'scroll')
@@ -169,7 +139,6 @@ describe('EditRoles', () => {
           data: {
             address: '0xnick',
             name: 'test.eth',
-            resolverAddress: underlyingResolver,
           },
           name: 'updateEthAddress',
         },
@@ -324,32 +293,5 @@ describe('EditRoles', () => {
         'input.editRoles.views.main.noneSet',
       ),
     ).toBeVisible()
-  })
-
-  it('should disable saving and dispatch nothing while the effective resolver is resolving', async () => {
-    mockUseEffectiveResolverAddress.mockReturnValue({
-      data: undefined,
-      isAbstracted: false,
-      isLoading: true,
-      isFetching: true,
-      isCachedData: false,
-    })
-    render(<EditRoles data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />)
-    await userEvent.click(
-      within(screen.getByTestId('role-card-eth-record')).getByTestId('role-card-change-button'),
-    )
-    await userEvent.type(screen.getByTestId('edit-roles-search-input'), 'nick')
-    await waitFor(() => {
-      expect(screen.getByTestId('search-result-0xnick')).toBeVisible()
-    })
-    await userEvent.click(screen.getByTestId('search-result-0xnick'))
-    await waitFor(() => {
-      expect(screen.getByTestId('edit-roles-save-button')).toBeVisible()
-    })
-    expect(screen.getByTestId('edit-roles-save-button')).toBeDisabled()
-    await userEvent.click(screen.getByTestId('edit-roles-save-button'))
-    expect(mockDispatch).not.toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'setTransactions' }),
-    )
   })
 })
