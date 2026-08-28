@@ -1,19 +1,26 @@
 import { expectEnabledHook, mockFunction, renderHook } from '@app/test-utils'
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useChainId } from 'wagmi'
 
 import { useEffectiveResolverAddress } from './useEffectiveResolverAddress'
 import { useUnderlyingResolver } from './useUnderlyingResolver'
 
 vi.mock('@app/hooks/resolver/useUnderlyingResolver')
+vi.mock('wagmi', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('wagmi')>()),
+  useChainId: vi.fn(),
+}))
 
 const mockUseUnderlyingResolver = mockFunction(useUnderlyingResolver)
+const mockUseChainId = mockFunction(useChainId)
 
 const registryResolver = '0x1111111111111111111111111111111111111111'
 const underlyingResolver = '0x2222222222222222222222222222222222222222'
 
 beforeEach(() => {
   vi.clearAllMocks()
+  mockUseChainId.mockReturnValue(1)
   mockUseUnderlyingResolver.mockReturnValue({ data: null, isLoading: false, isFetching: false })
 })
 
@@ -93,5 +100,18 @@ describe('useEffectiveResolverAddress', () => {
       }),
     )
     expectEnabledHook(mockUseUnderlyingResolver, false)
+  })
+
+  it('should not probe on the local development chain, and judge by the registry resolver', () => {
+    mockUseChainId.mockReturnValue(1337)
+    const { result } = renderHook(() =>
+      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
+    )
+    expectEnabledHook(mockUseUnderlyingResolver, false)
+    expect(result.current).toMatchObject({
+      data: registryResolver,
+      isAbstracted: false,
+      isLoading: false,
+    })
   })
 })

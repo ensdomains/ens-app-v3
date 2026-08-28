@@ -1,4 +1,6 @@
 import type { Address } from 'viem'
+import { localhost } from 'viem/chains'
+import { useChainId } from 'wagmi'
 
 import { useUnderlyingResolver } from './useUnderlyingResolver'
 
@@ -28,7 +30,13 @@ export const useEffectiveResolverAddress = ({
   resolverAddress,
   enabled: enabled_ = true,
 }: UseEffectiveResolverAddressParameters) => {
-  const enabled = enabled_ && !!name
+  const chainId = useChainId()
+
+  // The ENSv2 resolver abstraction does not exist on the local development
+  // chain (v1-only), so there is nothing to probe there: skip the extra
+  // `getResolver` call entirely and judge names by the registry resolver, as
+  // on mainnet before the abstraction ships.
+  const enabled = enabled_ && !!name && chainId !== localhost.id
 
   const underlyingResolver = useUnderlyingResolver({ name, resolverAddress, enabled })
 
