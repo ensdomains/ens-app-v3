@@ -66,19 +66,48 @@ const getTransactionRejectedRpcErrorMessage = (
   } satisfies ReadableError
 }
 
+/**
+ * Attempts to decode a revert reason into one of the known ENS contract errors.
+ *
+ * `decodeErrorResult` throws (rather than returning a nullish value) when the
+ * selector isn't present in the ABI, so the call must be guarded.
+ */
+export const decodeContractError = (err: unknown) => {
+  const data = getViemRevertErrorData(err)
+  if (!data) return null
+  try {
+    return decodeErrorResult({
+      abi: allContractErrors,
+      data,
+    })
+  } catch {
+    return null
+  }
+}
+
+/**
+ * `CommitmentTooNew` means the block the call was executed against is still
+ * older than `commitment + minCommitmentAge`. This is a transient condition:
+ * the commitment simply hasn't aged into the chain's view of "now" yet, and the
+ * call will succeed once the next block is mined.
+ */
+export const isCommitmentTooNewError = (err: unknown): boolean =>
+  decodeContractError(err)?.errorName === 'CommitmentTooNew'
+
 export const getReadableError = (err: unknown): ReadableError | null => {
+  // Decode revert data first: an execution revert can reach us wrapped in any of
+  // the error types below (e.g. `eth_createAccessList` surfaces one as an
+  // `RpcRequestError`), and the decoded contract error is always more useful
+  // than the generic viem message those branches fall back to.
+  const decodedError = decodeContractError(err)
+  if (decodedError)
+    return {
+      message: decodedError.errorName,
+      type: 'contract',
+    } as const
+
   if (err instanceof EstimateGasExecutionError) return getEstimateGasExecutionErrorMessage(err)
   if (err instanceof TransactionRejectedRpcError) return getTransactionRejectedRpcErrorMessage(err)
   if (err instanceof RpcRequestError) return getTransactionRejectedRpcErrorMessage(err)
-  const data = getViemRevertErrorData(err)
-  if (!data) return null
-  const decodedError = decodeErrorResult({
-    abi: allContractErrors,
-    data,
-  })
-  if (!decodedError) return null
-  return {
-    message: decodedError.errorName,
-    type: 'contract',
-  } as const
+  return null
 }
