@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
-import { useAccount } from 'wagmi'
+import { useAccount, useWatchBlocks } from 'wagmi'
 
 import { makeCommitment } from '@ensdomains/ensjs/utils'
 import { Button, CountdownCircle, Dialog, Heading, Spinner } from '@ensdomains/thorin'
@@ -222,6 +222,21 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const commitTx = getLatestTransaction(commitKey)
   const registerTx = getLatestTransaction(registerKey)
   const [resetOpen, setResetOpen] = useState(false)
+  const [commitCompleteBlockNumber, setCommitCompleteBlockNumber] = useState<bigint | undefined>()
+  const [blocksWaitedSinceCommit, setBlocksWaitedSinceCommit] = useState<bigint>(0n)
+
+  // Watch blocks to track when enough blocks have passed since commit completion
+  // This is needed when reverseRecord is set to ensure proper state settlement
+  useWatchBlocks({
+    onBlock: (block) => {
+      if (commitTx?.stage === 'complete' && !commitCompleteBlockNumber && block.number) {
+        setCommitCompleteBlockNumber(block.number)
+      }
+      if (commitCompleteBlockNumber && block.number) {
+        setBlocksWaitedSinceCommit(block.number - commitCompleteBlockNumber)
+      }
+    },
+  })
 
   const registrationParams = useRegistrationParams({
     name,
@@ -355,14 +370,14 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
     })
   }, [commitKey, createTransactionFlow, name, onStart, registrationParams])
 
-  const makeRegisterNameFlow = () => {
+  const makeRegisterNameFlow = useCallback(() => {
     createTransactionFlow(registerKey, {
       transactions: [createTransactionItem('registerName', registrationParams)],
       requiresManualCleanup: true,
       autoClose: true,
       resumeLink: `/register/${name}`,
     })
-  }
+  }, [registerKey, createTransactionFlow, name, registrationParams])
 
   const showCommitTransaction = () => {
     resumeTransactionFlow(commitKey)
@@ -422,6 +437,21 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
   const duration = useDurationCountdown({
     endDate: commitTimestamp ? new Date(commitTimestamp + ONE_DAY * 1000) : undefined,
   })
+
+  // When reverseRecord is set, wait for 2 blocks after commit to ensure proper state settlement
+  const BLOCKS_TO_WAIT_FOR_REVERSE_RECORD = 2n
+  const shouldWaitForBlocks = registrationData.reverseRecord && commitTx?.stage === 'complete'
+  const hasWaitedEnoughBlocks = blocksWaitedSinceCommit >= BLOCKS_TO_WAIT_FOR_REVERSE_RECORD
+  const isBlockWaitComplete = !shouldWaitForBlocks || hasWaitedEnoughBlocks
+
+  const handleRegisterClick = () => {
+    if (!isBlockWaitComplete) return
+    if (!registerTx) {
+      makeRegisterNameFlow()
+    } else {
+      showRegisterTransaction()
+    }
+  }
 
   return (
     <StyledCard>
@@ -562,7 +592,8 @@ const Transactions = ({ registrationData, name, callback, onStart }: Props) => {
               <MobileFullWidth>
                 <Button
                   data-testid="finish-button"
-                  onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
+                  disabled={!isBlockWaitComplete}
+                  onClick={handleRegisterClick}
                 >
                   {t('steps.transactions.completeRegistration')}
                 </Button>
