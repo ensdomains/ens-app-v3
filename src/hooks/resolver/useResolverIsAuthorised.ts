@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { encodeFunctionData, namehash } from 'viem'
+import { encodeFunctionData, isAddressEqual, namehash } from 'viem'
 import { useConnectorClient, useEstimateGas } from 'wagmi'
 
 import { publicResolverSetAddrSnippet } from '@ensdomains/ensjs/contracts'
@@ -69,7 +69,10 @@ export const useResolverIsAuthorised = ({
         !isResolverHasInterfacesLoading &&
         !knownResolverData &&
         resolverSupportsMultiAddress &&
-        !!effectiveResolverAddress,
+        // emptyAddress is a truthy string, so a presence check alone stops
+        // guarding once a caller substitutes it for a missing resolver.
+        !!effectiveResolverAddress &&
+        !isAddressEqual(effectiveResolverAddress, emptyAddress),
     },
   })
 

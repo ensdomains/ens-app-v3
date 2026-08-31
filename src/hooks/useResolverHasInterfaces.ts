@@ -64,10 +64,17 @@ export const useResolverHasInterfaces = <
 }: UseResolverHasInterfacesParameters<TInterfaceNames>) => {
   const chainId = useChainId()
 
+  // A known resolver is one of ours and is never a composite mirror, so there
+  // is nothing behind it to look up. Skipping keeps the zero-network fast path
+  // these addresses already had: this hook's isLoading feeds useAbilities, so
+  // probing here would put an RPC round trip in front of every edit, send and
+  // extend button on an ordinary profile.
+  const reportedIsKnownResolver = !!getKnownResolverData({ chainId, resolverAddress })
+
   const effectiveResolver = useEffectiveResolverAddress({
     name: name ?? '',
     resolverAddress,
-    enabled: enabled_ && !!name,
+    enabled: enabled_ && !!name && !reportedIsKnownResolver,
   })
   const effectiveResolverAddress = effectiveResolver.data ?? resolverAddress
 

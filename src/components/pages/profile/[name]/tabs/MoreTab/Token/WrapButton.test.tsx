@@ -105,6 +105,7 @@ describe('WrapButton', () => {
     mockUseResolverStatus.mockReturnValue(
       createMockResolverStatus({
         isMigratedProfileEqual: false,
+        hasProfile: true,
         effectiveResolverAddress: '0x2000000000000000000000000000000000000002',
       }),
     )
@@ -204,7 +205,7 @@ describe('WrapButton', () => {
   })
   it('should create a transaction flow for a .eth 2LD with a profile and a different owner', () => {
     mockUseResolverStatus.mockReturnValue(
-      createMockResolverStatus({ isMigratedProfileEqual: false }),
+      createMockResolverStatus({ isMigratedProfileEqual: false, hasProfile: true }),
     )
     render(
       <WrapButton
@@ -332,7 +333,7 @@ describe('WrapButton', () => {
 
   it('should create a transaction flow for a subname with a profile', () => {
     mockUseResolverStatus.mockReturnValue(
-      createMockResolverStatus({ isMigratedProfileEqual: false }),
+      createMockResolverStatus({ isMigratedProfileEqual: false, hasProfile: true }),
     )
     render(
       <WrapButton

@@ -35,7 +35,12 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegis
 
   // BUG: We should also check if the current resolver is name wrapper aware, but this check creates a false negative for custom name wrapper aware resolvers.
   // For safety, we will migrate if the profile on the current resolver does not match the profile on the latest name wrapper aware resolver.
-  const shouldMigrate = !resolverStatus.data?.isMigratedProfileEqual
+  // Also require records to exist: this flag is a COMPARISON against the latest
+  // resolver's profile, so an empty current profile with leftover records on the
+  // latest resolver makes it true with nothing to migrate, and the queued
+  // migrateProfile then aborts the whole wrap.
+  const shouldMigrate =
+    !resolverStatus.data?.isMigratedProfileEqual && !!resolverStatus.data?.hasProfile
   // Migrate reads its source records from the resolver that actually holds
   // them: the underlying resolver when the name is abstracted.
   const resolverAddress = resolverStatus.data?.effectiveResolverAddress ?? profile?.resolverAddress
