@@ -213,10 +213,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverStatus = useResolverStatus({
     name,
   })
-  // Record writes target the registry resolver: whether the abstraction
-  // contract accepts and forwards writes is unverified, so writes are not
-  // routed to the probed underlying resolver (see WEB-688 Known risks).
-  const currentResolverAddress = profile?.resolverAddress
+  const currentResolverAddress =
+    resolverStatus.data?.effectiveResolverAddress ?? profile?.resolverAddress
 
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
@@ -300,6 +298,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         transactions: [
           createTransactionItem('migrateProfile', {
             name,
+            resolverAddress: currentResolverAddress,
           }),
           createTransactionItem('updateResolver', {
             name,

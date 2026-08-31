@@ -106,6 +106,26 @@ describe('resolver abstraction layer', () => {
     expect(view).toBe('editor')
   })
 
+  it('reports the underlying resolver as the address flows write through', () => {
+    // Every write flow (ProfileEditor save, EditRoles, SendName, WrapButton,
+    // the primary-name flow) pins its transaction target to this one value. A
+    // composite mirror holds no records and implements no record-writing
+    // interface, so a write aimed at the reported resolver can only revert.
+    const { status } = renderEditorView({ isWrapped: false })
+    expect(status.data?.effectiveResolverAddress).toEqual(latestResolverAddress)
+    expect(status.data?.effectiveResolverAddress).not.toEqual(abstractionAddress)
+  })
+
+  it('falls back to the reported resolver when the name is not composite', () => {
+    mockUseUnderlyingResolver.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+    })
+    const { status } = renderEditorView({ isWrapped: false })
+    expect(status.data?.effectiveResolverAddress).toEqual(abstractionAddress)
+  })
+
   it('does not send a wrapped abstracted name to the name-wrapper-aware prompt', () => {
     mockUseIsWrapped.mockReturnValue({ data: true, isLoading: false })
     const { status, view } = renderEditorView({ isWrapped: true })

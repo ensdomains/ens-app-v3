@@ -128,7 +128,11 @@ describe('getSendNameTransactions', () => {
         resolverAddress: '0xresolver',
       }),
     ).toEqual([
-      createTransactionItem('updateEthAddress', { name: 'test.eth', address: '0xrecipient' }),
+      createTransactionItem('updateEthAddress', {
+        name: 'test.eth',
+        address: '0xrecipient',
+        resolverAddress: '0xresolver',
+      }),
       createTransactionItem('transferName', {
         name: 'test.eth',
         newOwnerAddress: '0xrecipient',
