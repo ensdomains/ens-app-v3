@@ -5,6 +5,7 @@ import { Address } from 'viem'
 import { Button, Dialog } from '@ensdomains/thorin'
 
 import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 import useResolverEditor from '@app/hooks/useResolverEditor'
@@ -28,7 +29,20 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const formRef = useRef<HTMLFormElement>(null)
 
   const { data: profile = { resolverAddress: '' } } = useProfile({ name: name as string })
-  const { resolverAddress } = profile
+
+  // Edit against the resolver that actually holds the name's records, which is
+  // what the More tab displays. Comparing the reported address instead makes an
+  // abstracted name whose underlying resolver is already the latest look
+  // out-of-date, so the form preselects "switch to latest" and one confirm
+  // replaces the abstraction; and it lets the address the tab just showed be
+  // typed in as a "new" resolver rather than rejected as the current one.
+  const effectiveResolver = useEffectiveResolverAddress({
+    name,
+    // The destructure above defaults a missing resolver to '', which is not an
+    // address; the hook wants "no resolver" spelled as undefined.
+    resolverAddress: profile.resolverAddress || undefined,
+  })
+  const resolverAddress = effectiveResolver.data ?? profile.resolverAddress
 
   const handleCreateTransaction = useCallback(
     (newResolver: Address) => {
