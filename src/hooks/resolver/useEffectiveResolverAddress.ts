@@ -2,6 +2,8 @@ import type { Address } from 'viem'
 import { localhost } from 'viem/chains'
 import { useChainId } from 'wagmi'
 
+import { getKnownResolverData } from '@app/constants/resolverAddressData'
+
 import { useUnderlyingResolver } from './useUnderlyingResolver'
 
 type UseEffectiveResolverAddressParameters = {
@@ -36,7 +38,18 @@ export const useEffectiveResolverAddress = ({
   // chain (v1-only), so there is nothing to probe there: skip the extra
   // `getResolver` call entirely and judge names by the registry resolver, as
   // on mainnet before the abstraction ships.
-  const enabled = enabled_ && !!name && chainId !== localhost.id
+  // A known resolver is one of ours and is never a composite mirror, so there
+  // is nothing behind it to look up. Skipping keeps the zero-network path these
+  // addresses already had: this hook's loading state reaches useResolverStatus
+  // and useAbilities, so looking up would put an RPC round trip in front of the
+  // wrap button, the profile actions and the Edit Profile dialog on every
+  // ordinary name.
+  const reportedIsKnownResolver = !!getKnownResolverData({
+    chainId,
+    resolverAddress: resolverAddress ?? '',
+  })
+
+  const enabled = enabled_ && !!name && chainId !== localhost.id && !reportedIsKnownResolver
 
   const underlyingResolver = useUnderlyingResolver({ name, resolverAddress, enabled })
 

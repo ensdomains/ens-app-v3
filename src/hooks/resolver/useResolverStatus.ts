@@ -89,14 +89,6 @@ export const useResolverStatus = ({
 
   const data = useMemo(() => {
     if (isLoading || !enabled) return
-    // When the composite lookup fails we do not know which resolver this name
-    // actually uses. Judging it on the reported address would call an
-    // abstracted name's resolver invalid and route the editor to a view whose
-    // action repoints the registry away from the abstraction — a destructive
-    // change offered off one failed read. Report nothing instead; consumers
-    // already treat undefined as "not known yet", and the query retries and
-    // refetches on focus.
-    if (effectiveResolver.isError) return
 
     const defaultResults = {
       hasResolver: false,
@@ -175,7 +167,6 @@ export const useResolverStatus = ({
     resolverType.data?.type,
     isLoading,
     enabled,
-    effectiveResolver.isError,
   ])
 
   return {
