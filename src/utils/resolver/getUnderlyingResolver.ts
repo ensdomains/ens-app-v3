@@ -69,13 +69,21 @@ export const decodeUnderlyingResolver = ({
   data: Hex | undefined
   compositeAddress: Address
 }): Address | null => {
+  // `offchain` means the address alone does not locate the resolver — more
+  // information is needed (ICompositeResolver: "If `offchain`, additional
+  // information is necessary to locate `resolver`"). We hand this answer to
+  // judgement, display AND transaction targets, none of which can act on a
+  // partial reference, so an offchain answer is rejected below rather than
+  // returned as if it were a usable resolver.
   // An address with no code, or a `getResolver` that returns nothing.
   if (!data) return null
   // `ICompositeResolver.getResolver` returns exactly `(address resolver, bool offchain)`.
   if (size(data) !== 64) return null
   const resolverWord = slice(data, 0, 32)
   if (!isPaddedAddressWord(resolverWord)) return null
-  if (!isBoolWord(slice(data, 32, 64))) return null
+  const offchainWord = slice(data, 32, 64)
+  if (!isBoolWord(offchainWord)) return null
+  if (slice(offchainWord, 31, 32) === '0x01') return null
   const resolver = getAddress(slice(resolverWord, 12, 32))
   // A zero or self-referential answer means "nothing behind this" — never a
   // resolver to judge, probe further, or write to.

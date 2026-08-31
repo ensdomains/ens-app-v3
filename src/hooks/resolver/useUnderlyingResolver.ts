@@ -78,6 +78,13 @@ export const useUnderlyingResolver = ({
       params.resolverAddress.toLowerCase() !== emptyAddress,
     gcTime,
     staleTime,
+    // A revert is no longer the failure path — an ordinary resolver answers
+    // the ERC-165 check cleanly with false — so an error here is a transport
+    // failure, which a retry can fix and which otherwise degrades an
+    // abstracted name to being judged on the mirror. Bounded rather than left
+    // to the default: every hook in the judging chain waits on this one, so
+    // the retry window is a spinner on Edit Profile, Wrap and Send.
+    retry: 1,
   })
 
   const query = useQuery(preparedOptions)

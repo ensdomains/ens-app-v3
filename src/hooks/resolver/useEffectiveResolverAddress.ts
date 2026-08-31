@@ -61,8 +61,10 @@ export const useEffectiveResolverAddress = ({
     // which fails closed on a composite mirror because the mirror supports no
     // record interfaces. The cost of the fallback is therefore availability,
     // not safety — an abstracted name is judged unusable until the lookup
-    // succeeds, which is what `isError` reports so a caller can offer a retry
-    // instead of the migrate-your-resolver prompt.
+    // succeeds, and lands on the migrate-your-resolver prompt meanwhile.
+    // `isError` distinguishes that from a genuine "not composite" answer. No
+    // caller threads it into a retry surface yet; doing so is what would turn
+    // this from a silent degradation into a recoverable one.
     data: isLoading ? undefined : underlyingResolverAddress ?? resolverAddress,
     isAbstracted: !!underlyingResolverAddress,
     /** The lookup failed, so `data` is the unresolved fallback, not an answer. */

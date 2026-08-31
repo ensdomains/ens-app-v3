@@ -37,10 +37,12 @@ describe('decodeUnderlyingResolver', () => {
     )
   })
 
-  it('accepts an offchain=true answer', () => {
+  it('rejects an offchain=true answer', () => {
+    // The address alone does not locate an offchain resolver, so it is not
+    // something to judge a name by, display, or write records to.
     expect(
       decodeUnderlyingResolver({ data: returndata(underlyingAddress, '1'), compositeAddress }),
-    ).toEqual(getAddress(underlyingAddress))
+    ).toBeNull()
   })
 
   it('returns null when the resolver does not answer at all', () => {

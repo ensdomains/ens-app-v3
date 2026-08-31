@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import type { Address } from 'viem'
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 
@@ -9,7 +8,7 @@ import { setRecords } from '@ensdomains/ensjs/wallet'
 
 import type { ClientWithEns, ConnectorClientWithEns } from '@app/types'
 
-import migrateProfileWithReset from './migrateProfileWithReset'
+import migrateProfile from './migrateProfile'
 
 vi.mock('@ensdomains/ensjs/contracts', () => ({ getChainContractAddress: vi.fn() }))
 vi.mock('@ensdomains/ensjs/public', () => ({ getRecords: vi.fn() }))
@@ -37,24 +36,33 @@ const client = {} as ClientWithEns
 const connectorClient = {} as ConnectorClientWithEns
 const data = { name: 'test.eth', resolverAddress: sourceResolver }
 
-describe('migrateProfileWithReset transaction', () => {
+describe('migrateProfile transaction', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockGetChainContractAddress.mockReturnValue(latestResolver)
     mockSetRecords.mockReturnValue({ to: latestResolver, data: '0x' })
   })
 
-  it('refuses to build a clearing write when the source profile comes back empty', async () => {
+  it('throws when the subgraph query itself returns nothing', async () => {
     mockGetSubgraphRecords.mockResolvedValue(null)
-    mockGetRecords.mockResolvedValue({ texts: [], coins: [], contentHash: null, abi: null })
 
-    await expect(
-      migrateProfileWithReset.transaction({ client, connectorClient, data }),
-    ).rejects.toThrow('No records found to migrate')
+    await expect(migrateProfile.transaction({ client, connectorClient, data })).rejects.toThrow(
+      'No subgraph records found',
+    )
     expect(mockSetRecords).not.toHaveBeenCalled()
   })
 
-  it('reads the source records from the supplied resolver and writes them to the latest', async () => {
+  it('refuses to migrate when the source profile comes back empty', async () => {
+    mockGetSubgraphRecords.mockResolvedValue({ texts: [], coins: [] })
+    mockGetRecords.mockResolvedValue({ texts: [], coins: [], contentHash: null, abi: null })
+
+    await expect(migrateProfile.transaction({ client, connectorClient, data })).rejects.toThrow(
+      'No records found to migrate',
+    )
+    expect(mockSetRecords).not.toHaveBeenCalled()
+  })
+
+  it('reads the source records from the supplied resolver and copies them to the latest', async () => {
     mockGetSubgraphRecords.mockResolvedValue({ texts: ['com.twitter'], coins: [] })
     mockGetRecords.mockResolvedValue({
       texts: [{ key: 'com.twitter', value: 'ens' }],
@@ -63,40 +71,21 @@ describe('migrateProfileWithReset transaction', () => {
       abi: null,
     })
 
-    await migrateProfileWithReset.transaction({ client, connectorClient, data })
+    await migrateProfile.transaction({ client, connectorClient, data })
 
-    expect(mockGetSubgraphRecords).toHaveBeenCalledWith(client, {
-      name: 'test.eth',
-      resolverAddress: sourceResolver,
-    })
-    expect(mockGetRecords).toHaveBeenCalledWith(
+    expect(mockGetSubgraphRecords).toHaveBeenCalledWith(
       client,
+      expect.objectContaining({ resolverAddress: sourceResolver }),
+    )
+    expect(mockGetRecords).toHaveBeenCalledWith(
+      connectorClient,
       expect.objectContaining({
         resolver: { address: sourceResolver, fallbackOnly: false },
       }),
     )
-    expect(mockSetRecords).toHaveBeenCalledWith(
-      connectorClient,
-      expect.objectContaining({ clearRecords: true, resolverAddress: latestResolver }),
-    )
-  })
-
-  it('lets a contenthash-only profile through the records floor and keeps the contenthash', async () => {
-    mockGetSubgraphRecords.mockResolvedValue(null)
-    mockGetRecords.mockResolvedValue({
-      texts: [],
-      coins: [],
-      contentHash: { protocolType: 'ipfs', decoded: 'bafy' },
-      abi: null,
-    })
-
-    await migrateProfileWithReset.transaction({ client, connectorClient, data })
-
-    expect(mockSetRecords).toHaveBeenCalledWith(
-      connectorClient,
-      expect.objectContaining({
-        contentHash: { protocolType: 'ipfs', decoded: 'bafy' },
-      }),
-    )
+    const payload = mockSetRecords.mock.calls[0][1]
+    expect(payload.resolverAddress).toEqual(latestResolver)
+    // migrateProfile copies without clearing; only the WithReset variant clears
+    expect(payload.clearRecords).toBeUndefined()
   })
 })
