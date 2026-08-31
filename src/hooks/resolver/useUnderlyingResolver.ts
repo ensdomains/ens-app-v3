@@ -42,9 +42,11 @@ export const underlyingResolverQueryFn =
  * Probes a resolver for the ENSv2 abstraction layer, returning the resolver
  * behind it or `null` when there is none. The probe itself (ABI, decode
  * guards, revert handling) lives in `@app/utils/resolver/getUnderlyingResolver`.
- * The result is for JUDGING and DISPLAYING a name only; record writes and
- * migrations target the registry resolver, so no transaction builder consumes
- * this. Prefer
+ * The result decides how a name is JUDGED, DISPLAYED, and WRITTEN THROUGH: a
+ * composite mirror holds no records and implements no record-writing
+ * interface, so flows pin the resolver behind it as their transaction target.
+ * A wrong answer here therefore reaches signed calldata — keep the decode
+ * guards in `getUnderlyingResolver` strict. Prefer
  * {@link import('./useEffectiveResolverAddress').useEffectiveResolverAddress},
  * which folds the answer back into a single address to judge a name by.
  */
@@ -76,9 +78,6 @@ export const useUnderlyingResolver = ({
       params.resolverAddress.toLowerCase() !== emptyAddress,
     gcTime,
     staleTime,
-    // Neither a revert nor an RPC failure gets better on a second attempt: both
-    // mean "assume there is no abstraction here".
-    retry: false,
   })
 
   const query = useQuery(preparedOptions)

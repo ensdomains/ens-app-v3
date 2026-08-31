@@ -46,6 +46,8 @@ const erc165SupportsInterfaceSnippet = parseAbi([
 
 const ADDRESS_WORD_PADDING = `0x${'00'.repeat(12)}`
 const BOOL_WORD_PADDING = `0x${'00'.repeat(31)}`
+/** ABI-encoded `true`: the only `supportsInterface` answer that means "composite". */
+const TRUE_WORD = `${BOOL_WORD_PADDING}01` as Hex
 
 const isPaddedAddressWord = (word: Hex) => slice(word, 0, 12) === ADDRESS_WORD_PADDING
 const isBoolWord = (word: Hex) =>
@@ -141,9 +143,7 @@ export const getUnderlyingResolver = async (
       args: [COMPOSITE_RESOLVER_INTERFACE_ID],
     }),
   )
-  // A bare `true` word is the only answer that means "composite".
-  if (!supportsResult.data || size(supportsResult.data) !== 32) return null
-  if (!isBoolWord(supportsResult.data) || slice(supportsResult.data, 31, 32) !== '0x01') return null
+  if (supportsResult.data !== TRUE_WORD) return null
 
   const result = await readOrNull(
     encodeFunctionData({

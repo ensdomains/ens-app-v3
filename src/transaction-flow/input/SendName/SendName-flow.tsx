@@ -96,7 +96,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const onSubmit = ({ recipient, transactions }: SendNameForm) => {
     // The record transactions below pin the judged resolver address; do not
     // build them from a still-resolving support check.
-    if (resolverSupport.isLoading) return
+    if (resolver.isLoading || resolverSupport.isLoading) return
     const isOwnerOrManager =
       account.address === basic.ownerData?.owner || basic.ownerData?.registrant === account.address
 
@@ -136,7 +136,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
           <ConfirmationView
             onBack={onBack}
             onSubmit={form.handleSubmit(onSubmit)}
-            loading={resolverSupport.isLoading}
+            loading={resolver.isLoading || resolverSupport.isLoading}
           />
         ))
         .with([true, 'summary'], () => (

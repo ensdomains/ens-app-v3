@@ -40,7 +40,7 @@ export const useEffectiveResolverAddress = ({
 
   const underlyingResolver = useUnderlyingResolver({ name, resolverAddress, enabled })
 
-  const { isLoading, isFetching, isCachedData } = underlyingResolver
+  const { isLoading, isFetching, isCachedData, isError } = underlyingResolver
   const underlyingResolverAddress = underlyingResolver.data ?? undefined
 
   return {
@@ -48,16 +48,25 @@ export const useEffectiveResolverAddress = ({
     // exists to prevent, so there is no address to report until the probe has
     // answered one way or the other.
     //
-    // A probe ERROR (transport failure on the first fetch) deliberately falls
-    // back to the supplied registry address rather than reporting nothing:
-    // for a non-abstracted name that address is the correct answer, and for
-    // an abstracted name every judgement made against it fails closed (the
-    // abstraction supports no resolver interfaces), so no editor unblocks and
-    // no write flow pins it while it is wrong. A refetch error never replaces
-    // previously fetched data. Erroring the composed hooks instead would take
-    // every ordinary name down with one flaky RPC round trip.
+    // A lookup ERROR (a transport failure — a non-composite resolver answers
+    // the ERC-165 check cleanly rather than erroring) falls back to the
+    // supplied address rather than reporting nothing: for the overwhelmingly
+    // common non-composite name that address is the correct answer, and
+    // erroring the composed hooks instead would take every ordinary name down
+    // with one flaky RPC round trip. A refetch error never replaces
+    // previously fetched data.
+    //
+    // A write flow CAN pin this fallback, but never a wrong one that reaches
+    // the chain: every write is gated behind the authorisation judgement,
+    // which fails closed on a composite mirror because the mirror supports no
+    // record interfaces. The cost of the fallback is therefore availability,
+    // not safety — an abstracted name is judged unusable until the lookup
+    // succeeds, which is what `isError` reports so a caller can offer a retry
+    // instead of the migrate-your-resolver prompt.
     data: isLoading ? undefined : underlyingResolverAddress ?? resolverAddress,
     isAbstracted: !!underlyingResolverAddress,
+    /** The lookup failed, so `data` is the unresolved fallback, not an answer. */
+    isError,
     isLoading,
     isFetching,
     isCachedData,

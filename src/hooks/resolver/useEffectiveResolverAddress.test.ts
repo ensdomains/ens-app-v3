@@ -69,7 +69,7 @@ describe('useEffectiveResolverAddress', () => {
     })
   })
 
-  it('should fall back to the registry resolver when the probe fails', () => {
+  it('should fall back to the registry resolver when the lookup fails, and say so', () => {
     mockUseUnderlyingResolver.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -83,7 +83,19 @@ describe('useEffectiveResolverAddress', () => {
       data: registryResolver,
       isAbstracted: false,
       isLoading: false,
+      // The fallback is NOT an answer: a caller must be able to tell it apart
+      // from a genuine "this resolver is not composite", or an abstracted name
+      // silently reverts to the migrate-your-resolver prompt this hook exists
+      // to prevent.
+      isError: true,
     })
+  })
+
+  it('should not report an error for a resolver that is simply not composite', () => {
+    const { result } = renderHook(() =>
+      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
+    )
+    expect(result.current).toMatchObject({ data: registryResolver, isError: undefined })
   })
 
   it('should not probe when there is no name', () => {
