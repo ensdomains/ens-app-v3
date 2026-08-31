@@ -40,7 +40,17 @@ const transaction = async ({
   connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
-  const subgraphRecords = await getSubgraphRecords(client, data)
+  // Key discovery and value reads come from different places on purpose: the
+  // index says which records exist, the chain says what they hold (see the
+  // wiki, knowledge/apps/resolution.md). Discovery is deliberately NOT keyed
+  // by the pinned resolver — the subgraph keys its resolver entity by the
+  // address in the v1 registry's NewResolver event, so an address-keyed lookup
+  // silently returns an empty set whenever that disagrees with the live read,
+  // losing every text and coin in the migration. The unkeyed query is also
+  // what the editor's own "do I have a profile" gate uses, so the option the
+  // dialog offers and the transaction it builds now agree. Values are still
+  // read from the pinned resolver below.
+  const subgraphRecords = await getSubgraphRecords(client, { name: data.name })
   if (!subgraphRecords) throw new Error('No subgraph records found')
   const profile = await getRecords(connectorClient, {
     name: data.name,

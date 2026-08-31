@@ -127,7 +127,7 @@ const Resolver = ({
   })
 
   return (
-    <Container $isCached={isCachedData}>
+    <Container $isCached={isCachedData || effectiveResolver.isCachedData}>
       <HeadingContainer>
         <InnerHeading>
           <Typography color="text" fontVariant="headingFour" weight="bold">
@@ -139,7 +139,15 @@ const Resolver = ({
         <RecordItem
           type="text"
           data-testid="resolver-address"
-          value={effectiveResolver.data || registryOrSubgraphResolverAddress || ''}
+          // Render nothing until the composite lookup settles. Falling back to
+          // the reported address meanwhile shows the mirror as if it were the
+          // answer and then swaps it, so anyone reading or copying during that
+          // window gets an address the app is about to contradict.
+          value={
+            effectiveResolver.isLoading
+              ? ''
+              : effectiveResolver.data || registryOrSubgraphResolverAddress || ''
+          }
         />
         {canEdit && !hasGraphError && (
           <>

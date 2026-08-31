@@ -73,10 +73,11 @@ describe('migrateProfile transaction', () => {
 
     await migrateProfile.transaction({ client, connectorClient, data })
 
-    expect(mockGetSubgraphRecords).toHaveBeenCalledWith(
-      client,
-      expect.objectContaining({ resolverAddress: sourceResolver }),
-    )
+    // Key discovery must NOT be keyed by the pinned resolver: the subgraph
+    // keys that entity by the v1 registry's NewResolver address, so an
+    // address-keyed lookup returns an empty set the moment the two disagree
+    // and the migration silently carries nothing across.
+    expect(mockGetSubgraphRecords).toHaveBeenCalledWith(client, { name: 'test.eth' })
     expect(mockGetRecords).toHaveBeenCalledWith(
       connectorClient,
       expect.objectContaining({
