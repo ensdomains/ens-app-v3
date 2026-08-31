@@ -61,7 +61,14 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
     [dispatch, name, isWrapped],
   )
 
-  const editResolverForm = useResolverEditor({ resolverAddress, callback: handleCreateTransaction })
+  const editResolverForm = useResolverEditor({
+    resolverAddress,
+    // On a failed lookup the address above is the reported one, which for an
+    // abstracted name is the mirror — the comparison that would otherwise
+    // preselect "switch to latest" is not trustworthy.
+    isResolverAddressUnknown: effectiveResolver.isError,
+    callback: handleCreateTransaction,
+  })
   const { hasErrors } = editResolverForm
 
   const handleSubmitForm = () => {

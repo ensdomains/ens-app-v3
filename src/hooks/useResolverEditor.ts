@@ -14,9 +14,19 @@ type FormData = {
 export type Props = {
   callback: (data: Address) => void
   resolverAddress: string | undefined
+  /**
+   * The name's current resolver could not be determined. Treated like "already
+   * on the latest": with nothing to compare against, the form must not
+   * preselect switching resolver.
+   */
+  isResolverAddressUnknown?: boolean
 }
 
-const useResolverEditor = ({ callback, resolverAddress }: Props) => {
+const useResolverEditor = ({
+  callback,
+  resolverAddress,
+  isResolverAddressUnknown = false,
+}: Props) => {
   const lastestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
   const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
@@ -27,8 +37,9 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     })
 
   useEffect(() => {
-    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', address: '' })
-  }, [isResolverAddressLatest, reset])
+    if (isResolverAddressLatest || isResolverAddressUnknown)
+      reset({ resolverChoice: 'custom', address: '' })
+  }, [isResolverAddressLatest, isResolverAddressUnknown, reset])
 
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
   const customResolver = watch('address')

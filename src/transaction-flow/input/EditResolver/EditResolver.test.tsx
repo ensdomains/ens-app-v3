@@ -82,4 +82,24 @@ describe('EditResolver', () => {
 
     await waitFor(() => expect(screen.getByTestId('latest-resolver-radio')).toBeChecked())
   })
+
+  it('does not preselect switching resolver when the lookup failed', async () => {
+    // A failed lookup leaves the reported (mirror) address in play, so the
+    // latest-resolver comparison is not trustworthy; preselecting the switch
+    // would put a one-confirm path to replacing the abstraction behind a
+    // transient RPC error.
+    mockUseProfile.mockReturnValue({ data: { resolverAddress: mirror }, isLoading: false })
+    mockUseEffectiveResolverAddress.mockReturnValue({
+      data: mirror,
+      isLoading: false,
+      isFetching: false,
+      isError: true,
+      isAbstracted: false,
+    })
+
+    renderEditResolver()
+
+    await waitFor(() => expect(screen.getByTestId('custom-resolver-radio')).toBeChecked())
+    expect(screen.getByTestId('latest-resolver-radio')).not.toBeChecked()
+  })
 })
