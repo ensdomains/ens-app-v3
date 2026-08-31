@@ -21,7 +21,12 @@ const underlyingResolver = '0x2222222222222222222222222222222222222222'
 beforeEach(() => {
   vi.clearAllMocks()
   mockUseChainId.mockReturnValue(1)
-  mockUseUnderlyingResolver.mockReturnValue({ data: null, isLoading: false, isFetching: false })
+  mockUseUnderlyingResolver.mockReturnValue({
+    data: null,
+    isLoading: false,
+    isFetching: false,
+    isError: false,
+  })
 })
 
 describe('useEffectiveResolverAddress', () => {
@@ -95,7 +100,7 @@ describe('useEffectiveResolverAddress', () => {
     const { result } = renderHook(() =>
       useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
     )
-    expect(result.current).toMatchObject({ data: registryResolver, isError: undefined })
+    expect(result.current).toMatchObject({ data: registryResolver, isError: false })
   })
 
   it('should not probe when there is no name', () => {
