@@ -1,0 +1,172 @@
+name: Claude Manual Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'PR number to test. Leave empty only for a local `act` rehearsal, where there is no PR to read.'
+        required: false
+
+concurrency:
+  group: claude-manual-test-${{ github.event.pull_request.number || inputs.pr || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write # so the action's OIDC path works on GitHub if the explicit token is ever removed
+
+jobs:
+  manual-test:
+    # Secrets are not available to fork PRs, and the run is expensive - skip both cases.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       !contains(github.event.pull_request.labels.*.name, 'skip-manual-test'))
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 90
+    env:
+      PR: ${{ github.event.pull_request.number || inputs.pr }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # `act` runs against the working tree, and has no PR/token to check out with
+      - name: Checkout PR branch
+        if: ${{ !env.ACT }}
+        run: gh pr checkout "$PR"
+
+      - uses: ./.github/actions/setup
+
+      - run: pnpm rebuild -r
+
+      - name: Install Playwright browsers
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          # the MCP server ships its own playwright, which needs its own browser build
+          npx -y @playwright/mcp@latest install-browser chrome-for-testing
+
+      # --- local stack -------------------------------------------------------------------------
+      # setsid, not just nohup: each step is its own `docker exec`/shell session, and a merely
+      # backgrounded child gets torn down with it (seen under `act`: next dev died between steps).
+      - name: Start test environment (anvil + subgraph + contracts)
+        run: |
+          setsid nohup pnpm denv > /tmp/denv.log 2>&1 < /dev/null &
+          disown || true
+          pnpm wait-on ./.env.local -t 900000
+          pnpm wait-on tcp:8545 tcp:42069 -t 900000
+          # .env.local can be left over from an earlier run (e.g. under `act`), so don't treat it as
+          # proof the deploy finished - wait until the registry actually has code, and the subgraph
+          # has caught up with it.
+          node .github/scripts/manual-test/wait-for-stack.mjs
+
+      - name: Start app
+        run: |
+          setsid nohup pnpm dev:glocal > /tmp/dev.log 2>&1 < /dev/null &
+          disown || true
+          pnpm wait-on http://localhost:3000 -t 900000
+
+      # --- claude ------------------------------------------------------------------------------
+      # --init-page runs .github/scripts/manual-test/init-page.cjs on every tab: it injects the
+      # same mock wallet (@ensdomains/headless-web3-provider) and installs the same chain-time page
+      # clock the e2e fixtures set up, and exposes a control server on :8546.
+      - name: Configure Playwright MCP
+        run: |
+          mkdir -p /tmp/playwright-mcp
+          cat > /tmp/mcp-playwright.json << EOF
+          {
+            "mcpServers": {
+              "playwright": {
+                "command": "npx",
+                "args": [
+                  "-y", "@playwright/mcp@latest",
+                  "--headless",
+                  "--isolated",
+                  "--browser", "chromium",
+                  "--viewport-size", "1280,900",
+                  "--output-dir", "/tmp/playwright-mcp",
+                  "--init-page", "${{ github.workspace }}/.github/scripts/manual-test/init-page.cjs"
+                ]
+              }
+            }
+          }
+          EOF
+
+      # Cheap proof the wallet, the clock and the app are all actually working through MCP - a broken
+      # harness should fail here, not halfway through a Claude session.
+      - name: Smoke-test the harness
+        run: node .github/scripts/manual-test/smoke.mjs
+        env:
+          MCP_CONFIG: /tmp/mcp-playwright.json
+
+      # A full session reads the PR diff, so it needs a PR number. Only a baseline-scope rehearsal
+      # (register + extend, nothing PR-specific) can run without one.
+      - name: Check scope against PR context
+        run: |
+          if [ -z "$PR" ] && [ "${MANUAL_TEST_SCOPE:-full}" != "baseline" ]; then
+            echo "::error::No PR number: pass one via the workflow_dispatch input, or set MANUAL_TEST_SCOPE=baseline."
+            exit 1
+          fi
+          echo "PR=${PR:-<none>} scope=${MANUAL_TEST_SCOPE:-full}"
+
+      # Skipped under `act` by default because it spends Claude usage. To rehearse the real thing:
+      #   act ... --env CLAUDE_IN_ACT=true -s CLAUDE_CODE_OAUTH_TOKEN
+      # MANUAL_TEST_DRY_RUN then keeps it from commenting on the real PR.
+      - name: Run manual test session
+        id: claude
+        if: ${{ !env.ACT || env.CLAUDE_IN_ACT == 'true' }}
+        uses: anthropics/claude-code-action@v1
+        env:
+          MANUAL_TEST_DRY_RUN: ${{ env.ACT == 'true' }}
+          # `--env MANUAL_TEST_SCOPE=baseline` keeps a local rehearsal to the Phase 0 flows
+          MANUAL_TEST_SCOPE: ${{ env.MANUAL_TEST_SCOPE || 'full' }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Without this the action mints its own token via OIDC, which needs
+          # ACTIONS_ID_TOKEN_REQUEST_URL - real GitHub only, so it fails under `act`.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            You are manually testing the checked-out branch of ${{ github.repository }}. The PR
+            number is in `$PR` (empty only in a baseline-scope rehearsal, where there is no PR).
+
+            Read `.github/claude/manual-test-instructions.md` and follow it exactly, end to end:
+            run the Phase 0 baseline flows (register a name, extend a name) whatever the diff
+            contains, understand the diff, derive a test plan with explicit oracles, execute it in
+            the browser through the Playwright MCP tools, then write the report to
+            /tmp/manual-test-report.md and post it with
+            `gh pr comment "$PR" --body-file /tmp/manual-test-report.md`
+            (skip the comment and print the report instead when MANUAL_TEST_DRY_RUN is true).
+
+            The environment is already running - do not start servers, do not run the automated e2e
+            suite, and do not modify application source. `$PR` is available in the shell.
+            Screenshots you take are uploaded as workflow artifacts, so name them meaningfully.
+          claude_args: |
+            --mcp-config /tmp/mcp-playwright.json
+            --allowedTools "mcp__playwright,Bash,Read,Grep,Glob,Write,Edit,TodoWrite,WebFetch"
+            --max-turns 400
+
+      # --- always: evidence + fallback comment ---------------------------------------------------
+      - name: Collect logs
+        if: always()
+        run: |
+          mkdir -p /tmp/manual-test-artifacts
+          cp /tmp/denv.log /tmp/dev.log /tmp/manual-test-artifacts/ 2>/dev/null || true
+          cp /tmp/manual-test-report.md /tmp/manual-test-artifacts/ 2>/dev/null || true
+          cp -r /tmp/playwright-mcp /tmp/manual-test-artifacts/screenshots 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: claude-manual-test
+          path: /tmp/manual-test-artifacts
+          retention-days: 14
+
+      - name: Comment on failure
+        if: ${{ failure() && !env.ACT }}
+        run: |
+          gh pr comment "$PR" --body "🤖 Claude manual test run did not complete — see [the workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for logs and screenshots."
