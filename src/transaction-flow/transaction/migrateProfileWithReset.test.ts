@@ -53,7 +53,7 @@ describe('migrateProfileWithReset transaction', () => {
     expect(mockSetRecords).not.toHaveBeenCalled()
   })
 
-  it('reads the source records from the supplied resolver and writes them to the latest', async () => {
+  it('reads the source records through the UniversalResolver and writes them to the latest', async () => {
     mockGetSubgraphRecords.mockResolvedValue({ texts: ['com.twitter'], coins: [] })
     mockGetRecords.mockResolvedValue({
       texts: [{ key: 'com.twitter', value: 'ens' }],
@@ -69,11 +69,11 @@ describe('migrateProfileWithReset transaction', () => {
     // address-keyed lookup returns an empty set the moment the two disagree
     // and the migration silently carries nothing across.
     expect(mockGetSubgraphRecords).toHaveBeenCalledWith(client, { name: 'test.eth' })
+    // Unpinned: a pinned read would bypass ENSIP-10 resolve(), which is the
+    // only path a wildcard or CCIP-Read resolver answers on.
     expect(mockGetRecords).toHaveBeenCalledWith(
-      client,
-      expect.objectContaining({
-        resolver: { address: sourceResolver, fallbackOnly: false },
-      }),
+      expect.anything(),
+      expect.not.objectContaining({ resolver: expect.anything() }),
     )
     expect(mockSetRecords).toHaveBeenCalledWith(
       connectorClient,

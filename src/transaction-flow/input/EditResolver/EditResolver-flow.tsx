@@ -29,7 +29,9 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { data: isWrapped } = useIsWrapped({ name })
   const formRef = useRef<HTMLFormElement>(null)
 
-  const { data: profile = { resolverAddress: '' } } = useProfile({ name: name as string })
+  const { data: profile = { resolverAddress: '' }, isLoading: profileLoading } = useProfile({
+    name: name as string,
+  })
 
   // Edit against the resolver that actually holds the name's records, which is
   // what the More tab displays. Comparing the reported address instead makes an
@@ -82,7 +84,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   // click in that window replaces the abstraction. Waiting also means the
   // form's own correction runs before the user can touch anything, so it can
   // never be skipped by a field they have already edited.
-  if (effectiveResolver.isLoading) return <TransactionLoader />
+  if (profileLoading || effectiveResolver.isLoading) return <TransactionLoader />
 
   return (
     <>

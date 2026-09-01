@@ -90,7 +90,9 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
         ? createTransactionItem('updateEthAddress', {
             name,
             address: dirtyValues['eth-record'],
-            resolverAddress: effectiveResolver.data,
+            // Only when the lookup redirected; otherwise let the builder resolve
+            // the name, which handles wildcard resolution as it always did.
+            resolverAddress: effectiveResolver.isAbstracted ? effectiveResolver.data : undefined,
           })
         : null,
       dirtyValues.manager

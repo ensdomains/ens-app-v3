@@ -126,13 +126,12 @@ const Resolver = ({
     resolverAddress: registryOrSubgraphResolverAddress as Address,
   })
 
-  // Blank until the composite lookup settles. Falling back to the reported
-  // address meanwhile shows the mirror as if it were the answer and then swaps
-  // it, so anyone reading or copying during that window gets an address the app
-  // is about to contradict.
-  const displayedResolverAddress = effectiveResolver.isLoading
-    ? ''
-    : effectiveResolver.data || registryOrSubgraphResolverAddress || ''
+  // Show the reported address while the lookup runs rather than blanking: an
+  // empty row with a live copy control is a certain cost on every custom
+  // resolver, while the value only changes underneath for a name that turns
+  // out to be abstracted. The dialog that could act on a stale reading — the
+  // resolver editor — waits for the lookup itself.
+  const displayedResolverAddress = effectiveResolver.data || registryOrSubgraphResolverAddress || ''
 
   return (
     <Container $isCached={isCachedData || effectiveResolver.isCachedData}>

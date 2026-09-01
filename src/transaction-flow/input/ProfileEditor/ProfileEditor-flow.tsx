@@ -216,16 +216,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const currentResolverAddress =
     resolverStatus.data?.effectiveResolverAddress ?? profile?.resolverAddress
 
-  // Only pin the read when the lookup actually redirected it. ensjs reads a
-  // pinned resolver with a direct multicall of raw text()/addr() calls,
-  // bypassing the UniversalResolver's ENSIP-10 resolve() wrapping — which is
-  // the only way a wildcard, CCIP-Read or L2-backed resolver answers at all.
-  // Unpinned, those names resolve correctly, and an abstracted name does too
-  // because the mirror's resolve() forwards to the resolver behind it.
-  const migrationSourceResolverAddress = resolverStatus.data?.isResolverAbstracted
-    ? currentResolverAddress
-    : undefined
-
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
@@ -308,7 +298,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         transactions: [
           createTransactionItem('migrateProfile', {
             name,
-            resolverAddress: migrationSourceResolverAddress,
           }),
           createTransactionItem('updateResolver', {
             name,
@@ -367,7 +356,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         transactions: [
           createTransactionItem('migrateProfileWithReset', {
             name,
-            resolverAddress: migrationSourceResolverAddress,
           }),
           createTransactionItem('updateResolver', {
             name,

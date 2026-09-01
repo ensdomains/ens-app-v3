@@ -14,7 +14,6 @@ type Props = {
   onSelectIndex: (index: number) => void
   onCancel: () => void
   onSubmit: () => void
-  /** Disables saving while transaction prerequisites are resolving. */
   /**
    * The data the save depends on is still resolving. Blocks the save without
    * claiming one is in progress — there is no in-dialog saving state, so a

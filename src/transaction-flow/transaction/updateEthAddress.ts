@@ -1,11 +1,12 @@
 import type { TFunction } from 'react-i18next'
-import { Address, getAddress } from 'viem'
+import { Address, getAddress, isAddressEqual } from 'viem'
 
 import { getChainContractAddress } from '@ensdomains/ensjs/contracts'
 import { getResolver } from '@ensdomains/ensjs/public'
 import { setAddressRecord } from '@ensdomains/ensjs/wallet'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { emptyAddress } from '@app/utils/constants'
 
 type Data = {
   name: string
@@ -47,9 +48,16 @@ const transaction = async ({
   connectorClient,
   data,
 }: TransactionFunctionParameters<Data>) => {
+  // A pinned zero address is not a resolver; fall through to looking one up so
+  // the guard below reports "no resolver" rather than building a transaction
+  // aimed at the zero address.
+  const pinnedResolverAddress =
+    data.resolverAddress && !isAddressEqual(data.resolverAddress, emptyAddress)
+      ? data.resolverAddress
+      : undefined
   const resolverAddress = data?.latestResolver
     ? getChainContractAddress({ client, contract: 'ensPublicResolver' })
-    : data.resolverAddress ?? (await getResolver(client, { name: data.name }))
+    : pinnedResolverAddress ?? (await getResolver(client, { name: data.name }))
   if (!resolverAddress) throw new Error('No resolver found')
   let address
   try {
