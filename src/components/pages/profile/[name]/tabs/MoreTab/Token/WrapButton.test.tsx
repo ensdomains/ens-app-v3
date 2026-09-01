@@ -64,7 +64,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -79,7 +78,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped={false}
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -93,7 +91,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -106,6 +103,7 @@ describe('WrapButton', () => {
       createMockResolverStatus({
         isMigratedProfileEqual: false,
         hasProfile: true,
+        isResolverAbstracted: true,
         effectiveResolverAddress: '0x2000000000000000000000000000000000000002',
       }),
     )
@@ -114,21 +112,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={true}
         isRegistrant={false}
       />,
@@ -153,21 +136,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -186,12 +154,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -212,21 +174,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ ownershipLevel: 'registrar', owner: '0x124', registrant: '0x123' }}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={false}
         isRegistrant={true}
       />,
@@ -252,21 +199,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ ownershipLevel: 'registrar', owner: '0x124', registrant: '0x123' }}
-        profile={
-          {
-            resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -290,12 +222,6 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
         isManager={true}
         isRegistrant={false}
       />,
@@ -319,12 +245,6 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -346,21 +266,6 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={true}
         isRegistrant={false}
       />,
@@ -386,7 +291,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -409,7 +313,6 @@ describe('WrapButton', () => {
         name="[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456', records: {} } as any}
         isManager={true}
         isRegistrant={false}
       />,
@@ -445,7 +348,6 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123', ownershipLevel: 'registrar', registrant: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,

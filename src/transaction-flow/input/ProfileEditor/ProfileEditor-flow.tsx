@@ -222,10 +222,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   // the only way a wildcard, CCIP-Read or L2-backed resolver answers at all.
   // Unpinned, those names resolve correctly, and an abstracted name does too
   // because the mirror's resolve() forwards to the resolver behind it.
-  const migrationSourceResolverAddress =
-    currentResolverAddress && currentResolverAddress !== profile?.resolverAddress
-      ? currentResolverAddress
-      : undefined
+  const migrationSourceResolverAddress = resolverStatus.data?.isResolverAbstracted
+    ? currentResolverAddress
+    : undefined
 
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {

@@ -10,7 +10,6 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
-import { Profile } from '@app/types'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import BaseWrapButton from './BaseWrapButton'
@@ -19,12 +18,11 @@ type Props = {
   name: string
   canBeWrapped: boolean
   ownerData: GetOwnerReturnType | undefined
-  profile: Profile | undefined
   isManager: boolean
   isRegistrant: boolean
 }
 
-const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegistrant }: Props) => {
+const WrapButton = ({ name, ownerData, canBeWrapped, isManager, isRegistrant }: Props) => {
   const { t } = useTranslation('profile')
 
   const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
@@ -47,11 +45,9 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegis
   // the only way a wildcard, CCIP-Read or L2-backed resolver answers at all.
   // Unpinned, those names resolve correctly, and an abstracted name does too
   // because the mirror's resolve() forwards to the resolver behind it.
-  const effectiveResolverAddress = resolverStatus.data?.effectiveResolverAddress
-  const resolverAddress =
-    effectiveResolverAddress && effectiveResolverAddress !== profile?.resolverAddress
-      ? effectiveResolverAddress
-      : undefined
+  const resolverAddress = resolverStatus.data?.isResolverAbstracted
+    ? resolverStatus.data.effectiveResolverAddress
+    : undefined
 
   const isSubname = name.split('.').length > 2
   const { data: approvedForAll, isLoading: isApprovalLoading } = useWrapperApprovedForAll({

@@ -120,6 +120,14 @@ export const useResolverStatus = ({
       // and implements no record-writing interface, so it is never a valid
       // write target itself.
       effectiveResolverAddress,
+      /**
+       * The reported resolver was a composite mirror and the address above is
+       * the resolver behind it. Callers that pin a read need this rather than
+       * comparing the two addresses: the fallback returns the reported address
+       * unchanged today, so a comparison happens to work, but it would break
+       * silently the moment either side is normalised.
+       */
+      isResolverAbstracted: effectiveResolver.isAbstracted,
       hasProfile: profileHasRecords(profile),
     }
 
@@ -161,6 +169,7 @@ export const useResolverStatus = ({
     latestResolverProfile.data,
     compare,
     migratedRecordsMatch,
+    effectiveResolver.isAbstracted,
     profile,
     profileResolverAddress,
     effectiveResolverAddress,
