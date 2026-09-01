@@ -41,9 +41,17 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegis
   // migrateProfile then aborts the whole wrap.
   const shouldMigrate =
     !resolverStatus.data?.isMigratedProfileEqual && !!resolverStatus.data?.hasProfile
-  // Migrate reads its source records from the resolver that actually holds
-  // them: the underlying resolver when the name is abstracted.
-  const resolverAddress = resolverStatus.data?.effectiveResolverAddress ?? profile?.resolverAddress
+  // Only pin the read when the lookup actually redirected it. ensjs reads a
+  // pinned resolver with a direct multicall of raw text()/addr() calls,
+  // bypassing the UniversalResolver's ENSIP-10 resolve() wrapping — which is
+  // the only way a wildcard, CCIP-Read or L2-backed resolver answers at all.
+  // Unpinned, those names resolve correctly, and an abstracted name does too
+  // because the mirror's resolve() forwards to the resolver behind it.
+  const effectiveResolverAddress = resolverStatus.data?.effectiveResolverAddress
+  const resolverAddress =
+    effectiveResolverAddress && effectiveResolverAddress !== profile?.resolverAddress
+      ? effectiveResolverAddress
+      : undefined
 
   const isSubname = name.split('.').length > 2
   const { data: approvedForAll, isLoading: isApprovalLoading } = useWrapperApprovedForAll({

@@ -238,7 +238,13 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].name).toEqual('wrapName')
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
     expect(args[1].transactions[1].name).toEqual('migrateProfile')
-    expect(args[1].transactions[1].data).toEqual({ name: 'test123.eth', resolverAddress: '0x456' })
+    // Not abstracted: the read is left unpinned so it goes through the
+    // UniversalResolver, which is the only path a wildcard or CCIP-Read
+    // resolver answers on.
+    expect(args[1].transactions[1].data).toEqual({
+      name: 'test123.eth',
+      resolverAddress: undefined,
+    })
   })
   it('should create a transaction flow for a .eth 2LD with a profile, a different owner, and a name wrapper aware resolver', () => {
     render(
@@ -364,9 +370,10 @@ describe('WrapButton', () => {
 
     expect(args[0]).toBe('wrapName-sub.test123.eth')
     expect(args[1].transactions[0].name).toEqual('migrateProfile')
+    // Not abstracted: unpinned, so the read goes through the UniversalResolver.
     expect(args[1].transactions[0].data).toEqual({
       name: 'sub.test123.eth',
-      resolverAddress: '0x456',
+      resolverAddress: undefined,
     })
     expect(args[1].transactions[1].name).toEqual('wrapName')
     expect(args[1].transactions[1].data).toEqual({ name: 'sub.test123.eth' })

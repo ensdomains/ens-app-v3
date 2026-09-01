@@ -12,6 +12,7 @@ import useResolverEditor from '@app/hooks/useResolverEditor'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { createTransactionItem } from '../../transaction'
+import TransactionLoader from '../../TransactionLoader'
 
 type Data = {
   name: string
@@ -74,6 +75,14 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const handleSubmitForm = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
   }
+
+  // Hold the form until the lookup settles. While it is in flight the address
+  // above is the reported one, so an abstracted name already on the latest
+  // resolver looks out of date, "Latest" stays preselected and enabled, and a
+  // click in that window replaces the abstraction. Waiting also means the
+  // form's own correction runs before the user can touch anything, so it can
+  // never be skipped by a field they have already edited.
+  if (effectiveResolver.isLoading) return <TransactionLoader />
 
   return (
     <>

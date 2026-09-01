@@ -102,4 +102,25 @@ describe('EditResolver', () => {
     await waitFor(() => expect(screen.getByTestId('custom-resolver-radio')).toBeChecked())
     expect(screen.getByTestId('latest-resolver-radio')).not.toBeChecked()
   })
+
+  it('shows no resolver choices until the lookup settles', async () => {
+    // In flight, the address in hand is the reported one, so an abstracted name
+    // already on the latest resolver looks out of date and "Latest" would be
+    // preselected and clickable — replacing the abstraction.
+    mockUseProfile.mockReturnValue({ data: { resolverAddress: mirror }, isLoading: false })
+    mockUseEffectiveResolverAddress.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+      isError: false,
+      isAbstracted: false,
+    })
+
+    renderEditResolver()
+
+    await waitFor(() =>
+      expect(screen.queryByTestId('latest-resolver-radio')).not.toBeInTheDocument(),
+    )
+    expect(screen.queryByTestId('custom-resolver-radio')).not.toBeInTheDocument()
+  })
 })

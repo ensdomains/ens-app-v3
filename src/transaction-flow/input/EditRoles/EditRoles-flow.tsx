@@ -148,7 +148,7 @@ const EditRoles = ({ data: { name }, dispatch, onDismiss }: Props) => {
             onSelectIndex={(index) => setSelectedRoleIndex(index)}
             onCancel={onDismiss}
             onSubmit={form.handleSubmit(onSubmit)}
-            loading={profile.isLoading || effectiveResolver.isLoading}
+            disabled={profile.isLoading || effectiveResolver.isLoading}
           />
         ))}
     </FormProvider>

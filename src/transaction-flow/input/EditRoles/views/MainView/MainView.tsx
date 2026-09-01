@@ -15,10 +15,15 @@ type Props = {
   onCancel: () => void
   onSubmit: () => void
   /** Disables saving while transaction prerequisites are resolving. */
-  loading?: boolean
+  /**
+   * The data the save depends on is still resolving. Blocks the save without
+   * claiming one is in progress — there is no in-dialog saving state, so a
+   * spinner here would just mean "opened recently".
+   */
+  disabled?: boolean
 }
 
-export const MainView = ({ onSelectIndex, onCancel, onSubmit, loading }: Props) => {
+export const MainView = ({ onSelectIndex, onCancel, onSubmit, disabled }: Props) => {
   const { t } = useTranslation()
   const { control } = useFormContext<EditRolesForm>()
   const { fields: roles } = useFieldArray<EditRolesForm>({ control, name: 'roles' })
@@ -56,8 +61,7 @@ export const MainView = ({ onSelectIndex, onCancel, onSubmit, loading }: Props) 
         trailing={
           <Button
             data-testid="edit-roles-save-button"
-            loading={loading}
-            disabled={!isDirty || loading}
+            disabled={!isDirty || disabled}
             onClick={() => {
               ref.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
             }}

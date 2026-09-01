@@ -13,7 +13,12 @@ import { hasRecordsToMigrate } from './utils/hasRecordsToMigrate'
 
 type Data = {
   name: string
-  resolverAddress: Address
+  /**
+   * Pin the source read to this resolver. Omitted unless the composite lookup
+   * actually redirected: a pinned read bypasses the UniversalResolver, which is
+   * the only path a wildcard or CCIP-Read resolver answers on.
+   */
+  resolverAddress?: Address
 }
 
 const displayItems = ({ name }: Data, t: TFunction): TransactionDisplayItem[] => {
