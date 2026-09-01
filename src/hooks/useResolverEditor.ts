@@ -14,9 +14,19 @@ type FormData = {
 export type Props = {
   callback: (data: Address) => void
   resolverAddress: string | undefined
+  /**
+   * The name's current resolver could not be determined. Treated like "already
+   * on the latest": with nothing to compare against, the form must not
+   * preselect switching resolver.
+   */
+  isResolverAddressUnknown?: boolean
 }
 
-const useResolverEditor = ({ callback, resolverAddress }: Props) => {
+const useResolverEditor = ({
+  callback,
+  resolverAddress,
+  isResolverAddressUnknown = false,
+}: Props) => {
   const lastestResolverAddress = useContractAddress({ contract: 'ensPublicResolver' })
   const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
@@ -26,9 +36,15 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
       defaultValues: { resolverChoice: 'latest', address: '' },
     })
 
+  // Only ever changes what the user has not touched. Either flag can flip while
+  // the dialog is open — a refetch on window focus is enough — and resetting
+  // then would silently clear an address they had already typed.
+  const { isDirty } = formState
   useEffect(() => {
-    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', address: '' })
-  }, [isResolverAddressLatest, reset])
+    if (isDirty) return
+    if (isResolverAddressLatest || isResolverAddressUnknown)
+      reset({ resolverChoice: 'custom', address: '' })
+  }, [isDirty, isResolverAddressLatest, isResolverAddressUnknown, reset])
 
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
   const customResolver = watch('address')

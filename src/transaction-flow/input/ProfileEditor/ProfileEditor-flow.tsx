@@ -213,17 +213,19 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverStatus = useResolverStatus({
     name,
   })
+  const currentResolverAddress =
+    resolverStatus.data?.effectiveResolverAddress ?? profile?.resolverAddress
 
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
-      if (!profile?.resolverAddress) return
+      if (!currentResolverAddress) return
       dispatch({
         name: 'setTransactions',
         payload: [
           createTransactionItem('updateProfileRecords', {
             name,
-            resolverAddress: profile.resolverAddress,
+            resolverAddress: currentResolverAddress,
             records,
             previousRecords: existingRecords,
             clearRecords: false,
@@ -232,7 +234,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [profile, name, existingRecords, dispatch],
+    [currentResolverAddress, name, existingRecords, dispatch],
   )
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
@@ -354,7 +356,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         transactions: [
           createTransactionItem('migrateProfileWithReset', {
             name,
-            resolverAddress: profile?.resolverAddress!,
           }),
           createTransactionItem('updateResolver', {
             name,
@@ -593,7 +594,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         .with('migrateProfileSelector', () => (
           <MigrateProfileSelectorView
             name={name}
-            currentResolverAddress={profile?.resolverAddress!}
+            currentResolverAddress={currentResolverAddress!}
             latestResolverAddress={resolverAddress!}
             hasCurrentProfile={resolverStatus.data?.hasProfile!}
             onBack={() => {

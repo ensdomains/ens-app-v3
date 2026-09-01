@@ -10,12 +10,14 @@ import { emptyAddress } from '@app/utils/constants'
 import { makeEthRecordItem, mergeAddressRecords } from '@app/utils/records'
 
 import { useProfile } from '../useProfile'
+import { useEffectiveResolverAddress } from './useEffectiveResolverAddress'
 import { useResolverIsAuthorised } from './useResolverIsAuthorised'
 import { useResolverType } from './useResolverType'
 
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/resolver/useResolverType')
 vi.mock('@app/hooks/resolver/useResolverIsAuthorised')
+vi.mock('@app/hooks/resolver/useEffectiveResolverAddress')
 vi.mock('@app/hooks/chain/useContractAddress')
 
 const mockUseProfileBase = mockFunction(useProfile)
@@ -25,6 +27,10 @@ const mockUseLatestResolverProfile = mockFunction<typeof useProfile>(vi.fn())
 const mockUseResolverType = mockFunction(useResolverType)
 const mockUseResolverIsAuthorised = mockFunction(useResolverIsAuthorised)
 const mockUseContractAddress = mockFunction(useContractAddress)
+const mockUseEffectiveResolverAddress = mockFunction(useEffectiveResolverAddress)
+
+/** An ENSv2 abstraction contract standing in front of the name's real resolver. */
+const abstractionAddress = '0x1111111111111111111111111111111111111111'
 
 const createProfileData = ({
   texts: _texts,
@@ -93,6 +99,13 @@ beforeEach(() => {
     isLoading: false,
   })
   mockUseResolverType.mockReturnValue({ data: { type: 'latest' }, isLoading: false })
+  // No abstraction layer: the effective resolver is the registry resolver.
+  mockUseEffectiveResolverAddress.mockImplementation(({ resolverAddress }) => ({
+    data: resolverAddress,
+    isAbstracted: false,
+    isLoading: false,
+    isFetching: false,
+  }))
 })
 
 describe('useResolverStatus', () => {
@@ -278,6 +291,55 @@ describe('useResolverStatus', () => {
     expectEnabledHook(mockUseResolverType, true)
     expectEnabledHook(mockUseResolverIsAuthorised, true)
     expectEnabledHook(mockUseLatestResolverProfile, false)
+  })
+
+  it('should compute name wrapper awareness from the underlying resolver of an abstracted name', () => {
+    mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
+    mockUseProfile.mockReturnValue({
+      isLoading: false,
+      data: createProfileData({ resolverAddress: abstractionAddress }),
+    })
+    mockUseEffectiveResolverAddress.mockReturnValue({
+      data: KNOWN_RESOLVER_DATA['1']![0].address,
+      isAbstracted: true,
+      isLoading: false,
+      isFetching: false,
+    })
+    const { result } = renderHook(() => useResolverStatus({ name: 'test.eth' }))
+    expect(result.current.data).toMatchObject({
+      hasResolver: true,
+      isNameWrapperAware: true,
+    })
+  })
+
+  it('should not report name wrapper awareness when the underlying resolver is unaware', () => {
+    mockUseResolverType.mockReturnValueOnce({ data: { type: 'outdated' } })
+    mockUseProfile.mockReturnValue({
+      isLoading: false,
+      data: createProfileData({ resolverAddress: abstractionAddress }),
+    })
+    mockUseEffectiveResolverAddress.mockReturnValue({
+      data: KNOWN_RESOLVER_DATA['1']!.find((item) => !item.isNameWrapperAware)!.address,
+      isAbstracted: true,
+      isLoading: false,
+      isFetching: false,
+    })
+    const { result } = renderHook(() => useResolverStatus({ name: 'test.eth' }))
+    expect(result.current.data).toMatchObject({
+      hasResolver: true,
+      isNameWrapperAware: false,
+    })
+  })
+
+  it('should not report a status while the abstraction probe is in flight', () => {
+    mockUseEffectiveResolverAddress.mockReturnValue({
+      data: undefined,
+      isAbstracted: false,
+      isLoading: true,
+      isFetching: true,
+    })
+    const { result } = renderHook(() => useResolverStatus({ name: 'test.eth' }))
+    expect(result.current).toMatchObject({ data: undefined, isLoading: true })
   })
 
   it('should call useProfile for latest resolver if current resolver address is empty address', () => {

@@ -10,7 +10,6 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { createTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
-import { Profile } from '@app/types'
 import { useHasGraphError } from '@app/utils/SyncProvider/SyncProvider'
 
 import BaseWrapButton from './BaseWrapButton'
@@ -19,12 +18,11 @@ type Props = {
   name: string
   canBeWrapped: boolean
   ownerData: GetOwnerReturnType | undefined
-  profile: Profile | undefined
   isManager: boolean
   isRegistrant: boolean
 }
 
-const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegistrant }: Props) => {
+const WrapButton = ({ name, ownerData, canBeWrapped, isManager, isRegistrant }: Props) => {
   const { t } = useTranslation('profile')
 
   const { data: hasGraphError, isLoading: hasGraphErrorLoading } = useHasGraphError()
@@ -35,8 +33,12 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegis
 
   // BUG: We should also check if the current resolver is name wrapper aware, but this check creates a false negative for custom name wrapper aware resolvers.
   // For safety, we will migrate if the profile on the current resolver does not match the profile on the latest name wrapper aware resolver.
-  const shouldMigrate = !resolverStatus.data?.isMigratedProfileEqual
-  const resolverAddress = profile?.resolverAddress
+  // Also require records to exist: this flag is a COMPARISON against the latest
+  // resolver's profile, so an empty current profile with leftover records on the
+  // latest resolver makes it true with nothing to migrate, and the queued
+  // migrateProfile then aborts the whole wrap.
+  const shouldMigrate =
+    !resolverStatus.data?.isMigratedProfileEqual && !!resolverStatus.data?.hasProfile
 
   const isSubname = name.split('.').length > 2
   const { data: approvedForAll, isLoading: isApprovalLoading } = useWrapperApprovedForAll({
@@ -76,9 +78,7 @@ const WrapButton = ({ name, ownerData, profile, canBeWrapped, isManager, isRegis
       createTransactionItem('wrapName', {
         name,
       }),
-      ...(isRegistrantAndShouldMigrate
-        ? [createTransactionItem('migrateProfile', { name, resolverAddress })]
-        : []),
+      ...(isRegistrantAndShouldMigrate ? [createTransactionItem('migrateProfile', { name })] : []),
     ]
 
     const transactionFlowItem: TransactionFlowItem = {

@@ -51,7 +51,6 @@ const MoreTab = ({ name, nameDetails, abilities }: Props) => {
             wrapperData,
             canBeWrapped,
             name,
-            profile,
             ownerData,
             address,
           }}

@@ -46,6 +46,7 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   const roles = useRoles(name)
   const resolver = useResolver({ name })
   const resolverSupport = useResolverHasInterfaces({
+    name,
     interfaceNames: ['VersionableResolver'],
     resolverAddress: resolver.data as Address,
     enabled: !!resolver.data,
@@ -93,6 +94,9 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
   }
 
   const onSubmit = ({ recipient, transactions }: SendNameForm) => {
+    // The record transactions below pin the judged resolver address; do not
+    // build them from a still-resolving support check.
+    if (resolver.isLoading || resolverSupport.isLoading) return
     const isOwnerOrManager =
       account.address === basic.ownerData?.owner || basic.ownerData?.registrant === account.address
 
@@ -102,7 +106,9 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
       transactions,
       isOwnerOrManager,
       abilities: abilities.data,
-      resolverAddress: resolver.data,
+      // The underlying resolver when the name is abstracted — the same
+      // address the VersionableResolver support check above judged.
+      resolverAddress: resolverSupport.resolverAddress ?? resolver.data,
     })
 
     if (_transactions.length === 0) return
@@ -127,7 +133,11 @@ const SendName = ({ data: { name }, dispatch, onDismiss }: Props) => {
       {match([canSend, view])
         .with([false, P._], () => <CannotSendView onDismiss={onDismiss} />)
         .with([true, 'confirmation'], () => (
-          <ConfirmationView onBack={onBack} onSubmit={form.handleSubmit(onSubmit)} />
+          <ConfirmationView
+            onBack={onBack}
+            onSubmit={form.handleSubmit(onSubmit)}
+            loading={resolver.isLoading || resolverSupport.isLoading}
+          />
         ))
         .with([true, 'summary'], () => (
           <SummaryView

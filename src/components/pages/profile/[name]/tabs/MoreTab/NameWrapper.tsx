@@ -10,7 +10,6 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { QuestionTooltip } from '@app/components/@molecules/QuestionTooltip/QuestionTooltip'
 import type { NameWrapperState } from '@app/hooks/fuses/useFusesStates'
-import type { Profile } from '@app/types'
 
 import { TabWrapper } from '../../../TabWrapper'
 import UnwrapButton from './Token/UnwrapButton'
@@ -22,7 +21,6 @@ type Props = {
   canBeWrapped: boolean
   ownerData?: GetOwnerReturnType
   wrapperData?: GetWrapperDataReturnType
-  profile?: Profile
   address?: Address
 }
 
@@ -109,7 +107,6 @@ export const NameWrapper = ({
   ownerData,
   wrapperData,
   canBeWrapped: _canBeWrapped,
-  profile,
   address,
 }: Props) => {
   const { t } = useTranslation('profile')
@@ -149,7 +146,7 @@ export const NameWrapper = ({
             <UnwrapButton status={status} {...{ name, ownerData }} />
           ))
           .with({ isButtonDisplayed: true, isWrapped: false }, () => (
-            <WrapButton {...{ profile, ownerData, canBeWrapped, name, isManager, isRegistrant }} />
+            <WrapButton {...{ ownerData, canBeWrapped, name, isManager, isRegistrant }} />
           ))
           .with({ isButtonDisplayed: false, isWrapped: false }, () => null)
           .otherwise(() => null)}

@@ -64,7 +64,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -79,7 +78,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped={false}
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -93,7 +91,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -103,28 +100,18 @@ describe('WrapButton', () => {
   })
   it('should create a transaction flow for migrateProfile and wrapName', async () => {
     mockUseResolverStatus.mockReturnValue(
-      createMockResolverStatus({ isMigratedProfileEqual: false }),
+      createMockResolverStatus({
+        isMigratedProfileEqual: false,
+        hasProfile: true,
+        isResolverAbstracted: true,
+        effectiveResolverAddress: '0x2000000000000000000000000000000000000002',
+      }),
     )
     render(
       <WrapButton
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={true}
         isRegistrant={false}
       />,
@@ -134,6 +121,8 @@ describe('WrapButton', () => {
 
     expect(args[0]).toBe('wrapName-test123.eth')
     expect(args[1].transactions[0].name).toEqual('migrateProfile')
+    // The migrate source must be the effective (underlying) resolver, not the
+    // registry-reported one.
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
     expect(args[1].transactions[1].name).toEqual('wrapName')
     expect(args[1].transactions[1].data).toEqual({ name: 'test123.eth' })
@@ -144,21 +133,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -177,12 +151,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -196,28 +164,13 @@ describe('WrapButton', () => {
   })
   it('should create a transaction flow for a .eth 2LD with a profile and a different owner', () => {
     mockUseResolverStatus.mockReturnValue(
-      createMockResolverStatus({ isMigratedProfileEqual: false }),
+      createMockResolverStatus({ isMigratedProfileEqual: false, hasProfile: true }),
     )
     render(
       <WrapButton
         name="test123.eth"
         canBeWrapped
         ownerData={{ ownershipLevel: 'registrar', owner: '0x124', registrant: '0x123' }}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={false}
         isRegistrant={true}
       />,
@@ -229,7 +182,7 @@ describe('WrapButton', () => {
     expect(args[1].transactions[0].name).toEqual('wrapName')
     expect(args[1].transactions[0].data).toEqual({ name: 'test123.eth' })
     expect(args[1].transactions[1].name).toEqual('migrateProfile')
-    expect(args[1].transactions[1].data).toEqual({ name: 'test123.eth', resolverAddress: '0x456' })
+    expect(args[1].transactions[1].data).toEqual({ name: 'test123.eth' })
   })
   it('should create a transaction flow for a .eth 2LD with a profile, a different owner, and a name wrapper aware resolver', () => {
     render(
@@ -237,21 +190,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ ownershipLevel: 'registrar', owner: '0x124', registrant: '0x123' }}
-        profile={
-          {
-            resolverAddress: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -275,12 +213,6 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
         isManager={true}
         isRegistrant={false}
       />,
@@ -304,12 +236,6 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {},
-          } as any
-        }
         isManager={false}
         isRegistrant={false}
       />,
@@ -324,28 +250,13 @@ describe('WrapButton', () => {
 
   it('should create a transaction flow for a subname with a profile', () => {
     mockUseResolverStatus.mockReturnValue(
-      createMockResolverStatus({ isMigratedProfileEqual: false }),
+      createMockResolverStatus({ isMigratedProfileEqual: false, hasProfile: true }),
     )
     render(
       <WrapButton
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={
-          {
-            resolverAddress: '0x456',
-            records: {
-              coinTypes: [
-                {
-                  key: 'coin1',
-                },
-                {
-                  key: 'coin2',
-                },
-              ],
-            },
-          } as any
-        }
         isManager={true}
         isRegistrant={false}
       />,
@@ -367,7 +278,6 @@ describe('WrapButton', () => {
         name="test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
@@ -390,7 +300,6 @@ describe('WrapButton', () => {
         name="[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123' } as any}
-        profile={{ resolverAddress: '0x456', records: {} } as any}
         isManager={true}
         isRegistrant={false}
       />,
@@ -426,7 +335,6 @@ describe('WrapButton', () => {
         name="sub.test123.eth"
         canBeWrapped
         ownerData={{ owner: '0x123', ownershipLevel: 'registrar', registrant: '0x123' } as any}
-        profile={{ resolverAddress: '0x456' } as any}
         isManager={false}
         isRegistrant={false}
       />,
