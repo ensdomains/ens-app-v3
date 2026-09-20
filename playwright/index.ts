@@ -12,6 +12,7 @@ import {
 } from '@ensdomains/headless-web3-provider'
 
 import { Accounts, createAccounts } from './fixtures/accounts'
+import { BalanceManager, createBalanceManager } from './fixtures/balances'
 import { createConsoleListener } from './fixtures/consoleListener'
 import { Login } from './fixtures/login'
 import { createMakeNames } from './fixtures/makeName/index.js'
@@ -26,6 +27,7 @@ dotenv.config({
 
 type Fixtures = {
   accounts: Accounts
+  balanceManager: BalanceManager
   wallet: Web3ProviderBackend
   login: InstanceType<typeof Login>
   getContract: (contract: string) => any
@@ -48,6 +50,11 @@ export const test = base.extend<Fixtures>({
   accounts: async ({}, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
     use(createAccounts(stateful))
+  },
+  balanceManager: async ({ accounts }, use, testInfo) => {
+    const stateful = testInfo.project?.name === 'stateful'
+    const chainName = stateful ? process.env.CHAIN : undefined
+    use(createBalanceManager({ accounts, chainName }))
   },
   wallet: async ({ page, accounts }, use, testInfo) => {
     const stateful = testInfo.project?.name === 'stateful'
