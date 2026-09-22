@@ -2,6 +2,7 @@ import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { DesyncedMessage } from '@app/components/@molecules/DesyncedMessage/DesyncedMessage'
+import { isShortEth2LD } from '@app/utils/shortName'
 import { formatFullExpiry } from '@app/utils/utils'
 
 import { useDnsOwner } from './ensjs/dns/useDnsOwner'
@@ -16,6 +17,7 @@ type UseNameDetailsParameters = {
 export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsParameters) => {
   const { t } = useTranslation('profile')
 
+  const basicNameData = useBasicName({ name })
   const {
     isValid,
     normalisedName,
@@ -26,7 +28,9 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     gracePeriodEndDate,
     refetchIfEnabled: refetchBasicName,
     ...basicName
-  } = useBasicName({ name })
+  } = basicNameData
+
+  const isShortName = isShortEth2LD(basicNameData)
 
   const {
     data: profile,
@@ -53,6 +57,9 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
   } | null = useMemo(() => {
     if (isValid === false) {
       return { content: t('errors.invalidName') }
+    }
+    if (registrationStatus === 'short') {
+      return { content: t('errors.shortName'), type: 'error' }
     }
     if (registrationStatus === 'unsupportedTLD') {
       return { content: t('errors.unsupportedTLD') }
@@ -88,7 +95,11 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     if (registrationStatus === 'gracePeriod') {
       return {
         title: t('errors.hasExpired', { name: normalisedName }),
-        content: t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) }),
+        // The usual copy promises extension and then availability, and a short name gets neither:
+        // the app does not offer to extend it, and the registrar will not re-register it.
+        content: isShortName
+          ? t('errors.expiringSoonShortName', { date: formatFullExpiry(gracePeriodEndDate) })
+          : t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) }),
       }
     }
     if (
@@ -96,6 +107,7 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
       !!normalisedName &&
       normalisedName !== '[root]' &&
       !profile &&
+      !isBasicLoading &&
       !isProfileLoading
     ) {
       return {
@@ -105,13 +117,16 @@ export const useNameDetails = ({ name, subgraphEnabled = true }: UseNameDetailsP
     }
     return null
   }, [
+    expiryDate,
     gracePeriodEndDate,
     normalisedName,
     profile,
+    isBasicLoading,
     isProfileLoading,
     registrationStatus,
     t,
     isValid,
+    isShortName,
   ])
 
   const isLoading = isProfileLoading || isBasicLoading || isDnsOwnerLoading

@@ -9,14 +9,20 @@ import { useIsWrapped } from '../useIsWrapped'
 import { useProfile } from '../useProfile'
 import { useRegistryResolver } from './useRegistryResolver'
 import { isWildcardCalc, useResolverType } from './useResolverType'
+import { useUnderlyingResolver } from './useUnderlyingResolver'
 
 vi.mock('@app/hooks/useIsWrapped')
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/resolver/useRegistryResolver')
+vi.mock('@app/hooks/resolver/useUnderlyingResolver')
 
 const mockUseIsWrapped = mockFunction(useIsWrapped)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseRegistryResolver = mockFunction(useRegistryResolver)
+const mockUseUnderlyingResolver = mockFunction(useUnderlyingResolver)
+
+/** An ENSv2 abstraction contract standing in front of the name's real resolver. */
+const abstractionAddress = '0x1111111111111111111111111111111111111111'
 
 const createProfileData = (
   overwrite: ReturnType<PartialMockedFunction<typeof useProfile>> = {},
@@ -45,6 +51,7 @@ beforeEach(() => {
   mockUseIsWrapped.mockReturnValue({ data: true, isLoading: false })
   mockUseProfile.mockReturnValue(createProfileData())
   mockUseRegistryResolver.mockReturnValue(createRegistryResolverData())
+  mockUseUnderlyingResolver.mockReturnValue({ data: null, isLoading: false, isFetching: false })
 })
 
 describe('useResolverType', () => {
@@ -218,6 +225,81 @@ describe('useResolverType', () => {
       expect.objectContaining({
         data: { type: 'latest', isWildcard: true, tone: 'greenSecondary' },
         isLoading: false,
+      }),
+    )
+  })
+
+  it('should report the underlying resolver type when the registry resolver is an abstraction', () => {
+    mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
+    mockUseProfile.mockReturnValue(
+      createProfileData({ data: { resolverAddress: abstractionAddress } }),
+    )
+    mockUseUnderlyingResolver.mockReturnValue({
+      data: KNOWN_RESOLVER_DATA['1']![0].address,
+      isLoading: false,
+      isFetching: false,
+    })
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'latest', isWildcard: false, tone: 'greenSecondary' },
+        isLoading: false,
+      }),
+    )
+  })
+
+  it('should return type is outdated if the underlying resolver of an abstracted name is outdated', () => {
+    mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
+    mockUseProfile.mockReturnValue(
+      createProfileData({ data: { resolverAddress: abstractionAddress } }),
+    )
+    mockUseUnderlyingResolver.mockReturnValue({
+      data: KNOWN_RESOLVER_DATA['1']!.find((item) => item.tag === 'outdated')!.address,
+      isLoading: false,
+      isFetching: false,
+    })
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'outdated', isWildcard: false, tone: 'redSecondary' },
+        isLoading: false,
+      }),
+    )
+  })
+
+  it('should return type is custom if the underlying resolver of an abstracted name is unknown', () => {
+    mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
+    mockUseProfile.mockReturnValue(
+      createProfileData({ data: { resolverAddress: abstractionAddress } }),
+    )
+    mockUseUnderlyingResolver.mockReturnValue({
+      data: '0x2222222222222222222222222222222222222222',
+      isLoading: false,
+      isFetching: false,
+    })
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'custom', isWildcard: false, tone: 'greySecondary' },
+        isLoading: false,
+      }),
+    )
+  })
+
+  it('should not judge the resolver while the abstraction probe is in flight', () => {
+    mockUseProfile.mockReturnValue(
+      createProfileData({ data: { resolverAddress: abstractionAddress } }),
+    )
+    mockUseUnderlyingResolver.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+    })
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: undefined,
+        isLoading: true,
       }),
     )
   })

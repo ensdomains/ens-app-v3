@@ -27,6 +27,7 @@ describe('useExpiryActions', () => {
     const { result } = renderHook(() =>
       useExpiryActions({
         name: 'test.eth',
+        canExtend: true,
         expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }],
       }),
     )
@@ -40,6 +41,7 @@ describe('useExpiryActions', () => {
     const { result } = renderHook(() =>
       useExpiryActions({
         name: 'test.eth',
+        canExtend: true,
         expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }],
       }),
     )
@@ -55,16 +57,37 @@ describe('useExpiryActions', () => {
     const { result } = renderHook(() =>
       useExpiryActions({
         name: 'sub.test.eth',
+        canExtend: true,
         expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }],
       }),
     )
     expect(result.current).toEqual(null)
   })
 
+  // on.eth has a real registrar expiry worth reminding about, but the app does not offer to extend
+  // a short name, so the panel keeps its reminder and loses only the extend action.
+  it('should keep the expiry reminder but drop extend when the name cannot be extended', () => {
+    const { result } = renderHook(() =>
+      useExpiryActions({
+        name: 'on.eth',
+        canExtend: false,
+        expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }],
+      }),
+    )
+
+    expect(result.current).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ type: 'extend' })]),
+    )
+    expect(result.current).toEqual(
+      expect.arrayContaining([expect.objectContaining({ type: 'set-reminder' })]),
+    )
+  })
+
   it('should return null if expiryDetails contains a expiry type data but an invalid expiry date', () => {
     const { result } = renderHook(() =>
       useExpiryActions({
         name: 'test.eth',
+        canExtend: true,
         expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }],
       }),
     )
@@ -75,6 +98,7 @@ describe('useExpiryActions', () => {
     const { result } = renderHook(() =>
       useExpiryActions({
         name: 'test.eth',
+        canExtend: true,
         expiryDetails: [{ type: 'expiry', date: undefined as unknown as Date }],
       }),
     )
@@ -86,6 +110,7 @@ describe('useExpiryActions', () => {
     const { result } = renderHook(() =>
       useExpiryActions({
         name: 'test.eth',
+        canExtend: true,
         expiryDetails: [{ type: 'expiry', date: new Date('3255803954000') }],
       }),
     )

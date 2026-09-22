@@ -7,6 +7,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { getSelectedIndex } from '@app/hooks/useRegistrationReducer'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { isShortEth2LD } from '@app/utils/shortName'
 
 export default function Page() {
   const router = useRouterWithHistory()
@@ -23,6 +24,13 @@ export default function Page() {
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
 
   const isLoading = detailsLoading || initial
+
+  if (isShortEth2LD(nameDetails)) {
+    if (!nameDetails.isBasicLoading) {
+      router.replace(`/profile/${nameDetails.normalisedName || name}`)
+    }
+    return null
+  }
 
   if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
     let redirect = true
@@ -47,6 +55,7 @@ export default function Page() {
 
     if (redirect) {
       router.push(`/profile/${name}`)
+      return null
     }
   }
 

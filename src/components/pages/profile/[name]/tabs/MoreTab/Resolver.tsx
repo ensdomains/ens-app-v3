@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { match, P } from 'ts-pattern'
+import type { Address } from 'viem'
 
 import { Button, Typography } from '@ensdomains/thorin'
 
@@ -8,6 +9,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useResolver } from '@app/hooks/ensjs/public/useResolver'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { emptyAddress } from '@app/utils/constants'
@@ -117,8 +119,22 @@ const Resolver = ({
     )
     .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
+  // Where the registry resolver is an ENSv2 abstraction contract, the address
+  // worth showing is the resolver behind it.
+  const effectiveResolver = useEffectiveResolverAddress({
+    name,
+    resolverAddress: registryOrSubgraphResolverAddress as Address,
+  })
+
+  // Show the reported address while the lookup runs rather than blanking: an
+  // empty row with a live copy control is a certain cost on every custom
+  // resolver, while the value only changes underneath for a name that turns
+  // out to be abstracted. The dialog that could act on a stale reading — the
+  // resolver editor — waits for the lookup itself.
+  const displayedResolverAddress = effectiveResolver.data || registryOrSubgraphResolverAddress || ''
+
   return (
-    <Container $isCached={isCachedData}>
+    <Container $isCached={isCachedData || effectiveResolver.isCachedData}>
       <HeadingContainer>
         <InnerHeading>
           <Typography color="text" fontVariant="headingFour" weight="bold">
@@ -127,11 +143,7 @@ const Resolver = ({
         </InnerHeading>
       </HeadingContainer>
       <ButtonStack>
-        <RecordItem
-          type="text"
-          data-testid="resolver-address"
-          value={registryOrSubgraphResolverAddress || ''}
-        />
+        <RecordItem type="text" data-testid="resolver-address" value={displayedResolverAddress} />
         {canEdit && !hasGraphError && (
           <>
             {canEditResolver ? (

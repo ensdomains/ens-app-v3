@@ -228,4 +228,45 @@ describe('ProfileEditor', () => {
     // as long as it's backward compatible with ensjs's version
     expect(appVersion >= ensjsVersion).toBe(true)
   })
+
+  it('opens the editor when an abstracted name has a valid latest underlying resolver', async () => {
+    const underlyingResolver = '0xF29100983E058B709F3D539b0c765937B804AC15'
+    mockUseProfile.mockReturnValue({
+      ...mockProfileData,
+      data: {
+        ...mockProfileData.data,
+        resolverAddress: '0x1000000000000000000000000000000000000001',
+      },
+    })
+    mockUseResolverStatus.mockReturnValue({
+      ...makeResolverStatus([
+        'hasResolver',
+        'hasLatestResolver',
+        'hasValidResolver',
+        'isAuthorized',
+        'isNameWrapperAware',
+      ]),
+      data: {
+        ...makeResolverStatus([
+          'hasResolver',
+          'hasLatestResolver',
+          'hasValidResolver',
+          'isAuthorized',
+          'isNameWrapperAware',
+        ]).data,
+        effectiveResolverAddress: underlyingResolver,
+      },
+    })
+
+    render(
+      <ProfileEditor
+        data={{ name: 'test.eth' }}
+        transactions={[]}
+        dispatch={mockDispatch}
+        onDismiss={vi.fn()}
+      />,
+    )
+
+    expect(await screen.findByTestId('profile-editor')).toBeInTheDocument()
+  })
 })

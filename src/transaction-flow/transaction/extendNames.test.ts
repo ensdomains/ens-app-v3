@@ -1,11 +1,11 @@
 import { mockFunction } from '@app/test-utils'
 
+import { labelhash, type Address, type Hex } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Address, Hex } from 'viem'
 
 import { getPrice } from '@ensdomains/ensjs/public'
-import * as  renewNames from '@app/overrides/ensjs/renewNames'
 
+import * as renewNames from '@app/overrides/ensjs/renewNames'
 import { ClientWithEns, ConnectorClientWithEns } from '@app/types'
 
 import extendNamesTransaction from './extendNames'
@@ -40,7 +40,7 @@ describe('extendNamesTransaction', () => {
         duration: ONE_YEAR_SECONDS,
         startDateTimestamp: JAN_1_2022_TIMESTAMP,
         displayPrice: '0.1 ETH',
-        hasWrapped: false
+        hasWrapped: false,
       }
 
       const result = extendNamesTransaction.displayItems(data, mockT)
@@ -79,7 +79,7 @@ describe('extendNamesTransaction', () => {
         duration: ONE_YEAR_SECONDS,
         startDateTimestamp: JAN_1_2022_TIMESTAMP,
         displayPrice: '0.2 ETH',
-        hasWrapped: false
+        hasWrapped: false,
       }
 
       const result = extendNamesTransaction.displayItems(data, mockT)
@@ -232,6 +232,55 @@ describe('extendNamesTransaction', () => {
           data,
         }),
       ).rejects.toThrow('No price found')
+    })
+
+    it('should reject a persisted on.eth renewal before requesting a price or transaction', async () => {
+      await expect(
+        extendNamesTransaction.transaction({
+          client: mockClient,
+          connectorClient: mockConnectorClient,
+          data: {
+            names: ['on.eth'],
+            duration: 31536000,
+            hasWrapped: false,
+          },
+        }),
+      ).rejects.toThrow('Extending is not available for short .eth names')
+
+      expect(mockGetPrice).not.toHaveBeenCalled()
+      expect(mockRenewNames).not.toHaveBeenCalled()
+    })
+
+    // An unhealed label reads as short to `parseInput`, which must not turn a renewal the user
+    // already paid attention to into an error at the last step.
+    it('should renew a name whose label is still an encoded labelhash', async () => {
+      const encodedName = `[${labelhash('nick').slice(2)}].eth`
+
+      mockGetPrice.mockResolvedValue({ base: BigInt('1000000000000000000'), premium: 0n } as any)
+      mockRenewNames.mockResolvedValue({
+        to: '0x123' as Address,
+        data: '0x456' as Hex,
+        value: BigInt('1020000000000000000'),
+      } as any)
+
+      await extendNamesTransaction.transaction({
+        client: mockClient,
+        connectorClient: mockConnectorClient,
+        data: {
+          names: [encodedName],
+          duration: 31536000,
+          hasWrapped: false,
+        },
+      })
+
+      expect(mockGetPrice).toHaveBeenCalledWith(mockClient, {
+        nameOrNames: [encodedName],
+        duration: 31536000,
+      })
+      expect(mockRenewNames).toHaveBeenCalledWith(
+        mockConnectorClient,
+        expect.objectContaining({ nameOrNames: [encodedName] }),
+      )
     })
   })
 })

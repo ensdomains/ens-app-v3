@@ -18,6 +18,7 @@ import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content, ContentWarning } from '@app/layouts/Content'
 import { OG_IMAGE_URL } from '@app/utils/constants'
+import { getShortNameState } from '@app/utils/shortName'
 import { shouldRedirect } from '@app/utils/shouldRedirect'
 import { formatFullExpiry, makeEtherscanLink } from '@app/utils/utils'
 
@@ -126,6 +127,11 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
     isBasicLoading,
     refetchIfEnabled,
   } = nameDetails
+  // `12.eth` is unregisterable and `on.eth` is a real name, and only the ownership and expiry
+  // lookups tell them apart — so a short name shows nothing but its warning until they answer.
+  const shortNameState = getShortNameState({ validation: nameDetails, registrationStatus })
+  const isShortName = shortNameState !== 'notShort'
+  const shouldHideProfileContent = shortNameState === 'pending' || shortNameState === 'unregistered'
 
   useProtectedRoute(
     '/',
@@ -170,13 +176,12 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   }
 
   const isWrappedOrLoading = isWrapped || isBasicLoading
-  const visibileTabs = useMemo(
-    () =>
-      (isWrappedOrLoading ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter((_tab) =>
-        unsupported ? _tab === 'profile' : _tab,
-      ),
-    [isWrappedOrLoading, unsupported],
-  )
+  const visibileTabs = useMemo(() => {
+    if (shouldHideProfileContent) return []
+    return (isWrappedOrLoading ? tabs : tabs.filter((_tab) => _tab !== 'permissions')).filter(
+      (_tab) => (unsupported ? _tab === 'profile' : _tab),
+    )
+  }, [isWrappedOrLoading, shouldHideProfileContent, unsupported])
 
   const abilities = useAbilities({ name: normalisedName })
 
@@ -184,6 +189,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
   // profile.decryptedName fetches labels from NW/subgraph
   // normalisedName fetches labels from localStorage
   useEffect(() => {
+    if (shouldHideProfileContent) return
     shouldRedirect(router, 'Profile.tsx', '/profile', {
       isSelf,
       name,
@@ -192,7 +198,16 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       visibileTabs,
       tab,
     })
-  }, [profile?.decodedName, normalisedName, name, isSelf, router, tab, visibileTabs])
+  }, [
+    profile?.decodedName,
+    normalisedName,
+    name,
+    isSelf,
+    router,
+    shouldHideProfileContent,
+    tab,
+    visibileTabs,
+  ])
 
   // useEffect(() => {
   //   if (shouldShowSuccessPage(transactions)) {
@@ -204,6 +219,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
 
   const infoBanner = useMemo(() => {
     if (
+      !isShortName &&
       registrationStatus !== 'gracePeriod' &&
       gracePeriodEndDate &&
       gracePeriodEndDate < new Date()
@@ -211,7 +227,7 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
       return <NameAvailableBanner {...{ normalisedName, expiryDate }} />
     }
     return undefined
-  }, [registrationStatus, gracePeriodEndDate, normalisedName, expiryDate])
+  }, [registrationStatus, gracePeriodEndDate, isShortName, normalisedName, expiryDate])
 
   const warning: ContentWarning = useMemo(() => {
     if (error)
@@ -246,9 +262,9 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
         copyValue={beautifiedName}
       >
         {{
-          info: infoBanner,
+          info: shouldHideProfileContent ? undefined : infoBanner,
           warning,
-          header: (
+          header: shouldHideProfileContent ? null : (
             <>
               <TabButtonContainer>
                 {visibileTabs.map((tabItem) => (
@@ -267,49 +283,58 @@ const ProfileContent = ({ isSelf, isLoading: parentIsLoading, name }: Props) => 
               <ProfileEmptyBanner name={normalisedName} />
             </>
           ),
-          titleExtra: profile?.address ? (
-            <Outlink
-              fontVariant="bodyBold"
-              href={makeEtherscanLink(profile.address!, chainName, 'address')}
-            >
-              {t('etherscan', { ns: 'common' })}
-            </Outlink>
-          ) : null,
-          trailing: match(tab)
-            .with('records', () => (
-              <RecordsTab
-                name={normalisedName}
-                texts={profile?.texts || []}
-                addresses={profile?.coins || []}
-                contentHash={profile?.contentHash}
-                abi={profile?.abi}
-                resolverAddress={profile?.resolverAddress}
-                canEdit={abilities.data?.canEdit}
-                canEditRecords={abilities.data?.canEditRecords}
-                isCached={isCachedData}
-              />
-            ))
-            .with('ownership', () => <OwnershipTab name={normalisedName} details={nameDetails} />)
-            .with('subnames', () => (
-              <SubnamesTab
-                name={normalisedName}
-                isWrapped={isWrapped}
-                canEdit={!!abilities.data?.canEdit}
-                canCreateSubdomains={!!abilities.data?.canCreateSubdomains}
-                canCreateSubdomainsError={abilities.data?.canCreateSubdomainsError}
-              />
-            ))
-            .with('permissions', () => (
-              <PermissionsTab
-                name={normalisedName}
-                wrapperData={wrapperData}
-                isCached={isCachedData}
-              />
-            ))
-            .with('more', () => (
-              <MoreTab name={normalisedName} nameDetails={nameDetails} abilities={abilities.data} />
-            ))
-            .otherwise(() => <ProfileTab name={normalisedName} nameDetails={nameDetails} />),
+          titleExtra:
+            !shouldHideProfileContent && profile?.address ? (
+              <Outlink
+                fontVariant="bodyBold"
+                href={makeEtherscanLink(profile.address!, chainName, 'address')}
+              >
+                {t('etherscan', { ns: 'common' })}
+              </Outlink>
+            ) : null,
+          trailing: shouldHideProfileContent
+            ? null
+            : match(tab)
+                .with('records', () => (
+                  <RecordsTab
+                    name={normalisedName}
+                    texts={profile?.texts || []}
+                    addresses={profile?.coins || []}
+                    contentHash={profile?.contentHash}
+                    abi={profile?.abi}
+                    resolverAddress={profile?.resolverAddress}
+                    canEdit={abilities.data?.canEdit}
+                    canEditRecords={abilities.data?.canEditRecords}
+                    isCached={isCachedData}
+                  />
+                ))
+                .with('ownership', () => (
+                  <OwnershipTab name={normalisedName} details={nameDetails} />
+                ))
+                .with('subnames', () => (
+                  <SubnamesTab
+                    name={normalisedName}
+                    isWrapped={isWrapped}
+                    canEdit={!!abilities.data?.canEdit}
+                    canCreateSubdomains={!!abilities.data?.canCreateSubdomains}
+                    canCreateSubdomainsError={abilities.data?.canCreateSubdomainsError}
+                  />
+                ))
+                .with('permissions', () => (
+                  <PermissionsTab
+                    name={normalisedName}
+                    wrapperData={wrapperData}
+                    isCached={isCachedData}
+                  />
+                ))
+                .with('more', () => (
+                  <MoreTab
+                    name={normalisedName}
+                    nameDetails={nameDetails}
+                    abilities={abilities.data}
+                  />
+                ))
+                .otherwise(() => <ProfileTab name={normalisedName} nameDetails={nameDetails} />),
         }}
       </Content>
     </>

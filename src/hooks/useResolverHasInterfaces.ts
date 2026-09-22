@@ -6,6 +6,7 @@ import { GetSupportedInterfacesReturnType } from '@ensdomains/ensjs/public'
 
 import { getKnownResolverData } from '@app/constants/resolverAddressData'
 import { RESOLVER_INTERFACE_IDS, ResolverInterfaceName } from '@app/constants/resolverInterfaceIds'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 
 import { useSupportedInterfaces } from './ensjs/public/useSupportedInterfaces'
 
@@ -13,6 +14,14 @@ type UseResolverHasInterfacesParameters<TInterfaceNames extends readonly Resolve
   {
     interfaceNames: TInterfaceNames
     resolverAddress: Address
+    /**
+     * Pass the name whenever `resolverAddress` is a NAME'S resolver (from the
+     * registry, subgraph or profile): the interfaces are then checked on the
+     * name's effective resolver, resolving the ENSv2 abstraction layer. Omit
+     * it ONLY when the address is a literal candidate to validate as-is
+     * (e.g. a user-typed resolver in the resolver editor).
+     */
+    name?: string
 
     enabled?: boolean
   }
@@ -50,21 +59,35 @@ export const useResolverHasInterfaces = <
 >({
   enabled: enabled_ = true,
   interfaceNames,
+  name,
   resolverAddress,
 }: UseResolverHasInterfacesParameters<TInterfaceNames>) => {
   const chainId = useChainId()
 
+  const effectiveResolver = useEffectiveResolverAddress({
+    name: name ?? '',
+    resolverAddress,
+    enabled: enabled_ && !!name,
+  })
+  const effectiveResolverAddress = effectiveResolver.data ?? resolverAddress
+
   const interfaceIds = useMemo(
-    () => interfaceNames.map((name) => RESOLVER_INTERFACE_IDS[name]) as TInterfaceIds,
+    () =>
+      interfaceNames.map((interfaceName) => RESOLVER_INTERFACE_IDS[interfaceName]) as TInterfaceIds,
     [interfaceNames],
   )
 
   const knownResolverData = useMemo(
-    () => getKnownResolverData({ chainId, resolverAddress }),
-    [chainId, resolverAddress],
+    () => getKnownResolverData({ chainId, resolverAddress: effectiveResolverAddress }),
+    [chainId, effectiveResolverAddress],
   )
 
-  const enabled = enabled_ && !!resolverAddress && interfaceNames.length > 0 && !knownResolverData
+  const enabled =
+    enabled_ &&
+    !effectiveResolver.isLoading &&
+    !!effectiveResolverAddress &&
+    interfaceNames.length > 0 &&
+    !knownResolverData
 
   const {
     data: data_,
@@ -73,7 +96,7 @@ export const useResolverHasInterfaces = <
     status,
     isCachedData,
   } = useSupportedInterfaces<GetInterfaceIds<TInterfaceNames>>({
-    address: resolverAddress,
+    address: effectiveResolverAddress,
     interfaces: interfaceIds,
     enabled,
   })
@@ -92,11 +115,12 @@ export const useResolverHasInterfaces = <
 
   return {
     data,
+    resolverAddress: effectiveResolverAddress,
     knownResolverData,
-    isLoading,
-    isFetching,
+    isLoading: effectiveResolver.isLoading || isLoading,
+    isFetching: effectiveResolver.isFetching || isFetching,
     status,
-    isCachedData,
+    isCachedData: effectiveResolver.isCachedData || isCachedData,
     errors: errors.length > 0 ? errors : undefined,
   }
 }

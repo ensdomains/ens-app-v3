@@ -14,6 +14,7 @@ import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { getTimezoneOffset } from '@app/utils/getTimezoneOffset'
+import { isShortEth2LD } from '@app/utils/shortName'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -246,7 +247,9 @@ export const ProfileSnippet = ({
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
-  const { registrationStatus } = useNameDetails({ name })
+  const nameDetails = useNameDetails({ name })
+  const { registrationStatus } = nameDetails
+  const isShortName = isShortEth2LD(nameDetails)
 
   const { usePreparedDataInput } = useTransactionFlow()
   const showExtendNamesInput = usePreparedDataInput('ExtendNames')
@@ -274,7 +277,7 @@ export const ProfileSnippet = ({
     !!registrationStatus && ['desynced', 'desynced:gracePeriod'].includes(registrationStatus)
 
   const ActionButton = useMemo(() => {
-    if (button === 'extend')
+    if (button === 'extend' && !isShortName)
       return (
         <Button
           size="small"
@@ -313,7 +316,7 @@ export const ProfileSnippet = ({
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, canSelfExtend, isWrapped])
+  }, [button, name, canSelfExtend, isShortName, isWrapped])
 
   return (
     <Container data-testid="profile-snippet">

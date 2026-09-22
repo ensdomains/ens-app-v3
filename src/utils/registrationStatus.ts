@@ -10,6 +10,7 @@ import { ParsedInputResult } from '@ensdomains/ensjs/utils'
 import { getChainsFromUrl } from '@app/constants/chains'
 
 import { emptyAddress } from './constants'
+import { isKnownLabel } from './shortName'
 
 export type RegistrationStatus =
   | 'invalid'
@@ -50,10 +51,6 @@ export const getRegistrationStatus = ({
 }): RegistrationStatus => {
   if (name === '[root]') return 'owned'
 
-  if (isETH && is2LD && isShort) {
-    return 'short'
-  }
-
   if (!ownerData && ownerData !== null && !wrapperData) return 'invalid'
 
   if (!isETH && !supportedTLD) {
@@ -89,12 +86,22 @@ export const getRegistrationStatus = ({
         }
         return 'gracePeriod'
       }
-      const { premium } = priceData || { premium: 0n }
-      if (premium > 0n) {
-        return 'premium'
-      }
     }
-    return 'available'
+    // Nothing above claimed the name, so everything left is a judgement about registering it — and
+    // that cannot be made for a label the app cannot read. Registering an encoded labelhash would
+    // register the bracket string itself, i.e. the wrong name; `isShort` is a statement about the
+    // missing label rather than about its length; and a premium implies the name is registerable. So
+    // an unhealed label is none of short, available or premium — it is simply not ours to offer.
+    if (!isKnownLabel(name)) return 'notOwned'
+
+    const { premium } = priceData || { premium: 0n }
+    // A short name can never be re-registered, so it never enters the premium window.
+    if (expiryData?.expiry && premium > 0n && !isShort) {
+      return 'premium'
+    }
+    // Otherwise the name is registerable — unless its label is below the registrar's minimum, in
+    // which case it is a dead end rather than an available name.
+    return isShort ? 'short' : 'available'
   }
   if (ownerData && ownerData.owner !== emptyAddress) {
     if (is2LD) {

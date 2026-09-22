@@ -8,6 +8,7 @@ import { Button, Dialog } from '@ensdomains/thorin'
 import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorTabContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
+import { useEffectiveResolverAddress } from '@app/hooks/resolver/useEffectiveResolverAddress'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
 import { createTransactionItem, TransactionItem } from '@app/transaction-flow/transaction'
@@ -70,6 +71,13 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
   ) as TransactionItem<'updateProfile'>
 
   const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
+  // Records must be written to the resolver that actually holds them: the
+  // underlying resolver when the name's registry resolver is an ENSv2
+  // abstraction contract.
+  const effectiveResolver = useEffectiveResolverAddress({
+    name,
+    resolverAddress: fetchedProfile?.resolverAddress,
+  })
   const [profile, setProfile] = useState<Profile | undefined>(undefined)
 
   // inline to prevent unnecessary re-renders
@@ -86,20 +94,22 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         payload: [
           createTransactionItem('updateProfile', {
             name,
-            resolverAddress: fetchedProfile!.resolverAddress!,
+            resolverAddress: effectiveResolver.data ?? fetchedProfile!.resolverAddress!,
             records,
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [fetchedProfile, dispatch, name],
+    [fetchedProfile, effectiveResolver.data, dispatch, name],
   )
+
+  const isEditorDataLoading = isProfileLoading || effectiveResolver.isLoading
 
   const advancedEditorForm = useAdvancedEditor({
     name,
     profile,
-    isLoading: isProfileLoading,
+    isLoading: isEditorDataLoading,
     callback: handleCreateTransaction,
     overwrites: transaction?.data.records,
   })
@@ -109,7 +119,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     onDismiss?.()
   }
 
-  if (isProfileLoading) return null
+  if (isEditorDataLoading) return null
 
   return (
     <>

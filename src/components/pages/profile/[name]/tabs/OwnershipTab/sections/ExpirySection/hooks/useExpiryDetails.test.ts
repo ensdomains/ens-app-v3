@@ -1,5 +1,6 @@
 import { renderHook } from '@app/test-utils'
 
+import { labelhash } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { checkETH2LDFromName } from '@app/utils/utils'
@@ -143,5 +144,73 @@ describe('useExpiryDetails', () => {
         })
       },
     )
+  })
+
+  // The grace-period tooltip says the name "can still be extended", which the app does not offer
+  // for a short .eth 2LD.
+  describe('grace-period tooltip', () => {
+    const renderFor = (details: object) => {
+      mockUseNameType.mockReturnValue({ data: 'eth-unwrapped-2ld', isLoading: false })
+      return renderHook(() =>
+        useExpiryDetails({
+          name: 'test.eth',
+          details: { expiryDate: new Date(3255803954000), isLoading: false, ...details } as any,
+        }),
+      )
+    }
+
+    it('should keep the extendable tooltip for a normal name', () => {
+      const { result } = renderFor({
+        name: 'test.eth',
+        isValid: true,
+        isETH: true,
+        is2LD: true,
+        isShort: false,
+      })
+
+      expect(result.current.data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: 'grace-period',
+            tooltip: 'tabs.ownership.sections.expiry.panel.grace-period.tooltip',
+          }),
+        ]),
+      )
+    })
+
+    // An unhealed label reads as short, and the name behind it can in fact still be extended.
+    it('should keep the extendable tooltip for a name whose label is an encoded labelhash', () => {
+      const { result } = renderFor({
+        name: `[${labelhash('nick').slice(2)}].eth`,
+        isValid: true,
+        isETH: true,
+        is2LD: true,
+        isShort: true,
+      })
+
+      expect(result.current.data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: 'grace-period',
+            tooltip: 'tabs.ownership.sections.expiry.panel.grace-period.tooltip',
+          }),
+        ]),
+      )
+    })
+
+    it('should drop the extendable tooltip for a short name while keeping the date', () => {
+      const { result } = renderFor({
+        name: 'on.eth',
+        isValid: true,
+        isETH: true,
+        is2LD: true,
+        isShort: true,
+      })
+
+      const gracePeriod = result.current.data?.find(({ type }) => type === 'grace-period')
+      expect(gracePeriod).toBeDefined()
+      expect(gracePeriod).toEqual(expect.objectContaining({ tooltip: undefined }))
+      expect((gracePeriod as { date?: Date })?.date).toBeInstanceOf(Date)
+    })
   })
 })

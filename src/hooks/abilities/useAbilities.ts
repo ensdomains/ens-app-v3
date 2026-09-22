@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { isSelfExtendable } from '@app/components/pages/profile/[name]/tabs/OwnershipTab/sections/ExpirySection/hooks/useExpiryActions'
+import { isShortEth2LD } from '@app/utils/shortName'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { useAccountSafely } from '../account/useAccountSafely'
@@ -128,7 +129,7 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
   const data: Abilities | undefined = useMemo(
     () => {
       if (!name || !address || isLoading) return DEFAULT_ABILITIES
-      const canExtend = !!name && checkETH2LDFromName(name)
+      const canExtend = !!name && checkETH2LDFromName(name) && !isShortEth2LD(basicNameData)
       return {
         canExtend,
         canSelfExtend: canExtend && isSelfExtendable({ ...basicNameData, address }),
@@ -166,6 +167,9 @@ export const useAbilities = ({ name, enabled = true }: UseAbilitiesParameters) =
       basicNameData.ownerData,
       basicNameData.wrapperData,
       basicNameData.pccExpired,
+      basicNameData.isETH,
+      basicNameData.is2LD,
+      basicNameData.isShort,
       parentBasicNameData.ownerData,
       parentBasicNameData.wrapperData,
       isLoading,

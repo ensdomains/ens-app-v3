@@ -10,6 +10,7 @@ import useRegistrationData from '@app/hooks/useRegistrationData'
 import { GRACE_PERIOD } from '@app/utils/constants'
 import { safeDateObj } from '@app/utils/date'
 import { parentName } from '@app/utils/name'
+import { isShortEth2LD } from '@app/utils/shortName'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
@@ -44,6 +45,13 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
   })
   const { buildTransactionUrl } = useBlockExplorer()
   const registrationData = useRegistrationData({ name, enabled: enabled && isETH2LD })
+
+  // The grace-period tooltip says the name "can still be extended", which the app does not offer
+  // for a short .eth 2LD — so it is dropped rather than shown untruthfully.
+  const isShortName = isShortEth2LD(details)
+  const isShortParentName = isShortEth2LD(parentData)
+  const graceTooltip = (isShort: boolean) =>
+    isShort ? undefined : t('tabs.ownership.sections.expiry.panel.grace-period.tooltip')
 
   const isLoading =
     nameType.isLoading || details.isLoading || parentData.isLoading || registrationData.isLoading
@@ -81,7 +89,7 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
                   {
                     type: 'grace-period',
                     date: expiry ? new Date(expiry.getTime() + GRACE_PERIOD) : undefined,
-                    tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
+                    tooltip: graceTooltip(isShortName),
                     supportLink: getSupportLink('grace-period'),
                   },
                 ]
@@ -129,7 +137,7 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
                     date: parentExpiry
                       ? new Date(parentExpiry.getTime() + GRACE_PERIOD)
                       : undefined,
-                    tooltip: t('tabs.ownership.sections.expiry.panel.grace-period.tooltip'),
+                    tooltip: graceTooltip(isShortParentName),
                     supportLink: getSupportLink('grace-period'),
                   },
                 ]
@@ -163,6 +171,8 @@ export const useExpiryDetails = ({ name, details }: Input, options: Options = {}
       parentData.expiryDate,
       registrationData.data,
       buildTransactionUrl,
+      isShortName,
+      isShortParentName,
     ],
   )
 

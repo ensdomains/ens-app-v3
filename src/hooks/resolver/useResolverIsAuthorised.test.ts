@@ -43,6 +43,49 @@ describe('useResolverIsAuthorised', () => {
       },
     })
   })
+  it('probes and estimates gas against the effective resolver address', async () => {
+    const abstractionResolver = '0x1000000000000000000000000000000000000001'
+    const underlyingResolver = '0x2000000000000000000000000000000000000002'
+    mockUseProfile.mockReturnValue({
+      data: { resolverAddress: abstractionResolver },
+      isLoading: false,
+    })
+    mockUseResolverHasInterfaces.mockReturnValue({
+      data: [true],
+      resolverAddress: underlyingResolver,
+      isLoading: false,
+    })
+    mockUseEstimateGas.mockReturnValue({ data: 21_000n, isLoading: false })
+
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))
+
+    await waitFor(() => result.current.data !== undefined)
+    expect(result.current.data).toEqual({ isAuthorised: true, isValid: true })
+    expect(mockUseResolverHasInterfaces).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'test.eth', resolverAddress: abstractionResolver }),
+    )
+    expect(mockUseEstimateGas).toHaveBeenCalledWith(
+      expect.objectContaining({ to: underlyingResolver }),
+    )
+  })
+
+  it('does not return an authorization judgement while resolver lookup is loading', () => {
+    mockUseProfile.mockReturnValue({
+      data: { resolverAddress: '0x1000000000000000000000000000000000000001' },
+      isLoading: false,
+    })
+    mockUseResolverHasInterfaces.mockReturnValue({
+      data: undefined,
+      resolverAddress: undefined,
+      isLoading: true,
+      isFetching: true,
+    })
+
+    const { result } = renderHook(() => useResolverIsAuthorised({ name: 'test.eth' }))
+
+    expect(result.current).toMatchObject({ data: undefined, isLoading: true, isFetching: true })
+  })
+
   it('should return isValid and isAuthorised is true if resolver is known and name is not wrapped', async () => {
     mockUseProfile.mockReturnValue({
       data: {

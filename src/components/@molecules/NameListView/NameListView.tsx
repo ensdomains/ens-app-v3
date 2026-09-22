@@ -22,6 +22,7 @@ import { useNamesForAddress } from '@app/hooks/ensjs/subgraph/useNamesForAddress
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { isShortEth2LDName } from '@app/utils/shortName'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -60,6 +61,12 @@ type NameListViewProps = {
   setError?: (isError: boolean) => void
   setLoading?: (isLoading: boolean) => void
 }
+
+export const isNameExtendable = (name: Pick<Name, 'name' | 'parentName'>) =>
+  name.parentName === 'eth' &&
+  !!name.name &&
+  !name.name.includes('Invalid ENS Name') &&
+  !isShortEth2LDName(name.name)
 
 export const NameListView = ({ address, selfAddress, setError, setLoading }: NameListViewProps) => {
   const { t } = useTranslation('names')
@@ -149,9 +156,6 @@ export const NameListView = ({ address, selfAddress, setError, setLoading }: Nam
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
-
-  const isNameExtendable = (name: Name) =>
-    name.parentName === 'eth' && !!name.name && !name.name.includes('Invalid ENS Name')
 
   const isNameDisabled = useCallback(
     (name: Name) => {
