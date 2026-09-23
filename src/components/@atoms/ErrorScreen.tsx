@@ -4,6 +4,8 @@ import styled, { css } from 'styled-components'
 
 import { AlertSVG, QuestionCircleSVG, Typography } from '@ensdomains/thorin'
 
+import { getSupportLink } from '@app/utils/supportLinks'
+
 const Container = styled.div(
   ({ theme }) => css`
     --icon-color: ${theme.colors.red};
@@ -69,7 +71,7 @@ const ErrorScreen = ({ errorType }: { errorType: ErrorType }) => {
           components={{
             HomeLink: <LinkWrapper />,
             // eslint-disable-next-line jsx-a11y/control-has-associated-label, jsx-a11y/anchor-has-content
-            SupportLink: <a href="https://support.ens.domains" />,
+            SupportLink: <a href={getSupportLink('home')} />,
           }}
         />
       </Typography>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { encodeFunctionData, namehash } from 'viem'
+import { encodeFunctionData, isAddressEqual, namehash } from 'viem'
 import { useConnectorClient, useEstimateGas } from 'wagmi'
 
 import { publicResolverSetAddrSnippet } from '@ensdomains/ensjs/contracts'
@@ -29,7 +29,7 @@ export const useResolverIsAuthorised = ({
     name,
     enabled,
   })
-  const resolverAddress = profile.data?.resolverAddress
+  const profileResolverAddress = profile.data?.resolverAddress
 
   const {
     data: isWrapped,
@@ -42,17 +42,19 @@ export const useResolverIsAuthorised = ({
 
   const {
     data: [resolverSupportsMultiAddress] = [false],
+    resolverAddress: effectiveResolverAddress,
     knownResolverData,
     isLoading: isResolverHasInterfacesLoading,
     isFetching: isResolverHasInterfacesFetching,
     isCachedData: isResolverHasInterfacesCachedData,
   } = useResolverHasInterfaces({
+    name,
     interfaceNames: ['MultiCoinAddressResolver'],
-    resolverAddress: resolverAddress!,
-    enabled: enabled && !isDependentDataLoading && !!resolverAddress,
+    resolverAddress: profileResolverAddress ?? emptyAddress,
+    enabled: enabled && !isDependentDataLoading && !!profileResolverAddress,
   })
   const estimateGasQuery = useEstimateGas({
-    to: resolverAddress,
+    to: effectiveResolverAddress,
     account: connector.data?.account,
     data: encodeFunctionData({
       abi: publicResolverSetAddrSnippet,
@@ -64,9 +66,13 @@ export const useResolverIsAuthorised = ({
       enabled:
         enabled &&
         !isDependentDataLoading &&
+        !isResolverHasInterfacesLoading &&
         !knownResolverData &&
         resolverSupportsMultiAddress &&
-        !!resolverAddress,
+        // emptyAddress is a truthy string, so a presence check alone stops
+        // guarding once a caller substitutes it for a missing resolver.
+        !!effectiveResolverAddress &&
+        !isAddressEqual(effectiveResolverAddress, emptyAddress),
     },
   })
 

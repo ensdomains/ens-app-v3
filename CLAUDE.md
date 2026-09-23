@@ -112,6 +112,7 @@ The app uses a sophisticated transaction flow system centered around:
 - Prefer small, pure functions outside of React hooks
 - Transaction logic should be in `transaction/` files, not components
 - Use path aliases: `@app/` for src/, `@public/` for public/
+- **No barrel exports for internal code** - Do not create `index.ts` files that re-export from other modules. Import directly from the specific file (e.g., `import { foo } from './utils/foo'` not `import { foo } from './utils'`). Barrel exports add unnecessary indirection and can cause circular dependency issues.
 
 ### Local Development
 1. Install Docker for test environment

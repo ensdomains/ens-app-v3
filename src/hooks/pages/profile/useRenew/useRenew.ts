@@ -10,6 +10,7 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { validateExtendNamesDuration } from '@app/transaction-flow/input/ExtendNames/utils/validateExtendNamesDuration'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { RegistrationStatus } from '@app/utils/registrationStatus'
+import { isShortEth2LD } from '@app/utils/shortName'
 
 type RenewStatus = 'connect-user' | 'display-extend-names' | 'idle'
 
@@ -68,7 +69,8 @@ export const removeRenewParam = ({
 
 export function useRenew(name: string) {
   const router = useRouterWithHistory()
-  const { registrationStatus, isLoading: isBasicNameLoading, isWrapped } = useBasicName({ name })
+  const basicName = useBasicName({ name })
+  const { registrationStatus, isLoading: isBasicNameLoading, isWrapped } = basicName
   const abilities = useAbilities({ name })
   const searchParams = useSearchParams()
   const { status } = useAccount()
@@ -84,7 +86,7 @@ export function useRenew(name: string) {
   const renewSeconds = validateExtendNamesDuration({ duration: searchParams.get('renew') })
 
   const renewState = calculateRenewState({
-    registrationStatus,
+    registrationStatus: isShortEth2LD(basicName) ? 'short' : registrationStatus,
     isRegistrationStatusLoading: isBasicNameLoading,
     renewSeconds,
     connectModalOpen,

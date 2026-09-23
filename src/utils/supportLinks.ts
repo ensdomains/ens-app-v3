@@ -1,16 +1,21 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 const SUPPORT_LINKS = {
-  homoglyphs: 'https://support.ens.domains/en/articles/7901658-homoglyphs',
+  home: 'https://support.ens.domains',
+  transactionTroubleshooting:
+    'https://support.ens.domains/en/articles/13449264-fix-eth-registration-errors',
+  homoglyphs:
+    'https://support.ens.domains/en/articles/7901658-what-are-homoglyphs-and-lookalike-ens-names',
   namesAndSubnames: 'https://support.ens.domains/en/articles/8883890-create-delete-ens-subnames',
-  managersAndOwners: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_3cf7f2fbdf',
-  resolver: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_1ef2545a3f',
+  managersAndOwners:
+    'https://support.ens.domains/en/articles/8825632-edit-the-roles-on-your-ens-name',
+  resolver: 'https://support.ens.domains/en/articles/7900622-what-is-the-resolver-on-my-ens-name',
   fuses: 'https://support.ens.domains/en/articles/7902567-fuses',
-  primaryName: 'https://support.ens.domains/en/articles/7902188-managing-a-name#h_b2baf0c02b',
+  primaryName: 'https://support.ens.domains/en/articles/7890756-what-is-a-primary-name',
   nameWrapper: 'https://support.ens.domains/en/articles/7902532-name-wrapper-overview',
-  dnsNames: 'https://support.ens.domains/en/collections/4027734-dns-names',
-  gaslessDnssec:
-    'https://support.ens.domains/en/articles/8834820-offchain-gasless-dnssec-names-in-ens#h_b92a64180f',
+  dnsNames:
+    'https://support.ens.domains/en/articles/9565578-can-i-use-my-dns-domain-as-an-ens-name',
+  gaslessDnssec: 'https://support.ens.domains/en/articles/8834820-gasless-dns-import#h_b92a64180f',
   'offchain-not-in-names':
     'https://support.ens.domains/en/articles/8874842-find-your-names-on-the-my-names-page',
   owner: undefined,

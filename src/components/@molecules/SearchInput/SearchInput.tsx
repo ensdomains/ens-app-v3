@@ -41,6 +41,7 @@ import { CreateQueryKey, GenericQueryKey } from '@app/types'
 import { sendEvent } from '@app/utils/analytics/events'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
+import { isShortEth2LD } from '@app/utils/shortName'
 import { thread, yearsToSeconds } from '@app/utils/utils'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
@@ -240,6 +241,7 @@ const getRouteForSearchItem = ({
   const getCachedQueryData = createCachedQueryDataGetter({ queryClient, chainId, address })
 
   if (selectedItem.nameType === 'eth' || selectedItem.nameType === 'dns') {
+    const validation = validate(selectedItem.text)
     const ownerData = getCachedQueryData<UseOwnerReturnType, UseOwnerQueryKey>({
       functionName: 'getOwner',
       params: { name: selectedItem.text },
@@ -261,17 +263,32 @@ const getRouteForSearchItem = ({
       params: { name: selectedItem.text },
     })
 
+    // A short name's row is inert until `useBasicName` has settled every read its status waits
+    // on — owner, wrapper, expiry and addr — so Enter has to clear the same bar, or a partially
+    // warm cache lets the keyboard navigate a row the mouse ignores. Price is deliberately not
+    // among them: it is disabled for short names, so requiring it would never let Enter through.
+    if (
+      isShortEth2LD(validation) &&
+      [ownerData, wrapperData, expiryData, addrData].some((data) => typeof data === 'undefined')
+    )
+      return undefined
+
     if (typeof ownerData !== 'undefined') {
       const registrationStatus = getRegistrationStatus({
         timestamp: Date.now(),
-        validation: validate(selectedItem.text),
+        validation,
         ownerData,
         wrapperData,
         expiryData,
         priceData,
         addrData,
         supportedTLD: true,
+        // The status model refuses to judge registerability without the name the flags were measured
+        // from, so it has to be passed here as `useBasicName` passes it — otherwise a genuinely
+        // short name would read as available in the dropdown.
+        name: validation.name,
       })
+      if (registrationStatus === 'short') return undefined
       if (registrationStatus === 'available') return `/register/${selectedItem.text}`
       if (registrationStatus === 'notImported') return `/import/${selectedItem.text}`
     }
@@ -311,12 +328,13 @@ const createSearchHandler =
     const { text, nameType } = selectedItem
     if (nameType === 'error' || nameType === 'text') return
 
+    const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
+    if (!path) return
+
     setHistory((prev: HistoryItem[]) => [
       ...prev.filter((item) => !(item.text === text && item.nameType === nameType)),
       { lastAccessed: Date.now(), nameType, text, isValid: selectedItem.isValid },
     ])
-
-    const path = getRouteForSearchItem({ address, chainId, queryClient, selectedItem })
 
     const searchType = match(path)
       .with(`/register/${text}`, () => 'eth' as const)

@@ -17,6 +17,7 @@ import { usePrefetchProfile } from '@app/hooks/useProfile'
 import { useZorb } from '@app/hooks/useZorb'
 import { zorbImageDataURI } from '@app/utils/gradient'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
+import { getShortNameState } from '@app/utils/shortName'
 import { shortenAddress } from '@app/utils/utils'
 
 import type { SearchHandler, SearchItem } from './types'
@@ -354,10 +355,15 @@ const EthResultItem = ({
     enabled: !usingPlaceholder,
   })
   const zorb = useZorb(name, 'name')
-  const { registrationStatus, isLoading, beautifiedName } = useBasicName({
+  const basicName = useBasicName({
     name,
     enabled: !usingPlaceholder,
   })
+  const { registrationStatus, isLoading, beautifiedName } = basicName
+  // Bucketed through getShortNameState so this agrees with the keyboard path in SearchInput, which
+  // blocks a route only for the `short` status: a short name in grace has a legitimate profile.
+  const shortNameState = getShortNameState({ validation: basicName, registrationStatus })
+  const isClickable = shortNameState === 'notShort' || shortNameState === 'registered'
 
   const { avatarUri, avatarIsPlaceholder } = getAvatarUri({ ensAvatar, usingPlaceholder, zorb })
 
@@ -366,10 +372,10 @@ const EthResultItem = ({
   return (
     <SearchItemContainer
       data-testid="search-result-name"
-      onClick={() => clickCallback(index)}
+      onClick={isClickable ? () => clickCallback(index) : undefined}
       onMouseDown={(e) => e.preventDefault()}
       onMouseEnter={() => hoverCallback(index)}
-      $clickable
+      $clickable={isClickable}
       $selected={selected}
     >
       <LeadingSearchItem>
