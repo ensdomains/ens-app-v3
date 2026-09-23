@@ -1,4 +1,9 @@
-import { EstimateGasExecutionError, RawContractError, RpcRequestError } from 'viem'
+import {
+  EstimateGasExecutionError,
+  InvalidInputRpcError,
+  RawContractError,
+  RpcRequestError,
+} from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import { getReadableError, isCommitmentTooNewError } from './errors'
@@ -8,17 +13,44 @@ import { getReadableError, isCommitmentTooNewError } from './errors'
 const COMMITMENT_TOO_NEW_DATA =
   '0x74480cc9ae290bbaa3282c9bf6ccbc240c630120d38c5edda4089fe86e3afc462b7a6a060000000000000000000000000000000000000000000000000000000069d61c9f0000000000000000000000000000000000000000000000000000000069d61c93' as const
 
-describe('errors', () => {
-  it('detects CommitmentTooNew from an RpcRequestError', () => {
-    // eth_createAccessList uses a raw client.request, so the revert reaches us
-    // as an RpcRequestError whose `details` used to win over the revert data.
-    const err = new RpcRequestError({
+// The shape viem's http transport produces for a JSON-RPC error: the raw error
+// member becomes the `cause` of an `RpcRequestError`, which a raw
+// `client.request` (e.g. `eth_createAccessList`) then maps by code - -32000 is
+// `InvalidInputRpcError`. Nothing normalises `data` along the way.
+const makeRpcError = (data: unknown) =>
+  new InvalidInputRpcError(
+    new RpcRequestError({
       body: {},
-      error: { code: 3, message: 'execution reverted', data: COMMITMENT_TOO_NEW_DATA } as never,
+      error: { code: -32000, message: 'execution reverted', data } as never,
       url: 'https://example.com',
-    })
+    }),
+  )
+
+// The shape the `estimateGas` action produces for the same JSON-RPC error.
+const makeEstimateGasError = (data: unknown) =>
+  new EstimateGasExecutionError(makeRpcError(data), {})
+
+describe('errors', () => {
+  it('detects CommitmentTooNew from a raw eth_createAccessList revert', () => {
+    expect(isCommitmentTooNewError(makeRpcError(COMMITMENT_TOO_NEW_DATA))).toBe(true)
+  })
+
+  it('detects CommitmentTooNew from an estimateGas revert', () => {
+    const err = makeEstimateGasError(COMMITMENT_TOO_NEW_DATA)
 
     expect(isCommitmentTooNewError(err)).toBe(true)
+    expect(getReadableError(err)).toEqual({ message: 'CommitmentTooNew', type: 'contract' })
+  })
+
+  it.each([
+    ['eth_createAccessList', makeRpcError],
+    ['estimateGas', makeEstimateGasError],
+  ])('does not throw when a %s revert has `data: null`', (_, makeError) => {
+    const err = makeError(null)
+
+    expect(() => isCommitmentTooNewError(err)).not.toThrow()
+    expect(isCommitmentTooNewError(err)).toBe(false)
+    expect(() => getReadableError(err)).not.toThrow()
   })
 
   it('decodes a contract error wrapped in an EstimateGasExecutionError', () => {

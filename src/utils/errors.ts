@@ -22,8 +22,14 @@ type ReadableError = {
 
 export const getViemRevertErrorData = (err: unknown) => {
   if (!(err instanceof BaseError)) return undefined
-  const error = err.walk() as RawContractError
-  return typeof error.data === 'object' ? error.data.data : error.data
+  const { data } = err.walk() as RawContractError
+  // `typeof null === 'object'`, so the nullish check has to come first. Nothing
+  // normalises the JSON-RPC error between the node and here - viem's http
+  // transport hands the raw error member to `RpcRequestError` as its `cause`,
+  // and `walk()` stops there - so a node answering `execution reverted` with
+  // `"data": null` reaches this line as-is. Reading `.data` off it would throw
+  // a `TypeError` inside every caller, including during render.
+  return data && typeof data === 'object' ? data.data : data
 }
 
 export const allContractErrors = [
@@ -96,9 +102,9 @@ export const isCommitmentTooNewError = (err: unknown): boolean =>
 
 export const getReadableError = (err: unknown): ReadableError | null => {
   // Decode revert data first: an execution revert can reach us wrapped in any of
-  // the error types below (e.g. `eth_createAccessList` surfaces one as an
-  // `RpcRequestError`), and the decoded contract error is always more useful
-  // than the generic viem message those branches fall back to.
+  // the error types below (e.g. `estimateGas` surfaces one as an
+  // `EstimateGasExecutionError`), and the decoded contract error is always more
+  // useful than the generic viem message those branches fall back to.
   const decodedError = decodeContractError(err)
   if (decodedError)
     return {

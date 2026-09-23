@@ -329,6 +329,45 @@ const getPreTransactionError = ({
     })
 }
 
+/**
+ * True while a transient `CommitmentTooNew` pre-flight failure is still being
+ * retried, so the modal can show a spinner instead of a terminal error.
+ *
+ * react-query keeps `failureReason` populated after the retry budget is
+ * exhausted, and `useInvalidateOnBlock` hands the query a fresh budget on every
+ * new block, so the failure signal on its own never clears - the confirm button
+ * would stay a disabled spinner and the error `Helper` would stay suppressed
+ * for as long as the dialog is open. Stop waiting as soon as a budget is
+ * exhausted, and latch that so later rounds don't flip back to the spinner; a
+ * round that eventually succeeds clears the error on its own.
+ */
+export const useIsWaitingForCommitment = ({
+  stage,
+  status,
+  failureReason,
+  error,
+}: {
+  stage: TransactionStage
+  status: 'pending' | 'error' | 'success'
+  failureReason: Error | null
+  error: Error | null
+}) => {
+  const [hasGivenUpWaiting, setHasGivenUpWaiting] = useState(false)
+
+  const isCommitmentTooNew =
+    isCommitmentTooNewError(failureReason) || isCommitmentTooNewError(error)
+  const hasExhaustedRetries = status === 'error' && isCommitmentTooNew
+
+  useEffect(() => {
+    if (hasExhaustedRetries) setHasGivenUpWaiting(true)
+    // A successful round means the commitment has aged in; a later
+    // `CommitmentTooNew` is a new wait rather than the one we gave up on.
+    else if (status === 'success') setHasGivenUpWaiting(false)
+  }, [hasExhaustedRetries, status])
+
+  return stage === 'confirm' && isCommitmentTooNew && !hasExhaustedRetries && !hasGivenUpWaiting
+}
+
 export const handleSendTransaction = async (
   request: Awaited<ReturnType<typeof createTransactionRequestUnsafe>>,
   actionName: string,
@@ -431,7 +470,10 @@ export const TransactionStageModal = ({
     // but a missed slot pushes the next block out to 24s - cover that worst
     // case. `useInvalidateOnBlock` below is the primary recovery mechanism;
     // this is cover for a slow block watcher.
-    retry: (failureCount, error) => isCommitmentTooNewError(error) && failureCount < 8,
+    // Anything else keeps react-query's default budget - the query fn's own
+    // guard throws (`connectorClient is required`) used to get it.
+    retry: (failureCount, error) =>
+      isCommitmentTooNewError(error) ? failureCount < 8 : failureCount < 3,
     retryDelay: 3_000,
   })
 
@@ -444,13 +486,14 @@ export const TransactionStageModal = ({
   const requestError = request_?.error || requestError_
   const isTransactionRequestCachedData = getIsCachedData(transactionRequestQuery)
 
-  // `failureReason` holds the error of the most recent failed attempt while
-  // retries are still in flight; `requestError` only becomes set once they're
-  // exhausted. Checking both keeps the waiting state stable for the whole
-  // retry window, then lets the error surface normally if it never resolves.
-  const isWaitingForCommitment =
-    isCommitmentTooNewError(transactionRequestQuery.failureReason) ||
-    isCommitmentTooNewError(requestError)
+  // Spinner while a `CommitmentTooNew` pre-flight is being retried; once a
+  // retry budget runs out the error surfaces through `requestError` as usual.
+  const isWaitingForCommitment = useIsWaitingForCommitment({
+    stage,
+    status: transactionRequestQuery.status,
+    failureReason: transactionRequestQuery.failureReason,
+    error: requestError_ ?? null,
+  })
 
   useInvalidateOnBlock({
     enabled: canEnableTransactionRequest && process.env.NEXT_PUBLIC_ETH_NODE !== 'anvil',

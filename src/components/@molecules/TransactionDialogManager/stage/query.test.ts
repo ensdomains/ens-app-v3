@@ -1,13 +1,20 @@
 import { getFeeHistory } from '@wagmi/core'
+import { EstimateGasExecutionError, InvalidInputRpcError, RpcRequestError } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
-import { getLargestMedianGasFee } from './query'
+import { createTransactionRequest } from '@app/transaction-flow/transaction'
+
+import { createTransactionRequestQueryFn, getLargestMedianGasFee } from './query'
 
 vi.mock('@getpara/rainbowkit', () => ({
   useConnectModal: () => ({
     openConnectModal: vi.fn(),
   }),
   connectorsForWallets: () => [() => {}],
+}))
+
+vi.mock('@app/transaction-flow/transaction', () => ({
+  createTransactionRequest: vi.fn(),
 }))
 
 vi.mock('@wagmi/core', async () => {
@@ -56,5 +63,52 @@ describe('getLargestMedianGasFee', () => {
     })
     const result = await getLargestMedianGasFee()
     expect(result).toBe(5000000000n)
+  })
+})
+
+describe('createTransactionRequestQueryFn', () => {
+  const address = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+
+  const runQueryFn = () =>
+    createTransactionRequestQueryFn({ getClient: () => ({}) } as never)({
+      connectorClient: { account: { address } } as never,
+      connections: [],
+    })({
+      queryKey: [{ name: 'registerName', data: {} }, 1, address],
+    } as never)
+
+  const makeRevert = (data: string) =>
+    new EstimateGasExecutionError(
+      new InvalidInputRpcError(
+        new RpcRequestError({
+          body: {},
+          error: { code: -32000, message: 'execution reverted', data } as never,
+          url: 'https://example.com',
+        }),
+      ),
+      {},
+    )
+
+  it('should rethrow CommitmentTooNew so react-query retries it', async () => {
+    const err = makeRevert(
+      '0x74480cc9ae290bbaa3282c9bf6ccbc240c630120d38c5edda4089fe86e3afc462b7a6a060000000000000000000000000000000000000000000000000000000069d61c9f0000000000000000000000000000000000000000000000000000000069d61c93',
+    )
+    vi.mocked(createTransactionRequest).mockRejectedValueOnce(err)
+
+    await expect(runQueryFn()).rejects.toBe(err)
+  })
+
+  it('should return any other failure as data', async () => {
+    const err = makeRevert('0xdeadbeef')
+    vi.mocked(createTransactionRequest).mockRejectedValueOnce(err)
+
+    await expect(runQueryFn()).resolves.toEqual({ data: null, error: err })
+  })
+
+  it('should return a revert with null data as data rather than throwing a TypeError', async () => {
+    const err = makeRevert(null as never)
+    vi.mocked(createTransactionRequest).mockRejectedValueOnce(err)
+
+    await expect(runQueryFn()).resolves.toEqual({ data: null, error: err })
   })
 })
