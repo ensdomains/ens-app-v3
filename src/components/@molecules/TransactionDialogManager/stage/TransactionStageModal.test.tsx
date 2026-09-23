@@ -1,9 +1,24 @@
 /* eslint-disable no-promise-executor-return */
-import { act, fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
+import {
+  act,
+  fireEvent,
+  mockFunction,
+  render,
+  renderHook,
+  screen,
+  userEvent,
+  waitFor,
+} from '@app/test-utils'
 
 import type { MockedFunctionDeep } from '@vitest/spy'
 import { ComponentProps } from 'react'
-import { Account, TransactionRequest } from 'viem'
+import {
+  Account,
+  EstimateGasExecutionError,
+  InvalidInputRpcError,
+  RpcRequestError,
+  TransactionRequest,
+} from 'viem'
 import { estimateGas, prepareTransactionRequest } from 'viem/actions'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useClient, useConnectorClient, useSendTransaction } from 'wagmi'
@@ -20,7 +35,11 @@ import { checkIsSafeApp } from '@app/utils/safe'
 import { makeMockIntersectionObserver } from '../../../../../test/mock/makeMockIntersectionObserver'
 import { useMockedUseQueryOptions } from '../../../../../test/mock/useMockedUseQueryOptions'
 import { calculateGasLimit, transactionSuccessHandler } from './query'
-import { handleBackToInput, TransactionStageModal } from './TransactionStageModal'
+import {
+  handleBackToInput,
+  TransactionStageModal,
+  useIsWaitingForCommitment,
+} from './TransactionStageModal'
 
 vi.mock('@app/hooks/account/useAccountSafely')
 vi.mock('@app/hooks/chain/useChainName')
@@ -432,6 +451,73 @@ describe('TransactionStageModal', () => {
         expect(mockSendTransaction).toHaveBeenCalled()
       })
     })
+  })
+})
+
+describe('useIsWaitingForCommitment', () => {
+  // CommitmentTooNew(bytes32, uint256, uint256), as returned by estimateGas.
+  const commitmentTooNew = new EstimateGasExecutionError(
+    new InvalidInputRpcError(
+      new RpcRequestError({
+        body: {},
+        error: {
+          code: -32000,
+          message: 'execution reverted',
+          data: '0x74480cc9ae290bbaa3282c9bf6ccbc240c630120d38c5edda4089fe86e3afc462b7a6a060000000000000000000000000000000000000000000000000000000069d61c9f0000000000000000000000000000000000000000000000000000000069d61c93',
+        } as never,
+        url: 'https://example.com',
+      }),
+    ),
+    {},
+  )
+
+  type Props = Parameters<typeof useIsWaitingForCommitment>[0]
+  const retrying: Props = {
+    stage: 'confirm',
+    status: 'pending',
+    failureReason: commitmentTooNew,
+    error: null,
+  }
+  // react-query keeps `failureReason` populated once the budget is exhausted.
+  const exhausted: Props = { ...retrying, status: 'error', error: commitmentTooNew }
+
+  const renderWaiting = (initialProps: Props) =>
+    renderHook((props: Props) => useIsWaitingForCommitment(props), { initialProps })
+
+  it('should wait while CommitmentTooNew is being retried', () => {
+    const { result } = renderWaiting(retrying)
+    expect(result.current).toBe(true)
+  })
+
+  it('should not wait for any other failure', () => {
+    const { result } = renderWaiting({ ...retrying, failureReason: new Error('nope') })
+    expect(result.current).toBe(false)
+  })
+
+  it('should stop waiting once the retry budget is exhausted', () => {
+    const { result, rerender } = renderWaiting(retrying)
+    rerender(exhausted)
+    expect(result.current).toBe(false)
+  })
+
+  it('should not go back to waiting when a new block starts another retry round', () => {
+    const { result, rerender } = renderWaiting(retrying)
+    rerender(exhausted)
+    rerender(retrying)
+    expect(result.current).toBe(false)
+  })
+
+  it('should wait again after a round succeeds', () => {
+    const { result, rerender } = renderWaiting(retrying)
+    rerender(exhausted)
+    rerender({ ...retrying, status: 'success', failureReason: null })
+    rerender({ ...retrying, status: 'success' })
+    expect(result.current).toBe(true)
+  })
+
+  it('should not wait outside of the confirm stage', () => {
+    const { result } = renderWaiting({ ...retrying, stage: 'failed' })
+    expect(result.current).toBe(false)
   })
 })
 
