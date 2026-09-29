@@ -21,6 +21,8 @@ const registryResolver = '0x1111111111111111111111111111111111111111'
 /** A resolver in KNOWN_RESOLVER_DATA for chain 1 — one of ours, never a mirror. */
 const knownResolver = KNOWN_RESOLVER_DATA['1']![0].address
 const underlyingResolver = '0x2222222222222222222222222222222222222222'
+/** An arbitrary registry resolver. Anyone can deploy this and have it self-report ICompositeResolver. */
+const attackerResolver = '0xa11ce000000000000000000000000000000a11ce'
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -124,6 +126,34 @@ describe('useEffectiveResolverAddress', () => {
       useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
     )
     expectEnabledHook(mockUseUnderlyingResolver, true)
+  })
+
+  it('does not probe an unknown resolver for a composite layer', () => {
+    // ERC-165 `ICompositeResolver` is a self-report. Probing every unknown
+    // resolver lets an attacker contract name the official Public Resolver and
+    // have this hook substitute it as the address to judge, display, and write
+    // through. Only an ENS-deployed composite/mirror should be unwrapped.
+    renderHook(() =>
+      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: attackerResolver }),
+    )
+    expectEnabledHook(mockUseUnderlyingResolver, false)
+  })
+
+  it('does not substitute an official resolver named by an unknown registry resolver', () => {
+    mockUseUnderlyingResolver.mockReturnValue({
+      data: knownResolver,
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    })
+    const { result } = renderHook(() =>
+      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: attackerResolver }),
+    )
+    expect(result.current).toMatchObject({
+      data: attackerResolver,
+      isAbstracted: false,
+      isLoading: false,
+    })
   })
 
   it('should not probe when there is no name', () => {

@@ -43,6 +43,8 @@ const latestResolverAddress = KNOWN_RESOLVER_DATA['1']![0].address
 /** An ENSv2 abstraction contract standing in front of the name's real resolver. */
 const abstractionAddress = '0x1111111111111111111111111111111111111111'
 const unknownResolverAddress = '0x2222222222222222222222222222222222222222'
+/** An arbitrary registry resolver claiming to be a composite mirror. */
+const attackerResolver = '0xa11ce000000000000000000000000000000a11ce'
 
 const name = 'test.eth'
 
@@ -114,6 +116,28 @@ describe('resolver abstraction layer', () => {
     const { status } = renderEditorView({ isWrapped: false })
     expect(status.data?.effectiveResolverAddress).toEqual(latestResolverAddress)
     expect(status.data?.effectiveResolverAddress).not.toEqual(abstractionAddress)
+  })
+
+  it('does not hide an unknown registry resolver that named the public resolver', () => {
+    // The probe answering with the official Public Resolver is not proof that
+    // the outer contract is ENS's composite mirror. Canonical resolution still
+    // follows the registry resolver, so judgement, display and writes must too.
+    mockUseProfile.mockReturnValue({
+      data: { isMigrated: true, resolverAddress: attackerResolver },
+      isLoading: false,
+    })
+    mockUseRegistryResolver.mockReturnValue({
+      data: attackerResolver,
+      isLoading: false,
+      isSuccess: true,
+    })
+    const { status, view } = renderEditorView({ isWrapped: false })
+    expect(status.data).toMatchObject({
+      hasLatestResolver: false,
+      effectiveResolverAddress: attackerResolver,
+    })
+    expect(status.data?.effectiveResolverAddress).not.toEqual(latestResolverAddress)
+    expect(view).not.toBe('editor')
   })
 
   it('falls back to the reported resolver when the name is not composite', () => {

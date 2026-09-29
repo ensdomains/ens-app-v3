@@ -23,6 +23,8 @@ const mockUseUnderlyingResolver = mockFunction(useUnderlyingResolver)
 
 /** An ENSv2 abstraction contract standing in front of the name's real resolver. */
 const abstractionAddress = '0x1111111111111111111111111111111111111111'
+/** An arbitrary registry resolver claiming to be a composite mirror. */
+const attackerResolver = '0xa11ce000000000000000000000000000000a11ce'
 
 const createProfileData = (
   overwrite: ReturnType<PartialMockedFunction<typeof useProfile>> = {},
@@ -243,6 +245,29 @@ describe('useResolverType', () => {
     expect(result.current).toMatchObject(
       expect.objectContaining({
         data: { type: 'latest', isWildcard: false, tone: 'greenSecondary' },
+        isLoading: false,
+      }),
+    )
+  })
+
+  it('should not classify a name as latest just because an unknown resolver named the public resolver', () => {
+    // A former owner can leave a contract that self-reports ICompositeResolver
+    // and returns the official Public Resolver from getResolver. Honouring that
+    // answer labels the name as already on the latest resolver, hides the
+    // attacker contract, and skips the migrate-your-resolver prompt.
+    mockUseIsWrapped.mockReturnValue({ data: false, isLoading: false })
+    mockUseProfile.mockReturnValue(
+      createProfileData({ data: { resolverAddress: attackerResolver } }),
+    )
+    mockUseUnderlyingResolver.mockReturnValue({
+      data: KNOWN_RESOLVER_DATA['1']![0].address,
+      isLoading: false,
+      isFetching: false,
+    })
+    const { result } = renderHook(() => useResolverType({ name: 'test.eth' }))
+    expect(result.current).toMatchObject(
+      expect.objectContaining({
+        data: { type: 'custom', isWildcard: false, tone: 'greySecondary' },
         isLoading: false,
       }),
     )
