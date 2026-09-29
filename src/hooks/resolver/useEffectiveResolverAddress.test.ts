@@ -172,16 +172,11 @@ describe('useEffectiveResolverAddress', () => {
     expectEnabledHook(mockUseUnderlyingResolver, false)
   })
 
-  it('should not probe on the local development chain, and judge by the registry resolver', () => {
+  it('still probes an unknown resolver on the local development chain', () => {
     mockUseChainId.mockReturnValue(1337)
-    const { result } = renderHook(() =>
+    renderHook(() =>
       useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
     )
-    expectEnabledHook(mockUseUnderlyingResolver, false)
-    expect(result.current).toMatchObject({
-      data: registryResolver,
-      isAbstracted: false,
-      isLoading: false,
-    })
+    expectEnabledHook(mockUseUnderlyingResolver, true)
   })
 })

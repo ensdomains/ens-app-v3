@@ -1,5 +1,4 @@
 import type { Address } from 'viem'
-import { localhost } from 'viem/chains'
 import { useChainId } from 'wagmi'
 
 import { getKnownResolverData } from '@app/constants/resolverAddressData'
@@ -34,22 +33,21 @@ export const useEffectiveResolverAddress = ({
 }: UseEffectiveResolverAddressParameters) => {
   const chainId = useChainId()
 
-  // The ENSv2 resolver abstraction does not exist on the local development
-  // chain (v1-only), so there is nothing to probe there: skip the extra
-  // `getResolver` call entirely and judge names by the registry resolver, as
-  // on mainnet before the abstraction ships.
   // A known resolver is one of ours and is never a composite mirror, so there
   // is nothing behind it to look up. Skipping keeps the zero-network path these
   // addresses already had: this hook's loading state reaches useResolverStatus
   // and useAbilities, so looking up would put an RPC round trip in front of the
   // wrap button, the profile actions and the Edit Profile dialog on every
   // ordinary name.
+  // Unknown resolvers are probed on every chain, including local anvil: a
+  // localhost skip would hide an untrusted ICompositeResolver claim and make
+  // the denv e2e for that case a false green.
   const reportedIsKnownResolver = !!getKnownResolverData({
     chainId,
     resolverAddress: resolverAddress ?? '',
   })
 
-  const enabled = enabled_ && !!name && chainId !== localhost.id && !reportedIsKnownResolver
+  const enabled = enabled_ && !!name && !reportedIsKnownResolver
 
   const underlyingResolver = useUnderlyingResolver({ name, resolverAddress, enabled })
 
