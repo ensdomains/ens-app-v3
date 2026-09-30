@@ -11,6 +11,13 @@ import { useRegistryResolver } from './useRegistryResolver'
 import { isWildcardCalc, useResolverType } from './useResolverType'
 import { useUnderlyingResolver } from './useUnderlyingResolver'
 
+vi.mock('@app/constants/resolverAddressData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@app/constants/resolverAddressData')>()),
+  isOfficialCompositeResolver: vi.fn(
+    ({ resolverAddress }: { resolverAddress: string }) =>
+      resolverAddress.toLowerCase() === '0x1111111111111111111111111111111111111111',
+  ),
+}))
 vi.mock('@app/hooks/useIsWrapped')
 vi.mock('@app/hooks/useProfile')
 vi.mock('@app/hooks/resolver/useRegistryResolver')

@@ -18,6 +18,7 @@ const mockUseUnderlyingResolver = mockFunction(useUnderlyingResolver)
 const mockUseChainId = mockFunction(useChainId)
 
 const registryResolver = '0x1111111111111111111111111111111111111111'
+const officialSepoliaComposite = '0xae66c62AcAE72098BdAc57d8E8AED53EF000b2Ba'
 /** A resolver in KNOWN_RESOLVER_DATA for chain 1 — one of ours, never a mirror. */
 const knownResolver = KNOWN_RESOLVER_DATA['1']![0].address
 const underlyingResolver = '0x2222222222222222222222222222222222222222'
@@ -48,13 +49,17 @@ describe('useEffectiveResolverAddress', () => {
   })
 
   it('should return the underlying resolver when the registry resolver is an abstraction', () => {
+    mockUseChainId.mockReturnValue(11155111)
     mockUseUnderlyingResolver.mockReturnValue({
       data: underlyingResolver,
       isLoading: false,
       isFetching: false,
     })
     const { result } = renderHook(() =>
-      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
+      useEffectiveResolverAddress({
+        name: 'test.eth',
+        resolverAddress: officialSepoliaComposite,
+      }),
     )
     expect(result.current).toMatchObject({
       data: underlyingResolver,
@@ -64,13 +69,17 @@ describe('useEffectiveResolverAddress', () => {
   })
 
   it('should not report an address while the probe is still in flight', () => {
+    mockUseChainId.mockReturnValue(11155111)
     mockUseUnderlyingResolver.mockReturnValue({
       data: undefined,
       isLoading: true,
       isFetching: true,
     })
     const { result } = renderHook(() =>
-      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
+      useEffectiveResolverAddress({
+        name: 'test.eth',
+        resolverAddress: officialSepoliaComposite,
+      }),
     )
     expect(result.current).toMatchObject({
       data: undefined,
@@ -81,6 +90,7 @@ describe('useEffectiveResolverAddress', () => {
   })
 
   it('should fall back to the registry resolver when the lookup fails, and say so', () => {
+    mockUseChainId.mockReturnValue(11155111)
     mockUseUnderlyingResolver.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -88,10 +98,13 @@ describe('useEffectiveResolverAddress', () => {
       isError: true,
     })
     const { result } = renderHook(() =>
-      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
+      useEffectiveResolverAddress({
+        name: 'test.eth',
+        resolverAddress: officialSepoliaComposite,
+      }),
     )
     expect(result.current).toMatchObject({
-      data: registryResolver,
+      data: officialSepoliaComposite,
       isAbstracted: false,
       isLoading: false,
       // The fallback is NOT an answer: a caller must be able to tell it apart
@@ -102,11 +115,15 @@ describe('useEffectiveResolverAddress', () => {
     })
   })
 
-  it('should not report an error for a resolver that is simply not composite', () => {
+  it('should not report an error when an official composite has no underlying resolver', () => {
+    mockUseChainId.mockReturnValue(11155111)
     const { result } = renderHook(() =>
-      useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
+      useEffectiveResolverAddress({
+        name: 'test.eth',
+        resolverAddress: officialSepoliaComposite,
+      }),
     )
-    expect(result.current).toMatchObject({ data: registryResolver, isError: false })
+    expect(result.current).toMatchObject({ data: officialSepoliaComposite, isError: false })
   })
 
   it('should not look up a resolver that is already a known one', () => {
@@ -121,9 +138,20 @@ describe('useEffectiveResolverAddress', () => {
     expect(result.current).toMatchObject({ data: knownResolver, isLoading: false })
   })
 
-  it('should still look up a resolver that is not a known one', () => {
+  it('should not look up an unknown resolver', () => {
     renderHook(() =>
       useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
+    )
+    expectEnabledHook(mockUseUnderlyingResolver, false)
+  })
+
+  it('should look up an official composite resolver', () => {
+    mockUseChainId.mockReturnValue(11155111)
+    renderHook(() =>
+      useEffectiveResolverAddress({
+        name: 'test.eth',
+        resolverAddress: officialSepoliaComposite,
+      }),
     )
     expectEnabledHook(mockUseUnderlyingResolver, true)
   })
@@ -172,11 +200,11 @@ describe('useEffectiveResolverAddress', () => {
     expectEnabledHook(mockUseUnderlyingResolver, false)
   })
 
-  it('still probes an unknown resolver on the local development chain', () => {
+  it('does not probe an unknown resolver on the local development chain', () => {
     mockUseChainId.mockReturnValue(1337)
     renderHook(() =>
       useEffectiveResolverAddress({ name: 'test.eth', resolverAddress: registryResolver }),
     )
-    expectEnabledHook(mockUseUnderlyingResolver, true)
+    expectEnabledHook(mockUseUnderlyingResolver, false)
   })
 })

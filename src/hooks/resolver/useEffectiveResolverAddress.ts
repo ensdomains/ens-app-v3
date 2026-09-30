@@ -1,7 +1,10 @@
 import type { Address } from 'viem'
 import { useChainId } from 'wagmi'
 
-import { getKnownResolverData } from '@app/constants/resolverAddressData'
+import {
+  getKnownResolverData,
+  isOfficialCompositeResolver,
+} from '@app/constants/resolverAddressData'
 
 import { useUnderlyingResolver } from './useUnderlyingResolver'
 
@@ -33,49 +36,35 @@ export const useEffectiveResolverAddress = ({
 }: UseEffectiveResolverAddressParameters) => {
   const chainId = useChainId()
 
-  // A known resolver is one of ours and is never a composite mirror, so there
-  // is nothing behind it to look up. Skipping keeps the zero-network path these
-  // addresses already had: this hook's loading state reaches useResolverStatus
-  // and useAbilities, so looking up would put an RPC round trip in front of the
-  // wrap button, the profile actions and the Edit Profile dialog on every
-  // ordinary name.
-  // Unknown resolvers are probed on every chain, including local anvil: a
-  // localhost skip would hide an untrusted ICompositeResolver claim and make
-  // the denv e2e for that case a false green.
+  // Known public resolvers are never composite mirrors, and unknown contracts
+  // must not be trusted as mirrors based on an ERC-165 self-report. Only an
+  // ENS-deployed composite allowlisted for the active chain is probed.
   const reportedIsKnownResolver = !!getKnownResolverData({
     chainId,
     resolverAddress: resolverAddress ?? '',
   })
+  const isOfficialComposite = isOfficialCompositeResolver({
+    chainId,
+    resolverAddress: resolverAddress ?? '',
+  })
 
-  const enabled = enabled_ && !!name && !reportedIsKnownResolver
+  const enabled = enabled_ && !!name && !reportedIsKnownResolver && isOfficialComposite
 
   const underlyingResolver = useUnderlyingResolver({ name, resolverAddress, enabled })
 
   const { isLoading, isFetching, isCachedData, isError } = underlyingResolver
-  const underlyingResolverAddress = underlyingResolver.data ?? undefined
+  const underlyingResolverAddress = isOfficialComposite
+    ? underlyingResolver.data ?? undefined
+    : undefined
 
   return {
     // Judging a name against the abstraction contract is the bug this hook
     // exists to prevent, so there is no address to report until the probe has
     // answered one way or the other.
     //
-    // A lookup ERROR (a transport failure — a non-composite resolver answers
-    // the ERC-165 check cleanly rather than erroring) falls back to the
-    // supplied address rather than reporting nothing: for the overwhelmingly
-    // common non-composite name that address is the correct answer, and
-    // erroring the composed hooks instead would take every ordinary name down
-    // with one flaky RPC round trip. A refetch error never replaces
-    // previously fetched data.
-    //
-    // A write flow CAN pin this fallback, but never a wrong one that reaches
-    // the chain: every write is gated behind the authorisation judgement,
-    // which fails closed on a composite mirror because the mirror supports no
-    // record interfaces. The cost of the fallback is therefore availability,
-    // not safety — an abstracted name is judged unusable until the lookup
-    // succeeds, and lands on the migrate-your-resolver prompt meanwhile.
-    // `isError` distinguishes that from a genuine "not composite" answer. No
-    // caller threads it into a retry surface yet; doing so is what would turn
-    // this from a silent degradation into a recoverable one.
+    // A lookup error falls back to the supplied address. The allowlisted
+    // composite is then judged unusable until the lookup succeeds, while
+    // `isError` lets callers distinguish the fallback from a decoded answer.
     data: isLoading ? undefined : underlyingResolverAddress ?? resolverAddress,
     isAbstracted: !!underlyingResolverAddress,
     /** The lookup failed, so `data` is the unresolved fallback, not an answer. */

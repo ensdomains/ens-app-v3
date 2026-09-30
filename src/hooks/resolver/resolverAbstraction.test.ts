@@ -22,6 +22,7 @@ import { useUnderlyingResolver } from './useUnderlyingResolver'
 // how they compose.
 vi.mock('wagmi', async (importOriginal) => ({
   ...(await importOriginal<typeof import('wagmi')>()),
+  useChainId: vi.fn(() => 11155111),
   useEstimateGas: vi.fn(),
 }))
 vi.mock('@app/hooks/useProfile')
@@ -39,9 +40,9 @@ const mockUseRegistryResolver = mockFunction(useRegistryResolver)
 const mockUseUnderlyingResolver = mockFunction(useUnderlyingResolver)
 const mockUseContractAddress = mockFunction(useContractAddress)
 
-const latestResolverAddress = KNOWN_RESOLVER_DATA['1']![0].address
-/** An ENSv2 abstraction contract standing in front of the name's real resolver. */
-const abstractionAddress = '0x1111111111111111111111111111111111111111'
+const latestResolverAddress = KNOWN_RESOLVER_DATA['11155111']![0].address
+/** The official Sepolia ENSV1Resolver standing in front of the name's real resolver. */
+const abstractionAddress = '0xae66c62AcAE72098BdAc57d8E8AED53EF000b2Ba'
 const unknownResolverAddress = '0x2222222222222222222222222222222222222222'
 /** An arbitrary registry resolver claiming to be a composite mirror. */
 const attackerResolver = '0xa11ce000000000000000000000000000000a11ce'
