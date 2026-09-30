@@ -2,7 +2,7 @@
 
 **Branch:** `fix/untrusted-composite-resolver` (off `origin/main` = `89f8681d5`)
 
-**Goal:** Stop ENS Manager from treating an arbitrary `ICompositeResolver` self-report as an official ENSv2 mirror. Only unwrap when the *outer* registry resolver is an ENS-deployed composite for the active chain.
+**Goal:** Stop ENS Manager from treating an arbitrary `ICompositeResolver` self-report as an official ENSv2 mirror. Only unwrap when the _outer_ registry resolver is an ENS-deployed composite for the active chain.
 
 **Do not** implement a mock composite on denv as the official mirror. Do not pull contracts-v2 into `ens-test-env`. Do not use a Tenderly fork for this fix.
 
@@ -19,7 +19,7 @@ That is correct **only** for ENS’s own mirrors (`ENSV1Resolver`, etc.). ERC-16
 3. The manager hides the spoof, labels Public Resolver as `latest`, writes records to Public Resolver, and disables “Use latest resolver”
 4. Canonical resolution still follows the registry (spoof)
 
-Official ENSv2 composites are **Sepolia-only** today (`ENSV1Resolver` `0xae66c62AcAE72098BdAc57d8E8AED53EF000b2Ba`). The app bug is live on **mainnet** because the probe runs on every chain except that we now also probe localhost (needed for denv e2e).
+Official ENSv2 composites are **Sepolia-only** today. Before this fix, the app probed unknown registry resolvers on mainnet and other supported non-local chains. The localhost regression fixture remains untrusted and is not added to the official allowlist.
 
 Immunefi #91649. Valid bug; Critical/direct-theft is inflated. Fix is the allowlist.
 
@@ -27,28 +27,25 @@ apps-monorepo never unwraps via ERC-165; it allowlists official resolvers by add
 
 ---
 
-## Current branch (already done)
+## Implementation status
 
-Two commits. Tests are **red** on purpose (TDD).
+The allowlist and its unit, component, and end-to-end regression coverage are implemented on this branch.
 
-1. `853bb7d6a` — unit/component tests for untrusted composite claims
-2. `9b3d65857` — denv e2e + localhost probe enabled
+### Regression coverage
 
-### Red tests (must go green)
-
-| File | Assertion |
-|---|---|
-| `src/hooks/resolver/useEffectiveResolverAddress.test.ts` | Do not probe `0xa11ce…`. Do not substitute Public Resolver when the probe names it. |
-| `src/hooks/resolver/useResolverType.test.ts` | Unknown outer that names Public Resolver stays `custom` |
-| `src/hooks/resolver/resolverAbstraction.test.ts` | `effectiveResolverAddress` stays the attacker; not `hasLatestResolver`; not the editor-as-latest view |
-| `src/transaction-flow/input/EditResolver/EditResolver.untrustedComposite.test.tsx` | Latest-resolver radio enabled and preselected |
-| `e2e/specs/stateless/untrustedCompositeResolver.spec.ts` | More tab shows spoof, not Public Resolver |
+| File                                                                               | Assertion                                                                                             |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `src/hooks/resolver/useEffectiveResolverAddress.test.ts`                           | Do not probe `0xa11ce…`. Do not substitute Public Resolver when the probe names it.                   |
+| `src/hooks/resolver/useResolverType.test.ts`                                       | Unknown outer that names Public Resolver stays `custom`                                               |
+| `src/hooks/resolver/resolverAbstraction.test.ts`                                   | `effectiveResolverAddress` stays the attacker; not `hasLatestResolver`; not the editor-as-latest view |
+| `src/transaction-flow/input/EditResolver/EditResolver.untrustedComposite.test.tsx` | Latest-resolver radio enabled and preselected                                                         |
+| `e2e/specs/stateless/untrustedCompositeResolver.spec.ts`                           | More tab shows spoof, not Public Resolver                                                             |
 
 Attacker address used in unit tests: `0xa11ce000000000000000000000000000000a11ce`
 
-### Existing tests that will break unless updated
+### Updated happy-path coverage
 
-These treat a random `0x1111…` / `0x1000…` outer as an official abstraction (they mock `useUnderlyingResolver` returning the Public Resolver):
+The following tests previously treated a random `0x1111…` / `0x1000…` outer as an official abstraction by mocking `useUnderlyingResolver` to return the Public Resolver:
 
 - `useEffectiveResolverAddress.test.ts` — “return the underlying resolver when the registry resolver is an abstraction”
 - `useEffectiveResolverAddress.test.ts` — “should still look up a resolver that is not a known one”
@@ -56,81 +53,30 @@ These treat a random `0x1111…` / `0x1000…` outer as an official abstraction 
 - `resolverAbstraction.test.ts` — ready-to-edit / write-through / wrapped / unusable underlying
 - `EditResolver.test.tsx` — abstracted name already on latest
 
-After the allowlist, `0x1111…` is **not** official. Happy-path tests must use an allowlisted outer address (Sepolia `ENSV1Resolver` + `chainId` 11155111, or mock `isOfficialCompositeResolver`).
+Their happy paths now use an allowlisted outer address or explicitly mock the allowlist policy. Unknown outer addresses remain untrusted.
 
 `getUnderlyingResolver` itself stays a decoder. Do **not** put the allowlist there unless you also pass chain/allowlist in; policy belongs in `useEffectiveResolverAddress`.
 
 ---
 
-## Implementation
+## Implemented design
 
 ### 1. Official composite list
 
-Add next to `getKnownResolverData` in `src/constants/resolverAddressData.ts`.
-
-These are **not** `KNOWN_RESOLVER_DATA` rows. Known public resolvers are never mirrors and must still skip the probe. Composites are the opposite: they *are* the probe targets.
-
-```ts
-export const OFFICIAL_COMPOSITE_RESOLVERS: Record<string, Address[] | undefined> = {
-  '1': [], // ENSv2 mirrors not on mainnet yet
-  '11155111': [
-    '0xae66c62AcAE72098BdAc57d8E8AED53EF000b2Ba', // ENSV1Resolver (Sepolia)
-    // Optionally also Sepolia ENSV2Resolver / DNSTLDResolver if the manager
-    // can see them as a name's registry resolver. Prefer including them:
-    // ENSV2Resolver 0x508cb4e4596429ca98a1bb3112d88d18f92456b5
-    // DNSTLDResolver — look up current sepolia.md in contracts-v2
-  ],
-  '1337': [], // denv has no official mirror; spoof must stay off this list
-}
-
-export const isOfficialCompositeResolver = ({
-  chainId,
-  resolverAddress,
-}: {
-  chainId: number
-  resolverAddress: string
-}): boolean =>
-  !!OFFICIAL_COMPOSITE_RESOLVERS[String(chainId)]?.some(
-    (address) => address.toLowerCase() === resolverAddress.toLowerCase(),
-  )
-```
-
-Checksum with `getAddress` when writing literals. Add a small unit test file for the helper (empty mainnet, sepolia hit, 1337 miss, attacker miss).
+[`src/constants/resolverAddressData.ts`](../../src/constants/resolverAddressData.ts) owns the active-chain allowlist and its address literals. These entries are deliberately separate from `KNOWN_RESOLVER_DATA`: known public resolvers skip the probe, while allowlisted composites are the only probe targets.
 
 ### 2. Gate `useEffectiveResolverAddress`
 
-`src/hooks/resolver/useEffectiveResolverAddress.ts`
-
-Probe **only** official composites. Ignore probe `data` unless the outer address is official (mocked `useUnderlyingResolver` can still return data when `enabled` is false).
-
-```ts
-const isOfficialComposite = isOfficialCompositeResolver({
-  chainId,
-  resolverAddress: resolverAddress ?? '',
-})
-
-const enabled =
-  enabled_ && !!name && !reportedIsKnownResolver && isOfficialComposite
-
-const underlyingResolverAddress = isOfficialComposite
-  ? (underlyingResolver.data ?? undefined)
-  : undefined
-```
-
-Keep using `underlyingResolverAddress ?? resolverAddress` for `data`, and `isAbstracted: !!underlyingResolverAddress`.
-
-Update the comment: known public resolvers are never mirrors; unknown contracts are never trusted as mirrors; only the allowlist is probed.
-
-`useUnderlyingResolver` / `getUnderlyingResolver` — no behaviour change required.
+[`src/hooks/resolver/useEffectiveResolverAddress.ts`](../../src/hooks/resolver/useEffectiveResolverAddress.ts) probes and consumes underlying-resolver data only when the outer address is allowlisted for the active chain. Known public resolvers and unknown contracts are not probed. `useUnderlyingResolver` and `getUnderlyingResolver` remain shape-only mechanisms; they do not authenticate the outer address.
 
 ### 3. Fix existing happy-path tests
 
-Wherever an outer `0x1111…` / `0x1000…` is meant to be the official mirror:
+Wherever an outer `0x1111…` / `0x1000…` represented the official mirror, the test now:
 
-- Set `useChainId` to `11155111` if the test file mocks it
-- Use Sepolia `ENSV1Resolver` as the outer address **or** mock `isOfficialCompositeResolver` to return true for that outer
+- sets `useChainId` to `11155111` when the test file mocks it; and
+- uses Sepolia `ENSV1Resolver` as the outer address or mocks `isOfficialCompositeResolver` for the fixture.
 
-“should still look up a resolver that is not a known one” currently expects a probe on unknown `0x1111…`. Change it to:
+The former “should still look up a resolver that is not a known one” case is split into:
 
 - unknown / attacker → `enabled: false`
 - official composite (Sepolia address, chain 11155111) → `enabled: true`

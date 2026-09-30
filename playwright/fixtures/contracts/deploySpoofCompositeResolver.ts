@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { type Address, type Hex, encodeDeployData } from 'viem'
+import { encodeDeployData, type Address, type Hex } from 'viem'
 
 import { Accounts } from '../accounts'
 import { waitForTransaction, walletClient } from './utils/addTestContracts'

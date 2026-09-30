@@ -29,10 +29,12 @@ import { dnsEncodeName } from '@app/utils/reverse'
  * record-writing interface; `getResolver` answers with the resolver actually
  * behind it, which is the one records are read from and written to.
  *
- * Composite resolvers are identified by ERC-165, not by guessing: they
- * advertise `ICompositeResolver` (`ens-contracts`,
- * `contracts/resolvers/profiles/ICompositeResolver.sol`). An ordinary resolver
- * does not, which is the answer for ~every name today.
+ * This decoder recognizes the composite shape through the ERC-165
+ * `ICompositeResolver` interface (`ens-contracts`,
+ * `contracts/resolvers/profiles/ICompositeResolver.sol`). That declaration is
+ * a self-report, not proof that the contract is an ENS deployment; callers
+ * that use the result for resolver judgement or writes must separately
+ * authenticate the outer resolver.
  */
 export const COMPOSITE_RESOLVER_INTERFACE_ID = '0xeea330f9'
 
@@ -108,8 +110,9 @@ type GetUnderlyingResolverParameters = {
 }
 
 /**
- * Resolves a composite (mirror) resolver to the resolver behind it, or `null`
- * when the given resolver is not composite. One hop only — the underlying
+ * Shape-decodes a composite (mirror) resolver to the resolver behind it, or
+ * `null` when the given resolver does not provide a usable composite answer.
+ * It does not authenticate the outer resolver. One hop only — the underlying
  * resolver is never resolved for a further layer.
  *
  * A revert is the expected answer for every ordinary resolver and maps to
@@ -141,9 +144,10 @@ export const getUnderlyingResolver = async (
       throw error
     })
 
-  // ERC-165 first: a composite resolver declares itself. This is the same
-  // detection ENSjs uses, and it avoids calling `getResolver` speculatively on
-  // every resolver in the app.
+  // ERC-165 first: a composite-shaped resolver declares itself. This is the
+  // same detection ENSjs uses, and it avoids calling `getResolver`
+  // speculatively. The declaration is not an authenticity check; policy
+  // callers must allowlist the outer resolver before using this answer.
   const supportsResult = await readOrNull(
     encodeFunctionData({
       abi: erc165SupportsInterfaceSnippet,

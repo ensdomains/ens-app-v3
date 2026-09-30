@@ -9,7 +9,6 @@ import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
-
 import { EditResolver } from './EditResolver-flow'
 
 vi.mock('@app/hooks/useProfile')

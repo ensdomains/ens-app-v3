@@ -8,7 +8,6 @@ import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
-
 import { EditResolver } from './EditResolver-flow'
 
 vi.mock('@app/hooks/useProfile')
@@ -61,9 +60,7 @@ describe('EditResolver', () => {
 
     renderEditResolver()
 
-    await waitFor(() =>
-      expect(screen.getByTestId('custom-resolver-radio')).toBeChecked(),
-    )
+    await waitFor(() => expect(screen.getByTestId('custom-resolver-radio')).toBeChecked())
     expect(screen.getByTestId('latest-resolver-radio')).not.toBeChecked()
   })
 

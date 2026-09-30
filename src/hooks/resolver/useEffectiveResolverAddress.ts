@@ -20,11 +20,13 @@ type UseEffectiveResolverAddressParameters = {
  * The resolver address every resolver judgement should be made against.
  *
  * For the overwhelmingly common v1 name that is just the registry resolver.
- * Where the registry resolver is an ENSv2 abstraction contract it is the
- * resolver behind it: the contract that actually holds the name's records,
- * answers `supportsInterface`, and decides who may write. Judging a name by the
- * abstraction contract instead is what makes a perfectly good resolver look
- * custom, invalid, and not name-wrapper aware.
+ * Where the registry resolver is an ENSv2 abstraction contract allowlisted for
+ * the active chain it is the resolver behind it: the contract that actually
+ * holds the name's records, answers `supportsInterface`, and decides who may
+ * write. Judging an official abstraction by the outer contract instead is what
+ * makes a perfectly good resolver look custom, invalid, and not name-wrapper
+ * aware. Unknown outer resolvers remain the effective address even if they
+ * self-report the same interface.
  *
  * Only one hop is taken — the underlying resolver is never probed for a further
  * abstraction layer.
