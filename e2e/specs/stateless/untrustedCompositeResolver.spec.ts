@@ -2,26 +2,24 @@ import { expect } from '@playwright/test'
 import { getAddress } from 'viem'
 
 import { test } from '../../../playwright'
-import { deploySpoofCompositeResolver } from '../../../playwright/fixtures/contracts/deploySpoofCompositeResolver'
-import { testClient } from '../../../playwright/fixtures/contracts/utils/addTestContracts'
+import {
+  deploymentAddresses,
+  testClient,
+} from '../../../playwright/fixtures/contracts/utils/addTestContracts'
 
 const publicResolver = testClient.chain.contracts.ensPublicResolver.address
+const spoofCompositeResolver = deploymentAddresses.SpoofCompositeResolver
 
 test('should not treat an untrusted composite resolver as the latest resolver', async ({
   page,
-  accounts,
   makeName,
   login,
   makePageObject,
 }) => {
-  const spoof = await deploySpoofCompositeResolver({
-    accounts,
-    officialResolver: publicResolver,
-  })
   const name = await makeName({
     label: 'untrusted-composite',
     type: 'legacy',
-    resolver: spoof,
+    resolver: spoofCompositeResolver,
   })
 
   const morePage = makePageObject('MorePage')
@@ -33,7 +31,7 @@ test('should not treat an untrusted composite resolver as the latest resolver', 
   // The registry resolver is the spoof. Honouring its ICompositeResolver
   // self-report would replace this with the Public Resolver and disable the
   // latest-resolver repair.
-  await expect(morePage.resolver).toHaveText(getAddress(spoof), { timeout: 30000 })
+  await expect(morePage.resolver).toHaveText(getAddress(spoofCompositeResolver), { timeout: 30000 })
   await expect(morePage.resolver).not.toHaveText(getAddress(publicResolver))
 
   await morePage.editResolverButton.click()

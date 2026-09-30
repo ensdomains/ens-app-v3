@@ -4,7 +4,7 @@
 
 **Goal:** Stop ENS Manager from treating an arbitrary `ICompositeResolver` self-report as an official ENSv2 mirror. Only unwrap when the _outer_ registry resolver is an ENS-deployed composite for the active chain.
 
-**Do not** implement a mock composite on denv as the official mirror. Do not pull contracts-v2 into `ens-test-env`. Do not use a Tenderly fork for this fix.
+Deploy the spoof composite as part of the local development deployment, but do **not** treat it as an official mirror or add it to the app allowlist. Do not pull contracts-v2 into `ens-test-env`. Do not use a Tenderly fork for this fix.
 
 ---
 
@@ -19,7 +19,7 @@ That is correct **only** for ENS’s own mirrors (`ENSV1Resolver`, etc.). ERC-16
 3. The manager hides the spoof, labels Public Resolver as `latest`, writes records to Public Resolver, and disables “Use latest resolver”
 4. Canonical resolution still follows the registry (spoof)
 
-Official ENSv2 composites are **Sepolia-only** today. Before this fix, the app probed unknown registry resolvers on mainnet and other supported non-local chains. The localhost regression fixture remains untrusted and is not added to the official allowlist.
+Official ENSv2 composites are **Sepolia-only** today. Before this fix, the app probed unknown registry resolvers on mainnet and other supported non-local chains. The localhost development deployment includes a spoof composite so names can exercise this case, but that resolver remains unknown to the app and is not added to the official allowlist.
 
 Immunefi #91649. Valid bug; Critical/direct-theft is inflated. Fix is the allowlist.
 
@@ -81,7 +81,11 @@ The former “should still look up a resolver that is not a known one” case is
 - unknown / attacker → `enabled: false`
 - official composite (Sepolia address, chain 11155111) → `enabled: true`
 
-### 4. Verify
+### 4. Local unknown-composite deployment
+
+The Hardhat development deployment deploys `SpoofCompositeResolver` after `PublicResolver`, exports its address through `NEXT_PUBLIC_DEPLOYMENT_ADDRESSES`, and registers `spoofcompositeresolver.eth` with the spoof as its registry resolver for manual development. Playwright uses the deployed resolver address but creates a fresh isolated name with `makeName`. This makes the scenario reusable while preserving the important distinction between a contract present in the development environment and a resolver trusted by the app.
+
+### 5. Verify
 
 ```sh
 pnpm exec vitest run \
@@ -105,7 +109,7 @@ Expect More tab text = spoof, latest-resolver radio enabled.
 
 Also run the rest of resolver unit tests if you touch shared mocks.
 
-### 5. Lint / types
+### 6. Lint / types
 
 ```sh
 pnpm lint:types
