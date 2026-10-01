@@ -8,7 +8,6 @@ import { useIsWrapped } from '@app/hooks/useIsWrapped'
 import { useProfile } from '@app/hooks/useProfile'
 
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
-
 import { EditResolver } from './EditResolver-flow'
 
 vi.mock('@app/hooks/useProfile')
@@ -25,8 +24,8 @@ const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseEffectiveResolverAddress = mockFunction(useEffectiveResolverAddress)
 
 const latestResolver = '0xF29100983E058B709F3D539b0c765937B804AC15'
-/** The ENSv2 composite mirror the registry reports for an abstracted name. */
-const mirror = '0x1000000000000000000000000000000000000001'
+/** The official Sepolia ENSv2 composite mirror reported for an abstracted name. */
+const mirror = '0xae66c62AcAE72098BdAc57d8E8AED53EF000b2Ba'
 
 const renderEditResolver = () =>
   render(
@@ -61,9 +60,7 @@ describe('EditResolver', () => {
 
     renderEditResolver()
 
-    await waitFor(() =>
-      expect(screen.getByTestId('custom-resolver-radio')).toBeChecked(),
-    )
+    await waitFor(() => expect(screen.getByTestId('custom-resolver-radio')).toBeChecked())
     expect(screen.getByTestId('latest-resolver-radio')).not.toBeChecked()
   })
 
