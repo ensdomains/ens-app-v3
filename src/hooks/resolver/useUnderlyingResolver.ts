@@ -45,9 +45,7 @@ export const underlyingResolverQueryFn =
  * ERC-165 is only a self-report, so this low-level hook does not establish that
  * the outer resolver is an official ENS mirror. Prefer
  * {@link import('./useEffectiveResolverAddress').useEffectiveResolverAddress},
- * which authenticates the outer resolver against the active-chain allowlist
- * before folding the answer into a single address to judge, display, or write
- * through.
+ * which owns the trust policy for resolver judgement, display, and writes.
  */
 export const useUnderlyingResolver = ({
   // config

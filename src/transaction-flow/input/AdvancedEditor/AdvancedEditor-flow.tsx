@@ -71,9 +71,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
   ) as TransactionItem<'updateProfile'>
 
   const { data: fetchedProfile, isLoading: isProfileLoading } = useProfile({ name })
-  // Records must be written to the resolver that actually holds them: the
-  // underlying resolver when the name's registry resolver is an ENSv2
-  // abstraction contract.
+  // Pin record writes to the address selected by useEffectiveResolverAddress's trust policy.
   const effectiveResolver = useEffectiveResolverAddress({
     name,
     resolverAddress: fetchedProfile?.resolverAddress,

@@ -33,8 +33,8 @@ import { dnsEncodeName } from '@app/utils/reverse'
  * `ICompositeResolver` interface (`ens-contracts`,
  * `contracts/resolvers/profiles/ICompositeResolver.sol`). That declaration is
  * a self-report, not proof that the contract is an ENS deployment; callers
- * that use the result for resolver judgement or writes must separately
- * authenticate the outer resolver.
+ * that use the result for resolver judgement or writes must follow the policy
+ * in {@link import('../../hooks/resolver/useEffectiveResolverAddress').useEffectiveResolverAddress}.
  */
 export const COMPOSITE_RESOLVER_INTERFACE_ID = '0xeea330f9'
 
@@ -48,7 +48,7 @@ const erc165SupportsInterfaceSnippet = parseAbi([
 
 const ADDRESS_WORD_PADDING = `0x${'00'.repeat(12)}`
 const BOOL_WORD_PADDING = `0x${'00'.repeat(31)}`
-/** ABI-encoded `true`: the only `supportsInterface` answer that means "composite". */
+/** ABI-encoded `true`: the only accepted composite-interface self-report. */
 const TRUE_WORD = `${BOOL_WORD_PADDING}01` as Hex
 
 const isPaddedAddressWord = (word: Hex) => slice(word, 0, 12) === ADDRESS_WORD_PADDING
@@ -116,10 +116,8 @@ type GetUnderlyingResolverParameters = {
  * resolver is never resolved for a further layer.
  *
  * A revert is the expected answer for every ordinary resolver and maps to
- * `null`. Anything else (a genuine transport/RPC failure) is rethrown: a read
- * caller degrades to "not composite" for that fetch without caching the
- * failure, and a transaction builder fails closed rather than risking record
- * calldata against the wrong contract.
+ * `null`. Anything else (a genuine transport/RPC failure) is rethrown for the
+ * caller to handle.
  */
 export const getUnderlyingResolver = async (
   client: ClientWithEns,
@@ -146,8 +144,7 @@ export const getUnderlyingResolver = async (
 
   // ERC-165 first: a composite-shaped resolver declares itself. This is the
   // same detection ENSjs uses, and it avoids calling `getResolver`
-  // speculatively. The declaration is not an authenticity check; policy
-  // callers must allowlist the outer resolver before using this answer.
+  // speculatively. For authenticity requirements, see useEffectiveResolverAddress.
   const supportsResult = await readOrNull(
     encodeFunctionData({
       abi: erc165SupportsInterfaceSnippet,
