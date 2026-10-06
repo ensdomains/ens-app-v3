@@ -17,8 +17,9 @@ type UseResolverHasInterfacesParameters<TInterfaceNames extends readonly Resolve
     /**
      * Pass the name whenever `resolverAddress` is a NAME'S resolver (from the
      * registry, subgraph or profile): the interfaces are then checked on the
-     * name's effective resolver, resolving the ENSv2 abstraction layer. Omit
-     * it ONLY when the address is a literal candidate to validate as-is
+     * address selected by
+     * {@link import('./resolver/useEffectiveResolverAddress').useEffectiveResolverAddress}.
+     * Omit it ONLY when the address is a literal candidate to validate as-is
      * (e.g. a user-typed resolver in the resolver editor).
      */
     name?: string

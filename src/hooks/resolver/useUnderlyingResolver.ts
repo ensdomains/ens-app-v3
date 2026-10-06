@@ -39,16 +39,13 @@ export const underlyingResolverQueryFn =
   }
 
 /**
- * Probes a resolver for the ENSv2 abstraction layer, returning the resolver
+ * Probes a resolver for the ENSv2 abstraction shape, returning the resolver
  * behind it or `null` when there is none. The probe itself (ABI, decode
  * guards, revert handling) lives in `@app/utils/resolver/getUnderlyingResolver`.
- * The result decides how a name is JUDGED, DISPLAYED, and WRITTEN THROUGH: a
- * composite mirror holds no records and implements no record-writing
- * interface, so flows pin the resolver behind it as their transaction target.
- * A wrong answer here therefore reaches signed calldata — keep the decode
- * guards in `getUnderlyingResolver` strict. Prefer
+ * ERC-165 is only a self-report, so this low-level hook does not establish that
+ * the outer resolver is an official ENS mirror. Prefer
  * {@link import('./useEffectiveResolverAddress').useEffectiveResolverAddress},
- * which folds the answer back into a single address to judge a name by.
+ * which owns the trust policy for resolver judgement, display, and writes.
  */
 export const useUnderlyingResolver = ({
   // config
