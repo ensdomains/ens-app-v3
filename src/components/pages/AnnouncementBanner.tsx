@@ -4,6 +4,9 @@ import styled, { css } from 'styled-components'
 
 import { Button, Typography } from '@ensdomains/thorin'
 
+const ENSV2_PRICING_ARTICLE_URL =
+  'https://support.ens.domains/en/articles/15122781-what-s-changing-with-ensv2-pricing-discounts-and-grace-period'
+
 const Container = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -51,7 +54,7 @@ export const AnnouncementBanner = () => {
   const { t } = useTranslation('ensv2')
 
   return (
-    <Link href="https://ens.domains/ensv2" legacyBehavior passHref>
+    <Link href={ENSV2_PRICING_ARTICLE_URL} legacyBehavior passHref>
       <Container>
         <TextContainer>
           <img src="/migrate/confetti.png" alt="" height={33} width={33} />
@@ -62,7 +65,7 @@ export const AnnouncementBanner = () => {
             </Typography>
           </Text>
         </TextContainer>
-        <Button as="a" href="https://ens.domains/ensv2" colorStyle="greenPrimary" width="max">
+        <Button as="a" href={ENSV2_PRICING_ARTICLE_URL} colorStyle="greenPrimary" width="max">
           {t('banner.cta')}
         </Button>
       </Container>
