@@ -23,6 +23,12 @@ export default defineConfig({
       },
     },
     {
+      // Test-data seeder for manual/exploratory sessions - see e2e/seed/seed.spec.ts
+      name: 'seed',
+      testDir: './e2e/seed',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
       name: 'wallets',
       testDir: './e2e/specs/wallets',
       timeout: 300000, // 5 minutes for wallet tests

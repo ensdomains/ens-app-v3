@@ -40,6 +40,7 @@
     "e2e:stateful": "playwright test --project=stateful",
     "e2e:wallet": "playwright test --project=wallets",
     "e2e:wallet:debug": "playwright test --project=wallets --debug",
+    "seed": "playwright test --project=seed --reporter=list",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000 --verbosity 1",
     "wrangle": "wrangler pages dev ./out --local --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
