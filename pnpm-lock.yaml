@@ -128,6 +128,9 @@ patchedDependencies:
   node-forge@1.3.1:
     hash: e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd
     path: patches/node-forge@1.3.1.patch
+  posthog-js@1.276.0:
+    hash: 92c17fe3ac0f46ebdf70960c03505c994bc8bbe26e4eca528610b38055a4a253
+    path: patches/posthog-js@1.276.0.patch
   react-confetti@6.1.0:
     hash: 548f8d8a65ec1bb10a868f7dfd84a4e4dd15fbc6cf59c8ff53573018de2a3190
     path: patches/react-confetti@6.1.0.patch
@@ -249,7 +252,7 @@ importers:
         version: 1.3.1(patch_hash=e32320aac1c0b5fc5548111012856993b2938f240b49c7988fdabf9e891644bd)
       posthog-js:
         specifier: ^1.236.8
-        version: 1.276.0
+        version: 1.276.0(patch_hash=92c17fe3ac0f46ebdf70960c03505c994bc8bbe26e4eca528610b38055a4a253)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -17068,7 +17071,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.276.0:
+  posthog-js@1.276.0(patch_hash=92c17fe3ac0f46ebdf70960c03505c994bc8bbe26e4eca528610b38055a4a253):
     dependencies:
       '@posthog/core': 1.3.0
       core-js: 3.40.0
