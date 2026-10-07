@@ -17,7 +17,7 @@ csp += " 'self'"
 // allow plausible script
 csp += ' plausible.io'
 // allow PostHog
-csp += ' jakob.ens.domains'
+csp += ' edge.ens.domains'
 // allow cloudflare analytics script
 csp += ' https://static.cloudflareinsights.com'
 // allow loading from the pages domain for this app
