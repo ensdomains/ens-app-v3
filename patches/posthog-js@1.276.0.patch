@@ -1,0 +1,34 @@
+diff --git a/dist/main.js b/dist/main.js
+index d7569a95d081e73dd7fc48c2a36f6cd075c7ef17..f7073ee4a5772868bca84eb58a75e723949c588d 100644
+--- a/dist/main.js
++++ b/dist/main.js
+@@ -2 +2,2 @@
+ //# sourceMappingURL=main.js.map
++exports.default.toolbar.maybeLoadToolbar=exports.default.toolbar.loadToolbar=function(){return!1};
+diff --git a/dist/module.js b/dist/module.js
+index dcbecebb57b2064619877fec789a2955bd0b7fed..4ddf35c819ef010dfaf865444c8e7970b8393e9b 100644
+--- a/dist/module.js
++++ b/dist/module.js
+@@ -2 +2,2 @@
+ //# sourceMappingURL=module.js.map
++Co.toolbar.maybeLoadToolbar=Co.toolbar.loadToolbar=function(){return!1};
+diff --git a/lib/src/extensions/toolbar.js b/lib/src/extensions/toolbar.js
+index f14ceb5108967c04f3dd46062a7c1d67b598851e..2620e83f7ed4a5c0a1d30d1e9b5c3630f370b6c2 100644
+--- a/lib/src/extensions/toolbar.js
++++ b/lib/src/extensions/toolbar.js
+@@ -49,6 +49,7 @@ var Toolbar = /** @class */ (function () {
+      * 2. From session storage under the key `toolbarParams` if the toolbar was initialized on a previous page
+      */
+     Toolbar.prototype.maybeLoadToolbar = function (location, localStorage, history) {
++        return false;
+         if (location === void 0) { location = undefined; }
+         if (localStorage === void 0) { localStorage = undefined; }
+         if (history === void 0) { history = undefined; }
+@@ -131,6 +132,7 @@ var Toolbar = /** @class */ (function () {
+         loadFn(params, this.instance);
+     };
+     Toolbar.prototype.loadToolbar = function (params) {
++        return false;
+         var _this = this;
+         var _a, _b;
+         var toolbarRunning = !!(globals_1.document === null || globals_1.document === void 0 ? void 0 : globals_1.document.getElementById(constants_1.TOOLBAR_ID));
