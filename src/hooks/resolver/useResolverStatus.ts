@@ -114,11 +114,7 @@ export const useResolverStatus = ({
       isNameWrapperAware: effectiveResolverAddress
         ? getResolverWrapperAwareness({ resolverAddress: effectiveResolverAddress, chainId })
         : false,
-      // The resolver a name should be judged, displayed, and written through:
-      // the underlying resolver when the reported one is a composite mirror,
-      // the reported resolver otherwise. A composite mirror holds no records
-      // and implements no record-writing interface, so it is never a valid
-      // write target itself.
+      // Preserve the address selected by useEffectiveResolverAddress's trust policy.
       effectiveResolverAddress,
       hasProfile: profileHasRecords(profile),
     }

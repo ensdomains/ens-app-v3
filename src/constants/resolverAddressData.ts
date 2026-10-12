@@ -303,3 +303,23 @@ export const getKnownResolverData = ({
   KNOWN_RESOLVER_DATA[chainId]?.find(
     (data) => data.address?.toLowerCase() === resolverAddress?.toLowerCase(),
   )
+
+export const OFFICIAL_COMPOSITE_RESOLVERS: Record<string, Address[] | undefined> = {
+  '1': [],
+  '11155111': [
+    // ENSV1Resolver (Sepolia)
+    '0xae66c62AcAE72098BdAc57d8E8AED53EF000b2Ba',
+  ],
+  '1337': [],
+}
+
+export const isOfficialCompositeResolver = ({
+  chainId,
+  resolverAddress,
+}: {
+  chainId: number
+  resolverAddress: string
+}): boolean =>
+  !!OFFICIAL_COMPOSITE_RESOLVERS[String(chainId)]?.some(
+    (address) => address.toLowerCase() === resolverAddress.toLowerCase(),
+  )

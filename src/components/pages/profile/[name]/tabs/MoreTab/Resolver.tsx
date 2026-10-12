@@ -119,18 +119,14 @@ const Resolver = ({
     )
     .otherwise(([subgraphResolver]) => subgraphResolver || emptyAddress)
 
-  // Where the registry resolver is an ENSv2 abstraction contract, the address
-  // worth showing is the resolver behind it.
+  // Keep display consistent with the trust policy in useEffectiveResolverAddress.
   const effectiveResolver = useEffectiveResolverAddress({
     name,
     resolverAddress: registryOrSubgraphResolverAddress as Address,
   })
 
-  // Show the reported address while the lookup runs rather than blanking: an
-  // empty row with a live copy control is a certain cost on every custom
-  // resolver, while the value only changes underneath for a name that turns
-  // out to be abstracted. The dialog that could act on a stale reading — the
-  // resolver editor — waits for the lookup itself.
+  // Keep the row and copy control usable while an official mirror's lookup
+  // runs. The resolver editor waits for the lookup before allowing changes.
   const displayedResolverAddress = effectiveResolver.data || registryOrSubgraphResolverAddress || ''
 
   return (

@@ -238,6 +238,11 @@ const names: Name[] = [
     namedController: 'owner',
   },
   {
+    label: 'spoofcompositeresolver',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+  },
+  {
     label: 'migrated-resolver-to-be-updated',
     namedOwner: 'owner',
     namedAddr: 'owner',
