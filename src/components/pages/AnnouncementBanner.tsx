@@ -27,6 +27,11 @@ const Container = styled.div(
     & > a {
       width: 100%;
       flex-shrink: 0;
+
+      &:focus-visible {
+        outline: 2px solid ${theme.colors.bluePrimary};
+        outline-offset: 2px;
+      }
     }
 
     @media (min-width: ${theme.breakpoints.sm}px) {
@@ -64,15 +69,6 @@ const Text = styled.div(
   `,
 )
 
-const CTA = styled(Button)(
-  ({ theme }) => css`
-    &:focus-visible {
-      outline: 2px solid ${theme.colors.bluePrimary};
-      outline-offset: 2px;
-    }
-  `,
-)
-
 export const AnnouncementBanner = ({ placement }: { placement: AnnouncementPlacement }) => {
   const { t } = useTranslation('ensv2')
   const { consent } = useCookieConsent()
@@ -89,7 +85,7 @@ export const AnnouncementBanner = ({ placement }: { placement: AnnouncementPlace
           </Typography>
         </Text>
       </TextContainer>
-      <CTA
+      <Button
         as="a"
         href={ENSV2_PRICING_ARTICLE_URL}
         colorStyle="greenPrimary"
@@ -100,7 +96,7 @@ export const AnnouncementBanner = ({ placement }: { placement: AnnouncementPlace
         }}
       >
         {t('banner.cta')}
-      </CTA>
+      </Button>
     </Container>
   )
 }
