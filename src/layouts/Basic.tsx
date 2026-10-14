@@ -1,13 +1,23 @@
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import styled, { css } from 'styled-components'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
+import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
 import { getSupportedChainById } from '@app/constants/chains'
+import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
+import { AnnouncementPlacement } from '@app/utils/analytics'
 
 import { Navigation } from './Navigation'
+
+// Add profile route patterns here when the announcement is enabled there.
+const announcementPlacements = new Map<string, AnnouncementPlacement>([
+  ['/', 'home'],
+  ['/my/names', 'my_names'],
+])
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -76,6 +86,9 @@ const shouldSwitchChain = ({
   !getSupportedChainById(chainId)
 
 export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
+  const { pathname } = useRouter()
+  const placement = announcementPlacements.get(pathname)
+  const { data: isControllerActive } = useIsEthRegistrarControllerActive()
   const { chainId, connector, isConnected } = useAccount()
   const hasProgrammaticChainSwitching = Boolean(connector?.switchChain)
   const { switchChain, isPending, isError } = useSwitchChain()
@@ -95,6 +108,9 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
     <Container className="min-safe">
       <Navigation />
       <ContentWrapper>
+        {!error && placement && isControllerActive !== false && (
+          <AnnouncementBanner placement={placement} />
+        )}
         {error ? <ErrorScreen errorType="application-error" /> : children}
       </ContentWrapper>
       <BottomPlaceholder />

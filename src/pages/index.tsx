@@ -9,7 +9,6 @@ import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import LegacyAppBanner from '@app/components/@molecules/LegacyAppBanner/LegacyAppBanner'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
-import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
 import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
 
 import ENSFull from '../assets/ENSFull.svg'
@@ -94,8 +93,8 @@ export default function Page() {
 
   // When the legacy ETHRegistrarController has been removed from
   // BaseRegistrarImplementation (e.g. Sepolia post ENSv2 beta), this app's
-  // core flows no longer work. Swap the standard "ENSv2 Hub" announcement
-  // for a warning banner that points users to the new Manager app.
+  // core flows no longer work. Keep the warning beneath the search field;
+  // Basic hides the ENSv2 announcement in this state.
   const { data: isControllerActive } = useIsEthRegistrarControllerActive()
   const isLegacy = isControllerActive === false
 
@@ -121,7 +120,7 @@ export default function Page() {
           </SubtitleWrapper>
           <SearchInput />
 
-          {isLegacy ? <LegacyAppBanner /> : <AnnouncementBanner />}
+          {isLegacy && <LegacyAppBanner />}
         </Stack>
       </Container>
     </>
