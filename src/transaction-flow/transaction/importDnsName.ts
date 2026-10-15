@@ -3,6 +3,7 @@ import type { TFunction } from 'react-i18next'
 import { importDnsName, ImportDnsNameDataParameters } from '@ensdomains/ensjs/dns'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { assertDnsImportProofNotExpired } from '@app/utils/dns/rootKeyRollover'
 
 type Data = Omit<ImportDnsNameDataParameters, 'address' | 'resolverAddress'>
 
@@ -21,8 +22,10 @@ const displayItems = (
   },
 ]
 
-const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) =>
-  importDnsName.makeFunctionData(connectorClient, data)
+const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  assertDnsImportProofNotExpired(data.dnsImportData)
+  return importDnsName.makeFunctionData(connectorClient, data)
+}
 
 export default {
   displayItems,

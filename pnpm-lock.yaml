@@ -148,6 +148,9 @@ importers:
       '@ensdomains/content-hash':
         specifier: 3.1.1
         version: 3.1.1
+      '@ensdomains/dnsprovejs':
+        specifier: 0.5.1
+        version: 0.5.1(patch_hash=46293ec988660581582e9312388c8aba9227f6b03fa88a5bec7657dbe8741ba4)
       '@ensdomains/ens-contracts':
         specifier: 1.6.0
         version: 1.6.0(patch_hash=690a84b6dc89077babbf6277c7ba377c4a9b92489488897fc4af09f5e4241aac)(bufferutil@4.0.9)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(utf-8-validate@5.0.10)
