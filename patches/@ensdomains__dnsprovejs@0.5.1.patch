@@ -1,8 +1,41 @@
 diff --git a/dist/prove.js b/dist/prove.js
-index 66315faaac8dc0640bf0cc7760e315da7f67d570..4b32e7d883d4129039173430cb7d924e8d50f41a 100644
+index 66315fa..d2fb391 100644
 --- a/dist/prove.js
 +++ b/dist/prove.js
-@@ -43,6 +43,13 @@ function encodeURLParams(p) {
+@@ -14,16 +14,17 @@ const sha256_1 = require("@noble/hashes/sha256");
+ const packet = require("dns-packet");
+ const packet_types = require("dns-packet/types");
+ const log_1 = require("./log");
++// https://data.iana.org/root-anchors/root-anchors.xml
+ exports.DEFAULT_TRUST_ANCHORS = [
+     {
+         name: '.',
+         type: 'DS',
+         class: 'IN',
+         data: {
+-            keyTag: 19036,
++            keyTag: 20326,
+             algorithm: 8,
+             digestType: 2,
+-            digest: Buffer.from('49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5', 'hex'),
++            digest: Buffer.from('E06D44B80B8F1D39A95C0B0D7C65D08458E880409BBC683457104237C7F8EC8D', 'hex'),
+         },
+     },
+     {
+@@ -31,10 +32,10 @@ exports.DEFAULT_TRUST_ANCHORS = [
+         type: 'DS',
+         class: 'IN',
+         data: {
+-            keyTag: 20326,
++            keyTag: 38696,
+             algorithm: 8,
+             digestType: 2,
+-            digest: Buffer.from('E06D44B80B8F1D39A95C0B0D7C65D08458E880409BBC683457104237C7F8EC8D', 'hex'),
++            digest: Buffer.from('683D2D0ACB8C9B712A1948B27F741219298D0A450D612C483AF444A4C0FB2B16', 'hex'),
+         },
+     },
+ ];
+@@ -43,6 +44,13 @@ function encodeURLParams(p) {
          .map((kv) => kv.map(encodeURIComponent).join('='))
          .join('&');
  }
@@ -16,7 +49,7 @@ index 66315faaac8dc0640bf0cc7760e315da7f67d570..4b32e7d883d4129039173430cb7d924e
  function getKeyTag(key) {
      const data = packet.dnskey.encode(key.data).slice(2);
      let keytag = 0;
-@@ -87,11 +94,13 @@ function dohQuery(url) {
+@@ -87,11 +95,13 @@ function dohQuery(url) {
      return function getDNS(q) {
          return __awaiter(this, void 0, void 0, function* () {
              const buf = packet.encode(q);

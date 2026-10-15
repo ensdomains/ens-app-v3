@@ -4,6 +4,7 @@ import { Address } from 'viem'
 import { GetDnsImportDataReturnType, importDnsName } from '@ensdomains/ensjs/dns'
 
 import { Transaction, TransactionDisplayItem, TransactionFunctionParameters } from '@app/types'
+import { assertDnsImportProofNotExpired } from '@app/utils/dns/rootKeyRollover'
 
 type Data = {
   name: string
@@ -36,6 +37,7 @@ const displayItems = (
 ]
 
 const transaction = ({ connectorClient, data }: TransactionFunctionParameters<Data>) => {
+  assertDnsImportProofNotExpired(data.dnsImportData)
   const { address: _, ...dataWithoutAddress } = data
   return importDnsName.makeFunctionData(connectorClient, dataWithoutAddress)
 }
