@@ -1,57 +1,94 @@
+import { getCustomAccountData } from '@app/constants/customAccountRecordKeys'
+
 import { normaliseTwitterRecordValue } from './records/normaliseTwitterRecordValue'
 
-export const getSocialData = (iconKey: string, value: string) => {
-  switch (iconKey) {
-    case 'twitter':
-    case 'com.twitter':
-    case 'x':
-    case 'com.x':
-      return {
-        icon: 'com.twitter',
-        color: '#000000',
-        label: 'X',
-        value: normaliseTwitterRecordValue(value),
-        type: 'link',
-        urlFormatter: `https://x.com/${value.replace(/^@/, '')}`,
-      }
-    case 'github':
-    case 'com.github':
-      return {
-        icon: 'com.github',
-        color: '#000000',
-        label: 'GitHub',
-        value,
-        type: 'link',
-        urlFormatter: `https://github.com/${value}`,
-      }
-    case 'discord':
-    case 'com.discord':
-      return {
-        icon: 'com.discord',
-        color: '#5A57DD',
-        label: 'Discord',
-        value,
-        type: 'copy',
-      }
-    case 'telegram':
-    case 'org.telegram':
-      return {
-        icon: 'org.telegram',
-        color: '#2BABEE',
-        label: 'Telegram',
-        value,
-        type: 'link',
-        urlFormatter: `https://t.me/${value}`,
-      }
-    case 'email':
-      return {
-        icon: 'email',
-        color: '#000000',
-        label: 'Email',
-        value,
-        type: 'copy',
-      }
-    default:
-      return null
+type SocialDataConfig = {
+  icon: string
+  color: string
+  label: string
+  type: 'link' | 'copy'
+  getValue?: (value: string) => string
+  getUrl?: (value: string) => string
+}
+
+// Define base configurations
+const twitterConfig: SocialDataConfig = {
+  icon: 'com.twitter',
+  color: '#000000',
+  label: 'X',
+  type: 'link',
+  getValue: normaliseTwitterRecordValue,
+  getUrl: (value) => `https://x.com/${value.replace(/^@/, '')}`,
+}
+
+const githubConfig: SocialDataConfig = {
+  icon: 'com.github',
+  color: '#000000',
+  label: 'GitHub',
+  type: 'link',
+  getUrl: (value) => `https://github.com/${value}`,
+}
+
+const discordConfig: SocialDataConfig = {
+  icon: 'com.discord',
+  color: '#5A57DD',
+  label: 'Discord',
+  type: 'copy',
+}
+
+const telegramConfig: SocialDataConfig = {
+  icon: 'org.telegram',
+  color: '#2BABEE',
+  label: 'Telegram',
+  type: 'link',
+  getUrl: (value) => `https://t.me/${value}`,
+}
+
+/* eslint-disable @typescript-eslint/naming-convention */
+const socialDataMap: Record<string, SocialDataConfig> = {
+  // Twitter/X aliases
+  twitter: twitterConfig,
+  'com.twitter': twitterConfig,
+  x: twitterConfig,
+  'com.x': twitterConfig,
+
+  // GitHub aliases
+  github: githubConfig,
+  'com.github': githubConfig,
+
+  // Discord aliases
+  discord: discordConfig,
+  'com.discord': discordConfig,
+
+  // Telegram aliases
+  telegram: telegramConfig,
+  'org.telegram': telegramConfig,
+
+  // Email
+  email: {
+    icon: 'email',
+    color: '#000000',
+    label: 'Email',
+    type: 'copy',
+  },
+}
+/* eslint-enable @typescript-eslint/naming-convention */
+
+export function getSocialData(iconKey: string, value: string) {
+  // Check custom account records first
+  const customData = getCustomAccountData(iconKey, value)
+  if (customData) return customData
+
+  // Then check standard social records
+  const config = socialDataMap[iconKey]
+  if (!config) return null
+
+  return {
+    icon: config.icon,
+    color: config.color,
+    label: config.label,
+    value: config.getValue?.(value) ?? value,
+    type: config.type,
+    urlFormatter: config.getUrl?.(value),
   }
 }
