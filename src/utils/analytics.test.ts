@@ -29,10 +29,41 @@ describe('analytics', () => {
     })
   })
   describe('trackEvent', () => {
+    it.each(['home', 'my_names'])(
+      'sends banner placement %s without wallet or name properties',
+      (placement) => {
+        window.plausible = vi.fn()
+        Object.defineProperty(window, 'location', {
+          value: { host: 'app.ens.domains' },
+          writable: true,
+        })
+        window.sessionStorage.clear()
+
+        trackEvent('ensv2:banner_click', network, { placement })
+
+        expect(window.plausible).toHaveBeenCalledExactlyOnceWith('ensv2:banner_click', {
+          props: { placement, referrer: null },
+        })
+      },
+    )
+
+    it.each([
+      ['localhost:3000', 'mainnet'],
+      ['app.ens.domains', 'sepolia'],
+    ])('does not send banner events on %s / %s', (host, chain) => {
+      window.plausible = vi.fn()
+      Object.defineProperty(window, 'location', { value: { host }, writable: true })
+
+      trackEvent('ensv2:banner_click', chain, { placement: 'home' })
+
+      expect(window.plausible).not.toHaveBeenCalled()
+    })
+
     it('send event to plausible', () => {
       global.window ??= Object.create(window)
       const mockPlausibleFunction = vi.fn()
       window.plausible = mockPlausibleFunction
+      window.sessionStorage.setItem('utmSource', 'twitter')
 
       Object.defineProperty(window, 'location', {
         value: {

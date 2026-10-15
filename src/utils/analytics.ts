@@ -1,3 +1,5 @@
+export type AnnouncementPlacement = 'home' | 'my_names' | 'profile'
+
 declare global {
   interface Window {
     plausible: any
