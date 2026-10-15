@@ -80,3 +80,5 @@ certificates
 .playwright-mcp
 .claude
 /thoughts
+# act local secrets (e.g. CLAUDE_CODE_OAUTH_TOKEN)
+.secrets
