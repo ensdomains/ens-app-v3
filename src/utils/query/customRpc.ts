@@ -3,10 +3,10 @@ import { getStorageValue } from '@app/hooks/useLocalStorage'
 /**
  * Per-device custom RPC endpoint overrides.
  *
- * Stored under a single localStorage key, keyed by chainId. Because each ENS deployment
- * serves exactly one chain per origin (app.ens.domains = mainnet, sepolia.app.ens.domains =
- * sepolia — separate origins with separate localStorage), only the active chain's entry is
- * ever exercised on a given device. Cross-device sync is out of scope until SIWE lands.
+ * Stored under a single localStorage key, keyed by chainId. Each ENS deployment serves exactly
+ * one chain per origin: app.ens.domains = mainnet and legacy.sepolia.app.ens.domains = sepolia.
+ * They use separate localStorage, so only the active chain's entry is exercised on a device.
+ * Cross-device sync is out of scope until SIWE lands.
  *
  * The key lives outside the reserved `wagmi*` namespace so it is not touched by wagmi's
  * own storage middleware.

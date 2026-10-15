@@ -611,7 +611,7 @@ async function confirmTransactionWithMetaMask(
     // await page.pause()
 
     // navigate back to the ENS app
-    // url is https://app.safe.global/apps/open?safe=sep:0x7894BFD6441B2e9a22358F8F71FdF9B2AC817ef8&appUrl=https%3A%2F%2Fsepolia.app.ens.domains
+    // url is https://app.safe.global/apps/open?safe=sep:0x7894BFD6441B2e9a22358F8F71FdF9B2AC817ef8&appUrl=https%3A%2F%2Flegacy.sepolia.app.ens.domains
 
     const appUrl = `${SafeEnsConfig.ENS_APP_URL}/`
     const url = `${

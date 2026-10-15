@@ -10,7 +10,7 @@ import { shouldOpenModal } from './utils'
 
 const appLinks = {
   Ethereum: 'app.ens.domains',
-  Sepolia: 'sepolia.app.ens.domains',
+  Sepolia: 'legacy.sepolia.app.ens.domains',
   Localhost: '',
 }
 

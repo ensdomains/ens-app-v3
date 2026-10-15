@@ -450,7 +450,7 @@
     "Sepolia": {
       "title": "Switch to Sepolia?",
       "description": "You've selected Sepolia (testnet) in your wallet.",
-      "action": "Go to sepolia.app.ens.domains"
+      "action": "Go to legacy.sepolia.app.ens.domains"
     }
   },
   "para": {
