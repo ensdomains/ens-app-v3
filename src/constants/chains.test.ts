@@ -168,6 +168,20 @@ describe('chains', () => {
         expect(result).toBe('sepolia')
       })
 
+      it('should return sepolia for the previous Sepolia deployment hostname', () => {
+        // @ts-ignore
+        global.window.location = createMockLocation('sepolia.app.ens.domains')
+        const result = getNetworkFromUrl()
+        expect(result).toBe('sepolia')
+      })
+
+      it('should return sepolia for the legacy Sepolia deployment hostname', () => {
+        // @ts-ignore
+        global.window.location = createMockLocation('legacy.sepolia.app.ens.domains')
+        const result = getNetworkFromUrl()
+        expect(result).toBe('sepolia')
+      })
+
       it('should return mainnet for app.ens.domains', () => {
         // @ts-ignore
         global.window.location = createMockLocation('app.ens.domains')
@@ -194,7 +208,7 @@ describe('chains', () => {
 
     it('should return sepolia chains for sepolia network', () => {
       // @ts-ignore
-      global.window.location = createMockLocation('sepolia.ens.domains')
+      global.window.location = createMockLocation('legacy.sepolia.app.ens.domains')
       const result = getChainsFromUrl()
       expect(result).toEqual([sepoliaWithEns])
     })

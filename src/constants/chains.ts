@@ -46,6 +46,9 @@ export const getNetworkFromUrl = (): 'mainnet' | 'sepolia' | 'localhost' | undef
   if (chain === 'sepolia') return 'sepolia' as const
   if (chain === 'mainnet') return 'mainnet' as const
 
+  // The legacy Sepolia deployment is hosted under a nested subdomain.
+  if (hostname === 'legacy.sepolia.app.ens.domains') return 'sepolia' as const
+
   // Previews
   if (segments.length === 4) {
     /* Used for testing preview on mainnet at: test.app.ens.domains. Update by configuring dns */
