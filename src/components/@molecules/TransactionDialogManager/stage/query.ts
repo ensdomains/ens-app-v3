@@ -24,7 +24,7 @@ import {
   CreateQueryKey,
 } from '@app/types'
 import { CURRENCY_FLUCTUATION_BUFFER_PERCENTAGE } from '@app/utils/constants'
-import { getReadableError } from '@app/utils/errors'
+import { getReadableError, isCommitmentTooNewError } from '@app/utils/errors'
 import { createAccessList } from '@app/utils/query/createAccessList'
 import { wagmiConfig } from '@app/utils/query/wagmi'
 import { connectorIsMetaMask, connectorIsPhantom, hasParaConnection } from '@app/utils/utils'
@@ -270,6 +270,11 @@ export const createTransactionRequestQueryFn =
         error: null,
       }
     } catch (e) {
+      // `CommitmentTooNew` is transient - the commitment is valid, the block we
+      // executed against is just older than `commitment + minCommitmentAge`.
+      // Rethrow so react-query treats it as a real error and retries it, rather
+      // than caching it as a terminal failure the way we do for genuine reverts.
+      if (isCommitmentTooNewError(e)) throw e
       return {
         data: null,
         error: e as Error,
