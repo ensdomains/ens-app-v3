@@ -1,3 +1,27 @@
+diff --git a/build/deploy/dnssec-oracle/10_deploy_oracle.js b/build/deploy/dnssec-oracle/10_deploy_oracle.js
+--- a/build/deploy/dnssec-oracle/10_deploy_oracle.js
++++ b/build/deploy/dnssec-oracle/10_deploy_oracle.js
+@@ -22,6 +22,20 @@
+             algorithm: 8,
+             digestType: 2,
+             digest: new Buffer('E06D44B80B8F1D39A95C0B0D7C65D08458E880409BBC683457104237C7F8EC8D', 'hex'),
++        },
++    },
++    // KSK-2024: keep local DNS imports compatible with live root proofs.
++    // https://data.iana.org/root-anchors/root-anchors.xml
++    {
++        name: '.',
++        type: 'DS',
++        class: 'IN',
++        ttl: 3600,
++        data: {
++            keyTag: 38696,
++            algorithm: 8,
++            digestType: 2,
++            digest: new Buffer('683D2D0ACB8C9B712A1948B27F741219298D0A450D612C483AF444A4C0FB2B16', 'hex'),
+         },
+     },
+ ];
 diff --git a/build/deploy/ethregistrar/02_deploy_legacy_eth_registrar_controller.js b/build/deploy/ethregistrar/02_deploy_legacy_eth_registrar_controller.js
 index 18998f8b94eaf70065836ad976626f5e508c2fb4..50d593c3b8cf8f59f59ca1571a7e0d3122e51a07 100644
 --- a/build/deploy/ethregistrar/02_deploy_legacy_eth_registrar_controller.js

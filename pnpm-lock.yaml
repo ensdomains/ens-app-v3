@@ -108,10 +108,10 @@ overrides:
 
 patchedDependencies:
   '@ensdomains/dnsprovejs@0.5.1':
-    hash: 613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22
+    hash: 46293ec988660581582e9312388c8aba9227f6b03fa88a5bec7657dbe8741ba4
     path: patches/@ensdomains__dnsprovejs@0.5.1.patch
   '@ensdomains/ens-contracts@1.6.0':
-    hash: 690a84b6dc89077babbf6277c7ba377c4a9b92489488897fc4af09f5e4241aac
+    hash: 10fa21098d989da50b50494b4143c642ade27e543dee6aac3702c2a8c528574a
     path: patches/@ensdomains__ens-contracts@1.6.0.patch
   '@ensdomains/ens-test-env@1.0.1':
     hash: b597d2dae9a4a8d52bd7729b3a106b767b262d1014e17b17537bdac1edf9468b
@@ -148,9 +148,12 @@ importers:
       '@ensdomains/content-hash':
         specifier: 3.1.1
         version: 3.1.1
+      '@ensdomains/dnsprovejs':
+        specifier: 0.5.1
+        version: 0.5.1(patch_hash=46293ec988660581582e9312388c8aba9227f6b03fa88a5bec7657dbe8741ba4)
       '@ensdomains/ens-contracts':
         specifier: 1.6.0
-        version: 1.6.0(patch_hash=690a84b6dc89077babbf6277c7ba377c4a9b92489488897fc4af09f5e4241aac)(bufferutil@4.0.9)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(utf-8-validate@5.0.10)
+        version: 1.6.0(patch_hash=10fa21098d989da50b50494b4143c642ade27e543dee6aac3702c2a8c528574a)(bufferutil@4.0.9)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(utf-8-validate@5.0.10)
       '@ensdomains/ens-test-env':
         specifier: 1.0.1
         version: 1.0.1(patch_hash=b597d2dae9a4a8d52bd7729b3a106b767b262d1014e17b17537bdac1edf9468b)
@@ -10059,13 +10062,13 @@ snapshots:
       '@multiformats/sha3': 4.0.0
       multiformats: 13.4.2
 
-  '@ensdomains/dnsprovejs@0.5.1(patch_hash=613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22)':
+  '@ensdomains/dnsprovejs@0.5.1(patch_hash=46293ec988660581582e9312388c8aba9227f6b03fa88a5bec7657dbe8741ba4)':
     dependencies:
       '@noble/hashes': 1.8.0
       dns-packet: 5.6.1
       typescript-logging: 1.0.1
 
-  '@ensdomains/ens-contracts@1.6.0(patch_hash=690a84b6dc89077babbf6277c7ba377c4a9b92489488897fc4af09f5e4241aac)(bufferutil@4.0.9)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(utf-8-validate@5.0.10)':
+  '@ensdomains/ens-contracts@1.6.0(patch_hash=10fa21098d989da50b50494b4143c642ade27e543dee6aac3702c2a8c528574a)(bufferutil@4.0.9)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10))(typescript@5.7.3)(utf-8-validate@5.0.10)':
     dependencies:
       '@ensdomains/buffer': 0.1.3
       '@ensdomains/solsha1': 0.0.3
@@ -10103,7 +10106,7 @@ snapshots:
       '@adraffy/ens-normalize': 1.10.1
       '@ensdomains/address-encoder': 1.1.4
       '@ensdomains/content-hash': 3.1.1
-      '@ensdomains/dnsprovejs': 0.5.1(patch_hash=613f8e32e5cc6cd20878b81a100193aa6317ad42262f322cfd07dc6bf7027c22)
+      '@ensdomains/dnsprovejs': 0.5.1(patch_hash=46293ec988660581582e9312388c8aba9227f6b03fa88a5bec7657dbe8741ba4)
       abitype: 1.1.1(typescript@5.7.3)(zod@3.25.75)
       dns-packet: 5.6.1
       graphql: 16.11.0
