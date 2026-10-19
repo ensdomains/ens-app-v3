@@ -5,11 +5,6 @@ import { test } from '../../../playwright'
 // When testing locally, reducers will be run twice because of strict mode
 const strictModeEventCount = process.env.CI ? 1 : 2
 
-// Skipped: flaky independent of any code change here — the import cost
-// estimate (useEstimateGasWithStateOverride) intermittently never resolves
-// above "0.0000 ETH", reproduced identically on unrelated branches sharing
-// the same main commit (one run passes, another fails minutes later on the
-// exact same code). Needs its own investigation/ticket before re-enabling.
 test('should allow claim (owned by user)', async ({
   page,
   login,
@@ -127,7 +122,6 @@ test('should allow claim (owned by user)', async ({
   )
 })
 
-// Skipped: same pre-existing, non-deterministic cost-estimate flake as above.
 test('should allow import (not owned by user)', async ({
   page,
   login,
