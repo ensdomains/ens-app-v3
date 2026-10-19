@@ -10,7 +10,7 @@ const strictModeEventCount = process.env.CI ? 1 : 2
 // above "0.0000 ETH", reproduced identically on unrelated branches sharing
 // the same main commit (one run passes, another fails minutes later on the
 // exact same code). Needs its own investigation/ticket before re-enabling.
-test.skip('should allow claim (owned by user)', async ({
+test('should allow claim (owned by user)', async ({
   page,
   login,
   accounts,
@@ -128,7 +128,7 @@ test.skip('should allow claim (owned by user)', async ({
 })
 
 // Skipped: same pre-existing, non-deterministic cost-estimate flake as above.
-test.skip('should allow import (not owned by user)', async ({
+test('should allow import (not owned by user)', async ({
   page,
   login,
   makePageObject,
