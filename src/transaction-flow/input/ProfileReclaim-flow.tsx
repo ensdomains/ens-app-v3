@@ -241,6 +241,7 @@ const ProfileReclaim = ({ data: { name, label, parent }, dispatch, onDismiss }: 
         .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={name}
+            nftSourceMode="name-associated-addresses"
             avatarFile={avatarFile}
             handleCancel={() => setView('profile-editor')}
             type={type}

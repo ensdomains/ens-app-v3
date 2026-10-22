@@ -49,8 +49,9 @@ const mockHandleCancel = vi.fn()
 
 makeMockIntersectionObserver()
 
-const props = {
+const props: React.ComponentProps<typeof AvatarNFT> = {
   name: 'test',
+  nftSourceMode: 'name-associated-addresses',
   handleSubmit: mockHandleSubmit,
   handleCancel: mockHandleCancel,
 }
@@ -353,14 +354,7 @@ describe('<AvatarNFT />', () => {
 
     it('uses only the connected account when explicitly requested', async () => {
       mockLegacyName()
-      const connectedAccountProps: React.ComponentProps<typeof AvatarNFT> & {
-        nftSourceMode: 'connected-account'
-      } = {
-        ...props,
-        nftSourceMode: 'connected-account',
-      }
-
-      render(<AvatarNFT {...connectedAccountProps} />)
+      render(<AvatarNFT {...props} nftSourceMode="connected-account" />)
 
       await screen.findByTestId('avatar-search-input')
 

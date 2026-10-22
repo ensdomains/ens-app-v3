@@ -562,6 +562,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={name}
+            nftSourceMode="name-associated-addresses"
             avatarFile={avatarFile}
             handleCancel={() => editorDispatch({ type: 'popView' })}
             type={type}
