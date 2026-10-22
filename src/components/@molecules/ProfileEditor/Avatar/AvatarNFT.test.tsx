@@ -351,6 +351,25 @@ describe('<AvatarNFT />', () => {
     const clickSource = (testId: string) =>
       fireEvent.click(within(screen.getByTestId(testId)).getByRole('button', { hidden: true }))
 
+    it('uses only the connected account when explicitly requested', async () => {
+      mockLegacyName()
+      const connectedAccountProps: React.ComponentProps<typeof AvatarNFT> & {
+        nftSourceMode: 'connected-account'
+      } = {
+        ...props,
+        nftSourceMode: 'connected-account',
+      }
+
+      render(<AvatarNFT {...connectedAccountProps} />)
+
+      await screen.findByTestId('avatar-search-input')
+
+      const owners = fetchedOwners()
+      expect(owners).not.toHaveLength(0)
+      expect(owners.every((owner) => owner === CONNECTED_ADDRESS)).toBe(true)
+      expect(screen.queryByTestId('nft-source-selector')).not.toBeInTheDocument()
+    })
+
     it('defaults to browsing the connected wallet NFTs', async () => {
       mockLegacyName()
       render(<AvatarNFT {...props} />)
