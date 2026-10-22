@@ -363,6 +363,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
         .with('upload', 'nft', 'manual', (type) => (
           <AvatarViewManager
             name={name}
+            nftSourceMode="name-associated-addresses"
             avatarFile={avatarFile}
             handleCancel={() => setView('profile-editor')}
             type={type}

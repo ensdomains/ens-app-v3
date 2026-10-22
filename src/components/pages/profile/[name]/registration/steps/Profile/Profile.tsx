@@ -237,6 +237,7 @@ const Profile = ({ name, callback, registrationData, resolverExists }: Props) =>
           .with('upload', 'nft', 'manual', (_modalOption) => (
             <AvatarViewManager
               name={name}
+              nftSourceMode="connected-account"
               avatarFile={avatarFile}
               handleCancel={() => setModalOpen(false)}
               type={_modalOption}
