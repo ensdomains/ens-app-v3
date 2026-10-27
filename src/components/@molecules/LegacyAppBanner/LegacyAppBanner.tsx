@@ -10,7 +10,7 @@ import { Banner } from '@ensdomains/thorin'
  * AnnouncementBanner ("ENSv2 Hub") when the legacy ETHRegistrarController
  * has been removed from BaseRegistrarImplementation (e.g. Sepolia post
  * ENSv2 beta). At that point this app's core flows (registration, renewal)
- * no longer work and users should be using the new Manager at app.ens.dev.
+ * no longer work and users should be using the new Manager at sepolia.app.ens.domains.
  *
  * Visual reference: Figma node `8:3126` ("Banners / legacy"). Implemented
  * with Thorin's standard warning Banner — the design uses the same colours

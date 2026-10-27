@@ -10,7 +10,7 @@ import { useIsEthRegistrarControllerActive } from './useIsEthRegistrarController
  * - Mainnet: always disabled. Users are sent to app.ens.domains.
  * - Other chains: disabled once the legacy ETHRegistrarController has been
  *   removed from BaseRegistrarImplementation (e.g. Sepolia post ENS v2 beta),
- *   in which case users are sent to app.ens.dev.
+ *   in which case users are sent to sepolia.app.ens.domains.
  */
 export const useIsLegacyFlowDisabled = () => {
   const chainName = useChainName()
