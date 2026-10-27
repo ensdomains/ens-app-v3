@@ -23,6 +23,14 @@ vi.mock('@app/hooks/useSetupIntercom', () => ({ useSetupIntercom: vi.fn() }))
 vi.mock('@app/hooks/registration/useIsEthRegistrarControllerActive', () => ({
   useIsEthRegistrarControllerActive: () => ({ data: state.controllerActive }),
 }))
+vi.mock('@app/hooks/registration/useIsLegacyFlowDisabled', () => ({
+  useIsLegacyFlowDisabled: () => ({
+    isDisabled: state.controllerActive === false,
+    isLoading: false,
+    isMainnet: false,
+    managerBaseUrl: 'https://app.ens.dev',
+  }),
+}))
 vi.mock('@app/utils/analytics/cookies', () => ({
   useCookieConsent: () => ({ consent: state.consent }),
 }))

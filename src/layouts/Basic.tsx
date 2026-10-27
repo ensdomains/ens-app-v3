@@ -7,7 +7,7 @@ import { useAccount, useSwitchChain } from 'wagmi'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 import { AnnouncementBanner } from '@app/components/pages/AnnouncementBanner'
 import { getSupportedChainById } from '@app/constants/chains'
-import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
+import { useIsLegacyFlowDisabled } from '@app/hooks/registration/useIsLegacyFlowDisabled'
 import { useSetupIntercom } from '@app/hooks/useSetupIntercom'
 import { AnnouncementPlacement } from '@app/utils/analytics'
 
@@ -88,7 +88,7 @@ const shouldSwitchChain = ({
 export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
   const { pathname } = useRouter()
   const placement = announcementPlacements.get(pathname)
-  const { data: isControllerActive } = useIsEthRegistrarControllerActive()
+  const { isDisabled: isLegacyFlowDisabled } = useIsLegacyFlowDisabled()
   const { chainId, connector, isConnected } = useAccount()
   const hasProgrammaticChainSwitching = Boolean(connector?.switchChain)
   const { switchChain, isPending, isError } = useSwitchChain()
@@ -108,7 +108,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
     <Container className="min-safe">
       <Navigation />
       <ContentWrapper>
-        {!error && placement && isControllerActive !== false && (
+        {!error && placement && !isLegacyFlowDisabled && (
           <AnnouncementBanner placement={placement} />
         )}
         {error ? <ErrorScreen errorType="application-error" /> : children}

@@ -12,6 +12,15 @@ describe('getManagerRenewUrl', () => {
     expect(getManagerRenewUrl(['sub.nick.eth'])).toBe(`${MANAGER_BASE_URL}/renew/sub.nick.eth`)
   })
 
+  it('uses the provided base URL (e.g. mainnet)', () => {
+    expect(getManagerRenewUrl(['nick.eth'], 'https://app.ens.domains')).toBe(
+      'https://app.ens.domains/renew/nick.eth',
+    )
+    expect(getManagerRenewUrl(['nick.eth', 'alice.eth'], 'https://app.ens.domains')).toBe(
+      'https://app.ens.domains',
+    )
+  })
+
   it('falls back to the Manager homepage for bulk renewals', () => {
     expect(getManagerRenewUrl(['nick.eth', 'alice.eth'])).toBe(MANAGER_BASE_URL)
   })

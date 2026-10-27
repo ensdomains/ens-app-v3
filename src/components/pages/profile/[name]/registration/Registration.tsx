@@ -12,7 +12,7 @@ import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/chain/useContractAddress'
 import { hasValidPrimaryName } from '@app/hooks/ensjs/public/primaryNameUtils'
 import { usePrimaryName } from '@app/hooks/ensjs/public/usePrimaryName'
-import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
+import { useIsLegacyFlowDisabled } from '@app/hooks/registration/useIsLegacyFlowDisabled'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useReferrer } from '@app/hooks/useReferrer'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
@@ -83,9 +83,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     name: normalisedName,
   })
 
-  const { data: isControllerActive, isLoading: isControllerActiveLoading } =
-    useIsEthRegistrarControllerActive()
-  const isRegistrationDisabled = isControllerActive === false
+  const { isDisabled: isRegistrationDisabled, isLoading: isControllerActiveLoading } =
+    useIsLegacyFlowDisabled()
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
