@@ -245,6 +245,10 @@
         "title": "ENS v2 beta is now deployed on Sepolia",
         "banner": "Future renewals will be in the new Manager app. Click <ManagerLink>here</ManagerLink> to renew your name there."
       },
+      "disabledMainnet": {
+        "title": "Renewals have moved to the new ENS app",
+        "banner": "Future renewals will be in the new Manager app. Click <ManagerLink>here</ManagerLink> to renew your name there."
+      },
       "shortName": {
         "title": "This name cannot be extended",
         "description": "Extending is not available for .eth names under 3 characters."

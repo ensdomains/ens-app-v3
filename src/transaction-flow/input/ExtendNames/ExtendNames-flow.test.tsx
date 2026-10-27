@@ -4,6 +4,7 @@ import { labelhash } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 import { useAccount, useBalance } from 'wagmi'
 
+import { useChainName } from '@app/hooks/chain/useChainName'
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
@@ -14,6 +15,7 @@ import { useReferrer } from '@app/hooks/useReferrer'
 import { makeMockIntersectionObserver } from '../../../../test/mock/makeMockIntersectionObserver'
 import ExtendNames from './ExtendNames-flow'
 
+vi.mock('@app/hooks/chain/useChainName')
 vi.mock('@app/hooks/chain/useEstimateGasWithStateOverride')
 vi.mock('@app/hooks/ensjs/public/usePrice')
 vi.mock('wagmi')
@@ -22,6 +24,7 @@ vi.mock('@app/hooks/useEthPrice')
 vi.mock('@app/hooks/useReferrer')
 vi.mock('@app/hooks/registration/useIsEthRegistrarControllerActive')
 
+const mockUseChainName = mockFunction(useChainName)
 const mockUseEstimateGasWithStateOverride = mockFunction(useEstimateGasWithStateOverride)
 const mockUsePrice = mockFunction(usePrice)
 const mockUseAccount = mockFunction(useAccount)
@@ -68,6 +71,7 @@ describe('Extendnames', () => {
   mockUseExpiry.mockReturnValue({ data: { expiry: { date: new Date() } }, isLoading: false })
   mockUseReferrer.mockReturnValue(undefined)
   mockUseIsEthRegistrarControllerActive.mockReturnValue({ data: true, isLoading: false } as any)
+  mockUseChainName.mockReturnValue('sepolia')
   it('should render', async () => {
     render(
       <ExtendNames
@@ -134,6 +138,21 @@ describe('Extendnames', () => {
     expect(screen.getAllByText('input.extendNames.disabled.title').length).toBeGreaterThan(0)
     // The pricing/registration confirm button should be replaced by a Close
     // button (action.close), so "action.next" must not appear.
+    expect(screen.queryByText('action.next')).not.toBeInTheDocument()
+  })
+  it('should show the mainnet disabled banner on mainnet even when the controller is active', () => {
+    mockUseChainName.mockReturnValueOnce('mainnet')
+    render(
+      <ExtendNames
+        {...{
+          data: { names: ['nick.eth'], isSelf: true, hasWrapped: false },
+          dispatch: () => null,
+          onDismiss: () => null,
+        }}
+      />,
+    )
+    expect(screen.getAllByText('input.extendNames.disabledMainnet.title').length).toBeGreaterThan(0)
+    expect(screen.queryByText('input.extendNames.disabled.title')).not.toBeInTheDocument()
     expect(screen.queryByText('action.next')).not.toBeInTheDocument()
   })
   it('should still show the disabled banner for bulk renewals', () => {

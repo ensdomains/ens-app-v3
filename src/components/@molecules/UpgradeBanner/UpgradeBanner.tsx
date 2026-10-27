@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
+import { useIsLegacyFlowDisabled } from '@app/hooks/registration/useIsLegacyFlowDisabled'
+import { TESTNET_MANAGER_BASE_URL } from '@app/utils/getManagerBaseUrl'
 
 /**
  * UpgradeBanner ("A new ENS app is here!")
@@ -123,7 +124,7 @@ type Props = {
   className?: string
 }
 
-const DEFAULT_HREF = 'https://app.ens.dev'
+const DEFAULT_HREF = TESTNET_MANAGER_BASE_URL
 
 const UpgradeBanner = ({ href = DEFAULT_HREF, className }: Props) => {
   const { t } = useTranslation('common')
@@ -145,14 +146,15 @@ const UpgradeBanner = ({ href = DEFAULT_HREF, className }: Props) => {
 
 /**
  * Global UpgradeBanner that mounts at the top of the app shell when (and
- * only when) the legacy ETHRegistrarController has been removed from
+ * only when) the legacy flows are disabled: always on mainnet, or on other
+ * chains once the legacy ETHRegistrarController has been removed from
  * BaseRegistrarImplementation. Mirrors the shape of `TestnetWarning`:
  * self-gating, returns null when not applicable, no props.
  */
 export const GlobalUpgradeBanner = () => {
-  const { data: isControllerActive } = useIsEthRegistrarControllerActive()
-  if (isControllerActive !== false) return null
-  return <UpgradeBanner />
+  const { isDisabled, managerBaseUrl } = useIsLegacyFlowDisabled()
+  if (!isDisabled) return null
+  return <UpgradeBanner href={managerBaseUrl} />
 }
 
 export default UpgradeBanner

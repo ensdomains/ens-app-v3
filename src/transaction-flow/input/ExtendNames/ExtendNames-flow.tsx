@@ -25,7 +25,7 @@ import { DateSelection } from '@app/components/@molecules/DateSelection/DateSele
 import { useEstimateGasWithStateOverride } from '@app/hooks/chain/useEstimateGasWithStateOverride'
 import { useExpiry } from '@app/hooks/ensjs/public/useExpiry'
 import { usePrice } from '@app/hooks/ensjs/public/usePrice'
-import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
+import { useIsLegacyFlowDisabled } from '@app/hooks/registration/useIsLegacyFlowDisabled'
 import { useEnsAvatar } from '@app/hooks/useEnsAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useReferrer } from '@app/hooks/useReferrer'
@@ -225,9 +225,13 @@ const ExtendNames = ({
   const referrer = useReferrer()
   const referrerHex = getReferrerHex(referrer)
 
-  const { data: isControllerActive, isLoading: isControllerActiveLoading } =
-    useIsEthRegistrarControllerActive()
-  const isRenewalDisabled = isControllerActive === false
+  const {
+    isDisabled: isRenewalDisabled,
+    isLoading: isControllerActiveLoading,
+    isMainnet,
+    managerBaseUrl,
+  } = useIsLegacyFlowDisabled()
+  const disabledKey = isMainnet ? 'disabledMainnet' : 'disabled'
 
   const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice()
   const { address, isConnected: isAccountConnected } = useAccount()
@@ -348,7 +352,7 @@ const ExtendNames = ({
       },
     }))
     .with('disabled', () => ({
-      title: t('input.extendNames.disabled.title'),
+      title: t(`input.extendNames.${disabledKey}.title`),
       alert: 'warning' as const,
       buttonProps: {
         onClick: onDismiss,
@@ -413,15 +417,15 @@ const ExtendNames = ({
           ))
           .with(['disabled', false], () => (
             <DisabledContainer>
-              <Banner alert="warning" title={t('input.extendNames.disabled.title')}>
+              <Banner alert="warning" title={t(`input.extendNames.${disabledKey}.title`)}>
                 <Trans
                   t={t}
-                  i18nKey="input.extendNames.disabled.banner"
+                  i18nKey={`input.extendNames.${disabledKey}.banner`}
                   components={{
                     // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
                     ManagerLink: (
                       <ManagerLink
-                        href={getManagerRenewUrl(names)}
+                        href={getManagerRenewUrl(names, managerBaseUrl)}
                         target="_blank"
                         rel="noreferrer noopener"
                       />

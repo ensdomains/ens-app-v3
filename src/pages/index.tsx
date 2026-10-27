@@ -9,7 +9,7 @@ import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import LegacyAppBanner from '@app/components/@molecules/LegacyAppBanner/LegacyAppBanner'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LeadingHeading } from '@app/components/LeadingHeading'
-import { useIsEthRegistrarControllerActive } from '@app/hooks/registration/useIsEthRegistrarControllerActive'
+import { useIsLegacyFlowDisabled } from '@app/hooks/registration/useIsLegacyFlowDisabled'
 
 import ENSFull from '../assets/ENSFull.svg'
 
@@ -95,8 +95,7 @@ export default function Page() {
   // BaseRegistrarImplementation (e.g. Sepolia post ENSv2 beta), this app's
   // core flows no longer work. Keep the warning beneath the search field;
   // Basic hides the ENSv2 announcement in this state.
-  const { data: isControllerActive } = useIsEthRegistrarControllerActive()
-  const isLegacy = isControllerActive === false
+  const { isDisabled: isLegacy } = useIsLegacyFlowDisabled()
 
   return (
     <>

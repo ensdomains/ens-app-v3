@@ -4,10 +4,11 @@ import styled, { css } from 'styled-components'
 
 import { Banner } from '@ensdomains/thorin'
 
-const REDIRECT_DELAY_MS = 1000
-const MANAGER_BASE_URL = 'https://app.ens.dev'
+import { useIsLegacyFlowDisabled } from '@app/hooks/registration/useIsLegacyFlowDisabled'
 
-const getManagerRegisterUrl = (name: string) => `${MANAGER_BASE_URL}/register/${name}`
+const REDIRECT_DELAY_MS = 1000
+
+const getManagerRegisterUrl = (baseUrl: string, name: string) => `${baseUrl}/register/${name}`
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -23,7 +24,11 @@ type Props = {
 
 const RegistrationDisabledBanner = ({ name }: Props) => {
   const { t } = useTranslation('register')
-  const url = getManagerRegisterUrl(name)
+  const { isMainnet, managerBaseUrl } = useIsLegacyFlowDisabled()
+  const url = getManagerRegisterUrl(managerBaseUrl, name)
+  // The Sepolia-specific copy mentions the ENS v2 beta on Sepolia, so mainnet
+  // uses its own keys.
+  const i18nPrefix = isMainnet ? 'disabledMainnet' : 'disabled'
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -34,10 +39,10 @@ const RegistrationDisabledBanner = ({ name }: Props) => {
 
   return (
     <Container>
-      <Banner alert="warning" title={t('disabled.title')}>
+      <Banner alert="warning" title={t(`${i18nPrefix}.title`)}>
         <Trans
           t={t}
-          i18nKey="disabled.banner"
+          i18nKey={`${i18nPrefix}.banner`}
           components={{
             // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
             ManagerLink: <a href={url} />,
