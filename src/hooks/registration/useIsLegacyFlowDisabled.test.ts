@@ -49,7 +49,7 @@ describe('useIsLegacyFlowDisabled', () => {
       isDisabled: true,
       isLoading: false,
       isMainnet: false,
-      managerBaseUrl: 'https://app.ens.dev',
+      managerBaseUrl: 'https://sepolia.app.ens.domains',
     })
   })
 

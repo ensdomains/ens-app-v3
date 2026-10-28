@@ -28,7 +28,7 @@ vi.mock('@app/hooks/registration/useIsLegacyFlowDisabled', () => ({
     isDisabled: state.controllerActive === false,
     isLoading: false,
     isMainnet: false,
-    managerBaseUrl: 'https://app.ens.dev',
+    managerBaseUrl: 'https://sepolia.app.ens.domains',
   }),
 }))
 vi.mock('@app/utils/analytics/cookies', () => ({
