@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { useIsLegacyFlowDisabled } from '@app/hooks/registration/useIsLegacyFlowDisabled'
-import { TESTNET_MANAGER_BASE_URL } from '@app/utils/getManagerBaseUrl'
+import { MAINNET_MANAGER_BASE_URL } from '@app/utils/getManagerBaseUrl'
 
 /**
  * UpgradeBanner ("A new ENS app is here!")
  *
- * Pink banner that prompts users to switch to the new Manager app at
- * https://app.ens.dev. Shown wherever the legacy v1 flow has been disabled
+ * Pink banner that prompts users to switch to the new Manager app for their
+ * network. Shown wherever the legacy v1 flow has been disabled
  * on-chain (e.g. registration / renewal once the ETHRegistrarController is
  * removed from BaseRegistrarImplementation).
  *
@@ -117,14 +117,14 @@ const CTA = styled.a(
 type Props = {
   /**
    * Destination URL for the "Open new app" CTA. Defaults to the Manager root
-   * (`https://app.ens.dev`). Pass a deep link (e.g. `/register/<name>` or
+   * (`https://app.ens.domains`). Pass a deep link (e.g. `/register/<name>` or
    * `/renew/<name>`) when there's a meaningful target for the user's flow.
    */
   href?: string
   className?: string
 }
 
-const DEFAULT_HREF = TESTNET_MANAGER_BASE_URL
+const DEFAULT_HREF = MAINNET_MANAGER_BASE_URL
 
 const UpgradeBanner = ({ href = DEFAULT_HREF, className }: Props) => {
   const { t } = useTranslation('common')

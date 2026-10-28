@@ -7,7 +7,7 @@ describe('getManagerBaseUrl', () => {
     expect(getManagerBaseUrl('mainnet')).toBe('https://app.ens.domains')
   })
 
-  it.each(['sepolia', 'holesky', 'localhost'])('returns app.ens.dev on %s', (chainName) => {
-    expect(getManagerBaseUrl(chainName)).toBe('https://app.ens.dev')
+  it.each(['sepolia', 'holesky', 'localhost'])('returns sepolia.app.ens.domains on %s', (chainName) => {
+    expect(getManagerBaseUrl(chainName)).toBe('https://sepolia.app.ens.domains')
   })
 })
