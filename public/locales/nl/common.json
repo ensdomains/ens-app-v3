@@ -9,7 +9,7 @@
   },
   "legacyAppBanner": {
     "title": "Je gebruikt de oude ENS app",
-    "body": "Deze versie wordt niet meer onderhouden en sommige functies werken mogelijk niet. Gebruik de nieuwe app voor de volledige ervaring."
+    "body": "Deze app ontvangt geen beveiligingsupdates meer, dus je gebruikt hem op eigen risico. Hij wordt ook niet meer onderhouden en sommige functies werken mogelijk niet. Gebruik de nieuwe app voor de volledige ervaring."
   },
   "action": {
     "cancel": "Annuleer",

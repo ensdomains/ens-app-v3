@@ -11,7 +11,7 @@
   },
   "legacyAppBanner": {
     "title": "You're on the legacy ENS app",
-    "body": "This version is no longer maintained and some features may be broken. Use the new app for the full experience."
+    "body": "This app is no longer receiving security updates, so you are using it at your own risk. It is also no longer maintained and some features may be broken. Use the new app for the full experience."
   },
   "action": {
     "cancel": "Cancel",

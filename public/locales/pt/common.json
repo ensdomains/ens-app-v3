@@ -11,7 +11,7 @@
   },
   "legacyAppBanner": {
     "title": "Você está no app ENS legado",
-    "body": "Esta versão não recebe mais manutenção e algumas funcionalidades podem não funcionar. Use o novo app para a experiência completa."
+    "body": "Este app não recebe mais atualizações de segurança, então você o usa por sua conta e risco. Ele também não recebe mais manutenção e algumas funcionalidades podem não funcionar. Use o novo app para a experiência completa."
   },
   "action": {
     "cancel": "Cancelar",
