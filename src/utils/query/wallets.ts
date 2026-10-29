@@ -3,6 +3,7 @@ import {
   argentWallet,
   braveWallet,
   coinbaseWallet,
+  imTokenWallet,
   injectedWallet,
   ledgerWallet,
   metaMaskWallet,
@@ -42,6 +43,7 @@ const standardWallets = isInsideSafe()
       metaMaskWallet,
       ledgerWallet,
       argentWallet,
+      imTokenWallet,
     ] as const satisfies WalletList[number]['wallets'])
 
 export const rainbowKitWallets = (
