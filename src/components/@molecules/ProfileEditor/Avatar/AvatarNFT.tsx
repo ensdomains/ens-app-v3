@@ -345,6 +345,8 @@ const NftItem = ({
   )
 }
 
+export type AvatarNftSourceMode = 'connected-account' | 'name-associated-addresses'
+
 type AvatarSource = {
   address: string
   // i18n key for the source's role label. Owner rows resolve in the `common`
@@ -358,7 +360,11 @@ type AvatarSource = {
 // an avatar source: the connected wallet (default), the name's manager/owner rows
 // (from `useOwners`), and the eth address record. Connected wallet is kept first so
 // the default browsing behaviour is unchanged.
-function useAvatarSources(name: string, connectedAddress?: string): readonly AvatarSource[] {
+function useAvatarSources(
+  name: string,
+  connectedAddress: string | undefined,
+  sourceMode: AvatarNftSourceMode,
+): readonly AvatarSource[] {
   const { profile, ownerData, wrapperData } = useNameDetails({ name })
   const owners = useOwners({ ownerData, wrapperData })
 
@@ -376,19 +382,23 @@ function useAvatarSources(name: string, connectedAddress?: string): readonly Ava
             },
           ]
         : []),
-      ...owners.map<AvatarSource>((owner) => ({
-        address: owner.address,
-        labelKey: owner.label,
-        ns: 'common',
-        testId: `nft-source-${owner.testId}`,
-      })),
-      ...(ethAddress
+      ...(sourceMode === 'name-associated-addresses'
         ? [
-            {
-              address: ethAddress,
-              labelKey: 'input.profileEditor.tabs.avatar.nft.address.other',
-              testId: 'nft-source-eth-record',
-            },
+            ...owners.map<AvatarSource>((owner) => ({
+              address: owner.address,
+              labelKey: owner.label,
+              ns: 'common',
+              testId: `nft-source-${owner.testId}`,
+            })),
+            ...(ethAddress
+              ? [
+                  {
+                    address: ethAddress,
+                    labelKey: 'input.profileEditor.tabs.avatar.nft.address.other',
+                    testId: 'nft-source-eth-record',
+                  },
+                ]
+              : []),
           ]
         : []),
     ]
@@ -401,15 +411,17 @@ function useAvatarSources(name: string, connectedAddress?: string): readonly Ava
       seen.add(key)
       return true
     })
-  }, [profile, owners, connectedAddress])
+  }, [profile, owners, connectedAddress, sourceMode])
 }
 
 export const AvatarNFT = ({
   name,
+  nftSourceMode,
   handleCancel,
   handleSubmit,
 }: {
   name: string
+  nftSourceMode: AvatarNftSourceMode
   handleCancel: () => void
   handleSubmit: (type: 'nft', uri: string, display: string) => void
 }) => {
@@ -419,7 +431,7 @@ export const AvatarNFT = ({
   const { address: _address } = useAccount()
   const address = _address!
 
-  const sources = useAvatarSources(name, _address)
+  const sources = useAvatarSources(name, _address, nftSourceMode)
 
   const [searchedInput, setSearchedInput] = useState('')
   const [selectedAddress, setSelectedAddress] = useState<string>(address)
